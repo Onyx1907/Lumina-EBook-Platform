@@ -3,6 +3,14 @@
 
 #include <QString>
 
+const QString NETWORK_SECRET_KEY = "LuminaDefaultSecretKey123!";
+
+const unsigned short SERVER_PORT = 12345;
+
+const QString SERVER_IP = "127.0.0.1";
+
+
+
 // نقش‌های کاربری
 enum class UserRole {
     RegularUser,
