@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LoginWidget</class>
+ <widget class="QWidget" name="LoginWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>650</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QWidget" name="formContainer" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>360</width>
+       <height>420</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>360</width>
+       <height>420</height>
+      </size>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QWidget#formContainer {
+    /* رنگ کرمی ملایم با شفافیت برای دیده شدن ویدیو */
+    background-color: rgba(247, 241, 227, 210); 
+    border: 2px solid #8c7e6d; /* مرز قهوه‌ای مات و کلاسیک */
+    border-radius: 13px;
+}
+
+/* استایل لایبل‌ها یا عناوین متنی داخل باکس */
+QLabel {
+    color: #4a3728; /* قهوه‌ای سوخته */
+    font-family: &quot;Georgia&quot;, &quot;serif&quot;, &quot;B Nazanin&quot;; /* فونت کلاسیک */
+    font-weight: bold;
+    font-size: 17px;
+    background-color: transparent;
+	border: none;
+}</string>
+     </property>
+     <widget class="QLabel" name="logo_label">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>0</y>
+        <width>71</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="username_input">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>130</y>
+        <width>321</width>
+        <height>37</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="password_input">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>210</y>
+        <width>321</width>
+        <height>37</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="forget_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>280</y>
+        <width>102</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    color: #8c4f2b; /* قهوه‌ای مایل به قرمز/آجری */
+    text-decoration: underline;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    color: #b86b3d; /* روشن‌تر شدن در حالت هاور */
+}</string>
+      </property>
+      <property name="text">
+       <string>فراموشی رمز عبور</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="register_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>280</y>
+        <width>98</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    color: #8c4f2b; /* قهوه‌ای مایل به قرمز/آجری */
+    text-decoration: underline;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    color: #b86b3d; /* روشن‌تر شدن در حالت هاور */
+}</string>
+      </property>
+      <property name="text">
+       <string>ثبت نام نکرده‌اید؟</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="username_label">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>100</y>
+        <width>55</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>نام کاربری</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="password_label">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>180</y>
+        <width>46</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>رمز عبور</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="login_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>330</y>
+        <width>81</width>
+        <height>45</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: #5c4033; /* قهوه‌ای شکلاتی تیره */
+    color: #f7f1e3; /* متن کرمی روشن */
+    font-weight: bold;
+    font-size: 18px;
+    border: 1px solid #4a3225;
+    border-radius: 6px;
+    font-family: &quot;Georgia&quot;, &quot;serif&quot;, &quot;B Nazanin&quot;;
+    padding: 8px;
+}
+
+/* وقتی موس روی دکمه ورود می‌رود */
+QPushButton:hover {
+    background-color: #73503f; /* کمی روشن‌تر شدن قهوه‌ای */
+}
+
+/* وقتی دکمه فشرده می‌شود */
+QPushButton:pressed {
+    background-color: #4a3225;
+}</string>
+      </property>
+      <property name="text">
+       <string>ورود</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

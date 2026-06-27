@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RegisterWidget</class>
+ <widget class="QWidget" name="RegisterWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>650</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>900</width>
+    <height>650</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QWidget" name="formContainer" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>600</width>
+       <height>500</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>600</width>
+       <height>500</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QWidget#formContainer {
+    /* رنگ کرمی ملایم با شفافیت برای دیده شدن ویدیو */
+    background-color: rgba(247, 241, 227, 210); 
+    border: 2px solid #8c7e6d; /* مرز قهوه‌ای مات و کلاسیک */
+    border-radius: 13px;
+}
+
+/* استایل لایبل‌ها یا عناوین متنی داخل باکس */
+QLabel {
+    color: #4a3728; /* قهوه‌ای سوخته */
+    font-family: &quot;Georgia&quot;, &quot;serif&quot;, &quot;B Nazanin&quot;; /* فونت کلاسیک */
+    font-weight: bold;
+    font-size: 17px;
+    background-color: transparent;
+	border: none;
+}
+
+</string>
+     </property>
+     <widget class="QLineEdit" name="username_input">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>70</y>
+        <width>281</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}
+QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="pass_input">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>70</y>
+        <width>281</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}
+QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="pass2_input">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>160</y>
+        <width>281</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}
+QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="security_input">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>250</y>
+        <width>571</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}
+QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="answer_input">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>340</y>
+        <width>221</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}
+QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 4px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="role_comboBox">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>330</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QComboBox {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    font-family: &quot;Georgia&quot;, &quot;serif&quot;, &quot;B Nazanin&quot;; 
+    border-radius: 4px;
+    padding: 6px 12px 6px 6px;
+    font-size: 14px;
+    /* برای اینکه در سیستم‌عامل‌های مختلف ظاهر بومی حذف شود */
+    combobox-popup: 0; 
+}
+
+/* وقتی کاربر روی کمبوباکس کلیک می‌کند */
+QComboBox:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی */
+}
+
+/* استایل دکمه‌ی فلش سمت راست کمبوباکس */
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left-width: 1px;
+    border-left-color: #b3a394;
+    border-left-style: solid;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+/* ظاهر خودِ منوی بازشو (لیست گزینه‌ها) */
+QComboBox QAbstractItemView {
+    background-color: #f7f1e3; /* رنگ کاغذ کرمی کلاسیک */
+    border: 1px solid #8c7e6d;
+    selection-background-color: #5c4033; /* رنگ هاور گزینه‌ها (قهوه‌ای شکلاتی) */
+    selection-color: #f7f1e3; /* رنگ متنِ گزینه انتخاب شده */
+    color: #2d1f10;
+    padding: 4px;
+}</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>کاربر عادی</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ناشر</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QPushButton" name="register_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>430</y>
+        <width>88</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: #5c4033; /* قهوه‌ای شکلاتی تیره */
+    color: #f7f1e3; /* متن کرمی روشن */
+    font-weight: bold;
+    font-size: 15px;
+    border: 1px solid #4a3225;
+    border-radius: 6px;
+    font-family: &quot;Georgia&quot;, &quot;serif&quot;, &quot;B Nazanin&quot;;
+    padding: 8px;
+}
+
+QPushButton:hover {
+    background-color: #73503f; /* کمی روشن‌تر شدن قهوه‌ای */
+}
+
+/* وقتی دکمه فشرده می‌شود */
+QPushButton:pressed {
+    background-color: #4a3225;
+}</string>
+      </property>
+      <property name="text">
+       <string>ثبت نام</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="username_label">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>50</y>
+        <width>66</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>نام کاربری</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="pass_label">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>50</y>
+        <width>66</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>رمز عبور</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="pass2_label">
+      <property name="geometry">
+       <rect>
+        <x>500</x>
+        <y>140</y>
+        <width>91</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>تکرار رمز عبور</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="security_label">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>230</y>
+        <width>201</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>سوال امنیتی برای بازیابی رمز عبور</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="answer_label">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>320</y>
+        <width>121</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>پاسخ سوال امنیتی</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="role_label">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>340</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;نقش کاربر(غیرقابل‌تغییر)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="title_label">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>10</y>
+        <width>66</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>فرم ثبت نام</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="back_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>460</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    color: #8c4f2b; /* قهوه‌ای مایل به قرمز/آجری */
+    text-decoration: underline;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    color: #b86b3d; /* روشن‌تر شدن در حالت هاور */
+}</string>
+      </property>
+      <property name="text">
+       <string>برگشت برای ورود
+</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
