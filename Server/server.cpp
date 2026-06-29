@@ -78,7 +78,42 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
             handleGetPopularBooks(socket);
             return;
         }
+        if (action == "GET_NEW_BOOKS") {
+            handleGetNewBooks(socket);
+            return;
+        }
+        if (action == "GET_BESTSELLERS") {
+            handleGetBestsellers(socket);
+            return;
+        }
+        if (action == "GET_FREE_BOOKS") {
+            handleGetFreeBooks(socket);
+            return;
+        }
 
+        if (action == "GET_PROFILE") {
+            handleGetProfile(socket, data);
+            return;
+        }
+        if (action == "UPDATE_PROFILE") {
+            handleUpdateProfile(socket, data);
+            return;
+        }
+        if (action == "CHANGE_PASSWORD") {
+            handleChangePassword(socket, data);
+            return;
+        }
+
+        if (action == "GET_PURCHASE_HISTORY") {
+            handleGetPurchaseHistory(socket, data);
+            return;
+        }
+
+        QJsonObject resp;
+        resp["action"] = action + "_RESPONSE";
+        resp["status"] = "ERROR";
+        resp["message"] = ".درخواست نامعتبر است";
+        sendJson(socket, resp);
 
 
 
@@ -266,6 +301,108 @@ void Server::handleGetPopularBooks(QTcpSocket* socket) {
     sendJson(socket, resp);
 }
 
+// دریافت لیست جدیدترین کتاب های اضافه شده
+void Server::handleGetNewBooks(QTcpSocket* socket) {
+    QList<QJsonObject> books = dbManager.getNewBooks();
+    QJsonArray arr;
+    for (const QJsonObject& b : std::as_const(books))
+        arr.append(b);
+
+    QJsonObject resp;
+    resp["action"] = "GET_NEW_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+    sendJson(socket, resp);
+}
+// دریافت لیست کتاب های پرفروش
+void Server::handleGetBestsellers(QTcpSocket* socket) {
+    QList<QJsonObject> books = dbManager.getBestsellers();
+    QJsonArray arr;
+    for (const QJsonObject& b : std::as_const(books))
+        arr.append(b);
+
+    QJsonObject resp;
+    resp["action"] = "GET_BESTSELLERS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+    sendJson(socket, resp);
+}
+// دریافت لیست کتاب های رایگان
+void Server::handleGetFreeBooks(QTcpSocket* socket) {
+    QList<QJsonObject> books = dbManager.getFreeBooks();
+    QJsonArray arr;
+    for (const QJsonObject& b : std::as_const(books))
+        arr.append(b);
+
+    QJsonObject resp;
+    resp["action"] = "GET_FREE_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+    sendJson(socket, resp);
+}
+// دریافت اطلاعات حساب کاربری (پروفایل)
+void Server::handleGetProfile(QTcpSocket* socket, const QJsonObject& data) {
+    const QString username = data.value("username").toString();
+    QJsonObject profile = dbManager.getUserProfile(username);
+
+    QJsonObject resp;
+    resp["action"] = "GET_PROFILE_RESPONSE";
+    if (profile.isEmpty()) {
+        resp["status"] = "ERROR";
+        resp["message"] = ".کاربر یافت نشد";
+    } else {
+        resp["status"] = "SUCCESS";
+        resp["profile"] = profile;
+    }
+    sendJson(socket, resp);
+}
+// به روزرسانی اطلاعات پروفایل کاربر
+void Server::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data) {
+    const QString username = data.value("username").toString();
+    const QString name = data.value("name").toString();
+    const QString email = data.value("email").toString();
+
+    bool ok = dbManager.updateUserProfile(username, name, email);
+
+    QJsonObject resp;
+    resp["action"] = "UPDATE_PROFILE_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد"
+                         : ".خطا در به روزرسانی اطلاعات حساب کاربری";
+
+    sendJson(socket, resp);
+}
+// تغییر رمز عبور کاربر
+void Server::handleChangePassword(QTcpSocket* socket, const QJsonObject& data) {
+    const QString username = data.value("username").toString();
+    const QString oldPass = data.value("old_password").toString();
+    const QString newPass = data.value("new_password").toString();
+
+    bool ok = dbManager.changePassword(username, oldPass, newPass);
+
+    QJsonObject resp;
+    resp["action"] = "CHANGE_PASSWORD_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".رمز عبور با موفقیت تغییر کرد "
+                         : ".رمز عبور فعلی اشتباه است یا کاربر یافت نشد";
+
+    sendJson(socket, resp);
+}
+// دریافت تاریخچه خریدهای یک کاربر
+void Server::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& data) {
+    const QString username = data.value("username").toString();
+    QList<QJsonObject> history = dbManager.getPurchaseHistory(username);
+
+    QJsonArray arr;
+    for (const QJsonObject& h : std::as_const(history))
+        arr.append(h);
+
+    QJsonObject resp;
+    resp["action"] = "GET_PURCHASE_HISTORY_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["history"] = arr;
+    sendJson(socket, resp);
+}
 
 
 
