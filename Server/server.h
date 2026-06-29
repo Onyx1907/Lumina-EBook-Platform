@@ -44,7 +44,15 @@ private:
     void handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data);
 
     void handleGetPopularBooks(QTcpSocket* socket);
+    void handleGetNewBooks(QTcpSocket* socket);
+    void handleGetBestsellers(QTcpSocket* socket);
+    void handleGetFreeBooks(QTcpSocket* socket);
 
+    void handleGetProfile(QTcpSocket* socket, const QJsonObject& data);
+    void handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data);
+    void handleChangePassword(QTcpSocket* socket, const QJsonObject& data);
+
+    void handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& data);
 
 
 
