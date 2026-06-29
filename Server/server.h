@@ -5,6 +5,8 @@
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QtPreprocessorSupport>
+
 
 #include "database_manager.h"
 #include "constants.h"
@@ -25,6 +27,7 @@ private slots:
     void onDisconnected();
 
 private:
+//***************************************************احراز هویت مرکزی******************************************************
     DatabaseManager dbManager;
 
     void handleRequest(QTcpSocket* socket, const QJsonObject& obj);
@@ -32,6 +35,15 @@ private:
     void handleRegister(QTcpSocket* socket, const QJsonObject& data);
     void handleForgotPassword(QTcpSocket* socket, const QJsonObject& data);
     void sendJson(QTcpSocket* socket, const QJsonObject& obj);
+
+
+
+
+
+
+
+
+
 };
 
 #endif // SERVER_H

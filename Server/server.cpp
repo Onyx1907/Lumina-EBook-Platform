@@ -1,4 +1,9 @@
 #include "server.h"
+#include <utility>
+
+
+//***************************************************احراز هویت مرکزی******************************************************
+
 
 // سازنده کلاس سرور: پایگاه داده را در بدو راه اندازی مقداردهی اولیه می کند
 Server::Server(QObject* parent):QTcpServer(parent) {
@@ -45,6 +50,8 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     QString action = obj.value("action").toString();
     QJsonObject data = obj.value("data").toObject();
 
+//***************************************************احراز هویت مرکزی******************************************************
+
     if (action == "LOGIN") {
         handleLogin(socket, data);
     } else if (action == "REGISTER") {
@@ -52,7 +59,14 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     } else if (action == "FORGOT_PASSWORD") {
         handleForgotPassword(socket, data);
     }
-}
+
+
+
+ }
+
+//***************************************************احراز هویت مرکزی******************************************************
+
+
 // برای تبدیل نوع شمارشی نقش کاربر به رشته متنی جهت ارسال در شبکه (Static) تابع کمکی محلی
 static QString roleToString(UserRole role) {
     switch (role) {
@@ -163,4 +177,3 @@ void Server::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
     socket->write(bytes);
     socket->flush();
 }
-
