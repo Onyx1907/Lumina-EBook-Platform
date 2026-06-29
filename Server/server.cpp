@@ -60,6 +60,26 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
         handleForgotPassword(socket, data);
     }
 
+//*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
+        if (action == "SET_FAVORITE_GENRES") {
+            handleSetFavoriteGenres(socket, data);
+            return;
+        }
+        if (action == "GET_RECOMMENDED_BOOKS") {
+            handleGetRecommendedBooks(socket, data);
+            return;
+        }
+        if (action == "GET_BOOKS_BY_GENRE") {
+            handleGetBooksByGenre(socket, data);
+            return;
+        }
+
+        if (action == "GET_POPULAR_BOOKS") {
+            handleGetPopularBooks(socket);
+            return;
+        }
+
+
 
 
  }
@@ -177,3 +197,79 @@ void Server::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
     socket->write(bytes);
     socket->flush();
 }
+
+
+//*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
+
+
+// ذخیره ژانرهای مورد علاقه کاربر در پایگاه داده
+void Server::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data) {
+    const QString username = data.value("username").toString();
+    QJsonArray arr = data.value("genres").toArray();
+    QStringList genres;
+
+    for(const QJsonValue& v : std::as_const(arr))
+        genres.append(v.toString());
+
+    bool ok = dbManager.setFavoriteGenres(username, genres);
+
+    QJsonObject resp;
+    resp["action"] = "SET_FAVORITE_GENRES_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".ژانرهای مورد علاقه با موفقیت ذخیره شدند"
+                         : ".خطا در ذخیره ژانرهای مورد علاقه";
+
+    sendJson(socket, resp);
+}
+// دریافت لیست کتاب های پیشنهادی بر اساس ژانرهای مورد علاقه کاربر
+void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data) {
+    const QString username = data.value("username").toString();
+    QStringList genres = dbManager.getFavoriteGenres(username);
+    QList<QJsonObject> books = dbManager.getRecommendedBooks(genres);
+
+    QJsonArray arr;
+    for (const QJsonObject& b : std::as_const(books))
+        arr.append(b);
+
+    QJsonObject resp;
+    resp["action"] = "GET_RECOMMENDED_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+    sendJson(socket, resp);
+}
+// دریافت لیست کتاب ها بر اساس یک ژانر خاص
+void Server::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) {
+    const QString genre = data.value("genre").toString();
+    QList<QJsonObject> books = dbManager.getBooksByGenre(genre);
+
+    QJsonArray arr;
+    for (const QJsonObject& b : std::as_const(books))
+        arr.append(b);
+
+    QJsonObject resp;
+    resp["action"] = "GET_BOOKS_BY_GENRE_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+    sendJson(socket, resp);
+}
+// دریافت لیست کتاب های محبوب (پرطرفدار)
+void Server::handleGetPopularBooks(QTcpSocket* socket) {
+    QList<QJsonObject> books = dbManager.getPopularBooks();
+    QJsonArray arr;
+    for (const QJsonObject& b : std::as_const(books))
+        arr.append(b);
+
+    QJsonObject resp;
+    resp["action"] = "GET_POPULAR_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+    sendJson(socket, resp);
+}
+
+
+
+
+
+
+
+
