@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QStackedWidget>
-#include "mainwindow.h"
 
 
 namespace Ui {
@@ -17,6 +16,12 @@ class ForgotPasswordWidget : public QWidget
 public:
     explicit ForgotPasswordWidget(QWidget *parent = nullptr);
     ~ForgotPasswordWidget();
+
+    void enableFormWithError(const QString& errorMsg);
+
+signals:
+    //  سیگنال‌هایی که به مِین‌ویندو می‌گویند کاربر می‌خواهد جابجا شود
+    void goToLoginRequested();
 
 private slots:
     void on_back_pushButton_clicked();

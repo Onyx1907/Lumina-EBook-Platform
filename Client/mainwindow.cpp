@@ -1,8 +1,5 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "loginwidget.h"
-#include "registerwidget.h"
-#include "forgotpasswordwidget.h"
 #include <QTimer>
 #include <QPainter>
 
@@ -42,9 +39,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->setAttribute(Qt::WA_TranslucentBackground, true);
     ui->stackedWidget->setStyleSheet("background: transparent; QWidget { background: transparent; }");
 
-    LoginWidget *LoginPage = new LoginWidget(this);
-    RegisterWidget *RegisterPage = new RegisterWidget(this);
-    ForgotPasswordWidget *ForgotPasswordPage = new ForgotPasswordWidget(this);
+    LoginPage = new LoginWidget(this);
+    RegisterPage = new RegisterWidget(this);
+    ForgotPasswordPage = new ForgotPasswordWidget(this);
 
     ui->stackedWidget->addWidget(LoginPage);
     ui->stackedWidget->addWidget(RegisterPage);
@@ -52,6 +49,23 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
     ui->stackedWidget->raise();
+
+
+    connect(LoginPage, &LoginWidget::goToRegisterRequested, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::RegisterPageIndex);
+    });
+
+    connect(LoginPage, &LoginWidget::goToForgotPasswordRequested, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::ForgotPasswordPageIndex);
+    });
+
+    connect(RegisterPage, &RegisterWidget::goToLoginRequested, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
+    });
+
+    connect(ForgotPasswordPage, &ForgotPasswordWidget::goToLoginRequested, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
+    });
 }
 
 // 🔹 ۵. جادوی اصلی: نقاشی کردن فریم ویدیو در دورترین لایه عقب مِین‌ویندو

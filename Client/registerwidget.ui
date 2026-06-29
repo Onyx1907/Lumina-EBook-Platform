@@ -133,6 +133,9 @@ QLineEdit:focus {
     background-color: #ffffff;
 }</string>
       </property>
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
+      </property>
      </widget>
      <widget class="QLineEdit" name="pass2_input">
       <property name="geometry">
@@ -172,6 +175,9 @@ QLineEdit:focus {
     border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
     background-color: #ffffff;
 }</string>
+      </property>
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
       </property>
      </widget>
      <widget class="QLineEdit" name="security_input">
@@ -489,6 +495,30 @@ QPushButton:hover {
       <property name="text">
        <string>برگشت برای ورود
 </string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="error_label">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>389</y>
+        <width>571</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #a63a3a;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>

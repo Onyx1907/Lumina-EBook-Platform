@@ -8,6 +8,10 @@
 #include <QAudioOutput>
 #include <QVideoSink>
 #include <QVideoFrame>
+#include "loginwidget.h"
+#include "registerwidget.h"
+#include "forgotpasswordwidget.h"
+#include "page_indices.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -20,11 +24,8 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    enum Page {
-        LoginPageIndex = 0,
-        RegisterPageIndex = 1,
-        ForgotPasswordPageIndex = 2
-    };
+
+
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -37,6 +38,10 @@ private:
     QWidget *bgWidget = nullptr;
     QVideoSink *videoSink = nullptr;
     QPixmap currentFramePixmap;
+
+    LoginWidget *LoginPage;
+    RegisterWidget *RegisterPage;
+    ForgotPasswordWidget *ForgotPasswordPage;
 };
 
 #endif // MAINWINDOW_H

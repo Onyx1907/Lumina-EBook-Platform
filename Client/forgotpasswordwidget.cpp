@@ -21,24 +21,12 @@ ForgotPasswordWidget::~ForgotPasswordWidget()
 
 void ForgotPasswordWidget::on_back_pushButton_clicked()
 {
-    QWidget *parent = this->parentWidget();
-    if(parent){
-        QStackedWidget *stacked = qobject_cast<QStackedWidget*>(parent);
-        if(stacked){
-            stacked->setCurrentIndex(MainWindow::Page::LoginPageIndex);
-        }
-    }
+    emit goToLoginRequested();
 }
 
 
 void ForgotPasswordWidget::on_back_pushButton_2_clicked()
 {
-    QWidget *parent = this->parentWidget();
-    if(parent){
-        QStackedWidget *stacked = qobject_cast<QStackedWidget*>(parent);
-        if(stacked){
-            stacked->setCurrentIndex(MainWindow::Page::LoginPageIndex);
-        }
-    }
+    emit goToLoginRequested();
 }
 

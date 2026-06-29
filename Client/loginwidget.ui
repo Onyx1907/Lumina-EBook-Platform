@@ -116,6 +116,9 @@ QLineEdit:focus {
     background-color: #ffffff;
 }</string>
       </property>
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
+      </property>
      </widget>
      <widget class="QPushButton" name="forget_pushButton">
       <property name="geometry">
@@ -207,7 +210,7 @@ QPushButton:hover {
       <property name="geometry">
        <rect>
         <x>140</x>
-        <y>330</y>
+        <y>340</y>
         <width>81</width>
         <height>45</height>
        </rect>
@@ -236,6 +239,27 @@ QPushButton:pressed {
       </property>
       <property name="text">
        <string>ورود</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="error_label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>309</y>
+        <width>341</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #a63a3a;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>

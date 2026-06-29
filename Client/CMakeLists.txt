@@ -32,6 +32,8 @@ qt_add_executable(LuminaClient
     loginwidget.h loginwidget.cpp loginwidget.ui
     registerwidget.h registerwidget.cpp registerwidget.ui
     forgotpasswordwidget.h forgotpasswordwidget.cpp forgotpasswordwidget.ui
+    clientnetworkmanager.h clientnetworkmanager.cpp
+    page_indices.h
 
 
 )
