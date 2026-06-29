@@ -37,6 +37,15 @@ private:
     void sendJson(QTcpSocket* socket, const QJsonObject& obj);
 
 
+//*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
+
+    void handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data);
+
+    void handleGetPopularBooks(QTcpSocket* socket);
+
+
 
 
 
