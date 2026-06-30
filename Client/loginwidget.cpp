@@ -78,7 +78,7 @@ void LoginWidget::on_login_pushButton_clicked()
         ClientNetworkManager::instance().sendRequest("LOGIN", loginData);
     }
     else{
-        enableFormWithError("عدم برقرار ارتباط... لطفا بعدا تلاش کنید");
+        enableFormWithError("عدم برقراری ارتباط... لطفا بعدا تلاش کنید");
     }
 }
 
