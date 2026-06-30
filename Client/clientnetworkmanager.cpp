@@ -42,12 +42,15 @@ void ClientNetworkManager::sendRequest(const QString& action, const QJsonObject&
     packet["data"] = data;
 
     QJsonDocument doc(packet);
-    socket->write(doc.toJson(QJsonDocument::Compact));
-    //socket->flush();
+    QByteArray bytes = doc.toJson(QJsonDocument::Compact) + "\n";
+    socket->write(bytes);
+    socket->flush();
 }
 
 void ClientNetworkManager::onReadyRead() {
     QByteArray raw = socket->readAll();
+
+    qDebug() << "data is recieved...";
 
     QJsonDocument doc = QJsonDocument::fromJson(raw);
     if (!doc.isObject() || doc.isNull()){
@@ -57,9 +60,8 @@ void ClientNetworkManager::onReadyRead() {
 
     QJsonObject response = doc.object();
     QString action = response.value("action").toString();
-    QJsonObject data = response.value("data").toObject();
 
 
-    emit responseReceived(action, data);
+    emit responseReceived(action, response);
 }
 

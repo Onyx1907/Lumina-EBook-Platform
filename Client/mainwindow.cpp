@@ -61,6 +61,13 @@ MainWindow::MainWindow(QWidget *parent)
         ui->stackedWidget->setCurrentIndex(Page::ForgotPasswordPageIndex);
     });
 
+    connect(RegisterPage, &RegisterWidget::goToLoginRequested, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
+    });
+
+    connect(ForgotPasswordPage, &ForgotPasswordWidget::goToLoginRequested, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
+    });
 }
 
 // 🔹 ۵. جادوی اصلی: نقاشی کردن فریم ویدیو در دورترین لایه عقب مِین‌ویندو

@@ -23,6 +23,7 @@ void Server::incomingConnection(qintptr socketDescriptor){
 }
 // اسلات خواندن داده ها: زمان ارسال اطلاعات از طرف کلاینت فعال میشود
 void Server::onReadyRead(){
+    qDebug() << "data recived...";
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
     if (!socket) return;
 
