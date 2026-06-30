@@ -278,4 +278,35 @@
       ]
     }
   }
+,
+  "16_SEARCH_BOOKS": {
+    "client_request": {
+      "action": "SEARCH_BOOKS",
+      "data": {
+        "title": "شاهنامه",
+        "author": "فردوسی",
+        "publisher_name": "انتشارات طوس"
+      }
+    },
+    "server_response_success": {
+      "action": "SEARCH_BOOKS_RESPONSE",
+      "status": "SUCCESS",
+      "books": [
+        {
+          "book_id": 10,
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "publisher_name": "انتشارات طوس",
+          "price": 250000
+        }
+      ],
+      "message": ".نتایج جستجو با موفقیت دریافت شد"
+    },
+    "server_response_empty": {
+      "action": "SEARCH_BOOKS_RESPONSE",
+      "status": "SUCCESS",
+      "books": [],
+      "message": ".هیچ کتابی با معیارهای جستجو یافت نشد"
+    }
+  }
 }
