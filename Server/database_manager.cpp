@@ -29,8 +29,9 @@ bool DatabaseManager::createTables(){
         "role TEXT NOT NULL,"                                // نقش کاربر در سیستم
         "is_blocked INTEGER NOT NULL DEFAULT 0,"            // وضعیت مسدود بودن (پیش فرض: فعال)
         "security_question TEXT,"                          // سوال امنیتی برای بازیابی رمز
-        "security_answer_encrypted BLOB"                  // پاسخ امنیتی رمزنگاری شده به صورت باینری
-        "registration_date TEXT NOT NULL"                // تاریخ ثبت نام
+        "security_answer_encrypted BLOB,"                  // پاسخ امنیتی رمزنگاری شده به صورت باینری
+        "registration_date TEXT NOT NULL,"                // تاریخ ثبت نام
+        "first_login INTEGER DEFAULT 1"
         ");";
     if(!q.exec(createUsers)){
         qDebug() << "Create users failed: " << q.lastError().text();
@@ -185,8 +186,8 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
 
     QSqlQuery q;
     q.prepare("INSERT INTO users "
-              "(username, password_hash, role, is_blocked, security_question, security_answer_encrypted,  registration_date) "
-              "VALUES (:u, :ph, :r, 0, :sq, :sa, :rd)");
+              "(username, password_hash, role, is_blocked, security_question, security_answer_encrypted,  registration_date, first_login) "
+              "VALUES (:u, :ph, :r, 0, :sq, :sa, :rd, 1)");
 
     q.bindValue(":u", username);
     q.bindValue(":ph", passwordHash);
@@ -202,23 +203,38 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     return true;
 }
 // احراز هویت کاربر هنگام ورود به سیستم
-bool DatabaseManager::verifyUser(const QString& username,const QString& plainPassword,UserRole& outRole,bool& outIsBlocked,int& outUserId){
+bool DatabaseManager::verifyUser(const QString& username,const QString& plainPassword,
+                                 UserRole& outRole,bool& outIsBlocked,int& outUserId,int& outFirstLogin)
+{
     QSqlQuery q;
-    q.prepare("SELECT id, password_hash, role, is_blocked FROM users WHERE username = :u");
+    q.prepare("SELECT id, password_hash, role, is_blocked, first_login FROM users WHERE username = :u");
     q.bindValue(":u", username);
+
     if (!q.exec()) return false;
     if (!q.next()) return false;
+
     outUserId = q.value("id").toInt();
     QString storedHash = q.value("password_hash").toString();
     int roleInt = q.value("role").toInt();
     outRole = static_cast<UserRole>(roleInt);
     outIsBlocked = q.value("is_blocked").toInt() != 0;
+    outFirstLogin = q.value("first_login").toInt();
 
     if(outIsBlocked) return false;
 
     QString inputHash = CryptoHelper::hashPassword(plainPassword);
     return (inputHash == storedHash);
 }
+
+//اولین ورود
+bool DatabaseManager::setFirstLoginFalse(int userId)
+{
+    QSqlQuery q;
+    q.prepare("UPDATE users SET first_login = 0 WHERE id = :id");
+    q.bindValue(":id", userId);
+    return q.exec();
+}
+
 // دریافت سوال امنیتی کاربر برای فرآیند بازیابی رمز عبور
 bool DatabaseManager::getSecurityQuestion(const QString& username,QString& outQuestion){
     QSqlQuery q;
@@ -249,6 +265,7 @@ bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& userna
     return q2.exec();
 }
 
+
 //*********************************************پنل کاربر عادی ( ماژول 1 )****************************************************
 
 
@@ -256,7 +273,7 @@ bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& userna
 bool DatabaseManager::setFavoriteGenres(const QString& username, const QStringList& genres){
     QJsonArray arr;
     for(const QString& g : genres)
-    arr.append(g);
+        arr.append(g);
     QJsonDocument doc(arr);
     QString json = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
 
@@ -284,10 +301,11 @@ QStringList DatabaseManager::getFavoriteGenres(const QString& username){
         return result;
 
     for(const QJsonValue& v : doc.array())
-    result.append(v.toString());
+        result.append(v.toString());
     return result;
 }
 //JSON تابع کمکی استاتیک برای نگاشت و تبدیل مستقیم یک ردیف از جدول کتاب به شیء متنی
+
 static QJsonObject bookFromQuery(const QSqlQuery& q) {
     QJsonObject obj;
     obj["id"] = q.value("id").toInt();
@@ -469,8 +487,5 @@ int DatabaseManager::getTotalPurchases(const QString& username){
         return 0;
     return q.value(0).toInt();
 }
-
-
-//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
 
 

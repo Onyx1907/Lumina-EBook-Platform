@@ -27,7 +27,7 @@ private slots:
     void onDisconnected();
 
 private:
-//***************************************************احراز هویت مرکزی******************************************************
+    //***************************************************احراز هویت مرکزی******************************************************
     DatabaseManager dbManager;
 
     void handleRequest(QTcpSocket* socket, const QJsonObject& obj);
@@ -37,7 +37,7 @@ private:
     void sendJson(QTcpSocket* socket, const QJsonObject& obj);
 
 
-//*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
+    //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
 
     void handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data);
     void handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data);
@@ -53,11 +53,6 @@ private:
     void handleChangePassword(QTcpSocket* socket, const QJsonObject& data);
 
     void handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& data);
-
-
-
-//*********************************************پنل کاربر عادی ( ماژول 2 )***************************************************
-
 
 
 
