@@ -56,7 +56,7 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
 // برای تبدیل نوع شمارشی نقش کاربر به رشته متنی جهت ارسال در شبکه (Static) تابع کمکی محلی
 static QString roleToString(UserRole role) {
     switch (role) {
-    case UserRole::RegularUser: return "User";
+    case UserRole::RegularUser: return " RegularUser";
     case UserRole::Publisher:   return "Publisher";
     case UserRole::Admin:       return "Admin";
     }
@@ -70,20 +70,28 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
     UserRole role;
     bool isBlocked;
     int userId;
+    int firstLogin;
 
     QJsonObject resp;
     resp["action"] = "LOGIN_RESPONSE";
 
-    if (!dbManager.verifyUser(username, passwordPlain, role, isBlocked, userId)) {
+    if (!dbManager.verifyUser(username, passwordPlain, role, isBlocked, userId, firstLogin)) {
         resp["status"] = "FAILED";
         resp["message"] = ".نام کاربری یا رمز عبور اشتباه است یا حساب شما مسدود است";
         sendJson(socket, resp);
         return;
     }
+
     resp["status"] = "SUCCESS";
     resp["message"] = "!خوش آمدی";
     resp["user_role"] = roleToString(role);
+    resp["first_login"] = firstLogin;
+
     sendJson(socket, resp);
+
+    if (firstLogin == 1) {
+        dbManager.setFirstLoginFalse(userId);
+    }
 }
 // مدیریت فرآیند ثبت نام کاربر جدید
 void Server::handleRegister(QTcpSocket* socket, const QJsonObject& data){

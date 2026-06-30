@@ -23,7 +23,10 @@ public:
                       const QString& securityQuestion,const QString& securityAnswerPlain);
 
 //login(ورود به سیستم)
-    bool verifyUser(const QString& username,const QString& plainPassword,UserRole& outRole,bool& outIsBlocked,int& outUserId);
+    bool verifyUser(const QString& username,const QString& plainPassword,
+                    UserRole& outRole,bool& outIsBlocked,int& outUserId,int& outFirstLogin);
+
+    bool setFirstLoginFalse(int userId);
 
 //forget password(فراموشی رمز عبور)
     bool getSecurityQuestion(const QString& username,QString& outQuestion);
