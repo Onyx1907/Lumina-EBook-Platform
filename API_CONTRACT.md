@@ -21,6 +21,7 @@
       "status": "SUCCESS",
       "message": "!خوش آمدی",
       "user_role": "User"
+      "first_login": 1    OR     "first_login": 0
     },
     "server_response_failed": {
       "action": "LOGIN_RESPONSE",
