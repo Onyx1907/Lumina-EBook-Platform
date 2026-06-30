@@ -20,7 +20,7 @@ bool DatabaseManager::initDatabase(){
 bool DatabaseManager::createTables(){
     QSqlQuery q;
 
-//--------------جدول کاربران--------------
+    //--------------جدول کاربران--------------
     QString createUsers =
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                 // شناسه یکتا و خودکار
@@ -36,7 +36,7 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create users failed: " << q.lastError().text();
         return false;
     }
-//--------------جدول کتاب ها--------------
+    //--------------جدول کتاب ها--------------
     QString createBooks =
         "CREATE TABLE IF NOT EXISTS books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                           //شناسه یکتا، کلید اصلی و افزایش خودکار برای هر کتاب
@@ -57,7 +57,7 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create books failed:" << q.lastError().text();
         return false;
     }
-//--------------جدول کامنت ها--------------
+    //--------------جدول کامنت ها--------------
     QString createComments =
         "CREATE TABLE IF NOT EXISTS comments ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                         //شناسه یکتا، کلید اصلی و افزایشی خودکار برای هر نظر
@@ -75,7 +75,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول سبد خرید--------------
+    //--------------جدول سبد خرید--------------
     QString createCart =
         "CREATE TABLE IF NOT EXISTS cart ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                        //شناسه یکتا و خودکار برای هر ردیف سبد خرید
@@ -89,7 +89,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتابخانه شخصی--------------
+    //--------------جدول کتابخانه شخصی--------------
     QString createLibrary =
         "CREATE TABLE IF NOT EXISTS library ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                             //شناسه یکتا و خودکار برای هر ردیف جدول
@@ -104,7 +104,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتاب های ذخیره شده--------------
+    //--------------جدول کتاب های ذخیره شده--------------
     QString createSavedBooks =
         "CREATE TABLE IF NOT EXISTS saved_books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                              //شناسه یکتا و خودکار برای هر ردیف
@@ -118,7 +118,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول قفسه ها--------------
+    //--------------جدول قفسه ها--------------
     QString createShelves =
         "CREATE TABLE IF NOT EXISTS shelves ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                         //شناسه یکتا و خودکار قفسه
@@ -131,7 +131,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتاب های قفسه--------------
+    //--------------جدول کتاب های قفسه--------------
     QString createShelfBooks =
         "CREATE TABLE IF NOT EXISTS shelf_books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                          //شناسه یکتا و خودکار برای هر ردیف اتصال
@@ -145,7 +145,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول آخرین صفحه مطالعه شده--------------
+    //--------------جدول آخرین صفحه مطالعه شده--------------
     QString createReadingProgress =
         "CREATE TABLE IF NOT EXISTS reading_progress ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                             //شناسه یکتا و خودکار برای هر ردیف
@@ -181,7 +181,7 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     QString passwordHash = CryptoHelper::hashPassword(plainPassword);
     QByteArray encryptedAnswer =CryptoHelper::encryptData(securityAnswerPlain, NETWORK_SECRET_KEY);
 
-     QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     QSqlQuery q;
     q.prepare("INSERT INTO users "
@@ -196,7 +196,7 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     q.bindValue(":rd", now);
 
     if(!q.exec()){
-    qDebug() << "Register failed: " << q.lastError().text();
+        qDebug() << "Register failed: " << q.lastError().text();
         return false;
     }
     return true;
@@ -204,20 +204,20 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
 // احراز هویت کاربر هنگام ورود به سیستم
 bool DatabaseManager::verifyUser(const QString& username,const QString& plainPassword,UserRole& outRole,bool& outIsBlocked,int& outUserId){
     QSqlQuery q;
-        q.prepare("SELECT id, password_hash, role, is_blocked FROM users WHERE username = :u");
+    q.prepare("SELECT id, password_hash, role, is_blocked FROM users WHERE username = :u");
     q.bindValue(":u", username);
-        if (!q.exec()) return false;
-        if (!q.next()) return false;
-        outUserId = q.value("id").toInt();
-        QString storedHash = q.value("password_hash").toString();
-        int roleInt = q.value("role").toInt();
-        outRole = static_cast<UserRole>(roleInt);
-        outIsBlocked = q.value("is_blocked").toInt() != 0;
+    if (!q.exec()) return false;
+    if (!q.next()) return false;
+    outUserId = q.value("id").toInt();
+    QString storedHash = q.value("password_hash").toString();
+    int roleInt = q.value("role").toInt();
+    outRole = static_cast<UserRole>(roleInt);
+    outIsBlocked = q.value("is_blocked").toInt() != 0;
 
-        if(outIsBlocked) return false;
+    if(outIsBlocked) return false;
 
-        QString inputHash = CryptoHelper::hashPassword(plainPassword);
-        return (inputHash == storedHash);
+    QString inputHash = CryptoHelper::hashPassword(plainPassword);
+    return (inputHash == storedHash);
 }
 // دریافت سوال امنیتی کاربر برای فرآیند بازیابی رمز عبور
 bool DatabaseManager::getSecurityQuestion(const QString& username,QString& outQuestion){
@@ -288,7 +288,6 @@ QStringList DatabaseManager::getFavoriteGenres(const QString& username){
     return result;
 }
 //JSON تابع کمکی استاتیک برای نگاشت و تبدیل مستقیم یک ردیف از جدول کتاب به شیء متنی
-
 static QJsonObject bookFromQuery(const QSqlQuery& q) {
     QJsonObject obj;
     obj["id"] = q.value("id").toInt();
@@ -469,6 +468,60 @@ int DatabaseManager::getTotalPurchases(const QString& username){
     if (!q.exec() || !q.next())
         return 0;
     return q.value(0).toInt();
+}
+
+
+//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+
+//تابع جستوجوی کتاب
+QList<QJsonObject> DatabaseManager::searchBooks(const QString& title,const QString& author,const QString& publisherName) {
+    QList<QJsonObject> list;
+
+// تعریف کوئری پایه برای دریافت اطلاعات کتاب ها به همراه نام ناشر
+       QString sql = "SELECT b.*, p.companyName AS publisherName "      // انتخاب تمام ستون های کتاب و تغییر نام ستون شرکت ناشر
+                  "FROM books b "                                       // b انتخاب جدول اصلی کتاب ها با نام مستعار
+                  "LEFT JOIN publishers p ON b.publisherId = p.id "     //اتصال به جدول ناشران بر اساس شناسه ناشر (حتی اگر کتاب ناشر نداشته باشد)
+                  "WHERE 1=1 ";                                         // ANDیک شرط همیشه درست برای تسهیل در چسباندن دینامیک شرط های بعدی با
+
+
+
+// افزودن دینامیک(پویا)شرط عنوان کتاب به کوئری در صورت وجود ورودی
+    if (!title.isEmpty())                                         //اگر کاربر در بخش عنوان کلمه "برنامه" را سرچ کند
+        sql += "AND b.title LIKE :title ";                       //مقدار نهایی تبدیل به "%برنامه%" میشود
+                                                                //اگر علامت % اول را حذف کنید (یعنی title + "%")
+                                                               // فقط کتاب هایی پیدا میشوند که با کلمه "برنامه" شروع میشوند
+                                                              //اگر علامت % آخر را حذف کنید (یعنی "%" + title)
+                                                             //فقط کتاب هایی پیدا میشوند که به کلمه "برنامه" ختم میشوند
+
+
+// افزودن دینامیک(پویا)شرط نویسنده به کوئری در صورت وجود ورودی
+    if (!author.isEmpty())
+        sql += "AND b.author LIKE :author ";
+
+// افزودن دینامیک(پویا)شرط نام ناشر به کوئری در صورت وجود ورودی
+    if (!publisherName.isEmpty())
+        sql += "AND p.companyName LIKE :publisherName ";
+
+    QSqlQuery q;
+    q.prepare(sql);
+
+    if (!title.isEmpty())
+        q.bindValue(":title", "%" + title + "%");
+    if (!author.isEmpty())
+        q.bindValue(":author", "%" + author + "%");
+    if (!publisherName.isEmpty())
+        q.bindValue(":publisherName", "%" + publisherName + "%");
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject obj = bookFromQuery(q);
+        obj["publisher_name"] = q.value("publisherName").toString();
+        list.append(obj);
+    }
+
+    return list;
 }
 
 

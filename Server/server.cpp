@@ -20,11 +20,11 @@ bool Server::start(){
 }
 // مدیریت اتصال های ورودی: به محض اتصال هر کلاینت جدید، این متد اجرا میشود
 void Server::incomingConnection(qintptr socketDescriptor){
-   QTcpSocket* socket = new QTcpSocket(this);
+    QTcpSocket* socket = new QTcpSocket(this);
     socket->setSocketDescriptor(socketDescriptor);
 
-   connect(socket,&QTcpSocket::readyRead,this,&Server::onReadyRead);
-   connect(socket,&QTcpSocket::disconnected,this,&Server::onDisconnected);
+    connect(socket,&QTcpSocket::readyRead,this,&Server::onReadyRead);
+    connect(socket,&QTcpSocket::disconnected,this,&Server::onDisconnected);
 }
 // اسلات خواندن داده ها: زمان ارسال اطلاعات از طرف کلاینت فعال میشود
 void Server::onReadyRead(){
@@ -116,8 +116,14 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
         sendJson(socket, resp);
 
 
+//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
 
- }
+
+
+
+
+
+}
 
 //***************************************************احراز هویت مرکزی******************************************************
 
@@ -156,35 +162,35 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
 }
 // مدیریت فرآیند ثبت نام کاربر جدید
 void Server::handleRegister(QTcpSocket* socket, const QJsonObject& data){
-        QString username = data.value("username").toString();
-        QString passwordPlain = data.value("password").toString();
-        QString roleStr = data.value("role").toString();
-        QString securityQuestion = data.value("security_question").toString();
-        QString securityAnswerPlain = data.value("security_answer").toString();
+    QString username = data.value("username").toString();
+    QString passwordPlain = data.value("password").toString();
+    QString roleStr = data.value("role").toString();
+    QString securityQuestion = data.value("security_question").toString();
+    QString securityAnswerPlain = data.value("security_answer").toString();
 
-        UserRole role = UserRole::RegularUser;
-        if (roleStr == "Publisher") role = UserRole::Publisher;
-        else if (roleStr == "Admin") role = UserRole::Admin;
+    UserRole role = UserRole::RegularUser;
+    if (roleStr == "Publisher") role = UserRole::Publisher;
+    else if (roleStr == "Admin") role = UserRole::Admin;
 
-        QJsonObject resp;
-        resp["action"] = "REGISTER_RESPONSE";
+    QJsonObject resp;
+    resp["action"] = "REGISTER_RESPONSE";
 
-        if (dbManager.isUsernameTaken(username)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".نام کاربری تکراری است";
-            sendJson(socket, resp);
-            return;
-        }
-        if (!dbManager.registerUser(username, passwordPlain, role, securityQuestion, securityAnswerPlain)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".خطا در ثبت نام";
-            sendJson(socket, resp);
-            return;
-        }
-
-        resp["status"] = "SUCCESS";
-        resp["message"] = ".ثبت نام با موفقیت انجام شد";
+    if (dbManager.isUsernameTaken(username)) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".نام کاربری تکراری است";
         sendJson(socket, resp);
+        return;
+    }
+    if (!dbManager.registerUser(username, passwordPlain, role, securityQuestion, securityAnswerPlain)) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".خطا در ثبت نام";
+        sendJson(socket, resp);
+        return;
+    }
+
+    resp["status"] = "SUCCESS";
+    resp["message"] = ".ثبت نام با موفقیت انجام شد";
+    sendJson(socket, resp);
 }
 // مدیریت دو مرحله ای فرآیند فراموشی رمز عبور
 void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
@@ -204,7 +210,7 @@ void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
             resp["status"] = "SUCCESS";
             resp["security_question"] = question;
         }
-         sendJson(socket, resp);
+        sendJson(socket, resp);
     }
     else if (step == "ANSWER_AND_RESET") {
         QString username = data.value("username").toString();
@@ -233,7 +239,6 @@ void Server::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
     socket->flush();
 }
 
-
 //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
 
 
@@ -241,6 +246,16 @@ void Server::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
 void Server::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data) {
     const QString username = data.value("username").toString();
     QJsonArray arr = data.value("genres").toArray();
+
+    if (arr.size() < 1 || arr.size() > 3) {
+        QJsonObject resp;
+        resp["action"] = "SET_FAVORITE_GENRES_RESPONSE";
+        resp["status"] = "ERROR";
+        resp["message"] = ".تعداد ژانر باید بین ۱ تا ۳ باشد";
+        sendJson(socket, resp);
+        return;
+    }
+
     QStringList genres;
 
     for(const QJsonValue& v : std::as_const(arr))
@@ -300,7 +315,6 @@ void Server::handleGetPopularBooks(QTcpSocket* socket) {
     resp["books"] = arr;
     sendJson(socket, resp);
 }
-
 // دریافت لیست جدیدترین کتاب های اضافه شده
 void Server::handleGetNewBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getNewBooks();
@@ -403,6 +417,16 @@ void Server::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& dat
     resp["history"] = arr;
     sendJson(socket, resp);
 }
+
+
+
+//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+
+
+
+
+
+
 
 
 

@@ -22,15 +22,15 @@ public:
     DatabaseManager();
     bool initDatabase();
 
-//Registration(ثبت نام)
+    //Registration(ثبت نام)
     bool isUsernameTaken(const QString& username);
     bool registerUser(const QString& username,const QString& plainPassword,UserRole role,
                       const QString& securityQuestion,const QString& securityAnswerPlain);
 
-//login(ورود به سیستم)
+    //login(ورود به سیستم)
     bool verifyUser(const QString& username,const QString& plainPassword,UserRole& outRole,bool& outIsBlocked,int& outUserId);
 
-//forget password(فراموشی رمز عبور)
+    //forget password(فراموشی رمز عبور)
     bool getSecurityQuestion(const QString& username,QString& outQuestion);
     bool verifySecurityAnswerAndResetPassword(const QString& username,const QString& answerPlain,const QString& newPlainPassword);
 
@@ -55,11 +55,19 @@ public:
     int getTotalPurchases(const QString& username);
 
 
+//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+
+
+    QList<QJsonObject> searchBooks(const QString& title,const QString& author,const QString& publisherName);
+
+
+
+
 
 
 
 private:
-//**************************************************احراز هویت مرکزی*********************************************************
+    //**************************************************احراز هویت مرکزی*********************************************************
     QSqlDatabase db;
     bool createTables();
 
