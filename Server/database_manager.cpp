@@ -29,8 +29,9 @@ bool DatabaseManager::createTables(){
         "role TEXT NOT NULL,"                                // نقش کاربر در سیستم
         "is_blocked INTEGER NOT NULL DEFAULT 0,"            // وضعیت مسدود بودن (پیش فرض: فعال)
         "security_question TEXT,"                          // سوال امنیتی برای بازیابی رمز
-        "security_answer_encrypted BLOB"                  // پاسخ امنیتی رمزنگاری شده به صورت باینری
-        "registration_date TEXT NOT NULL"                // تاریخ ثبت نام
+        "security_answer_encrypted BLOB,"                  // پاسخ امنیتی رمزنگاری شده به صورت باینری
+        "registration_date TEXT NOT NULL,"                // تاریخ ثبت نام
+        "first_login INTEGER DEFAULT 1"
         ");";
     if(!q.exec(createUsers)){
         qDebug() << "Create users failed: " << q.lastError().text();
@@ -185,8 +186,8 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
 
     QSqlQuery q;
     q.prepare("INSERT INTO users "
-              "(username, password_hash, role, is_blocked, security_question, security_answer_encrypted,  registration_date) "
-              "VALUES (:u, :ph, :r, 0, :sq, :sa, :rd)");
+              "(username, password_hash, role, is_blocked, security_question, security_answer_encrypted,  registration_date, first_login) "
+              "VALUES (:u, :ph, :r, 0, :sq, :sa, :rd, 1)");
 
     q.bindValue(":u", username);
     q.bindValue(":ph", passwordHash);
@@ -202,23 +203,38 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     return true;
 }
 // احراز هویت کاربر هنگام ورود به سیستم
-bool DatabaseManager::verifyUser(const QString& username,const QString& plainPassword,UserRole& outRole,bool& outIsBlocked,int& outUserId){
+bool DatabaseManager::verifyUser(const QString& username,const QString& plainPassword,
+                                 UserRole& outRole,bool& outIsBlocked,int& outUserId,int& outFirstLogin)
+{
     QSqlQuery q;
-        q.prepare("SELECT id, password_hash, role, is_blocked FROM users WHERE username = :u");
+    q.prepare("SELECT id, password_hash, role, is_blocked, first_login FROM users WHERE username = :u");
     q.bindValue(":u", username);
-        if (!q.exec()) return false;
-        if (!q.next()) return false;
-        outUserId = q.value("id").toInt();
-        QString storedHash = q.value("password_hash").toString();
-        int roleInt = q.value("role").toInt();
-        outRole = static_cast<UserRole>(roleInt);
-        outIsBlocked = q.value("is_blocked").toInt() != 0;
 
-        if(outIsBlocked) return false;
+    if (!q.exec()) return false;
+    if (!q.next()) return false;
 
-        QString inputHash = CryptoHelper::hashPassword(plainPassword);
-        return (inputHash == storedHash);
+    outUserId = q.value("id").toInt();
+    QString storedHash = q.value("password_hash").toString();
+    int roleInt = q.value("role").toInt();
+    outRole = static_cast<UserRole>(roleInt);
+    outIsBlocked = q.value("is_blocked").toInt() != 0;
+    outFirstLogin = q.value("first_login").toInt();
+
+    if(outIsBlocked) return false;
+
+    QString inputHash = CryptoHelper::hashPassword(plainPassword);
+    return (inputHash == storedHash);
 }
+
+//اولین ورود
+bool DatabaseManager::setFirstLoginFalse(int userId)
+{
+    QSqlQuery q;
+    q.prepare("UPDATE users SET first_login = 0 WHERE id = :id");
+    q.bindValue(":id", userId);
+    return q.exec();
+}
+
 // دریافت سوال امنیتی کاربر برای فرآیند بازیابی رمز عبور
 bool DatabaseManager::getSecurityQuestion(const QString& username,QString& outQuestion){
     QSqlQuery q;
