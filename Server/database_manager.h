@@ -55,6 +55,11 @@ public:
     int getTotalPurchases(const QString& username);
 
 
+//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+
+
+    QList<QJsonObject> searchBooks(const QString& title,const QString& author,const QString& publisherName);
+
 
 
 

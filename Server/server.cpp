@@ -241,6 +241,16 @@ void Server::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
 void Server::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data) {
     const QString username = data.value("username").toString();
     QJsonArray arr = data.value("genres").toArray();
+
+    if (arr.size() < 1 || arr.size() > 3) {
+        QJsonObject resp;
+        resp["action"] = "SET_FAVORITE_GENRES_RESPONSE";
+        resp["status"] = "ERROR";
+        resp["message"] = "تعداد ژانر باید بین ۱ تا ۳ باشد.";
+        sendJson(socket, resp);
+        return;
+    }
+
     QStringList genres;
 
     for(const QJsonValue& v : std::as_const(arr))
