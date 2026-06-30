@@ -2,6 +2,8 @@
 #include "./ui_mainwindow.h"
 #include <QTimer>
 #include <QPainter>
+#include "clientnetworkmanager.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -59,13 +61,6 @@ MainWindow::MainWindow(QWidget *parent)
         ui->stackedWidget->setCurrentIndex(Page::ForgotPasswordPageIndex);
     });
 
-    connect(RegisterPage, &RegisterWidget::goToLoginRequested, this, [this](){
-        ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
-    });
-
-    connect(ForgotPasswordPage, &ForgotPasswordWidget::goToLoginRequested, this, [this](){
-        ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
-    });
 }
 
 // 🔹 ۵. جادوی اصلی: نقاشی کردن فریم ویدیو در دورترین لایه عقب مِین‌ویندو
@@ -87,6 +82,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
     this->update(); // صرفاً درخواست بازنویسی صفحه
 }
+
 
 MainWindow::~MainWindow()
 {

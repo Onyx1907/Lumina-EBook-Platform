@@ -15,8 +15,6 @@ public:
     explicit LoginWidget(QWidget *parent = nullptr);
     ~LoginWidget();
 
-    void enableFormWithError(const QString& errorMsg);
-
 signals:
     //  سیگنال‌هایی که به مِین‌ویندو می‌گویند کاربر می‌خواهد جابجا شود
     void goToRegisterRequested();
@@ -30,8 +28,13 @@ private slots:
 
     void on_login_pushButton_clicked();
 
+    void processNetworkData(const QString& action, const QJsonObject& data);
+
 private:
     Ui::LoginWidget *ui;
+
+    void enableFormWithError(const QString& errorMsg);
+
 };
 
 #endif // LOGINWIDGET_H

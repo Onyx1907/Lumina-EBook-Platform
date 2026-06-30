@@ -11,6 +11,10 @@ RegisterWidget::RegisterWidget(QWidget *parent) :
     ui->setupUi(this);
 
     setAttribute(Qt::WA_TranslucentBackground);
+
+
+    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
+            this, &RegisterWidget::processNetworkData);
 }
 
 RegisterWidget::~RegisterWidget()
@@ -31,7 +35,13 @@ void RegisterWidget::on_register_pushButton_clicked()
     QString confirm_password = ui->pass2_input->text();
     QString security_question = ui->security_input->text().trimmed();
     QString security_answer = ui->answer_input->text().trimmed();
-    QString role = ui->role_comboBox->currentText();
+    QString role;
+    if(ui->role_comboBox->currentIndex() == 0){
+        role = "RegularUser";
+    }
+    else if(ui->role_comboBox->currentIndex() == 1){
+        role = "Publisher";
+    }
 
     if(username.isEmpty() || password.isEmpty() || confirm_password.isEmpty() ||
         security_question.isEmpty() || security_answer.isEmpty()) {
@@ -49,8 +59,53 @@ void RegisterWidget::on_register_pushButton_clicked()
         return;
     }
 
-    ui->error_label->setText("");
+    ui->error_label->setText("در حال اتصال به سرور");
 
+    if(ClientNetworkManager::instance().connectToServer()) {
+        enableFormWithError("در حال ثبت نام", false);
 
+        QJsonObject regData;
+        regData["username"] = username;
+        regData["password"] = password;
+        regData["role"] = role;
+        regData["security_question"] = security_question;
+        regData["security_answer"] = security_answer;
+
+        ClientNetworkManager::instance().sendRequest("REGISTER", regData);
+    }
+    else{
+        enableFormWithError("عدم برقراری ارتباط با سرور", true);
+    }
 }
 
+
+void RegisterWidget::processNetworkData(const QString& action, const QJsonObject& data){
+    if(action != "REGISTER_RESPONSE"){
+        return;
+    }
+
+    QString status = data.value("status").toString();
+    QString message = data.value("message").toString();
+
+    if(status == "SUCCESS") {
+        enableFormWithError("ثبت نام با موفقیت انجام شد... شما می‌توانید وارد شوید", true);
+        // بازگشت به صفحه لاگین
+    }
+    else if(status == "FAILED"){
+        enableFormWithError(message, true);
+    }
+}
+
+
+void RegisterWidget::enableFormWithError(const QString& errorMsg, bool b){
+    ui->answer_input->setEnabled(b);
+    ui->back_pushButton->setEnabled(b);
+    ui->pass2_input->setEnabled(b);
+    ui->pass_input->setEnabled(b);
+    ui->register_pushButton->setEnabled(b);
+    ui->role_comboBox->setEnabled(b);
+    ui->security_input->setEnabled(b);
+    ui->username_input->setEnabled(b);
+
+    ui->error_label->setText(errorMsg);
+}

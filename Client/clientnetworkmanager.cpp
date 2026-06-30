@@ -1,68 +1,65 @@
 #include "clientnetworkmanager.h"
 #include <QDebug>
 
+ClientNetworkManager& ClientNetworkManager::instance(){
+    static ClientNetworkManager m_instance;
+    return m_instance;
+}
+
 ClientNetworkManager::ClientNetworkManager(QObject* parent) : QObject(parent) {
     socket = new QTcpSocket(this);
 
-    // ۱. گوش دادن به دیتای دریافتی
+    // گوش دادن به دیتای دریافتی
     connect(socket, &QTcpSocket::readyRead, this, &ClientNetworkManager::onReadyRead);
-
-    // ۲. گوش دادن به قطع اتصال
-    connect(socket, &QTcpSocket::disconnected, this, &ClientNetworkManager::onDisconnected);
-
-    // ۳. مدیریت خطا (پاسخ به سوال قبلی‌ت برای جلوگیری از کرش)
-    connect(socket, &QAbstractSocket::errorOccurred, this, [this](QAbstractSocket::SocketError socketError) {
-        qDebug() << "Socket Error: " << socket->errorString();
-        emit connectionErrorOccurred("خطا در ارتباط با سرور! لطفاً بررسی کنید که سرور روشن باشد.");
-    });
 }
 
-void ClientNetworkManager::connectToServer() {
-    if (socket->state() == QAbstractSocket::UnconnectedState) {
-        // !!! اینجا از همان متغیرهای کانست کتابخانه مشترکتون استفاده می‌کنی
-        // فرض می‌کنم اسمشون SERVER_IP و SERVER_PORT باشه (مثل کد هم‌تیمی‌ات)
-        socket->connectToHost(SERVER_IP, SERVER_PORT);
+bool ClientNetworkManager::connectToServer() {
+    // اگر از قبل وصل بودیم، نیازی به اتصال مجدد نیست
+    if (socket && socket->state() == QAbstractSocket::ConnectedState) {
+        return true;
     }
+
+    // تلاش برای اتصال به سرور
+    socket->connectToHost(SERVER_IP, SERVER_PORT);
+
+    // حداکثر ۳ ثانیه منتظر می‌ماند تا سوکت وصل شود (UI را قفل نمی‌کند چون زمانش کم است)
+    if (socket->waitForConnected(3000)) {
+        qDebug() << "connected to server successfully";
+        return true; // اتصال موفقیت‌آمیز بود
+    }
+
+    qDebug() << "failed to connect to server";
+    return false; // اتصال ناموفق بود
 }
 
 void ClientNetworkManager::sendRequest(const QString& action, const QJsonObject& data) {
     if (socket->state() != QAbstractSocket::ConnectedState) {
-        emit connectionErrorOccurred("شما به سرور متصل نیستید!");
+        qDebug() << "cannot send request";
         return;
     }
-    QJsonObject request;
-    request["action"] = action;
-    request["data"] = data;
+    QJsonObject packet;
+    packet["action"] = action;
+    packet["data"] = data;
 
-    QJsonDocument doc(request);
+    QJsonDocument doc(packet);
     socket->write(doc.toJson(QJsonDocument::Compact));
-    socket->flush();
+    //socket->flush();
 }
 
 void ClientNetworkManager::onReadyRead() {
     QByteArray raw = socket->readAll();
+
     QJsonDocument doc = QJsonDocument::fromJson(raw);
-    if (!doc.isObject()) return;
+    if (!doc.isObject() || doc.isNull()){
+        qDebug() << "invalid json data from server";
+        return;
+    }
 
-    QJsonObject obj = doc.object();
-    QString action = obj.value("action").toString();
+    QJsonObject response = doc.object();
+    QString action = response.value("action").toString();
+    QJsonObject data = response.value("data").toObject();
 
-    if (action == "LOGIN_RESPONSE") {
-        bool success = (obj.value("status").toString() == "SUCCESS");
-        QString message = obj.value("message").toString();
-        QString role = obj.value("user_role").toString();
-        emit loginResponseReceived(success, message, role);
-    }
-    else if (action == "REGISTER_RESPONSE") {
-        bool success = (obj.value("status").toString() == "SUCCESS");
-        QString message = obj.value("message").toString();
-        emit registerResponseReceived(success, message);
-    }
-    else if (action == "FORGOT_PASSWORD_RESPONSE") {
-        emit forgotPasswordResponseReceived(obj);
-    }
+
+    emit responseReceived(action, data);
 }
 
-void ClientNetworkManager::onDisconnected() {
-    qDebug() << "Disconnected from server.";
-}

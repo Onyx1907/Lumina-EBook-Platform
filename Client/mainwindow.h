@@ -31,6 +31,8 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
+private slots:
+
 private:
     Ui::MainWindow *ui;
     QMediaPlayer *mediaPlayer = nullptr;
