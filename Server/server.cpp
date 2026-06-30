@@ -424,7 +424,30 @@ void Server::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& dat
 }
 
 
+//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
 
+
+// مدیریت درخواست جستجوی کتاب
+void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data) {
+    const QString title = data.value("title").toString();
+    const QString author = data.value("author").toString();
+    const QString publisherName = data.value("publisher_name").toString();
+
+    QList<QJsonObject> books = dbManager.searchBooks(title, author, publisherName);
+
+    QJsonArray arr;
+    for (const QJsonObject& b : std::as_const(books))
+        arr.append(b);
+
+    QJsonObject resp;
+    resp["action"] = "SEARCH_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+    resp["message"] = books.isEmpty()  ? ".هیچ کتابی با معیارهای جستجو یافت نشد"
+                                       : ".نتایج جستجو با موفقیت دریافت شد";
+
+    sendJson(socket, resp);
+}
 
 
 
