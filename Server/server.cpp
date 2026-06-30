@@ -50,7 +50,7 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     QString action = obj.value("action").toString();
     QJsonObject data = obj.value("data").toObject();
 
-//***************************************************احراز هویت مرکزی******************************************************
+    //***************************************************احراز هویت مرکزی******************************************************
 
     if (action == "LOGIN") {
         handleLogin(socket, data);
@@ -60,67 +60,60 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
         handleForgotPassword(socket, data);
     }
 
-//*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
-        if (action == "SET_FAVORITE_GENRES") {
-            handleSetFavoriteGenres(socket, data);
-            return;
-        }
-        if (action == "GET_RECOMMENDED_BOOKS") {
-            handleGetRecommendedBooks(socket, data);
-            return;
-        }
-        if (action == "GET_BOOKS_BY_GENRE") {
-            handleGetBooksByGenre(socket, data);
-            return;
-        }
+    //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
+    if (action == "SET_FAVORITE_GENRES") {
+        handleSetFavoriteGenres(socket, data);
+        return;
+    }
+    if (action == "GET_RECOMMENDED_BOOKS") {
+        handleGetRecommendedBooks(socket, data);
+        return;
+    }
+    if (action == "GET_BOOKS_BY_GENRE") {
+        handleGetBooksByGenre(socket, data);
+        return;
+    }
 
-        if (action == "GET_POPULAR_BOOKS") {
-            handleGetPopularBooks(socket);
-            return;
-        }
-        if (action == "GET_NEW_BOOKS") {
-            handleGetNewBooks(socket);
-            return;
-        }
-        if (action == "GET_BESTSELLERS") {
-            handleGetBestsellers(socket);
-            return;
-        }
-        if (action == "GET_FREE_BOOKS") {
-            handleGetFreeBooks(socket);
-            return;
-        }
+    if (action == "GET_POPULAR_BOOKS") {
+        handleGetPopularBooks(socket);
+        return;
+    }
+    if (action == "GET_NEW_BOOKS") {
+        handleGetNewBooks(socket);
+        return;
+    }
+    if (action == "GET_BESTSELLERS") {
+        handleGetBestsellers(socket);
+        return;
+    }
+    if (action == "GET_FREE_BOOKS") {
+        handleGetFreeBooks(socket);
+        return;
+    }
 
-        if (action == "GET_PROFILE") {
-            handleGetProfile(socket, data);
-            return;
-        }
-        if (action == "UPDATE_PROFILE") {
-            handleUpdateProfile(socket, data);
-            return;
-        }
-        if (action == "CHANGE_PASSWORD") {
-            handleChangePassword(socket, data);
-            return;
-        }
+    if (action == "GET_PROFILE") {
+        handleGetProfile(socket, data);
+        return;
+    }
+    if (action == "UPDATE_PROFILE") {
+        handleUpdateProfile(socket, data);
+        return;
+    }
+    if (action == "CHANGE_PASSWORD") {
+        handleChangePassword(socket, data);
+        return;
+    }
 
-        if (action == "GET_PURCHASE_HISTORY") {
-            handleGetPurchaseHistory(socket, data);
-            return;
-        }
+    if (action == "GET_PURCHASE_HISTORY") {
+        handleGetPurchaseHistory(socket, data);
+        return;
+    }
 
-        QJsonObject resp;
-        resp["action"] = action + "_RESPONSE";
-        resp["status"] = "ERROR";
-        resp["message"] = ".درخواست نامعتبر است";
-        sendJson(socket, resp);
-
-
-//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
-
-
-
-
+    QJsonObject resp;
+    resp["action"] = action + "_RESPONSE";
+    resp["status"] = "ERROR";
+    resp["message"] = ".درخواست نامعتبر است";
+    sendJson(socket, resp);
 
 
 }
@@ -131,7 +124,7 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
 // برای تبدیل نوع شمارشی نقش کاربر به رشته متنی جهت ارسال در شبکه (Static) تابع کمکی محلی
 static QString roleToString(UserRole role) {
     switch (role) {
-    case UserRole::RegularUser: return "User";
+    case UserRole::RegularUser: return "RegularUser";
     case UserRole::Publisher:   return "Publisher";
     case UserRole::Admin:       return "Admin";
     }
@@ -145,21 +138,30 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
     UserRole role;
     bool isBlocked;
     int userId;
+    int firstLogin;
 
     QJsonObject resp;
     resp["action"] = "LOGIN_RESPONSE";
 
-    if (!dbManager.verifyUser(username, passwordPlain, role, isBlocked, userId)) {
+    if (!dbManager.verifyUser(username, passwordPlain, role, isBlocked, userId, firstLogin)) {
         resp["status"] = "FAILED";
         resp["message"] = ".نام کاربری یا رمز عبور اشتباه است یا حساب شما مسدود است";
         sendJson(socket, resp);
         return;
     }
+
     resp["status"] = "SUCCESS";
     resp["message"] = "!خوش آمدی";
     resp["user_role"] = roleToString(role);
+    resp["first_login"] = firstLogin;
+
     sendJson(socket, resp);
+
+    if (firstLogin == 1) {
+        dbManager.setFirstLoginFalse(userId);
+    }
 }
+
 // مدیریت فرآیند ثبت نام کاربر جدید
 void Server::handleRegister(QTcpSocket* socket, const QJsonObject& data){
     QString username = data.value("username").toString();
@@ -239,6 +241,7 @@ void Server::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
     socket->flush();
 }
 
+
 //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
 
 
@@ -251,7 +254,7 @@ void Server::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data
         QJsonObject resp;
         resp["action"] = "SET_FAVORITE_GENRES_RESPONSE";
         resp["status"] = "ERROR";
-        resp["message"] = ".تعداد ژانر باید بین ۱ تا ۳ باشد";
+        resp["message"] = "تعداد ژانر باید بین ۱ تا ۳ باشد.";
         sendJson(socket, resp);
         return;
     }
@@ -315,6 +318,7 @@ void Server::handleGetPopularBooks(QTcpSocket* socket) {
     resp["books"] = arr;
     sendJson(socket, resp);
 }
+
 // دریافت لیست جدیدترین کتاب های اضافه شده
 void Server::handleGetNewBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getNewBooks();
@@ -417,18 +421,6 @@ void Server::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& dat
     resp["history"] = arr;
     sendJson(socket, resp);
 }
-
-
-
-//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
-
-
-
-
-
-
-
-
 
 
 
