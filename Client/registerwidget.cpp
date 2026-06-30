@@ -37,7 +37,7 @@ void RegisterWidget::on_register_pushButton_clicked()
     QString security_answer = ui->answer_input->text().trimmed();
     QString role;
     if(ui->role_comboBox->currentIndex() == 0){
-        role = "RegularUser";
+        role = "User";
     }
     else if(ui->role_comboBox->currentIndex() == 1){
         role = "Publisher";
@@ -84,8 +84,11 @@ void RegisterWidget::processNetworkData(const QString& action, const QJsonObject
         return;
     }
 
+
     QString status = data.value("status").toString();
     QString message = data.value("message").toString();
+
+    qDebug() << status << " " << message;
 
     if(status == "SUCCESS") {
         enableFormWithError("ثبت نام با موفقیت انجام شد... شما می‌توانید وارد شوید", true);
