@@ -116,6 +116,15 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
         sendJson(socket, resp);
 
 
+//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+
+
+        if (action == "SEARCH_BOOKS") {
+            handleSearchBooks(socket, data);
+            return;
+        }
+
+
 
  }
 

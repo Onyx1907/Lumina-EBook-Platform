@@ -56,6 +56,11 @@ private:
 
 
 
+//*********************************************پنل کاربر عادی ( ماژول 2 )***************************************************
+
+
+    void handleSearchBooks(QTcpSocket* socket, const QJsonObject& data);
+
 
 
 
