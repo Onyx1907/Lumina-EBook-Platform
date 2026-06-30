@@ -110,6 +110,12 @@
       "status": "SUCCESS",
       "message": ".ژانرهای مورد علاقه با موفقیت ذخیره شدند"
     },
+"if count genres <1 or >3 :"
+{
+    "action": "SET_FAVORITE_GENRES_RESPONSE",
+    "status": "ERROR",
+    "message": ".تعداد ژانر باید بین ۱ تا ۳ باشد"
+},
     "server_response_error": {
       "action": "SET_FAVORITE_GENRES_RESPONSE",
       "status": "ERROR",
