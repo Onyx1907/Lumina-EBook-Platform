@@ -24,12 +24,28 @@ ForgotPasswordWidget::~ForgotPasswordWidget()
 
 void ForgotPasswordWidget::on_back_pushButton_clicked()
 {
+    ui->answer_input->clear();
+    ui->error_label->clear();
+    ui->error_label_2->clear();
+    ui->newPass_again_input->clear();
+    ui->newPass_input->clear();
+    ui->username_input->clear();
+    ui->internalStackedWidget->setCurrentIndex(internalPage::VerificationStage);
+
     emit goToLoginRequested();
 }
 
 
 void ForgotPasswordWidget::on_back_pushButton_2_clicked()
 {
+    ui->answer_input->clear();
+    ui->error_label->clear();
+    ui->error_label_2->clear();
+    ui->newPass_again_input->clear();
+    ui->newPass_input->clear();
+    ui->username_input->clear();
+    ui->internalStackedWidget->setCurrentIndex(internalPage::VerificationStage);
+
     emit goToLoginRequested();
 }
 
@@ -68,12 +84,17 @@ void ForgotPasswordWidget::on_change_pass_pushButton_clicked()
     QString confirmPass = ui->newPass_again_input->text();
 
     if(answer.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()){
-        ui->error_label->setText("لطفا تمام فیلدها را پر کنید");
+        ui->error_label_2->setText("لطفا تمام فیلدها را پر کنید");
         return;
     }
 
     if(newPass != confirmPass){
-        ui->error_label->setText("رمز عبور با تکرار آن مطابقت ندارد");
+        ui->error_label_2->setText("رمز عبور با تکرار آن مطابقت ندارد");
+        return;
+    }
+
+    if(newPass.length() < 6){
+        ui->error_label_2->setText("رمز عبور باید بیشتر از ۶ کارکتر باشد");
         return;
     }
 
@@ -106,6 +127,7 @@ void ForgotPasswordWidget::processNetworkData(const QString& action, const QJson
 
             ui->internalStackedWidget->setCurrentIndex(internalPage::ResetPasswordStage);
             enableFormWithError("", true);
+            ui->seurityQ_label->setText(question);
         }
         else{
             QString message = data.value("message").toString();
@@ -117,7 +139,7 @@ void ForgotPasswordWidget::processNetworkData(const QString& action, const QJson
         if(status == "SUCCESS"){
             enableFormWithError("رمز عبور با موفقیت تغییر کرد", true);
             QTimer::singleShot(4000, this, [this](){
-                emit goToLoginRequested();
+                on_back_pushButton_clicked();
             });
         }
         else{

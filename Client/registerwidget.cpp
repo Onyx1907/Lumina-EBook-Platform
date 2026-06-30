@@ -2,6 +2,7 @@
 #include "ui_registerwidget.h"
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTimer>
 #include "user.h"
 
 RegisterWidget::RegisterWidget(QWidget *parent) :
@@ -24,6 +25,14 @@ RegisterWidget::~RegisterWidget()
 
 void RegisterWidget::on_back_pushButton_clicked()
 {
+    ui->answer_input->clear();
+    ui->error_label->clear();
+    ui->pass_input->clear();
+    ui->pass2_input->clear();
+    ui->role_comboBox->setCurrentIndex(0);
+    ui->security_input->clear();
+    ui->username_input->clear();
+
     emit goToLoginRequested();
 }
 
@@ -56,6 +65,11 @@ void RegisterWidget::on_register_pushButton_clicked()
 
     if(password.length() < 6) {
         ui->error_label->setText("رمز عبور نمی‌تواند کمتر از ۶ کارکتر باشد");
+        return;
+    }
+
+    if(username.length() < 5){
+        ui->error_label->setText("نام کاربری نمی‌تواند کمتر از ۵ کارکتر باشد");
         return;
     }
 
@@ -92,7 +106,10 @@ void RegisterWidget::processNetworkData(const QString& action, const QJsonObject
 
     if(status == "SUCCESS") {
         enableFormWithError("ثبت نام با موفقیت انجام شد... شما می‌توانید وارد شوید", true);
-        // بازگشت به صفحه لاگین
+
+        QTimer::singleShot(4000, this, [this](){
+            on_back_pushButton_clicked();
+        });
     }
     else if(status == "FAILED"){
         enableFormWithError(message, true);

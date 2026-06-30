@@ -34,12 +34,20 @@ LoginWidget::~LoginWidget()
 
 void LoginWidget::on_register_pushButton_clicked()
 {
+    ui->username_input->clear();
+    ui->password_input->clear();
+    ui->error_label->clear();
+    ui->error_label->setStyleSheet("color: #e74c3c; font-weight: bold;");
+
     emit goToRegisterRequested();
 }
 
 
 void LoginWidget::on_forget_pushButton_clicked()
 {
+    ui->username_input->clear();
+    ui->password_input->clear();
+
     emit goToForgotPasswordRequested();
 }
 
