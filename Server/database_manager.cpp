@@ -37,6 +37,25 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create users failed: " << q.lastError().text();
         return false;
     }
+
+//--------------جدول اعلان ها--------------
+    QString createNotifications =
+        "CREATE TABLE IF NOT EXISTS notifications ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                       //شناسه یکتا، عددی و خودکارافزایش (کلید اصلی)
+        "username TEXT NOT NULL,"                                                    //نام کاربری دریافت کننده اعلان (متنی و اجباری)
+        "role TEXT,"                                                                //نقش کاربری (متنی و اختیاری)
+        "type TEXT NOT NULL,"                                                      //نوع اعلان مثلاً سیستم، پیام یا هشدار (متنی و اجباری)
+        "message TEXT NOT NULL,"                                                  //متن اصلی اعلان (متنی و اجباری)
+        "related_id INTEGER,"                                                    //شناسه مرتبط با اعلان مثل شناسه پست یا فاکتور (عددی و اختیاری)
+        "is_read INTEGER NOT NULL DEFAULT 0,"                                   //وضعیت خوانده شدن: 0 یعنی خوانده نشده، 1 یعنی خوانده‌شده (پیش فرض 0)
+        "created_at TEXT NOT NULL"                                             //تاریخ و زمان ثبت اعلان (متنی و اجباری)
+        ");";
+
+    if (!q.exec(createNotifications)) {
+        qDebug() << "Create notifications failed:" << q.lastError().text();
+        return false;
+    }
+
 //--------------جدول کتاب ها--------------
     QString createBooks =
         "CREATE TABLE IF NOT EXISTS books ("
@@ -542,3 +561,11 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title,const QStri
 
     return list;
 }
+
+
+
+
+
+
+
+

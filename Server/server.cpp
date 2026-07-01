@@ -43,7 +43,12 @@ void Server::onReadyRead(){
 // اسلات مدیریت قطع اتصال: حافظه سوکت کلاینتی که خارج شده را آزاد می کند
 void Server::onDisconnected(){
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
-    if (socket) socket->deleteLater();
+    if (socket){
+        QString username = socketToUser.value(socket);
+        onlineUsers.remove(username);
+        socketToUser.remove(socket);
+        socket->deleteLater();
+  }
 }
 // کلاینت را به متد مربوطه هدایت می کند "action" متد بررسی اولیه درخواست: بر اساس کلید
 void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
@@ -126,6 +131,8 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
 
 
 
+
+
  }
 
 //***************************************************احراز هویت مرکزی******************************************************
@@ -164,6 +171,9 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
     resp["message"] = "!خوش آمدی";
     resp["user_role"] = roleToString(role);
     resp["first_login"] = firstLogin;
+
+    onlineUsers[username] = socket;
+    socketToUser[socket] = username;
 
     sendJson(socket, resp);
 
@@ -457,6 +467,7 @@ void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data) {
 
     sendJson(socket, resp);
 }
+
 
 
 

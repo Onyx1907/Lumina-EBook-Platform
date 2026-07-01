@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QList>
 
 
 #include "constants.h"
@@ -63,6 +64,12 @@ public:
 
 
     QList<QJsonObject> searchBooks(const QString& title,const QString& author,const QString& publisherName);
+
+
+
+
+
+
 
 
 

@@ -27,6 +27,11 @@ private slots:
     void onDisconnected();
 
 private:
+
+    QMap<QString, QTcpSocket*> onlineUsers;      // username → socket
+    QMap<QTcpSocket*, QString> socketToUser;    // socket → username
+
+
 //***************************************************احراز هویت مرکزی******************************************************
     DatabaseManager dbManager;
 
@@ -60,6 +65,16 @@ private:
 
 
     void handleSearchBooks(QTcpSocket* socket, const QJsonObject& data);
+
+
+
+
+
+
+
+
+
+
 
 
 
