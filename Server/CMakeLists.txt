@@ -14,6 +14,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ۲. پیدا کردن پکیج‌های مورد نیاز سرور (هسته، ویدجت‌ها برای UI مانیتورینگ و شبکه برای سوکت)
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Sql)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+
 
 # ۳. فایل‌های سورس سرور (دوستت هر فایلی ساخت، اینجا اضافه میشه)
 set(PROJECT_SOURCES
@@ -27,12 +30,17 @@ set(PROJECT_SOURCES
 qt_add_executable(LuminaServer
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    database_manager.h database_manager.cpp
+    server.h
+    server.cpp
 )
 
 # ۵. جادوی اصلی: لینک کردن لایبرری مشترک (توابع هش و کلاس‌ها) و ابزارهای کیوت به سرور
 target_link_libraries(LuminaServer PRIVATE
     LuminaShared
     Qt6::Widgets
+    Qt6::Sql
+    Qt6::Core
     Qt6::Network
 )
 
