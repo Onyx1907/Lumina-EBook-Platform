@@ -66,6 +66,15 @@ public:
     QList<QJsonObject> searchBooks(const QString& title,const QString& author,const QString& publisherName);
 
 
+//*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
+
+
+    bool addComment(int bookId, int userId, const QString& text, int rating);
+    bool editComment(int commentId, const QString& newText, int newRating);
+    bool deleteComment(int commentId);
+    QList<QJsonObject> getCommentsForBook(int bookId);
+    bool recalculateBookRating(int bookId);
+
 
 
 
