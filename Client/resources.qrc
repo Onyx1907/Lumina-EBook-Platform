@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/Lumina_Logo.png</file>
+        <file>resources/background.webm</file>
+    </qresource>
+</RCC>

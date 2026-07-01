@@ -12,19 +12,30 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ۲. پکیج Network رو هم اینجا اضافه کن برای سوکت‌ها
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Multimedia MultimediaWidgets)
 
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        loginwidget.h  loginwidget.cpp  loginwidget.ui
+        registerwidget.h  registerwidget.cpp  registerwidget.ui
+        resources.qrc
 )
 
 # ۳. نام تارگت رو از Client به LuminaClient تغییر دادم
 qt_add_executable(LuminaClient
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    resources.qrc
+    loginwidget.h loginwidget.cpp loginwidget.ui
+    registerwidget.h registerwidget.cpp registerwidget.ui
+    forgotpasswordwidget.h forgotpasswordwidget.cpp forgotpasswordwidget.ui
+    clientnetworkmanager.h clientnetworkmanager.cpp
+    page_indices.h
+
+
 )
 
 # ۴. اینجا لومینا شیرد و کیوت ویدجت و شبکه رو به لومینا کلاینت وصل می‌کنیم
@@ -32,6 +43,8 @@ target_link_libraries(LuminaClient PRIVATE
     LuminaShared
     Qt6::Widgets
     Qt6::Network
+    Qt6::Multimedia
+    Qt6::MultimediaWidgets
 )
 
 set_target_properties(LuminaClient PROPERTIES
