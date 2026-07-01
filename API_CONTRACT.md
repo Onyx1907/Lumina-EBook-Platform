@@ -309,4 +309,100 @@
       "message": ".هیچ کتابی با معیارهای جستجو یافت نشد"
     }
   }
+,
+  "17_ADD_COMMENT": {
+    "client_request": {
+      "action": "ADD_COMMENT",
+      "data": {
+        "book_id": 10,
+        "user_id": 42,
+        "text": "کتاب بسیار عالی و آموزنده‌ای بود.",
+        "rating": 5
+      }
+    },
+    "server_response_success": {
+      "action": "ADD_COMMENT_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".نظر ثبت شد"
+    },
+    "server_response_error": {
+      "action": "ADD_COMMENT_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در ثبت نظر"
+    },
+    "broadcast_response": {
+      "action": "COMMENT_UPDATED",
+      "book_id": 10,
+      "type": "ADD"
+    }
+  },
+  "18_EDIT_COMMENT": {
+    "client_request": {
+      "action": "EDIT_COMMENT",
+      "data": {
+        "comment_id": 154,
+        "text": "ویرایش: کتاب خوبی بود اما بخش دوم کمی طولانی بود.",
+        "rating": 4
+      }
+    },
+    "server_response_success": {
+      "action": "EDIT_COMMENT_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".نظر ویرایش شد"
+    },
+    "server_response_error": {
+      "action": "EDIT_COMMENT_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در ویرایش"
+    },
+    "broadcast_response": {
+      "action": "COMMENT_UPDATED",
+      "comment_id": 154,
+      "type": "EDIT"
+    }
+  },
+  "19_DELETE_COMMENT": {
+    "client_request": {
+      "action": "DELETE_COMMENT",
+      "data": {
+        "comment_id": 154
+      }
+    },
+    "server_response_success": {
+      "action": "DELETE_COMMENT_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".نظر حذف شد"
+    },
+    "server_response_error": {
+      "action": "DELETE_COMMENT_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در حذف"
+    },
+    "broadcast_response": {
+      "action": "COMMENT_UPDATED",
+      "comment_id": 154,
+      "type": "DELETE"
+    }
+  },
+  "20_GET_COMMENTS": {
+    "client_request": {
+      "action": "GET_COMMENTS",
+      "data": {
+        "book_id": 10
+      }
+    },
+    "server_response_success": {
+      "action": "GET_COMMENTS_RESPONSE",
+      "status": "SUCCESS",
+      "comments": [
+        {
+          "comment_id": 154,
+          "book_id": 10,
+          "user_id": 42,
+          "text": "کتاب بسیار عالی و آموزنده‌ای بود.",
+          "rating": 5
+        }
+      ]
+    }
+  }
 }
