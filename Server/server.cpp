@@ -130,6 +130,15 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
         }
 
 
+//*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
+
+
+        if (action == "ADD_COMMENT") { handleAddComment(socket, data); return; }
+        if (action == "EDIT_COMMENT") { handleEditComment(socket, data); return; }
+        if (action == "DELETE_COMMENT") { handleDeleteComment(socket, data); return; }
+        if (action == "GET_COMMENTS") { handleGetComments(socket, data); return; }
+
+
 
 
 
