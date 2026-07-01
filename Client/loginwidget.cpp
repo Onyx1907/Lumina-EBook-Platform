@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QJsonObject>
 #include "clientnetworkmanager.h"
+#include <QTimer>
 
 LoginWidget::LoginWidget(QWidget *parent) :
     QWidget(parent),
@@ -70,7 +71,7 @@ void LoginWidget::on_login_pushButton_clicked()
     ui->error_label->setText("در حال برقراری ارتباط با سرور");
 
     if(ClientNetworkManager::instance().connectToServer()){
-
+        current_username = username;
 
         ui->login_pushButton->setEnabled(false);
         ui->username_input->setEnabled(false);
@@ -100,7 +101,20 @@ void LoginWidget::processNetworkData(const QString& action, const QJsonObject& d
 
     if(status == "SUCCESS"){
         ui->success_label->setText("ورود با موفقیت انجام شد");
-        // اضافه کردن سیگنال جابجایی صفحه
+
+        QString role = data.value("user_role").toString();
+        bool is_first_login = (data.value("first_login").toInt() == 1);
+
+        User *user;
+
+        if(role == "User"){
+            user = new RegularUser(1, current_username);
+        }
+        //else if(role == "Publisher"){}
+
+        QTimer::singleShot(3000, this, [this, user, is_first_login](){
+            emit goToUSerDashboard(user, is_first_login);
+        });
 
         enableFormWithError("");
     }

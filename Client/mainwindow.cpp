@@ -2,8 +2,11 @@
 #include "./ui_mainwindow.h"
 #include <QTimer>
 #include <QPainter>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
+#include <QSequentialAnimationGroup>
 #include "clientnetworkmanager.h"
-#include <QMessageBox>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -49,24 +52,53 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->addWidget(RegisterPage);
     ui->stackedWidget->addWidget(ForgotPasswordPage);
 
-    ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
+    fadeToPage(Page::LoginPageIndex);
     ui->stackedWidget->raise();
 
 
     connect(LoginPage, &LoginWidget::goToRegisterRequested, this, [this](){
-        ui->stackedWidget->setCurrentIndex(Page::RegisterPageIndex);
+        fadeToPage(Page::RegisterPageIndex);
     });
 
     connect(LoginPage, &LoginWidget::goToForgotPasswordRequested, this, [this](){
-        ui->stackedWidget->setCurrentIndex(Page::ForgotPasswordPageIndex);
+        fadeToPage(Page::ForgotPasswordPageIndex);
     });
 
     connect(RegisterPage, &RegisterWidget::goToLoginRequested, this, [this](){
-        ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
+        fadeToPage(Page::LoginPageIndex);
     });
 
     connect(ForgotPasswordPage, &ForgotPasswordWidget::goToLoginRequested, this, [this](){
-        ui->stackedWidget->setCurrentIndex(Page::LoginPageIndex);
+        fadeToPage(Page::LoginPageIndex);
+    });
+
+    connect(LoginPage, &LoginWidget::goToUSerDashboard, this, [this](User *user, bool is_first_login){
+        RegularUser *cur_user = dynamic_cast<RegularUser*>(user);
+
+        if(cur_user != nullptr) {
+            UserDashboardPage = new UserDashboardWidget(cur_user, this);
+            ui->stackedWidget->addWidget(UserDashboardPage);
+            fadeToPage(Page::UserDashboardPageIndex);
+        }
+
+        mediaPlayer->stop();
+
+        currentFramePixmap = QPixmap();
+        this->update();
+
+        QTimer::singleShot(3000, this, [this](){
+
+            mediaPlayer->setVideoOutput(nullptr);
+            mediaPlayer->setAudioOutput(nullptr);
+            delete mediaPlayer;
+            delete audioOutput;
+            delete videoSink;
+            mediaPlayer = nullptr;
+            audioOutput = nullptr;
+            videoSink = nullptr;
+
+        });
+
     });
 }
 
@@ -88,6 +120,53 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 void MainWindow::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
     this->update(); // صرفاً درخواست بازنویسی صفحه
+}
+
+void MainWindow::fadeToPage(int pageIndex) {
+    QWidget *currentWidget = ui->stackedWidget->currentWidget();
+    QWidget *nextWidget = ui->stackedWidget->widget(pageIndex);
+
+    if (!currentWidget || !nextWidget || currentWidget == nextWidget) return;
+
+    // ۱. ایجاد افکت شفافیت برای هر دو صفحه
+    QGraphicsOpacityEffect *fadeOutEffect = new QGraphicsOpacityEffect(currentWidget);
+    QGraphicsOpacityEffect *fadeInEffect = new QGraphicsOpacityEffect(nextWidget);
+
+    currentWidget->setGraphicsEffect(fadeOutEffect);
+    nextWidget->setGraphicsEffect(fadeInEffect);
+
+    // ۲. انیمیشن محو شدن صفحه فعلی (مدت زمان: ۳۰۰ میلی‌ثانیه)
+    QPropertyAnimation *fadeOutAnim = new QPropertyAnimation(fadeOutEffect, "opacity");
+    fadeOutAnim->setDuration(300);
+    fadeOutAnim->setStartValue(1.0);
+    fadeOutAnim->setEndValue(0.0);
+
+    // ۳. انیمیشن ظاهر شدن صفحه بعدی (مدت زمان: ۳۰۰ میلی‌ثانیه)
+    QPropertyAnimation *fadeInAnim = new QPropertyAnimation(fadeInEffect, "opacity");
+    fadeInAnim->setDuration(300);
+    fadeInAnim->setStartValue(0.0);
+    fadeInAnim->setEndValue(1.0);
+
+    // ۴. گروه‌بندی انیمیشن‌ها به صورت متوالی (اول اولی محو شه، بعد دومی بیاد)
+    QSequentialAnimationGroup *group = new QSequentialAnimationGroup(this);
+    group->addAnimation(fadeOutAnim);
+
+    // دقیقاً وسط کار (وقتی صفحه اول محو شد)، ایندکس استک‌ویجت رو عوض می‌کنیم
+    connect(fadeOutAnim, &QPropertyAnimation::finished, this, [this, pageIndex]() {
+        ui->stackedWidget->setCurrentIndex(pageIndex);
+    });
+
+    group->addAnimation(fadeInAnim);
+
+    // ۵. پاک‌سازی افکت‌ها بعد از پایان کل انیمیشن برای جلوگیری از کندی گرافیکی
+    connect(group, &QSequentialAnimationGroup::finished, this, [currentWidget, nextWidget, group]() {
+        currentWidget->setGraphicsEffect(nullptr);
+        nextWidget->setGraphicsEffect(nullptr);
+        group->deleteLater(); // حذف خودکار گروه انیمیشن از رم
+    });
+
+    // شروع انیمیشن
+    group->start();
 }
 
 

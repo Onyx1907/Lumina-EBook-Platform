@@ -11,7 +11,7 @@
 #include "loginwidget.h"
 #include "registerwidget.h"
 #include "forgotpasswordwidget.h"
-#include "page_indices.h"
+#include "userdashboardwidget.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -44,6 +44,16 @@ private:
     LoginWidget *LoginPage;
     RegisterWidget *RegisterPage;
     ForgotPasswordWidget *ForgotPasswordPage;
+    UserDashboardWidget *UserDashboardPage;
+
+    void fadeToPage(int pageIndex);
+
+    enum Page {
+        LoginPageIndex = 0,
+        RegisterPageIndex = 1,
+        ForgotPasswordPageIndex = 2,
+        UserDashboardPageIndex = 3
+    };
 };
 
 #endif // MAINWINDOW_H
