@@ -562,6 +562,133 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title,const QStri
     return list;
 }
 
+//*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
+
+
+//اضافه کردن نظر
+bool DatabaseManager::addComment(int bookId, int userId,
+                                 const QString& text, int rating) {
+    const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    QSqlQuery q;
+    q.prepare("INSERT INTO comments (book_id, user_id, comment_text, rating, created_at, updated_at) "
+              "VALUES (:b, :u, :t, :r, :c, :u2)");
+    q.bindValue(":b", bookId);
+    q.bindValue(":u", userId);
+    q.bindValue(":t", text);
+    q.bindValue(":r", rating);
+    q.bindValue(":c", now);
+    q.bindValue(":u2", now);
+
+    if (!q.exec())
+        return false;
+
+    return recalculateBookRating(bookId);
+}
+
+//ویرایش نظر
+bool DatabaseManager::editComment(int commentId,
+                                  const QString& newText, int newRating) {
+    const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);  //این خط کد، زمان و تاریخ فعلی سیستم را میگیرد
+                                                            //و آن را به یک متن (رشته) استاندارد و قابل فهم برای کامپیوتر تبدیل میکند
+
+    QSqlQuery qGet;
+    qGet.prepare("SELECT book_id FROM comments WHERE id = :id");
+    qGet.bindValue(":id", commentId);
+    if (!qGet.exec() || !qGet.next())
+        return false;
+
+    int bookId = qGet.value(0).toInt();
+
+    QSqlQuery q;
+    q.prepare("UPDATE comments SET comment_text = :t, rating = :r, updated_at = :u WHERE id = :id");
+    q.bindValue(":t", newText);
+    q.bindValue(":r", newRating);
+    q.bindValue(":u", now);
+    q.bindValue(":id", commentId);
+
+    if (!q.exec())
+        return false;
+
+    return recalculateBookRating(bookId);
+}
+
+//حذف نظر
+bool DatabaseManager::deleteComment(int commentId) {
+    QSqlQuery qGet;
+    qGet.prepare("SELECT book_id FROM comments WHERE id = :id");
+    qGet.bindValue(":id", commentId);
+    if (!qGet.exec() || !qGet.next())
+        return false;
+
+    int bookId = qGet.value(0).toInt();
+
+    QSqlQuery q;
+    q.prepare("DELETE FROM comments WHERE id = :id");
+    q.bindValue(":id", commentId);
+
+    if (!q.exec())
+        return false;
+
+    return recalculateBookRating(bookId);
+}
+
+//دیدن نظرات یک کتاب
+QList<QJsonObject> DatabaseManager::getCommentsForBook(int bookId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT c.id, c.comment_text, c.rating, c.created_at, c.updated_at, "
+              "u.username "
+              "FROM comments c "
+              "JOIN users u ON c.user_id = u.id "
+              "WHERE c.book_id = :b "
+              "ORDER BY c.created_at DESC");
+    q.bindValue(":b", bookId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject obj;
+        obj["id"] = q.value("id").toInt();
+        obj["text"] = q.value("comment_text").toString();
+        obj["rating"] = q.value("rating").toInt();
+        obj["created_at"] = q.value("created_at").toString();
+        obj["updated_at"] = q.value("updated_at").toString();
+        obj["username"] = q.value("username").toString();
+        list.append(obj);
+    }
+
+    return list;
+}
+
+//محاسبه امتیاز کتاب
+bool DatabaseManager::recalculateBookRating(int bookId) {
+    QSqlQuery q;
+    q.prepare("SELECT rating FROM comments WHERE book_id = :b");
+    q.bindValue(":b", bookId);
+
+    if (!q.exec())
+        return false;
+
+    int count = 0;
+    double sum = 0.0;
+    while (q.next()) {
+        sum += q.value(0).toInt();
+        ++count;
+    }
+
+    double avg = (count == 0) ? 0.0 : (sum / count);
+
+    QSqlQuery qUpdate;
+    qUpdate.prepare("UPDATE books SET averageRating = :a, ratingCount = :c WHERE id = :b");
+    qUpdate.bindValue(":a", avg);
+    qUpdate.bindValue(":c", count);
+    qUpdate.bindValue(":b", bookId);
+
+    return qUpdate.exec();
+}
 
 
 

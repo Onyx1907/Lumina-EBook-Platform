@@ -469,6 +469,108 @@ void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data) {
 }
 
 
+//*********************************************پنل کاربر عادی ( ماژول 3 )***************************************************
+
+//مدیریت ثبت نظرات
+void Server::handleAddComment(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId = data["book_id"].toInt();
+    int userId = data["user_id"].toInt();
+    QString text = data["text"].toString();
+    int rating = data["rating"].toInt();
+
+    bool ok = dbManager.addComment(bookId, userId, text, rating);
+
+    QJsonObject resp;
+    resp["action"] = "ADD_COMMENT_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".نظر ثبت شد"
+                         :".خطا در ثبت نظر";
+
+    sendJson(socket, resp);
+
+    if (ok) {
+        QJsonObject b;
+        b["action"] = "COMMENT_UPDATED";
+        b["book_id"] = bookId;
+        b["type"] = "ADD";
+        broadcastToAll(b);
+    }
+}
+
+//مدیریت ویرایش نظرات
+void Server::handleEditComment(QTcpSocket* socket, const QJsonObject& data) {
+    int commentId = data["comment_id"].toInt();
+    QString text = data["text"].toString();
+    int rating = data["rating"].toInt();
+
+    bool ok = dbManager.editComment(commentId, text, rating);
+
+    QJsonObject resp;
+    resp["action"] = "EDIT_COMMENT_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".نظر ویرایش شد"
+                         : ".خطا در ویرایش";
+
+    sendJson(socket, resp);
+
+    if (ok) {
+        QJsonObject b;
+        b["action"] = "COMMENT_UPDATED";
+        b["comment_id"] = commentId;
+        b["type"] = "EDIT";
+        broadcastToAll(b);
+    }
+}
+
+//مدیریت حذف نظرات
+void Server::handleDeleteComment(QTcpSocket* socket, const QJsonObject& data) {
+    int commentId = data["comment_id"].toInt();
+
+    bool ok = dbManager.deleteComment(commentId);
+
+    QJsonObject resp;
+    resp["action"] = "DELETE_COMMENT_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".نظر حذف شد"
+                         : ".خطا در حذف";
+
+    sendJson(socket, resp);
+
+    if (ok) {
+        QJsonObject b;
+        b["action"] = "COMMENT_UPDATED";
+        b["comment_id"] = commentId;
+        b["type"] = "DELETE";
+        broadcastToAll(b);
+    }
+}
+
+//مدیریت دیدن نظرات
+void Server::handleGetComments(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId = data["book_id"].toInt();
+
+    QList<QJsonObject> list = dbManager.getCommentsForBook(bookId);
+
+    QJsonArray arr;
+    for (auto &c : list)
+        arr.append(c);
+
+    QJsonObject resp;
+    resp["action"] = "GET_COMMENTS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["comments"] = arr;
+    sendJson(socket, resp);
+}
+
+//ارسال پیام به همه کلاینت ها
+void Server::broadcastToAll(const QJsonObject& obj) {
+    for (QTcpSocket* client : std::as_const(clients)) {
+        sendJson(client, obj);
+    }
+}
 
 
 

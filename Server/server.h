@@ -68,6 +68,18 @@ private:
 
 
 
+//*********************************************پنل کاربر عادی ( ماژول 3 )***************************************************
+
+
+    QList<QTcpSocket*> clients;
+
+    void handleAddComment(QTcpSocket* socket, const QJsonObject& data);
+    void handleEditComment(QTcpSocket* socket, const QJsonObject& data);
+    void handleDeleteComment(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetComments(QTcpSocket* socket, const QJsonObject& data);
+
+    void broadcastToAll(const QJsonObject& obj);
+
 
 
 
