@@ -527,6 +527,33 @@ background: transparent;</string>
        <bool>true</bool>
       </property>
      </widget>
+     <widget class="QLabel" name="success_label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>390</y>
+        <width>571</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #9a7b56;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>

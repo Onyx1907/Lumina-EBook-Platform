@@ -37,7 +37,6 @@ void LoginWidget::on_register_pushButton_clicked()
     ui->username_input->clear();
     ui->password_input->clear();
     ui->error_label->clear();
-    ui->error_label->setStyleSheet("color: #e74c3c; font-weight: bold;");
 
     emit goToRegisterRequested();
 }
@@ -100,8 +99,10 @@ void LoginWidget::processNetworkData(const QString& action, const QJsonObject& d
     QString message = data.value("message").toString();
 
     if(status == "SUCCESS"){
-        ui->error_label->setText("ورود با موفقیت انجام شد");
+        ui->success_label->setText("ورود با موفقیت انجام شد");
         // اضافه کردن سیگنال جابجایی صفحه
+
+        enableFormWithError("");
     }
     else if(status == "FAILED"){
         enableFormWithError(message);

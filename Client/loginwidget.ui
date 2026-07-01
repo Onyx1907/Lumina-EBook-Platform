@@ -263,6 +263,28 @@ background: transparent;
        <string/>
       </property>
      </widget>
+     <widget class="QLabel" name="success_label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>300</y>
+        <width>341</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #9a7b56;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>

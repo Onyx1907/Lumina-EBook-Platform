@@ -27,6 +27,7 @@ void ForgotPasswordWidget::on_back_pushButton_clicked()
     ui->answer_input->clear();
     ui->error_label->clear();
     ui->error_label_2->clear();
+    ui->success_label->clear();
     ui->newPass_again_input->clear();
     ui->newPass_input->clear();
     ui->username_input->clear();
@@ -41,6 +42,7 @@ void ForgotPasswordWidget::on_back_pushButton_2_clicked()
     ui->answer_input->clear();
     ui->error_label->clear();
     ui->error_label_2->clear();
+    ui->success_label->clear();
     ui->newPass_again_input->clear();
     ui->newPass_input->clear();
     ui->username_input->clear();
@@ -137,8 +139,9 @@ void ForgotPasswordWidget::processNetworkData(const QString& action, const QJson
     else{
         QString message = data.value("message").toString();
         if(status == "SUCCESS"){
-            enableFormWithError("رمز عبور با موفقیت تغییر کرد", true);
-            QTimer::singleShot(4000, this, [this](){
+            enableFormWithError("", true);
+            ui->success_label->setText("رمز عبور با موفقیت تغییر کرد");
+            QTimer::singleShot(3000, this, [this](){
                 on_back_pushButton_clicked();
             });
         }
@@ -158,6 +161,7 @@ void ForgotPasswordWidget::enableFormWithError(const QString& errorMsg, bool b){
     ui->newPass_again_input->setEnabled(b);
     ui->newPass_input->setEnabled(b);
     ui->username_input->setEnabled(b);
+
     ui->error_label->setText(errorMsg);
     ui->error_label_2->setText(errorMsg);
 }

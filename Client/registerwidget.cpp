@@ -27,6 +27,7 @@ void RegisterWidget::on_back_pushButton_clicked()
 {
     ui->answer_input->clear();
     ui->error_label->clear();
+    ui->success_label->clear();
     ui->pass_input->clear();
     ui->pass2_input->clear();
     ui->role_comboBox->setCurrentIndex(0);
@@ -105,9 +106,10 @@ void RegisterWidget::processNetworkData(const QString& action, const QJsonObject
     qDebug() << status << " " << message;
 
     if(status == "SUCCESS") {
-        enableFormWithError("ثبت نام با موفقیت انجام شد... شما می‌توانید وارد شوید", true);
+        enableFormWithError("", true);
+        ui->success_label->setText("ثبت نام با موفقیت انجام شد... شما می‌توانید وارد شوید");;
 
-        QTimer::singleShot(4000, this, [this](){
+        QTimer::singleShot(3000, this, [this](){
             on_back_pushButton_clicked();
         });
     }
