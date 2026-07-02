@@ -142,7 +142,10 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     //*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
 
 
-
+    if (action == "ADD_TO_CART") return handleAddToCart(socket, data);
+    if (action == "REMOVE_FROM_CART") return handleRemoveFromCart(socket, data);
+    if (action == "GET_CART") return handleGetCart(socket, data);
+    if (action == "FINALIZE_PURCHASE") return handleFinalizePurchase(socket, data);
 
 
 }

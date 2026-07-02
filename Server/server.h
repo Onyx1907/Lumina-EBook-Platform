@@ -85,6 +85,10 @@ private:
     //*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
 
 
+    void handleAddToCart(QTcpSocket* socket, const QJsonObject& data);
+    void handleRemoveFromCart(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetCart(QTcpSocket* socket, const QJsonObject& data);
+    void handleFinalizePurchase(QTcpSocket* socket, const QJsonObject& data);
 
 
 
