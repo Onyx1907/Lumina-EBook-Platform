@@ -20,11 +20,11 @@ bool Server::start(){
 }
 // مدیریت اتصال های ورودی: به محض اتصال هر کلاینت جدید، این متد اجرا میشود
 void Server::incomingConnection(qintptr socketDescriptor){
-   QTcpSocket* socket = new QTcpSocket(this);
+    QTcpSocket* socket = new QTcpSocket(this);
     socket->setSocketDescriptor(socketDescriptor);
 
-   connect(socket,&QTcpSocket::readyRead,this,&Server::onReadyRead);
-   connect(socket,&QTcpSocket::disconnected,this,&Server::onDisconnected);
+    connect(socket,&QTcpSocket::readyRead,this,&Server::onReadyRead);
+    connect(socket,&QTcpSocket::disconnected,this,&Server::onDisconnected);
 }
 // اسلات خواندن داده ها: زمان ارسال اطلاعات از طرف کلاینت فعال میشود
 void Server::onReadyRead(){
@@ -55,7 +55,7 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     QString action = obj.value("action").toString();
     QJsonObject data = obj.value("data").toObject();
 
-//***************************************************احراز هویت مرکزی******************************************************
+    //***************************************************احراز هویت مرکزی******************************************************
 
     if (action == "LOGIN") {
         handleLogin(socket, data);
@@ -65,60 +65,61 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
         handleForgotPassword(socket, data);
     }
 
-//*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
-        if (action == "SET_FAVORITE_GENRES") {
-            handleSetFavoriteGenres(socket, data);
-            return;
-        }
-        if (action == "GET_RECOMMENDED_BOOKS") {
-            handleGetRecommendedBooks(socket, data);
-            return;
-        }
-        if (action == "GET_BOOKS_BY_GENRE") {
-            handleGetBooksByGenre(socket, data);
-            return;
-        }
+    //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
+    if (action == "SET_FAVORITE_GENRES") {
+        handleSetFavoriteGenres(socket, data);
+        return;
+    }
+    if (action == "GET_RECOMMENDED_BOOKS") {
+        handleGetRecommendedBooks(socket, data);
+        return;
+    }
+    if (action == "GET_BOOKS_BY_GENRE") {
+        handleGetBooksByGenre(socket, data);
+        return;
+    }
 
-        if (action == "GET_POPULAR_BOOKS") {
-            handleGetPopularBooks(socket);
-            return;
-        }
-        if (action == "GET_NEW_BOOKS") {
-            handleGetNewBooks(socket);
-            return;
-        }
-        if (action == "GET_BESTSELLERS") {
-            handleGetBestsellers(socket);
-            return;
-        }
-        if (action == "GET_FREE_BOOKS") {
-            handleGetFreeBooks(socket);
-            return;
-        }
+    if (action == "GET_POPULAR_BOOKS") {
+        handleGetPopularBooks(socket);
+        return;
+    }
+    if (action == "GET_NEW_BOOKS") {
+        handleGetNewBooks(socket);
+        return;
+    }
+    if (action == "GET_BESTSELLERS") {
+        handleGetBestsellers(socket);
+        return;
+    }
+    if (action == "GET_FREE_BOOKS") {
+        handleGetFreeBooks(socket);
+        return;
+    }
 
-        if (action == "GET_PROFILE") {
-            handleGetProfile(socket, data);
-            return;
-        }
-        if (action == "UPDATE_PROFILE") {
-            handleUpdateProfile(socket, data);
-            return;
-        }
-        if (action == "CHANGE_PASSWORD") {
-            handleChangePassword(socket, data);
-            return;
-        }
+    if (action == "GET_PROFILE") {
+        handleGetProfile(socket, data);
+        return;
+    }
+    if (action == "UPDATE_PROFILE") {
+        handleUpdateProfile(socket, data);
+        return;
+    }
+    if (action == "CHANGE_PASSWORD") {
+        handleChangePassword(socket, data);
+        return;
+    }
 
-        if (action == "GET_PURCHASE_HISTORY") {
-            handleGetPurchaseHistory(socket, data);
-            return;
-        }
+    if (action == "GET_PURCHASE_HISTORY") {
+        handleGetPurchaseHistory(socket, data);
+        return;
+    }
 
-        QJsonObject resp;
-        resp["action"] = action + "_RESPONSE";
-        resp["status"] = "ERROR";
-        resp["message"] = ".درخواست نامعتبر است";
-        sendJson(socket, resp);
+    QJsonObject resp;
+    resp["action"] = action + "_RESPONSE";
+    resp["status"] = "ERROR";
+    resp["message"] = ".درخواست نامعتبر است";
+    sendJson(socket, resp);
+
 
 
 //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
@@ -193,35 +194,35 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
 
 // مدیریت فرآیند ثبت نام کاربر جدید
 void Server::handleRegister(QTcpSocket* socket, const QJsonObject& data){
-        QString username = data.value("username").toString();
-        QString passwordPlain = data.value("password").toString();
-        QString roleStr = data.value("role").toString();
-        QString securityQuestion = data.value("security_question").toString();
-        QString securityAnswerPlain = data.value("security_answer").toString();
+    QString username = data.value("username").toString();
+    QString passwordPlain = data.value("password").toString();
+    QString roleStr = data.value("role").toString();
+    QString securityQuestion = data.value("security_question").toString();
+    QString securityAnswerPlain = data.value("security_answer").toString();
 
-        UserRole role = UserRole::RegularUser;
-        if (roleStr == "Publisher") role = UserRole::Publisher;
-        else if (roleStr == "Admin") role = UserRole::Admin;
+    UserRole role = UserRole::RegularUser;
+    if (roleStr == "Publisher") role = UserRole::Publisher;
+    else if (roleStr == "Admin") role = UserRole::Admin;
 
-        QJsonObject resp;
-        resp["action"] = "REGISTER_RESPONSE";
+    QJsonObject resp;
+    resp["action"] = "REGISTER_RESPONSE";
 
-        if (dbManager.isUsernameTaken(username)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".نام کاربری تکراری است";
-            sendJson(socket, resp);
-            return;
-        }
-        if (!dbManager.registerUser(username, passwordPlain, role, securityQuestion, securityAnswerPlain)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".خطا در ثبت نام";
-            sendJson(socket, resp);
-            return;
-        }
-
-        resp["status"] = "SUCCESS";
-        resp["message"] = ".ثبت نام با موفقیت انجام شد";
+    if (dbManager.isUsernameTaken(username)) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".نام کاربری تکراری است";
         sendJson(socket, resp);
+        return;
+    }
+    if (!dbManager.registerUser(username, passwordPlain, role, securityQuestion, securityAnswerPlain)) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".خطا در ثبت نام";
+        sendJson(socket, resp);
+        return;
+    }
+
+    resp["status"] = "SUCCESS";
+    resp["message"] = ".ثبت نام با موفقیت انجام شد";
+    sendJson(socket, resp);
 }
 // مدیریت دو مرحله ای فرآیند فراموشی رمز عبور
 void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
@@ -241,7 +242,7 @@ void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
             resp["status"] = "SUCCESS";
             resp["security_question"] = question;
         }
-         sendJson(socket, resp);
+        sendJson(socket, resp);
     }
     else if (step == "ANSWER_AND_RESET") {
         QString username = data.value("username").toString();
@@ -310,8 +311,25 @@ void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& da
     QList<QJsonObject> books = dbManager.getRecommendedBooks(genres);
 
     QJsonArray arr;
-    for (const QJsonObject& b : std::as_const(books))
+    for (QJsonObject b : std::as_const(books)) {
+        // خواندن مسیر عکس از دیتابیس
+        QString coverPath = b.value("cover_image_path").toString();
+        if (coverPath.isEmpty()) coverPath = b.value("coverImagePath").toString();
+
+        QFile coverFile(coverPath);
+        if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
+            QByteArray coverBytes = coverFile.readAll();
+            coverFile.close();
+            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+        } else {
+            b["cover_base64"] = "";
+        }
+
+        // خالی رد کردن فیلد پی دی اف جهت بهینه سازی حجم شبکه
+        b["pdf_base64"] = "";
+
         arr.append(b);
+    }
 
     QJsonObject resp;
     resp["action"] = "GET_RECOMMENDED_BOOKS_RESPONSE";
@@ -319,14 +337,30 @@ void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& da
     resp["books"] = arr;
     sendJson(socket, resp);
 }
-// دریافت لیست کتاب ها بر اساس یک ژانر خاص
+
+//دریافت لیست کتاب‌ها بر اساس یک ژانر خاص
 void Server::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) {
     const QString genre = data.value("genre").toString();
     QList<QJsonObject> books = dbManager.getBooksByGenre(genre);
 
     QJsonArray arr;
-    for (const QJsonObject& b : std::as_const(books))
+    for (QJsonObject b : std::as_const(books)) {
+        QString coverPath = b.value("cover_image_path").toString();
+        if (coverPath.isEmpty()) coverPath = b.value("coverImagePath").toString();
+
+        QFile coverFile(coverPath);
+        if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
+            QByteArray coverBytes = coverFile.readAll();
+            coverFile.close();
+            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+        } else {
+            b["cover_base64"] = "";
+        }
+
+        b["pdf_base64"] = "";
+
         arr.append(b);
+    }
 
     QJsonObject resp;
     resp["action"] = "GET_BOOKS_BY_GENRE_RESPONSE";
@@ -334,12 +368,28 @@ void Server::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) 
     resp["books"] = arr;
     sendJson(socket, resp);
 }
-// دریافت لیست کتاب های محبوب (پرطرفدار)
+
+//دریافت لیست کتاب های محبوب (پرطرفدار)
 void Server::handleGetPopularBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getPopularBooks();
     QJsonArray arr;
-    for (const QJsonObject& b : std::as_const(books))
+    for (QJsonObject b : std::as_const(books)) {
+        QString coverPath = b.value("cover_image_path").toString();
+        if (coverPath.isEmpty()) coverPath = b.value("coverImagePath").toString();
+
+        QFile coverFile(coverPath);
+        if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
+            QByteArray coverBytes = coverFile.readAll();
+            coverFile.close();
+            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+        } else {
+            b["cover_base64"] = "";
+        }
+
+        b["pdf_base64"] = "";
+
         arr.append(b);
+    }
 
     QJsonObject resp;
     resp["action"] = "GET_POPULAR_BOOKS_RESPONSE";
@@ -348,12 +398,27 @@ void Server::handleGetPopularBooks(QTcpSocket* socket) {
     sendJson(socket, resp);
 }
 
-// دریافت لیست جدیدترین کتاب های اضافه شده
+//دریافت لیست جدیدترین کتاب های اضافه شده
 void Server::handleGetNewBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getNewBooks();
     QJsonArray arr;
-    for (const QJsonObject& b : std::as_const(books))
+    for (QJsonObject b : std::as_const(books)) {
+        QString coverPath = b.value("cover_image_path").toString();
+        if (coverPath.isEmpty()) coverPath = b.value("coverImagePath").toString();
+
+        QFile coverFile(coverPath);
+        if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
+            QByteArray coverBytes = coverFile.readAll();
+            coverFile.close();
+            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+        } else {
+            b["cover_base64"] = "";
+        }
+
+        b["pdf_base64"] = "";
+
         arr.append(b);
+    }
 
     QJsonObject resp;
     resp["action"] = "GET_NEW_BOOKS_RESPONSE";
@@ -361,12 +426,28 @@ void Server::handleGetNewBooks(QTcpSocket* socket) {
     resp["books"] = arr;
     sendJson(socket, resp);
 }
-// دریافت لیست کتاب های پرفروش
+
+//دریافت لیست کتاب های پرفروش
 void Server::handleGetBestsellers(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getBestsellers();
     QJsonArray arr;
-    for (const QJsonObject& b : std::as_const(books))
+    for (QJsonObject b : std::as_const(books)) {
+        QString coverPath = b.value("cover_image_path").toString();
+        if (coverPath.isEmpty()) coverPath = b.value("coverImagePath").toString();
+
+        QFile coverFile(coverPath);
+        if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
+            QByteArray coverBytes = coverFile.readAll();
+            coverFile.close();
+            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+        } else {
+            b["cover_base64"] = "";
+        }
+
+        b["pdf_base64"] = "";
+
         arr.append(b);
+    }
 
     QJsonObject resp;
     resp["action"] = "GET_BESTSELLERS_RESPONSE";
@@ -374,12 +455,28 @@ void Server::handleGetBestsellers(QTcpSocket* socket) {
     resp["books"] = arr;
     sendJson(socket, resp);
 }
-// دریافت لیست کتاب های رایگان
+
+//دریافت لیست کتاب های رایگان
 void Server::handleGetFreeBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getFreeBooks();
     QJsonArray arr;
-    for (const QJsonObject& b : std::as_const(books))
+    for (QJsonObject b : std::as_const(books)) {
+        QString coverPath = b.value("cover_image_path").toString();
+        if (coverPath.isEmpty()) coverPath = b.value("coverImagePath").toString();
+
+        QFile coverFile(coverPath);
+        if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
+            QByteArray coverBytes = coverFile.readAll();
+            coverFile.close();
+            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+        } else {
+            b["cover_base64"] = "";
+        }
+
+        b["pdf_base64"] = "";
+
         arr.append(b);
+    }
 
     QJsonObject resp;
     resp["action"] = "GET_FREE_BOOKS_RESPONSE";
@@ -456,23 +553,42 @@ void Server::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& dat
 
 
 // مدیریت درخواست جستجوی کتاب
-void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data) {
-    const QString title = data.value("title").toString();
-    const QString author = data.value("author").toString();
-    const QString publisherName = data.value("publisher_name").toString();
+void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data)
+{
+    QString title = data.value("title").toString();
+    QString author = data.value("author").toString();
+    QString publisher = data.value("publisher_name").toString();
 
-    QList<QJsonObject> books = dbManager.searchBooks(title, author, publisherName);
+    //دریافت نتایج جستجو از دیتابیس (که مسیرهای فیزیکی فایل‌ها را هم شامل می‌شود)
+    QList<QJsonObject> books = dbManager.searchBooks(title, author, publisher);
+    QJsonArray finalArray;
 
-    QJsonArray arr;
-    for (const QJsonObject& b : std::as_const(books))
-        arr.append(b);
+    for (QJsonObject book : books) {
+        //استخراج مسیر فیزیکی عکس کاور کتاب
+        QString coverPath = book.value("cover_image_path").toString();
+        if (coverPath.isEmpty()) {
+            coverPath = book.value("coverImagePath").toString();
+        }
+
+        QFile coverFile(coverPath);
+        if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
+            QByteArray coverBytes = coverFile.readAll();
+            coverFile.close();
+
+            book["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+        } else {
+            book["cover_base64"] = ""; // در صورت عدم وجود تصویر
+        }
+
+        book["pdf_base64"] = "";
+
+        finalArray.append(book);
+    }
 
     QJsonObject resp;
     resp["action"] = "SEARCH_BOOKS_RESPONSE";
     resp["status"] = "SUCCESS";
-    resp["books"] = arr;
-    resp["message"] = books.isEmpty()  ? ".هیچ کتابی با معیارهای جستجو یافت نشد"
-                                       : ".نتایج جستجو با موفقیت دریافت شد";
+    resp["books"] = finalArray;
 
     sendJson(socket, resp);
 }

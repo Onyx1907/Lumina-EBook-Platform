@@ -6,6 +6,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QtPreprocessorSupport>
+#include <QFile>
+#include <QDir>
+#include <QByteArray>
 
 
 #include "database_manager.h"
@@ -32,7 +35,8 @@ private:
     QMap<QTcpSocket*, QString> socketToUser;    // socket → username
 
 
-//***************************************************احراز هویت مرکزی******************************************************
+
+    //***************************************************احراز هویت مرکزی******************************************************
     DatabaseManager dbManager;
 
     void handleRequest(QTcpSocket* socket, const QJsonObject& obj);
@@ -42,7 +46,7 @@ private:
     void sendJson(QTcpSocket* socket, const QJsonObject& obj);
 
 
-//*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
+    //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
 
     void handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data);
     void handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data);
@@ -79,8 +83,6 @@ private:
     void handleGetComments(QTcpSocket* socket, const QJsonObject& data);
 
     void broadcastToAll(const QJsonObject& obj);
-
-
 
 
 
