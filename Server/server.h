@@ -6,6 +6,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QtPreprocessorSupport>
+#include <QFile>
+#include <QDir>
+#include <QByteArray>
 
 
 #include "database_manager.h"

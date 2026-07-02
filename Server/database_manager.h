@@ -9,6 +9,9 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QFile>
+#include <QDir>
+#include <QByteArray>
 
 
 #include "constants.h"
