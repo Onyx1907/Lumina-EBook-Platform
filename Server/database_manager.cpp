@@ -692,3 +692,23 @@ bool DatabaseManager::recalculateBookRating(int bookId) {
 
 //*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
 
+
+//افزودن به سبد خرید
+bool DatabaseManager::addToCart(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("INSERT INTO cart (user_id, book_id) VALUES (:u, :b)");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+//حذف از سبد خرید
+bool DatabaseManager::removeFromCart(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("DELETE FROM cart WHERE user_id = :u AND book_id = :b");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+

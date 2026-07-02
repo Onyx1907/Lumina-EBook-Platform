@@ -80,6 +80,12 @@ public:
 
 
 
+    bool addToCart(int userId, int bookId);
+    bool removeFromCart(int userId, int bookId);
+    QList<QJsonObject> getCartItems(int userId);
+    bool clearCart(int userId);
+
+    bool finalizePurchase(int userId);
 
 
 
