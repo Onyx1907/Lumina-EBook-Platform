@@ -20,7 +20,7 @@ bool DatabaseManager::initDatabase(){
 bool DatabaseManager::createTables(){
     QSqlQuery q;
 
-//--------------جدول کاربران--------------
+    //--------------جدول کاربران--------------
     QString createUsers =
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                 // شناسه یکتا و خودکار
@@ -38,7 +38,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول اعلان ها--------------
+    //--------------جدول اعلان ها--------------
     QString createNotifications =
         "CREATE TABLE IF NOT EXISTS notifications ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                       //شناسه یکتا، عددی و خودکارافزایش (کلید اصلی)
@@ -56,7 +56,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتاب ها--------------
+    //--------------جدول کتاب ها--------------
     QString createBooks =
         "CREATE TABLE IF NOT EXISTS books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                           //شناسه یکتا، کلید اصلی و افزایش خودکار برای هر کتاب
@@ -77,7 +77,7 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create books failed:" << q.lastError().text();
         return false;
     }
-//--------------جدول کامنت ها--------------
+    //--------------جدول کامنت ها--------------
     QString createComments =
         "CREATE TABLE IF NOT EXISTS comments ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                         //شناسه یکتا، کلید اصلی و افزایشی خودکار برای هر نظر
@@ -95,7 +95,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول سبد خرید--------------
+    //--------------جدول سبد خرید--------------
     QString createCart =
         "CREATE TABLE IF NOT EXISTS cart ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                        //شناسه یکتا و خودکار برای هر ردیف سبد خرید
@@ -109,7 +109,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتابخانه شخصی--------------
+    //--------------جدول کتابخانه شخصی--------------
     QString createLibrary =
         "CREATE TABLE IF NOT EXISTS library ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                             //شناسه یکتا و خودکار برای هر ردیف جدول
@@ -124,7 +124,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتاب های ذخیره شده--------------
+    //--------------جدول کتاب های ذخیره شده--------------
     QString createSavedBooks =
         "CREATE TABLE IF NOT EXISTS saved_books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                              //شناسه یکتا و خودکار برای هر ردیف
@@ -138,7 +138,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول قفسه ها--------------
+    //--------------جدول قفسه ها--------------
     QString createShelves =
         "CREATE TABLE IF NOT EXISTS shelves ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                         //شناسه یکتا و خودکار قفسه
@@ -151,7 +151,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتاب های قفسه--------------
+    //--------------جدول کتاب های قفسه--------------
     QString createShelfBooks =
         "CREATE TABLE IF NOT EXISTS shelf_books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                          //شناسه یکتا و خودکار برای هر ردیف اتصال
@@ -165,7 +165,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول آخرین صفحه مطالعه شده--------------
+    //--------------جدول آخرین صفحه مطالعه شده--------------
     QString createReadingProgress =
         "CREATE TABLE IF NOT EXISTS reading_progress ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                             //شناسه یکتا و خودکار برای هر ردیف
@@ -201,7 +201,7 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     QString passwordHash = CryptoHelper::hashPassword(plainPassword);
     QByteArray encryptedAnswer =CryptoHelper::encryptData(securityAnswerPlain, NETWORK_SECRET_KEY);
 
-     QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     QSqlQuery q;
     q.prepare("INSERT INTO users "
@@ -216,7 +216,7 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     q.bindValue(":rd", now);
 
     if(!q.exec()){
-    qDebug() << "Register failed: " << q.lastError().text();
+        qDebug() << "Register failed: " << q.lastError().text();
         return false;
     }
     return true;
@@ -526,10 +526,10 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title,const QStri
     // افزودن دینامیک(پویا)شرط عنوان کتاب به کوئری در صورت وجود ورودی
     if (!title.isEmpty())                                                    //اگر کاربر در بخش عنوان کلمه "برنامه" را سرچ کند
         sql += "AND b.title LIKE :title ";                                  //مقدار نهایی تبدیل به "%برنامه%" میشود
-                                                                           //اگر علامت % اول را حذف کنید (یعنی title + "%")
-                                                                          // فقط کتاب هایی پیدا میشوند که با کلمه "برنامه" شروع میشوند
-                                                                         //اگر علامت % آخر را حذف کنید (یعنی "%" + title)
-                                                                        //فقط کتاب هایی پیدا میشوند که به کلمه "برنامه" ختم میشوند
+    //اگر علامت % اول را حذف کنید (یعنی title + "%")
+    // فقط کتاب هایی پیدا میشوند که با کلمه "برنامه" شروع میشوند
+    //اگر علامت % آخر را حذف کنید (یعنی "%" + title)
+    //فقط کتاب هایی پیدا میشوند که به کلمه "برنامه" ختم میشوند
 
 
     // افزودن دینامیک(پویا)شرط نویسنده به کوئری در صورت وجود ورودی
@@ -590,7 +590,7 @@ bool DatabaseManager::addComment(int bookId, int userId,
 bool DatabaseManager::editComment(int commentId,
                                   const QString& newText, int newRating) {
     const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);  //این خط کد، زمان و تاریخ فعلی سیستم را میگیرد
-                                                            //و آن را به یک متن (رشته) استاندارد و قابل فهم برای کامپیوتر تبدیل میکند
+    //و آن را به یک متن (رشته) استاندارد و قابل فهم برای کامپیوتر تبدیل میکند
 
     QSqlQuery qGet;
     qGet.prepare("SELECT book_id FROM comments WHERE id = :id");
@@ -690,9 +690,5 @@ bool DatabaseManager::recalculateBookRating(int bookId) {
     return qUpdate.exec();
 }
 
-
-
-
-
-
+//*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
 

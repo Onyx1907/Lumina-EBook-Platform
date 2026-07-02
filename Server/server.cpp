@@ -20,11 +20,11 @@ bool Server::start(){
 }
 // مدیریت اتصال های ورودی: به محض اتصال هر کلاینت جدید، این متد اجرا میشود
 void Server::incomingConnection(qintptr socketDescriptor){
-   QTcpSocket* socket = new QTcpSocket(this);
+    QTcpSocket* socket = new QTcpSocket(this);
     socket->setSocketDescriptor(socketDescriptor);
 
-   connect(socket,&QTcpSocket::readyRead,this,&Server::onReadyRead);
-   connect(socket,&QTcpSocket::disconnected,this,&Server::onDisconnected);
+    connect(socket,&QTcpSocket::readyRead,this,&Server::onReadyRead);
+    connect(socket,&QTcpSocket::disconnected,this,&Server::onDisconnected);
 }
 // اسلات خواندن داده ها: زمان ارسال اطلاعات از طرف کلاینت فعال میشود
 void Server::onReadyRead(){
@@ -48,14 +48,14 @@ void Server::onDisconnected(){
         onlineUsers.remove(username);
         socketToUser.remove(socket);
         socket->deleteLater();
-  }
+    }
 }
 // کلاینت را به متد مربوطه هدایت می کند "action" متد بررسی اولیه درخواست: بر اساس کلید
 void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     QString action = obj.value("action").toString();
     QJsonObject data = obj.value("data").toObject();
 
-//***************************************************احراز هویت مرکزی******************************************************
+    //***************************************************احراز هویت مرکزی******************************************************
 
     if (action == "LOGIN") {
         handleLogin(socket, data);
@@ -65,84 +65,87 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
         handleForgotPassword(socket, data);
     }
 
-//*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
-        if (action == "SET_FAVORITE_GENRES") {
-            handleSetFavoriteGenres(socket, data);
-            return;
-        }
-        if (action == "GET_RECOMMENDED_BOOKS") {
-            handleGetRecommendedBooks(socket, data);
-            return;
-        }
-        if (action == "GET_BOOKS_BY_GENRE") {
-            handleGetBooksByGenre(socket, data);
-            return;
-        }
+    //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
+    if (action == "SET_FAVORITE_GENRES") {
+        handleSetFavoriteGenres(socket, data);
+        return;
+    }
+    if (action == "GET_RECOMMENDED_BOOKS") {
+        handleGetRecommendedBooks(socket, data);
+        return;
+    }
+    if (action == "GET_BOOKS_BY_GENRE") {
+        handleGetBooksByGenre(socket, data);
+        return;
+    }
 
-        if (action == "GET_POPULAR_BOOKS") {
-            handleGetPopularBooks(socket);
-            return;
-        }
-        if (action == "GET_NEW_BOOKS") {
-            handleGetNewBooks(socket);
-            return;
-        }
-        if (action == "GET_BESTSELLERS") {
-            handleGetBestsellers(socket);
-            return;
-        }
-        if (action == "GET_FREE_BOOKS") {
-            handleGetFreeBooks(socket);
-            return;
-        }
+    if (action == "GET_POPULAR_BOOKS") {
+        handleGetPopularBooks(socket);
+        return;
+    }
+    if (action == "GET_NEW_BOOKS") {
+        handleGetNewBooks(socket);
+        return;
+    }
+    if (action == "GET_BESTSELLERS") {
+        handleGetBestsellers(socket);
+        return;
+    }
+    if (action == "GET_FREE_BOOKS") {
+        handleGetFreeBooks(socket);
+        return;
+    }
 
-        if (action == "GET_PROFILE") {
-            handleGetProfile(socket, data);
-            return;
-        }
-        if (action == "UPDATE_PROFILE") {
-            handleUpdateProfile(socket, data);
-            return;
-        }
-        if (action == "CHANGE_PASSWORD") {
-            handleChangePassword(socket, data);
-            return;
-        }
+    if (action == "GET_PROFILE") {
+        handleGetProfile(socket, data);
+        return;
+    }
+    if (action == "UPDATE_PROFILE") {
+        handleUpdateProfile(socket, data);
+        return;
+    }
+    if (action == "CHANGE_PASSWORD") {
+        handleChangePassword(socket, data);
+        return;
+    }
 
-        if (action == "GET_PURCHASE_HISTORY") {
-            handleGetPurchaseHistory(socket, data);
-            return;
-        }
+    if (action == "GET_PURCHASE_HISTORY") {
+        handleGetPurchaseHistory(socket, data);
+        return;
+    }
 
-        QJsonObject resp;
-        resp["action"] = action + "_RESPONSE";
-        resp["status"] = "ERROR";
-        resp["message"] = ".درخواست نامعتبر است";
-        sendJson(socket, resp);
-
-
-//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+    QJsonObject resp;
+    resp["action"] = action + "_RESPONSE";
+    resp["status"] = "ERROR";
+    resp["message"] = ".درخواست نامعتبر است";
+    sendJson(socket, resp);
 
 
-        if (action == "SEARCH_BOOKS") {
-            handleSearchBooks(socket, data);
-            return;
-        }
+    //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
 
 
-//*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
+    if (action == "SEARCH_BOOKS") {
+        handleSearchBooks(socket, data);
+        return;
+    }
 
 
-        if (action == "ADD_COMMENT") { handleAddComment(socket, data); return; }
-        if (action == "EDIT_COMMENT") { handleEditComment(socket, data); return; }
-        if (action == "DELETE_COMMENT") { handleDeleteComment(socket, data); return; }
-        if (action == "GET_COMMENTS") { handleGetComments(socket, data); return; }
+    //*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
+
+
+    if (action == "ADD_COMMENT") { handleAddComment(socket, data); return; }
+    if (action == "EDIT_COMMENT") { handleEditComment(socket, data); return; }
+    if (action == "DELETE_COMMENT") { handleDeleteComment(socket, data); return; }
+    if (action == "GET_COMMENTS") { handleGetComments(socket, data); return; }
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
 
 
 
 
 
- }
+}
 
 //***************************************************احراز هویت مرکزی******************************************************
 
@@ -193,35 +196,35 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
 
 // مدیریت فرآیند ثبت نام کاربر جدید
 void Server::handleRegister(QTcpSocket* socket, const QJsonObject& data){
-        QString username = data.value("username").toString();
-        QString passwordPlain = data.value("password").toString();
-        QString roleStr = data.value("role").toString();
-        QString securityQuestion = data.value("security_question").toString();
-        QString securityAnswerPlain = data.value("security_answer").toString();
+    QString username = data.value("username").toString();
+    QString passwordPlain = data.value("password").toString();
+    QString roleStr = data.value("role").toString();
+    QString securityQuestion = data.value("security_question").toString();
+    QString securityAnswerPlain = data.value("security_answer").toString();
 
-        UserRole role = UserRole::RegularUser;
-        if (roleStr == "Publisher") role = UserRole::Publisher;
-        else if (roleStr == "Admin") role = UserRole::Admin;
+    UserRole role = UserRole::RegularUser;
+    if (roleStr == "Publisher") role = UserRole::Publisher;
+    else if (roleStr == "Admin") role = UserRole::Admin;
 
-        QJsonObject resp;
-        resp["action"] = "REGISTER_RESPONSE";
+    QJsonObject resp;
+    resp["action"] = "REGISTER_RESPONSE";
 
-        if (dbManager.isUsernameTaken(username)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".نام کاربری تکراری است";
-            sendJson(socket, resp);
-            return;
-        }
-        if (!dbManager.registerUser(username, passwordPlain, role, securityQuestion, securityAnswerPlain)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".خطا در ثبت نام";
-            sendJson(socket, resp);
-            return;
-        }
-
-        resp["status"] = "SUCCESS";
-        resp["message"] = ".ثبت نام با موفقیت انجام شد";
+    if (dbManager.isUsernameTaken(username)) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".نام کاربری تکراری است";
         sendJson(socket, resp);
+        return;
+    }
+    if (!dbManager.registerUser(username, passwordPlain, role, securityQuestion, securityAnswerPlain)) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".خطا در ثبت نام";
+        sendJson(socket, resp);
+        return;
+    }
+
+    resp["status"] = "SUCCESS";
+    resp["message"] = ".ثبت نام با موفقیت انجام شد";
+    sendJson(socket, resp);
 }
 // مدیریت دو مرحله ای فرآیند فراموشی رمز عبور
 void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
@@ -241,7 +244,7 @@ void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
             resp["status"] = "SUCCESS";
             resp["security_question"] = question;
         }
-         sendJson(socket, resp);
+        sendJson(socket, resp);
     }
     else if (step == "ANSWER_AND_RESET") {
         QString username = data.value("username").toString();
@@ -472,7 +475,7 @@ void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data) {
     resp["status"] = "SUCCESS";
     resp["books"] = arr;
     resp["message"] = books.isEmpty()  ? ".هیچ کتابی با معیارهای جستجو یافت نشد"
-                                       : ".نتایج جستجو با موفقیت دریافت شد";
+                                      : ".نتایج جستجو با موفقیت دریافت شد";
 
     sendJson(socket, resp);
 }
@@ -580,6 +583,9 @@ void Server::broadcastToAll(const QJsonObject& obj) {
         sendJson(client, obj);
     }
 }
+
+
+//*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
 
 
 
