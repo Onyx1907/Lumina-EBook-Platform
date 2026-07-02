@@ -711,4 +711,65 @@ bool DatabaseManager::removeFromCart(int userId, int bookId) {
     return q.exec();
 }
 
+//گرفتن یک لیست از سبد خرید
+QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercentage "
+              "FROM cart c "
+              "JOIN books b ON c.book_id = b.id "
+              "WHERE c.user_id = :u");
+    q.bindValue(":u", userId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject obj;
+        obj["id"] = q.value("id").toInt();
+        obj["title"] = q.value("title").toString();
+        obj["author"] = q.value("author").toString();
+        obj["price"] = q.value("price").toDouble();
+        obj["discount"] = q.value("discountPercentage").toDouble();
+        list.append(obj);
+    }
+
+    return list;
+}
+
+//پاک کردن سبد خرید
+bool DatabaseManager::clearCart(int userId) {
+    QSqlQuery q;
+    q.prepare("DELETE FROM cart WHERE user_id = :u");
+    q.bindValue(":u", userId);
+    return q.exec();
+}
+
+//نهایی کردن خرید
+bool DatabaseManager::finalizePurchase(int userId) {
+    QSqlQuery q;
+    q.prepare("SELECT book_id FROM cart WHERE user_id = :u");
+    q.bindValue(":u", userId);
+
+    if (!q.exec())
+        return false;
+
+    const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    while (q.next()) {
+        int bookId = q.value(0).toInt();
+
+        QSqlQuery insert;
+        insert.prepare("INSERT INTO library (user_id, book_id, purchase_date) "
+                       "VALUES (:u, :b, :d)");
+        insert.bindValue(":u", userId);
+        insert.bindValue(":b", bookId);
+        insert.bindValue(":d", now);
+        insert.exec();
+    }
+
+    return clearCart(userId);
+}
+
 
