@@ -40,8 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     mediaPlayer->setLoops(QMediaPlayer::Infinite);
     mediaPlayer->play();
 
-    // ۳. شفاف‌سازی استک‌ویجت
-    ui->stackedWidget->setAttribute(Qt::WA_TranslucentBackground, true);
+    // شفاف‌سازی استک‌ویجت
     ui->stackedWidget->setStyleSheet("background: transparent; QWidget { background: transparent; }");
 
     LoginPage = new LoginWidget(this);
@@ -76,29 +75,16 @@ MainWindow::MainWindow(QWidget *parent)
         RegularUser *cur_user = dynamic_cast<RegularUser*>(user);
 
         if(cur_user != nullptr) {
-            UserDashboardPage = new UserDashboardWidget(cur_user, this);
+            UserDashboardPage = new UserDashboardWidget(cur_user, is_first_login, this);
+
             ui->stackedWidget->addWidget(UserDashboardPage);
+
             fadeToPage(Page::UserDashboardPageIndex);
         }
 
-        mediaPlayer->stop();
-
-        currentFramePixmap = QPixmap();
-        this->update();
-
-        QTimer::singleShot(3000, this, [this](){
-
-            mediaPlayer->setVideoOutput(nullptr);
-            mediaPlayer->setAudioOutput(nullptr);
-            delete mediaPlayer;
-            delete audioOutput;
-            delete videoSink;
-            mediaPlayer = nullptr;
-            audioOutput = nullptr;
-            videoSink = nullptr;
-
-        });
-
+            mediaPlayer->stop();
+            mediaPlayer->setSource(QUrl("qrc:/resources/dashboard.mp4"));
+            mediaPlayer->play();
     });
 }
 

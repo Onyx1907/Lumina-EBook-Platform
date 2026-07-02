@@ -37,7 +37,6 @@ private:
     Ui::MainWindow *ui;
     QMediaPlayer *mediaPlayer = nullptr;
     QAudioOutput *audioOutput = nullptr;
-    QWidget *bgWidget = nullptr;
     QVideoSink *videoSink = nullptr;
     QPixmap currentFramePixmap;
 
