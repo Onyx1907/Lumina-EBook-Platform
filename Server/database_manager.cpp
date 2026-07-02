@@ -20,7 +20,7 @@ bool DatabaseManager::initDatabase(){
 bool DatabaseManager::createTables(){
     QSqlQuery q;
 
-//--------------جدول کاربران--------------
+    //--------------جدول کاربران--------------
     QString createUsers =
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                 // شناسه یکتا و خودکار
@@ -37,7 +37,7 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create users failed: " << q.lastError().text();
         return false;
     }
-//--------------جدول کتاب ها--------------
+    //--------------جدول کتاب ها--------------
     QString createBooks =
         "CREATE TABLE IF NOT EXISTS books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                           //شناسه یکتا، کلید اصلی و افزایش خودکار برای هر کتاب
@@ -58,7 +58,7 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create books failed:" << q.lastError().text();
         return false;
     }
-//--------------جدول کامنت ها--------------
+    //--------------جدول کامنت ها--------------
     QString createComments =
         "CREATE TABLE IF NOT EXISTS comments ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                         //شناسه یکتا، کلید اصلی و افزایشی خودکار برای هر نظر
@@ -76,7 +76,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول سبد خرید--------------
+    //--------------جدول سبد خرید--------------
     QString createCart =
         "CREATE TABLE IF NOT EXISTS cart ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                        //شناسه یکتا و خودکار برای هر ردیف سبد خرید
@@ -90,7 +90,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتابخانه شخصی--------------
+    //--------------جدول کتابخانه شخصی--------------
     QString createLibrary =
         "CREATE TABLE IF NOT EXISTS library ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                             //شناسه یکتا و خودکار برای هر ردیف جدول
@@ -105,7 +105,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتاب های ذخیره شده--------------
+    //--------------جدول کتاب های ذخیره شده--------------
     QString createSavedBooks =
         "CREATE TABLE IF NOT EXISTS saved_books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                              //شناسه یکتا و خودکار برای هر ردیف
@@ -119,7 +119,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول قفسه ها--------------
+    //--------------جدول قفسه ها--------------
     QString createShelves =
         "CREATE TABLE IF NOT EXISTS shelves ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                         //شناسه یکتا و خودکار قفسه
@@ -132,7 +132,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول کتاب های قفسه--------------
+    //--------------جدول کتاب های قفسه--------------
     QString createShelfBooks =
         "CREATE TABLE IF NOT EXISTS shelf_books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                          //شناسه یکتا و خودکار برای هر ردیف اتصال
@@ -146,7 +146,7 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-//--------------جدول آخرین صفحه مطالعه شده--------------
+    //--------------جدول آخرین صفحه مطالعه شده--------------
     QString createReadingProgress =
         "CREATE TABLE IF NOT EXISTS reading_progress ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                             //شناسه یکتا و خودکار برای هر ردیف
@@ -182,7 +182,7 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     QString passwordHash = CryptoHelper::hashPassword(plainPassword);
     QByteArray encryptedAnswer =CryptoHelper::encryptData(securityAnswerPlain, NETWORK_SECRET_KEY);
 
-     QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     QSqlQuery q;
     q.prepare("INSERT INTO users "
@@ -197,7 +197,7 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     q.bindValue(":rd", now);
 
     if(!q.exec()){
-    qDebug() << "Register failed: " << q.lastError().text();
+        qDebug() << "Register failed: " << q.lastError().text();
         return false;
     }
     return true;
@@ -311,7 +311,7 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     obj["id"] = q.value("id").toInt();
     obj["title"] = q.value("title").toString();
     obj["author"] = q.value("author").toString();
-    obj["publisher_id"] = q.value("publisherId").toInt();
+    obj["publisher_id"] = q.value("publisher_id").toInt();
     obj["genre"] = q.value("genre").toString();
     obj["price"] = q.value("price").toDouble();
     obj["discount_percentage"] = q.value("discountPercentage").toDouble();
@@ -489,56 +489,36 @@ int DatabaseManager::getTotalPurchases(const QString& username){
 }
 
 
+
+
 //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
 
 
 //تابع جستوجوی کتاب
-QList<QJsonObject> DatabaseManager::searchBooks(const QString& title,const QString& author,const QString& publisherName) {
+QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QString& author, const QString& publisherName) {
     QList<QJsonObject> list;
-
-    // تعریف کوئری پایه برای دریافت اطلاعات کتاب ها به همراه نام ناشر
-    QString sql = "SELECT b.*, p.companyName AS publisherName "      // انتخاب تمام ستون های کتاب و تغییر نام ستون شرکت ناشر
-                  "FROM books b "                                       // b انتخاب جدول اصلی کتاب ها با نام مستعار
-                  "LEFT JOIN publishers p ON b.publisherId = p.id "     //اتصال به جدول ناشران بر اساس شناسه ناشر (حتی اگر کتاب ناشر نداشته باشد)
-                  "WHERE 1=1 ";                                         // ANDیک شرط همیشه درست برای تسهیل در چسباندن دینامیک شرط های بعدی با
-
-
-
-    // افزودن دینامیک(پویا)شرط عنوان کتاب به کوئری در صورت وجود ورودی
-    if (!title.isEmpty())                                                    //اگر کاربر در بخش عنوان کلمه "برنامه" را سرچ کند
-        sql += "AND b.title LIKE :title ";                                  //مقدار نهایی تبدیل به "%برنامه%" میشود
-                                                                           //اگر علامت % اول را حذف کنید (یعنی title + "%")
-                                                                          // فقط کتاب هایی پیدا میشوند که با کلمه "برنامه" شروع میشوند
-                                                                         //اگر علامت % آخر را حذف کنید (یعنی "%" + title)
-                                                                        //فقط کتاب هایی پیدا میشوند که به کلمه "برنامه" ختم میشوند
-
-
-    // افزودن دینامیک(پویا)شرط نویسنده به کوئری در صورت وجود ورودی
-    if (!author.isEmpty())
-        sql += "AND b.author LIKE :author ";
-
-    // افزودن دینامیک(پویا)شرط نام ناشر به کوئری در صورت وجود ورودی
-    if (!publisherName.isEmpty())
-        sql += "AND p.companyName LIKE :publisherName ";
-
     QSqlQuery q;
-    q.prepare(sql);
 
-    if (!title.isEmpty())
-        q.bindValue(":title", "%" + title + "%");
-    if (!author.isEmpty())
-        q.bindValue(":author", "%" + author + "%");
-    if (!publisherName.isEmpty())
-        q.bindValue(":publisherName", "%" + publisherName + "%");
+    QString queryStr = "SELECT b.id, b.title, b.author, b.genre, b.description, b.price, "
+                       "b.discountPercent, b.discountAmount, b.coverImagePath, b.pdfPath, b.publisher_id, b.isActive "
+                       "FROM books b "
+                       "JOIN users u ON b.publisher_id = u.id "
+                       "WHERE b.isActive = 1";
 
-    if (!q.exec())
-        return list;
+    if (!title.isEmpty()) queryStr += " AND b.title LIKE :title";
+    if (!author.isEmpty()) queryStr += " AND b.author LIKE :author";
+    if (!publisherName.isEmpty()) queryStr += " AND u.username LIKE :pub";
+
+    q.prepare(queryStr);
+    if (!title.isEmpty()) q.bindValue(":title", "%" + title + "%");
+    if (!author.isEmpty()) q.bindValue(":author", "%" + author + "%");
+    if (!publisherName.isEmpty()) q.bindValue(":pub", "%" + publisherName + "%");
+
+    if (!q.exec()) return list;
 
     while (q.next()) {
-        QJsonObject obj = bookFromQuery(q);
-        obj["publisher_name"] = q.value("publisherName").toString();
-        list.append(obj);
+        // استفاده از همان تابع مپینگ استاندارد شده
+        list.append(bookFromQuery(q));
     }
-
     return list;
 }
