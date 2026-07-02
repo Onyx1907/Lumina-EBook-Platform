@@ -97,7 +97,6 @@
     }
   }
 ,
-,
   "5_SET_FAVORITE_GENRES": {
     "client_request": {
       "action": "SET_FAVORITE_GENRES",
@@ -111,16 +110,10 @@
       "status": "SUCCESS",
       "message": ".ژانرهای مورد علاقه با موفقیت ذخیره شدند"
     },
-"if count genres <1 or >3 :"
-{
-    "action": "SET_FAVORITE_GENRES_RESPONSE",
-    "status": "ERROR",
-    "message": ".تعداد ژانر باید بین ۱ تا ۳ باشد"
-},
     "server_response_error": {
       "action": "SET_FAVORITE_GENRES_RESPONSE",
       "status": "ERROR",
-      "message": ".خطا در ذخیره ژانرهای مورد علاقه"
+      "message": "تعداد ژانر باید بین ۱ تا ۳ باشد. یا .خطا در ذخیره ژانرهای مورد علاقه"
     }
   },
   "6_GET_RECOMMENDED_BOOKS": {
@@ -134,7 +127,13 @@
       "action": "GET_RECOMMENDED_BOOKS_RESPONSE",
       "status": "SUCCESS",
       "books": [
-        { "book_id": 1, "title": "Book Title", "author": "Author Name" }
+        {
+          "book_id": 1,
+          "title": "Book Title",
+          "author": "Author Name",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
+          "pdf_base64": ""
+        }
       ]
     }
   },
@@ -149,7 +148,14 @@
       "action": "GET_BOOKS_BY_GENRE_RESPONSE",
       "status": "SUCCESS",
       "books": [
-        { "book_id": 2, "title": "Another Book", "author": "Author Name", "price": 15000 }
+        {
+          "book_id": 2,
+          "title": "Another Book",
+          "author": "Author Name",
+          "price": 15000,
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
+          "pdf_base64": ""
+        }
       ]
     }
   },
@@ -161,7 +167,13 @@
       "action": "GET_POPULAR_BOOKS_RESPONSE",
       "status": "SUCCESS",
       "books": [
-        { "book_id": 3, "title": "Popular Book", "author": "Author Name" }
+        {
+          "book_id": 3,
+          "title": "Popular Book",
+          "author": "Author Name",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
+          "pdf_base64": ""
+        }
       ]
     }
   },
@@ -173,7 +185,13 @@
       "action": "GET_NEW_BOOKS_RESPONSE",
       "status": "SUCCESS",
       "books": [
-        { "book_id": 4, "title": "New Book", "author": "Author Name" }
+        {
+          "book_id": 4,
+          "title": "New Book",
+          "author": "Author Name",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
+          "pdf_base64": ""
+        }
       ]
     }
   },
@@ -185,7 +203,13 @@
       "action": "GET_BESTSELLERS_RESPONSE",
       "status": "SUCCESS",
       "books": [
-        { "book_id": 5, "title": "Bestseller Book", "author": "Author Name" }
+        {
+          "book_id": 5,
+          "title": "Bestseller Book",
+          "author": "Author Name",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
+          "pdf_base64": ""
+        }
       ]
     }
   },
@@ -197,7 +221,14 @@
       "action": "GET_FREE_BOOKS_RESPONSE",
       "status": "SUCCESS",
       "books": [
-        { "book_id": 6, "title": "Free Book", "author": "Author Name", "price": 0 }
+        {
+          "book_id": 6,
+          "title": "Free Book",
+          "author": "Author Name",
+          "price": 0,
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
+          "pdf_base64": ""
+        }
       ]
     }
   },
@@ -274,11 +305,14 @@
       "action": "GET_PURCHASE_HISTORY_RESPONSE",
       "status": "SUCCESS",
       "history": [
-        { "purchase_id": 5, "book_title": "Book Name", "date": "2026-06-29" }
+        {
+          "purchase_id": 5,
+          "book_title": "Book Name",
+          "date": "2026-06-29"
+        }
       ]
     }
-  }
-,
+  },
   "16_SEARCH_BOOKS": {
     "client_request": {
       "action": "SEARCH_BOOKS",
@@ -297,16 +331,11 @@
           "title": "شاهنامه",
           "author": "فردوسی",
           "publisher_name": "انتشارات طوس",
-          "price": 250000
+          "price": 250000,
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
+          "pdf_base64": ""
         }
-      ],
-      "message": ".نتایج جستجو با موفقیت دریافت شد"
-    },
-    "server_response_empty": {
-      "action": "SEARCH_BOOKS_RESPONSE",
-      "status": "SUCCESS",
-      "books": [],
-      "message": ".هیچ کتابی با معیارهای جستجو یافت نشد"
+      ]
     }
   }
 ,
