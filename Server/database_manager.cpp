@@ -311,7 +311,7 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     obj["id"] = q.value("id").toInt();
     obj["title"] = q.value("title").toString();
     obj["author"] = q.value("author").toString();
-    obj["publisher_id"] = q.value("publisherId").toInt();
+    obj["publisher_id"] = q.value("publisher_id").toInt();
     obj["genre"] = q.value("genre").toString();
     obj["price"] = q.value("price").toDouble();
     obj["discount_percentage"] = q.value("discountPercentage").toDouble();
@@ -487,5 +487,3 @@ int DatabaseManager::getTotalPurchases(const QString& username){
         return 0;
     return q.value(0).toInt();
 }
-
-
