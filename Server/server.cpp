@@ -148,6 +148,12 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     if (action == "FINALIZE_PURCHASE") return handleFinalizePurchase(socket, data);
 
 
+    //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
+
+
+
+
+
 }
 
 //***************************************************احراز هویت مرکزی******************************************************
@@ -791,3 +797,9 @@ void Server::handleFinalizePurchase(QTcpSocket* socket, const QJsonObject& data)
 
     sendJson(socket, resp);
 }
+
+//*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
+
+
+
+
