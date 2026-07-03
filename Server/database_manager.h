@@ -10,6 +10,10 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QList>
+#include <QFile>
+#include <QDir>
+#include <QByteArray>
+
 
 
 #include "constants.h"

@@ -330,7 +330,7 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     obj["id"] = q.value("id").toInt();
     obj["title"] = q.value("title").toString();
     obj["author"] = q.value("author").toString();
-    obj["publisher_id"] = q.value("publisherId").toInt();
+    obj["publisher_id"] = q.value("publisher_id").toInt();
     obj["genre"] = q.value("genre").toString();
     obj["price"] = q.value("price").toDouble();
     obj["discount_percentage"] = q.value("discountPercentage").toDouble();
@@ -512,55 +512,34 @@ int DatabaseManager::getTotalPurchases(const QString& username){
 
 
 //تابع جستوجوی کتاب
-QList<QJsonObject> DatabaseManager::searchBooks(const QString& title,const QString& author,const QString& publisherName) {
+QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QString& author, const QString& publisherName) {
     QList<QJsonObject> list;
-
-    // تعریف کوئری پایه برای دریافت اطلاعات کتاب ها به همراه نام ناشر
-    QString sql = "SELECT b.*, p.companyName AS publisherName "      // انتخاب تمام ستون های کتاب و تغییر نام ستون شرکت ناشر
-                  "FROM books b "                                       // b انتخاب جدول اصلی کتاب ها با نام مستعار
-                  "LEFT JOIN publishers p ON b.publisherId = p.id "     //اتصال به جدول ناشران بر اساس شناسه ناشر (حتی اگر کتاب ناشر نداشته باشد)
-                  "WHERE 1=1 ";                                         // ANDیک شرط همیشه درست برای تسهیل در چسباندن دینامیک شرط های بعدی با
-
-
-
-    // افزودن دینامیک(پویا)شرط عنوان کتاب به کوئری در صورت وجود ورودی
-    if (!title.isEmpty())                                                    //اگر کاربر در بخش عنوان کلمه "برنامه" را سرچ کند
-        sql += "AND b.title LIKE :title ";                                  //مقدار نهایی تبدیل به "%برنامه%" میشود
-    //اگر علامت % اول را حذف کنید (یعنی title + "%")
-    // فقط کتاب هایی پیدا میشوند که با کلمه "برنامه" شروع میشوند
-    //اگر علامت % آخر را حذف کنید (یعنی "%" + title)
-    //فقط کتاب هایی پیدا میشوند که به کلمه "برنامه" ختم میشوند
-
-
-    // افزودن دینامیک(پویا)شرط نویسنده به کوئری در صورت وجود ورودی
-    if (!author.isEmpty())
-        sql += "AND b.author LIKE :author ";
-
-    // افزودن دینامیک(پویا)شرط نام ناشر به کوئری در صورت وجود ورودی
-    if (!publisherName.isEmpty())
-        sql += "AND p.companyName LIKE :publisherName ";
-
     QSqlQuery q;
-    q.prepare(sql);
 
-    if (!title.isEmpty())
-        q.bindValue(":title", "%" + title + "%");
-    if (!author.isEmpty())
-        q.bindValue(":author", "%" + author + "%");
-    if (!publisherName.isEmpty())
-        q.bindValue(":publisherName", "%" + publisherName + "%");
+    QString queryStr = "SELECT b.id, b.title, b.author, b.genre, b.description, b.price, "
+                       "b.discountPercent, b.discountAmount, b.coverImagePath, b.pdfPath, b.publisher_id, b.isActive "
+                       "FROM books b "
+                       "JOIN users u ON b.publisher_id = u.id "
+                       "WHERE b.isActive = 1";
 
-    if (!q.exec())
-        return list;
+    if (!title.isEmpty()) queryStr += " AND b.title LIKE :title";
+    if (!author.isEmpty()) queryStr += " AND b.author LIKE :author";
+    if (!publisherName.isEmpty()) queryStr += " AND u.username LIKE :pub";
+
+    q.prepare(queryStr);
+    if (!title.isEmpty()) q.bindValue(":title", "%" + title + "%");
+    if (!author.isEmpty()) q.bindValue(":author", "%" + author + "%");
+    if (!publisherName.isEmpty()) q.bindValue(":pub", "%" + publisherName + "%");
+
+    if (!q.exec()) return list;
 
     while (q.next()) {
-        QJsonObject obj = bookFromQuery(q);
-        obj["publisher_name"] = q.value("publisherName").toString();
-        list.append(obj);
+        // استفاده از همان تابع مپینگ استاندارد شده
+        list.append(bookFromQuery(q));
     }
-
     return list;
 }
+
 
 //*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
 
