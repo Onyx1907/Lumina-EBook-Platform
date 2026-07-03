@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <regularuser.h>
+#include <genreselectionwidget.h>
+#include <userhomewidget.h>
 
 
 namespace Ui {
@@ -23,6 +25,20 @@ protected:
 private:
     Ui::UserDashboardWidget *ui;
     RegularUser *user;
+
+    GenreSelectionWidget  *GenreSelectionPage;
+    UserHomeWidget *UserHomePage;
+
+    void fadeToPage(int pageIndex);
+
+    enum Page{
+        GenreSelectionPageIndex = 0,
+        UserHomePageIndex = 1
+    };
+
 };
+
+
+
 
 #endif // USERDASHBOARDWIDGET_H

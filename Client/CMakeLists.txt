@@ -35,6 +35,8 @@ qt_add_executable(LuminaClient
     clientnetworkmanager.h clientnetworkmanager.cpp
 
     userdashboardwidget.h userdashboardwidget.cpp userdashboardwidget.ui
+    user/genreselectionwidget.h user/genreselectionwidget.cpp user/genreselectionwidget.ui
+    user/userhomewidget.h user/userhomewidget.cpp user/userhomewidget.ui
 
 
 )
@@ -54,6 +56,10 @@ set_target_properties(LuminaClient PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+
+target_include_directories(LuminaClient PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/user)
 
 include(GNUInstallDirs)
 install(TARGETS LuminaClient

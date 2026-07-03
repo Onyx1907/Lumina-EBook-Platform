@@ -179,7 +179,7 @@ QWidget QPushButton:checked:hover {
       <bool>false</bool>
      </property>
      <attribute name="buttonGroup">
-      <string notr="true">buttonGroup</string>
+      <string notr="true">sidebar_buttonGroup</string>
      </attribute>
     </widget>
     <widget class="QPushButton" name="setting_pushButton">
@@ -217,7 +217,7 @@ QWidget QPushButton:checked:hover {
       <bool>false</bool>
      </property>
      <attribute name="buttonGroup">
-      <string notr="true">buttonGroup</string>
+      <string notr="true">sidebar_buttonGroup</string>
      </attribute>
     </widget>
     <widget class="QPushButton" name="profile_pushButton">
@@ -255,7 +255,7 @@ QWidget QPushButton:checked:hover {
       <bool>false</bool>
      </property>
      <attribute name="buttonGroup">
-      <string notr="true">buttonGroup</string>
+      <string notr="true">sidebar_buttonGroup</string>
      </attribute>
     </widget>
     <widget class="QPushButton" name="search_pushButton">
@@ -293,7 +293,7 @@ QWidget QPushButton:checked:hover {
       <bool>false</bool>
      </property>
      <attribute name="buttonGroup">
-      <string notr="true">buttonGroup</string>
+      <string notr="true">sidebar_buttonGroup</string>
      </attribute>
     </widget>
     <widget class="QPushButton" name="cart_pushButton">
@@ -331,7 +331,7 @@ QWidget QPushButton:checked:hover {
       <bool>false</bool>
      </property>
      <attribute name="buttonGroup">
-      <string notr="true">buttonGroup</string>
+      <string notr="true">sidebar_buttonGroup</string>
      </attribute>
     </widget>
    </widget>
@@ -376,8 +376,9 @@ QWidget QPushButton:checked:hover {
     border-bottom-right-radius: 18px;
 }</string>
     </property>
-    <widget class="QWidget" name="page"/>
-    <widget class="QWidget" name="page_2"/>
+    <property name="currentIndex">
+     <number>-1</number>
+    </property>
    </widget>
   </widget>
  </widget>
@@ -386,6 +387,6 @@ QWidget QPushButton:checked:hover {
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
+  <buttongroup name="sidebar_buttonGroup"/>
  </buttongroups>
 </ui>

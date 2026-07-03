@@ -8,5 +8,11 @@
         <file>resources/profile_icon.svg</file>
         <file>resources/search_icon.svg</file>
         <file>resources/cart_icon.svg</file>
+        <file>resources/genres/ficition_genre.svg</file>
+        <file>resources/genres/Psychology_genre.svg</file>
+        <file>resources/genres/educational_genre.svg</file>
+        <file>resources/genres/history_genre.svg</file>
+        <file>resources/genres/scifi_genre.svg</file>
+        <file>resources/genres/biography_genre.svg</file>
     </qresource>
 </RCC>
