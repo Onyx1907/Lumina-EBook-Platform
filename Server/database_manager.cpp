@@ -25,18 +25,23 @@ bool DatabaseManager::createTables(){
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                 // شناسه یکتا و خودکار
         "username TEXT UNIQUE NOT NULL,"                       // نام کاربری (یکتا و اجباری)
-        "password_hash TEXT NOT NULL,"                        // هش رمز عبور (عدم ذخیره متن خام)
-        "role TEXT NOT NULL,"                                // نقش کاربر در سیستم
-        "is_blocked INTEGER NOT NULL DEFAULT 0,"            // وضعیت مسدود بودن (پیش فرض: فعال)
-        "security_question TEXT,"                          // سوال امنیتی برای بازیابی رمز
-        "security_answer_encrypted BLOB,"                  // پاسخ امنیتی رمزنگاری شده به صورت باینری
-        "registration_date TEXT NOT NULL,"                // تاریخ ثبت نام
-        "first_login INTEGER DEFAULT 1"
+        "password_hash TEXT NOT NULL,"                        //هش رمز عبور (عدم ذخیره متن خام)
+        "role TEXT NOT NULL,"                                  // نقش کاربر در سیستم
+        "is_blocked INTEGER NOT NULL DEFAULT 0,"               // وضعیت مسدود بودن (پیش فرض: فعال)
+        "security_question TEXT,"                              // سوال امنیتی برای بازیابی رمز
+        "security_answer_encrypted BLOB,"                      // پاسخ امنیتی رمزنگاری شده به صورت باینری
+        "registration_date TEXT NOT NULL,"                     // تاریخ ثبت نام
+        "first_login INTEGER DEFAULT 1,"                       // وضعیت اولین ورود کاربر (پیش‌فرض ۱ برای اولین ورود)
+        "favorite_genres TEXT,"                                // لیست ژانرهای مورد علاقه کاربر به صورت متن
+        "name TEXT,"                                           // برای ماژول پروفایل اضافه شد (نام کاربر)
+        "email TEXT"                                           // برای ماژول پروفایل اضافه شد (ایمیل کاربر)
         ");";
+
     if(!q.exec(createUsers)){
         qDebug() << "Create users failed: " << q.lastError().text();
         return false;
     }
+
     //--------------جدول کتاب ها--------------
     QString createBooks =
         "CREATE TABLE IF NOT EXISTS books ("
@@ -183,6 +188,14 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     QByteArray encryptedAnswer =CryptoHelper::encryptData(securityAnswerPlain, NETWORK_SECRET_KEY);
 
     QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QString roleStr;
+    if (role == UserRole::Admin) {
+        roleStr = "Admin";
+    } else if (role == UserRole::Publisher) {
+        roleStr = "Publisher";
+    } else {
+        roleStr = "RegularUser";
+    }
 
     QSqlQuery q;
     q.prepare("INSERT INTO users "
@@ -191,7 +204,7 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
 
     q.bindValue(":u", username);
     q.bindValue(":ph", passwordHash);
-    q.bindValue(":r", QString::number(static_cast<int>(role)));
+    q.bindValue(":r", roleStr);
     q.bindValue(":sq", securityQuestion);
     q.bindValue(":sa", encryptedAnswer);
     q.bindValue(":rd", now);
@@ -269,6 +282,14 @@ bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& userna
 //*********************************************پنل کاربر عادی ( ماژول 1 )****************************************************
 
 
+bool DatabaseManager::setFirstLoginFalseByUsername(const QString& username)
+{
+    QSqlQuery q;
+    q.prepare("UPDATE users SET first_login = 0 WHERE username = :u");
+    q.bindValue(":u", username);
+    return q.exec();
+}
+
 //تایید موفقیت یا شکست عملیات ذخیره لیست ژانرها برای یک کاربر خاص
 bool DatabaseManager::setFavoriteGenres(const QString& username, const QStringList& genres){
     QJsonArray arr;
@@ -314,9 +335,10 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     obj["publisher_id"] = q.value("publisher_id").toInt();
     obj["genre"] = q.value("genre").toString();
     obj["price"] = q.value("price").toDouble();
-    obj["discount_percentage"] = q.value("discountPercentage").toDouble();
-    obj["pdf_path"] = q.value("pdfPath").toString();
+    obj["discount_percentage"] = q.value("discountPercent").toDouble();
+    obj["discount_amount"] = q.value("discountAmount").toDouble();
     obj["cover_image_path"] = q.value("coverImagePath").toString();
+    obj["pdf_path"] = q.value("pdfPath").toString();
     return obj;
 }
 
@@ -434,7 +456,7 @@ bool DatabaseManager::updateUserProfile(const QString& username, const QString& 
 // فرآیند احراز هویت رمز عبور فعلی و ثبت رمز عبور جدید به صورت هش شده
 bool DatabaseManager::changePassword(const QString& username,const QString& oldPasswordPlain,const QString& newPasswordPlain){
     QSqlQuery q;
-    q.prepare("SELECT passwordHash FROM users WHERE username = :u");
+    q.prepare("SELECT password_hash FROM users WHERE username = :u");
     q.bindValue(":u", username);
     if (!q.exec() || !q.next())
         return false;
@@ -445,7 +467,7 @@ bool DatabaseManager::changePassword(const QString& username,const QString& oldP
 
     const QString newHash = CryptoHelper::hashPassword(newPasswordPlain);
     QSqlQuery q2;
-    q2.prepare("UPDATE users SET passwordHash = :p WHERE username = :u");
+    q2.prepare("UPDATE users SET password_hash = :p WHERE username = :u");
     q2.bindValue(":p", newHash);
     q2.bindValue(":u", username);
     return q2.exec();
