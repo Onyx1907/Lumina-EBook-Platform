@@ -25,14 +25,18 @@ bool DatabaseManager::createTables(){
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                 // شناسه یکتا و خودکار
         "username TEXT UNIQUE NOT NULL,"                       // نام کاربری (یکتا و اجباری)
-        "password_hash TEXT NOT NULL,"                        // هش رمز عبور (عدم ذخیره متن خام)
-        "role TEXT NOT NULL,"                                // نقش کاربر در سیستم
-        "is_blocked INTEGER NOT NULL DEFAULT 0,"            // وضعیت مسدود بودن (پیش فرض: فعال)
-        "security_question TEXT,"                          // سوال امنیتی برای بازیابی رمز
-        "security_answer_encrypted BLOB,"                  // پاسخ امنیتی رمزنگاری شده به صورت باینری
-        "registration_date TEXT NOT NULL,"                // تاریخ ثبت نام
-        "first_login INTEGER DEFAULT 1"
+        "password_hash TEXT NOT NULL,"                        //هش رمز عبور (عدم ذخیره متن خام)
+        "role TEXT NOT NULL,"                                  // نقش کاربر در سیستم
+        "is_blocked INTEGER NOT NULL DEFAULT 0,"               // وضعیت مسدود بودن (پیش فرض: فعال)
+        "security_question TEXT,"                              // سوال امنیتی برای بازیابی رمز
+        "security_answer_encrypted BLOB,"                      // پاسخ امنیتی رمزنگاری شده به صورت باینری
+        "registration_date TEXT NOT NULL,"                     // تاریخ ثبت نام
+        "first_login INTEGER DEFAULT 1,"                       // وضعیت اولین ورود کاربر (پیش‌فرض ۱ برای اولین ورود)
+        "favorite_genres TEXT,"                                // لیست ژانرهای مورد علاقه کاربر به صورت متن
+        "name TEXT,"                                           // برای ماژول پروفایل اضافه شد (نام کاربر)
+        "email TEXT"                                           // برای ماژول پروفایل اضافه شد (ایمیل کاربر)
         ");";
+
     if(!q.exec(createUsers)){
         qDebug() << "Create users failed: " << q.lastError().text();
         return false;
@@ -202,6 +206,14 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     QByteArray encryptedAnswer =CryptoHelper::encryptData(securityAnswerPlain, NETWORK_SECRET_KEY);
 
     QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QString roleStr;
+    if (role == UserRole::Admin) {
+        roleStr = "Admin";
+    } else if (role == UserRole::Publisher) {
+        roleStr = "Publisher";
+    } else {
+        roleStr = "RegularUser";
+    }
 
     QSqlQuery q;
     q.prepare("INSERT INTO users "
@@ -210,7 +222,7 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
 
     q.bindValue(":u", username);
     q.bindValue(":ph", passwordHash);
-    q.bindValue(":r", QString::number(static_cast<int>(role)));
+    q.bindValue(":r", roleStr);
     q.bindValue(":sq", securityQuestion);
     q.bindValue(":sa", encryptedAnswer);
     q.bindValue(":rd", now);
@@ -288,6 +300,14 @@ bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& userna
 //*********************************************پنل کاربر عادی ( ماژول 1 )****************************************************
 
 
+bool DatabaseManager::setFirstLoginFalseByUsername(const QString& username)
+{
+    QSqlQuery q;
+    q.prepare("UPDATE users SET first_login = 0 WHERE username = :u");
+    q.bindValue(":u", username);
+    return q.exec();
+}
+
 //تایید موفقیت یا شکست عملیات ذخیره لیست ژانرها برای یک کاربر خاص
 bool DatabaseManager::setFavoriteGenres(const QString& username, const QStringList& genres){
     QJsonArray arr;
@@ -333,9 +353,10 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     obj["publisher_id"] = q.value("publisher_id").toInt();
     obj["genre"] = q.value("genre").toString();
     obj["price"] = q.value("price").toDouble();
-    obj["discount_percentage"] = q.value("discountPercentage").toDouble();
-    obj["pdf_path"] = q.value("pdfPath").toString();
+    obj["discount_percentage"] = q.value("discountPercent").toDouble();
+    obj["discount_amount"] = q.value("discountAmount").toDouble();
     obj["cover_image_path"] = q.value("coverImagePath").toString();
+    obj["pdf_path"] = q.value("pdfPath").toString();
     return obj;
 }
 
@@ -453,7 +474,7 @@ bool DatabaseManager::updateUserProfile(const QString& username, const QString& 
 // فرآیند احراز هویت رمز عبور فعلی و ثبت رمز عبور جدید به صورت هش شده
 bool DatabaseManager::changePassword(const QString& username,const QString& oldPasswordPlain,const QString& newPasswordPlain){
     QSqlQuery q;
-    q.prepare("SELECT passwordHash FROM users WHERE username = :u");
+    q.prepare("SELECT password_hash FROM users WHERE username = :u");
     q.bindValue(":u", username);
     if (!q.exec() || !q.next())
         return false;
@@ -464,7 +485,7 @@ bool DatabaseManager::changePassword(const QString& username,const QString& oldP
 
     const QString newHash = CryptoHelper::hashPassword(newPasswordPlain);
     QSqlQuery q2;
-    q2.prepare("UPDATE users SET passwordHash = :p WHERE username = :u");
+    q2.prepare("UPDATE users SET password_hash = :p WHERE username = :u");
     q2.bindValue(":p", newHash);
     q2.bindValue(":u", username);
     return q2.exec();
@@ -539,7 +560,6 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
     }
     return list;
 }
-
 
 //*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
 
@@ -831,5 +851,107 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
 
     return list;
 }
+
+//+++++قفسه ها+++++
+
+//ایجاد قفسه
+bool DatabaseManager::createShelf(int userId, const QString& name) {
+    QSqlQuery q;
+    q.prepare("INSERT INTO shelves (user_id, name) VALUES (:u, :n)");
+    q.bindValue(":u", userId);
+    q.bindValue(":n", name);
+    return q.exec();
+}
+
+//تغییر نام قفسه
+bool DatabaseManager::renameShelf(int shelfId, const QString& newName) {
+    QSqlQuery q;
+    q.prepare("UPDATE shelves SET name = :n WHERE id = :id");
+    q.bindValue(":n", newName);
+    q.bindValue(":id", shelfId);
+    return q.exec();
+}
+
+//حذف قفسه
+bool DatabaseManager::deleteShelf(int shelfId) {
+    QSqlQuery q1;
+    q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :id");
+    q1.bindValue(":id", shelfId);
+    q1.exec();
+
+    QSqlQuery q2;
+    q2.prepare("DELETE FROM shelves WHERE id = :id");
+    q2.bindValue(":id", shelfId);
+    return q2.exec();
+}
+
+//افزودن کتاب به قفسه
+bool DatabaseManager::addBookToShelf(int shelfId, int bookId) {
+    QSqlQuery q;
+    q.prepare("INSERT INTO shelf_books (shelf_id, book_id) VALUES (:s, :b)");
+    q.bindValue(":s", shelfId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+//انتقال کتاب بین قفسه ها
+bool DatabaseManager::moveBookBetweenShelves(int fromShelfId, int toShelfId, int bookId) {
+    QSqlQuery q1;
+    q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
+    q1.bindValue(":s", fromShelfId);
+    q1.bindValue(":b", bookId);
+    q1.exec();
+
+    return addBookToShelf(toShelfId, bookId);
+}
+
+//گرفتن لیست قفسه ها
+QList<QJsonObject> DatabaseManager::getShelves(int userId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT id, name FROM shelves WHERE user_id = :u");
+    q.bindValue(":u", userId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject shelf;
+        shelf["id"] = q.value("id").toInt();
+        shelf["name"] = q.value("name").toString();
+        list.append(shelf);
+    }
+
+    return list;
+}
+
+//گرفتن لیستی از کتاب های یک قفسه
+QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath "
+              "FROM shelf_books sb "
+              "JOIN books b ON sb.book_id = b.id "
+              "WHERE sb.shelf_id = :s");
+    q.bindValue(":s", shelfId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject book;
+        book["id"] = q.value("id").toInt();
+        book["title"] = q.value("title").toString();
+        book["author"] = q.value("author").toString();
+        book["genre"] = q.value("genre").toString();
+        book["cover"] = q.value("coverImagePath").toString();
+        list.append(book);
+    }
+
+    return list;
+}
+
 
 
