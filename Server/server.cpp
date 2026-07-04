@@ -53,13 +53,12 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     //***************************************************احراز هویت مرکزی******************************************************
 
     if (action == "LOGIN") {
-        handleLogin(socket, data);
-    } else if (action == "REGISTER") {
-        handleRegister(socket, data);
-    } else if (action == "FORGOT_PASSWORD") {
-        handleForgotPassword(socket, data);
+        handleLogin(socket, data);return;
+    } if (action == "REGISTER") {
+        handleRegister(socket, data);return;
+    } if (action == "FORGOT_PASSWORD") {
+        handleForgotPassword(socket, data);return;
     }
-
     //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
     if (action == "SET_FAVORITE_GENRES") {
         handleSetFavoriteGenres(socket, data);
@@ -157,9 +156,7 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
 
     sendJson(socket, resp);
 
-    if (firstLogin == 1) {
-        dbManager.setFirstLoginFalse(userId);
-    }
+
 }
 
 // مدیریت فرآیند ثبت نام کاربر جدید
@@ -199,11 +196,11 @@ void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
     QString step = data.value("step").toString();
 
     QJsonObject resp;
+    resp["action"] = "FORGOT_PASSWORD_RESPONSE"; // مقدار اکشن را در همان ابتدا ثابت می‌گذاریم تا در هر دو حالت ارسال شود
 
     if (step == "REQUEST_QUESTION") {
         QString username = data.value("username").toString();
         QString question;
-        resp["action"] = "FORGOT_PASSWORD_RESPONSE";
 
         if (!dbManager.getSecurityQuestion(username, question)) {
             resp["status"] = "FAILED";
@@ -219,9 +216,7 @@ void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
         QString answerPlain = data.value("security_answer").toString();
         QString newPasswordPlain = data.value("new_password").toString();
 
-        resp["action"] = "FORGOT_PASSWORD_RESPONSE";
-
-        if (!dbManager.verifySecurityAnswerAndResetPassword(username,answerPlain,newPasswordPlain)) {
+        if (!dbManager.verifySecurityAnswerAndResetPassword(username, answerPlain, newPasswordPlain)) {
             resp["status"] = "FAILED";
             resp["message"] = ".پاسخ امنیتی نادرست است";
         }
@@ -254,7 +249,7 @@ void Server::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data
         QJsonObject resp;
         resp["action"] = "SET_FAVORITE_GENRES_RESPONSE";
         resp["status"] = "ERROR";
-        resp["message"] = "تعداد ژانر باید بین ۱ تا ۳ باشد.";
+        resp["message"] = ".تعداد ژانر باید بین ۱ تا ۳ باشد";
         sendJson(socket, resp);
         return;
     }
@@ -265,22 +260,19 @@ void Server::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data
 
     bool ok = dbManager.setFavoriteGenres(username, genres);
 
-    //اگر ذخیره ژانر موفقیت آمیز بود، وضعیت اولین ورود را صفر میکنیم
     if (ok) {
-        bool updateLoginOk = dbManager.setFirstLoginFalseByUsername(username);
-        if (!updateLoginOk) {
-            qDebug() << "Warning: Failed to update first_login status for user:" << username;
-        }
+        dbManager.setFirstLoginFalseByUsername(username);
     }
 
     QJsonObject resp;
     resp["action"] = "SET_FAVORITE_GENRES_RESPONSE";
     resp["status"] = ok ? "SUCCESS" : "ERROR";
-    resp["message"] = ok ? "ژانرهای مورد علاقه با موفقیت ذخیره شدند."
-                         : "خطا در ذخیره ژانرهای مورد علاقه.";
+    resp["message"] = ok ? ".ژانرهای مورد علاقه با موفقیت ذخیره شدند"
+                         : ".خطا در ذخیره ژانرهای مورد علاقه";
 
     sendJson(socket, resp);
 }
+
 // دریافت لیست کتاب های پیشنهادی بر اساس ژانرهای مورد علاقه کاربر
 void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data) {
     const QString username = data.value("username").toString();
@@ -375,7 +367,7 @@ void Server::handleGetPopularBooks(QTcpSocket* socket) {
     sendJson(socket, resp);
 }
 
-//دریافت لیست جدیدترین کتاب‌های اضافه شده
+//دریافت لیست جدیدترین کتاب های اضافه شده
 void Server::handleGetNewBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getNewBooks();
     QJsonArray arr;
@@ -433,7 +425,7 @@ void Server::handleGetBestsellers(QTcpSocket* socket) {
     sendJson(socket, resp);
 }
 
-//دریافت لیست کتاب‌های رایگان
+//دریافت لیست کتاب های رایگان
 void Server::handleGetFreeBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getFreeBooks();
     QJsonArray arr;
