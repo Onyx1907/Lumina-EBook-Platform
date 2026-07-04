@@ -755,6 +755,81 @@ bool DatabaseManager::finalizePurchase(int userId) {
 //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
 
 
+//+++++کتاب های خریداری شده+++++
 
+//دیدن کتاب های خریده شده
+QList<QJsonObject> DatabaseManager::getPurchasedBooks(int userId) {
+    QList<QJsonObject> list;
+    QSqlQuery q;
+
+    // انتخاب دقیق فیلدهای مسیر فیزیکی کتاب از دیتابیس
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.price, b.pdfPath, b.coverImagePath "
+              "FROM library l "
+              "JOIN books b ON l.book_id = b.id "
+              "WHERE l.user_id = :u");
+    q.bindValue(":u", userId);
+
+    if (!q.exec()) {
+        qDebug() << "getPurchasedBooks failed:" << q.lastError().text();
+        return list;
+    }
+
+    while (q.next()) {
+        QJsonObject o;
+        o["id"] = q.value("id").toInt();
+        o["title"] = q.value("title").toString();
+        o["author"] = q.value("author").toString();
+        o["genre"] = q.value("genre").toString();
+        o["price"] = q.value("price").toDouble();
+        o["pdfPath"] = q.value("pdfPath").toString();                 // فیلد فیزیکی هارد سرور
+        o["coverImagePath"] = q.value("coverImagePath").toString();   // فیلد فیزیکی هارد سرور
+        list.append(o);
+    }
+    return list;
+}
+
+//+++++کتاب های ذخیره شده+++++
+
+//ذخیره کتاب
+bool DatabaseManager::saveBook(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("INSERT INTO saved_books (user_id, book_id) VALUES (:u, :b)");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+//حذف کتاب ذخیره شده
+bool DatabaseManager::removeSavedBook(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("DELETE FROM saved_books WHERE user_id = :u AND book_id = :b");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+//دیدن لیستی از کتاب های ذخیره شده
+QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT b.id, b.title, b.author, b.genre "
+              "FROM saved_books s "
+              "JOIN books b ON s.book_id = b.id "
+              "WHERE s.user_id = :u");
+    q.bindValue(":u", userId);
+    q.exec();
+
+    while (q.next()) {
+        QJsonObject o;
+        o["id"] = q.value("id").toInt();
+        o["title"] = q.value("title").toString();
+        o["author"] = q.value("author").toString();
+        o["genre"] = q.value("genre").toString();
+        list.append(o);
+    }
+
+    return list;
+}
 
 

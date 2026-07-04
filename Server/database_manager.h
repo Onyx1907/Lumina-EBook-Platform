@@ -96,6 +96,13 @@ public:
     //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
 
 
+    //+++++کتاب های خریداری شده+++++
+    QList<QJsonObject> getPurchasedBooks(int userId);
+
+    //+++++کتاب های ذخیره شده+++++
+    bool saveBook(int userId, int bookId);
+    bool removeSavedBook(int userId, int bookId);
+    QList<QJsonObject> getSavedBooks(int userId);
 
 
 
