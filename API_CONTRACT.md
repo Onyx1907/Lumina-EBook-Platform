@@ -434,4 +434,85 @@
       ]
     }
   }
+,
+  "21_ADD_TO_CART": {
+    "client_request": {
+      "action": "ADD_TO_CART",
+      "data": {
+        "user_id": 42,
+        "book_id": 10
+      }
+    },
+    "server_response_success": {
+      "action": "ADD_TO_CART_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب به سبد خرید اضافه شد"
+    },
+    "server_response_error": {
+      "action": "ADD_TO_CART_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در افزودن کتاب"
+    }
+  },
+  "22_REMOVE_FROM_CART": {
+    "client_request": {
+      "action": "REMOVE_FROM_CART",
+      "data": {
+        "user_id": 42,
+        "book_id": 10
+      }
+    },
+    "server_response_success": {
+      "action": "REMOVE_FROM_CART_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب از سبد خرید حذف شد"
+    },
+    "server_response_error": {
+      "action": "REMOVE_FROM_CART_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در حذف کتاب"
+    }
+  },
+  "23_GET_CART": {
+    "client_request": {
+      "action": "GET_CART",
+      "data": {
+        "user_id": 42
+      }
+    },
+    "server_response_success": {
+      "action": "GET_CART_RESPONSE",
+      "status": "SUCCESS",
+      "items": [
+        {
+          "book_id": 10,
+          "title": "شاهنامه",
+          "price": 250000.0,
+          "discount": 10.0
+        }
+      ],
+      "total_price": 250000.0,
+      "discount": 25000.0,
+      "final_price": 225000.0,
+      "count": 1
+    }
+  },
+  "24_FINALIZE_PURCHASE": {
+    "client_request": {
+      "action": "FINALIZE_PURCHASE",
+      "data": {
+        "user_id": 42
+      }
+    },
+    "server_response_success": {
+      "action": "FINALIZE_PURCHASE_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".خرید با موفقیت انجام شد"
+    },
+    "server_response_error": {
+      "action": "FINALIZE_PURCHASE_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در نهایی سازی خرید"
+    }
+  }
 }
