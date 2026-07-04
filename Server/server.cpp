@@ -349,7 +349,7 @@ void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& da
     sendJson(socket, resp);
 }
 
-//دریافت لیست کتاب‌ها بر اساس یک ژانر خاص
+//دریافت لیست کتاب ها بر اساس یک ژانر خاص
 void Server::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) {
     const QString genre = data.value("genre").toString();
     QList<QJsonObject> books = dbManager.getBooksByGenre(genre);
@@ -409,7 +409,7 @@ void Server::handleGetPopularBooks(QTcpSocket* socket) {
     sendJson(socket, resp);
 }
 
-//دریافت لیست جدیدترین کتاب‌های اضافه شده
+//دریافت لیست جدیدترین کتاب های اضافه شده
 void Server::handleGetNewBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getNewBooks();
     QJsonArray arr;

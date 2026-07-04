@@ -104,7 +104,17 @@ public:
     bool removeSavedBook(int userId, int bookId);
     QList<QJsonObject> getSavedBooks(int userId);
 
+    //+++++قفسه ها+++++
+    bool createShelf(int userId, const QString& name);
+    bool renameShelf(int shelfId, const QString& newName);
+    bool deleteShelf(int shelfId);
 
+    bool addBookToShelf(int shelfId, int bookId);
+    bool removeBookFromShelf(int shelfId, int bookId);
+    bool moveBookBetweenShelves(int fromShelfId, int toShelfId, int bookId);
+
+    QList<QJsonObject> getShelves(int userId);
+    QList<QJsonObject> getBooksInShelf(int shelfId);
 
 
 
