@@ -5,7 +5,7 @@
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
-//#include <QtPreprocessorSupport>
+#include <QtPreprocessorSupport>
 #include <QFile>
 #include <QDir>
 #include <QByteArray>
