@@ -66,12 +66,15 @@ void GenreSelectionWidget::on_check_pushButton_clicked()
             }
         }
 
+        // qDebug()<< username;
+        // qDebug() << genresArray.size();
+
         QJsonObject data;
 
         data["username"] = username;
         data["genres"] = genresArray;
 
-        ClientNetworkManager::instance().sendRequest("SER_FAVORITE_GENRES", data);
+        ClientNetworkManager::instance().sendRequest("SET_FAVORITE_GENRES", data);
     }
     else{
         ui->error_label->setText("خطا در برقراری اتصال");
@@ -89,7 +92,7 @@ void GenreSelectionWidget::on_check_pushButton_clicked()
 
 
 void GenreSelectionWidget::processNetworkData(const QString& action, const QJsonObject& data){
-    if(action != "SER_FAVORITE_GENRES_RESPONSE"){
+    if(action != "SET_FAVORITE_GENRES_RESPONSE"){
         return;
     }
 

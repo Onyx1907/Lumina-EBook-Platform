@@ -47,6 +47,7 @@ void LoginWidget::on_forget_pushButton_clicked()
 {
     ui->username_input->clear();
     ui->password_input->clear();
+    ui->error_label->clear();
 
     emit goToForgotPasswordRequested();
 }
@@ -107,7 +108,7 @@ void LoginWidget::processNetworkData(const QString& action, const QJsonObject& d
 
         User *user;
 
-        if(role == "User"){
+        if(role == "RegularUser"){
             user = new RegularUser(1, current_username);
         }
         //else if(role == "Publisher"){}

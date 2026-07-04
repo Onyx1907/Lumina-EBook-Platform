@@ -54,10 +54,13 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
 
     if (action == "LOGIN") {
         handleLogin(socket, data);
+        return;
     } else if (action == "REGISTER") {
         handleRegister(socket, data);
+        return;
     } else if (action == "FORGOT_PASSWORD") {
         handleForgotPassword(socket, data);
+        return;
     }
 
     //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************

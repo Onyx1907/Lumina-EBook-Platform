@@ -182,7 +182,7 @@ QWidget QPushButton:checked:hover {
       <string notr="true">sidebar_buttonGroup</string>
      </attribute>
     </widget>
-    <widget class="QPushButton" name="setting_pushButton">
+    <widget class="QPushButton" name="library_pushButton">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -202,12 +202,12 @@ QWidget QPushButton:checked:hover {
      </property>
      <property name="icon">
       <iconset resource="resources.qrc">
-       <normaloff>:/resources/setting_icon.svg</normaloff>:/resources/setting_icon.svg</iconset>
+       <normaloff>:/resources/library_icon.svg</normaloff>:/resources/library_icon.svg</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>95</width>
-       <height>95</height>
+       <width>100</width>
+       <height>100</height>
       </size>
      </property>
      <property name="checkable">

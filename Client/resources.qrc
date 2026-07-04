@@ -4,7 +4,6 @@
         <file>resources/background.webm</file>
         <file>resources/dashboard.mp4</file>
         <file>resources/home_icon.svg</file>
-        <file>resources/setting_icon.svg</file>
         <file>resources/profile_icon.svg</file>
         <file>resources/search_icon.svg</file>
         <file>resources/cart_icon.svg</file>
@@ -14,5 +13,7 @@
         <file>resources/genres/history_genre.svg</file>
         <file>resources/genres/scifi_genre.svg</file>
         <file>resources/genres/biography_genre.svg</file>
+        <file>resources/library_icon.svg</file>
+        <file>resources/magic_home.png</file>
     </qresource>
 </RCC>

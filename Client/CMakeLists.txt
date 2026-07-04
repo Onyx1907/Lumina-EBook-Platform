@@ -37,6 +37,7 @@ qt_add_executable(LuminaClient
     userdashboardwidget.h userdashboardwidget.cpp userdashboardwidget.ui
     user/genreselectionwidget.h user/genreselectionwidget.cpp user/genreselectionwidget.ui
     user/userhomewidget.h user/userhomewidget.cpp user/userhomewidget.ui
+    bookcard.h bookcard.cpp bookcard.ui
 
 
 )
