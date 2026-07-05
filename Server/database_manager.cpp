@@ -216,8 +216,8 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     return true;
 }
 // احراز هویت کاربر هنگام ورود به سیستم
-bool DatabaseManager::verifyUser(const QString& username,const QString& plainPassword,
-                                 UserRole& outRole,bool& outIsBlocked,int& outUserId,int& outFirstLogin)
+bool DatabaseManager::verifyUser(const QString& username, const QString& plainPassword,
+                                 UserRole& outRole, bool& outIsBlocked, int& outUserId, int& outFirstLogin)
 {
     QSqlQuery q;
     q.prepare("SELECT id, password_hash, role, is_blocked, first_login FROM users WHERE username = :u");
@@ -228,8 +228,16 @@ bool DatabaseManager::verifyUser(const QString& username,const QString& plainPas
 
     outUserId = q.value("id").toInt();
     QString storedHash = q.value("password_hash").toString();
-    int roleInt = q.value("role").toInt();
-    outRole = static_cast<UserRole>(roleInt);
+
+    QString roleStr = q.value("role").toString();
+    if (roleStr == "Admin") {
+        outRole = UserRole::Admin;
+    } else if (roleStr == "Publisher") {
+        outRole = UserRole::Publisher;
+    } else {
+        outRole = UserRole::RegularUser;
+    }
+
     outIsBlocked = q.value("is_blocked").toInt() != 0;
     outFirstLogin = q.value("first_login").toInt();
 
@@ -259,15 +267,21 @@ bool DatabaseManager::getSecurityQuestion(const QString& username,QString& outQu
     return true;
 }
 // تایید پاسخ امنیتی و تغییر رمز عبور در صورت صحت اطلاعات
-bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& username,const QString& answerPlain,const QString& newPlainPassword){
+bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& username, const QString& answerPlain, const QString& newPlainPassword){
     QSqlQuery q;
     q.prepare("SELECT security_answer_encrypted FROM users WHERE username = :u");
     q.bindValue(":u", username);
     if (!q.exec()) return false;
     if (!q.next()) return false;
-    QByteArray encrypted = q.value(0).toByteArray();
-    QString storedAnswerPlain = CryptoHelper::decryptData(encrypted, NETWORK_SECRET_KEY);
-    if (storedAnswerPlain != answerPlain) return false;
+
+    QByteArray dbEncrypted = q.value(0).toByteArray();
+
+    QByteArray inputEncrypted = CryptoHelper::encryptData(answerPlain, NETWORK_SECRET_KEY);
+
+    // مقایسه باینری دو مقدار رمزگذاری شده
+    if (dbEncrypted != inputEncrypted) {
+        return false;
+    }
 
     QString newHash = CryptoHelper::hashPassword(newPlainPassword);
 
@@ -276,7 +290,9 @@ bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& userna
     q2.bindValue(":ph", newHash);
     q2.bindValue(":u", username);
     return q2.exec();
+
 }
+
 
 
 //*********************************************پنل کاربر عادی ( ماژول 1 )****************************************************
