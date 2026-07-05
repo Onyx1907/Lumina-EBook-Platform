@@ -294,8 +294,6 @@ void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& da
             b["cover_base64"] = "";
         }
 
-    // خالی رد کردن فیلد پی دی اف جهت بهینه سازی حجم شبکه
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -326,7 +324,6 @@ void Server::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) 
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -355,7 +352,6 @@ void Server::handleGetPopularBooks(QTcpSocket* socket) {
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -384,7 +380,6 @@ void Server::handleGetNewBooks(QTcpSocket* socket) {
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -413,7 +408,6 @@ void Server::handleGetBestsellers(QTcpSocket* socket) {
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -442,7 +436,6 @@ void Server::handleGetFreeBooks(QTcpSocket* socket) {
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }

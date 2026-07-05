@@ -358,6 +358,19 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     return obj;
 }
 
+static QJsonObject bookFromQueryWithoutPdf(const QSqlQuery& q) {
+    QJsonObject obj;
+    obj["id"] = q.value("id").toInt();
+    obj["title"] = q.value("title").toString();
+    obj["author"] = q.value("author").toString();
+    obj["genre"] = q.value("genre").toString();
+    obj["price"] = q.value("price").toDouble();
+    obj["discount_percentage"] = q.value("discountPercent").toDouble();
+    obj["cover_image_path"] = q.value("coverImagePath").toString();
+
+    return obj;
+}
+
 // دریافت لیست کتاب های پیشنهادی بر اساس لیستی از ژانرهای ورودی کاربر
 QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genres){
     QList<QJsonObject> list;
@@ -376,7 +389,7 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // فیلتراسیون و دریافت کتاب ها بر اساس یک ژانر مشخص شده
@@ -388,7 +401,7 @@ QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // بازیابی لیست تمام کتاب های نشانه گذاری شده به عنوان محبوب
@@ -399,7 +412,7 @@ QList<QJsonObject> DatabaseManager::getPopularBooks(){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // بازیابی لیست تمام کتاب های تازه اضافه شده به سیستم
@@ -410,7 +423,7 @@ QList<QJsonObject> DatabaseManager::getNewBooks(){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // بازیابی لیست پرفروش ترین کتاب های موجود در پایگاه داده
@@ -421,7 +434,7 @@ QList<QJsonObject> DatabaseManager::getBestsellers(){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // دریافت لیست کتاب هایی که به صورت رایگان در اختیار کاربران قرار دارند
@@ -432,7 +445,7 @@ QList<QJsonObject> DatabaseManager::getFreeBooks(){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 //JSON دریافت و تجمیع اطلاعات پروفایل شخصی کاربر در قالب یک شیء خلاصه شده
