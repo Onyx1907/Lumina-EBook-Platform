@@ -25,14 +25,18 @@ bool DatabaseManager::createTables(){
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                 // شناسه یکتا و خودکار
         "username TEXT UNIQUE NOT NULL,"                       // نام کاربری (یکتا و اجباری)
-        "password_hash TEXT NOT NULL,"                        // هش رمز عبور (عدم ذخیره متن خام)
-        "role TEXT NOT NULL,"                                // نقش کاربر در سیستم
-        "is_blocked INTEGER NOT NULL DEFAULT 0,"            // وضعیت مسدود بودن (پیش فرض: فعال)
-        "security_question TEXT,"                          // سوال امنیتی برای بازیابی رمز
-        "security_answer_encrypted BLOB,"                  // پاسخ امنیتی رمزنگاری شده به صورت باینری
-        "registration_date TEXT NOT NULL,"                // تاریخ ثبت نام
-        "first_login INTEGER DEFAULT 1"
+        "password_hash TEXT NOT NULL,"                        //هش رمز عبور (عدم ذخیره متن خام)
+        "role TEXT NOT NULL,"                                  // نقش کاربر در سیستم
+        "is_blocked INTEGER NOT NULL DEFAULT 0,"               // وضعیت مسدود بودن (پیش فرض: فعال)
+        "security_question TEXT,"                              // سوال امنیتی برای بازیابی رمز
+        "security_answer_encrypted BLOB,"                      // پاسخ امنیتی رمزنگاری شده به صورت باینری
+        "registration_date TEXT NOT NULL,"                     // تاریخ ثبت نام
+        "first_login INTEGER DEFAULT 1,"                       // وضعیت اولین ورود کاربر (پیش‌فرض ۱ برای اولین ورود)
+        "favorite_genres TEXT,"                                // لیست ژانرهای مورد علاقه کاربر به صورت متن
+        "name TEXT,"                                           // برای ماژول پروفایل اضافه شد (نام کاربر)
+        "email TEXT"                                           // برای ماژول پروفایل اضافه شد (ایمیل کاربر)
         ");";
+
     if(!q.exec(createUsers)){
         qDebug() << "Create users failed: " << q.lastError().text();
         return false;
@@ -203,6 +207,14 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     QByteArray encryptedAnswer =CryptoHelper::encryptData(securityAnswerPlain, NETWORK_SECRET_KEY);
 
     QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QString roleStr;
+    if (role == UserRole::Admin) {
+        roleStr = "Admin";
+    } else if (role == UserRole::Publisher) {
+        roleStr = "Publisher";
+    } else {
+        roleStr = "RegularUser";
+    }
 
     QSqlQuery q;
     q.prepare("INSERT INTO users "
@@ -211,7 +223,7 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
 
     q.bindValue(":u", username);
     q.bindValue(":ph", passwordHash);
-    q.bindValue(":r", QString::number(static_cast<int>(role)));
+    q.bindValue(":r", roleStr);
     q.bindValue(":sq", securityQuestion);
     q.bindValue(":sa", encryptedAnswer);
     q.bindValue(":rd", now);
@@ -223,8 +235,8 @@ bool DatabaseManager::registerUser(const QString& username,const QString& plainP
     return true;
 }
 // احراز هویت کاربر هنگام ورود به سیستم
-bool DatabaseManager::verifyUser(const QString& username,const QString& plainPassword,
-                                 UserRole& outRole,bool& outIsBlocked,int& outUserId,int& outFirstLogin)
+bool DatabaseManager::verifyUser(const QString& username, const QString& plainPassword,
+                                 UserRole& outRole, bool& outIsBlocked, int& outUserId, int& outFirstLogin)
 {
     QSqlQuery q;
     q.prepare("SELECT id, password_hash, role, is_blocked, first_login FROM users WHERE username = :u");
@@ -235,8 +247,16 @@ bool DatabaseManager::verifyUser(const QString& username,const QString& plainPas
 
     outUserId = q.value("id").toInt();
     QString storedHash = q.value("password_hash").toString();
-    int roleInt = q.value("role").toInt();
-    outRole = static_cast<UserRole>(roleInt);
+
+    QString roleStr = q.value("role").toString();
+    if (roleStr == "Admin") {
+        outRole = UserRole::Admin;
+    } else if (roleStr == "Publisher") {
+        outRole = UserRole::Publisher;
+    } else {
+        outRole = UserRole::RegularUser;
+    }
+
     outIsBlocked = q.value("is_blocked").toInt() != 0;
     outFirstLogin = q.value("first_login").toInt();
 
@@ -266,15 +286,21 @@ bool DatabaseManager::getSecurityQuestion(const QString& username,QString& outQu
     return true;
 }
 // تایید پاسخ امنیتی و تغییر رمز عبور در صورت صحت اطلاعات
-bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& username,const QString& answerPlain,const QString& newPlainPassword){
+bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& username, const QString& answerPlain, const QString& newPlainPassword){
     QSqlQuery q;
     q.prepare("SELECT security_answer_encrypted FROM users WHERE username = :u");
     q.bindValue(":u", username);
     if (!q.exec()) return false;
     if (!q.next()) return false;
-    QByteArray encrypted = q.value(0).toByteArray();
-    QString storedAnswerPlain = CryptoHelper::decryptData(encrypted, NETWORK_SECRET_KEY);
-    if (storedAnswerPlain != answerPlain) return false;
+
+    QByteArray dbEncrypted = q.value(0).toByteArray();
+
+    QByteArray inputEncrypted = CryptoHelper::encryptData(answerPlain, NETWORK_SECRET_KEY);
+
+    // مقایسه باینری دو مقدار رمزگذاری شده
+    if (dbEncrypted != inputEncrypted) {
+        return false;
+    }
 
     QString newHash = CryptoHelper::hashPassword(newPlainPassword);
 
@@ -283,11 +309,21 @@ bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& userna
     q2.bindValue(":ph", newHash);
     q2.bindValue(":u", username);
     return q2.exec();
+
 }
+
 
 
 //*********************************************پنل کاربر عادی ( ماژول 1 )****************************************************
 
+
+bool DatabaseManager::setFirstLoginFalseByUsername(const QString& username)
+{
+    QSqlQuery q;
+    q.prepare("UPDATE users SET first_login = 0 WHERE username = :u");
+    q.bindValue(":u", username);
+    return q.exec();
+}
 
 //تایید موفقیت یا شکست عملیات ذخیره لیست ژانرها برای یک کاربر خاص
 bool DatabaseManager::setFavoriteGenres(const QString& username, const QStringList& genres){
@@ -334,9 +370,23 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     obj["publisher_id"] = q.value("publisher_id").toInt();
     obj["genre"] = q.value("genre").toString();
     obj["price"] = q.value("price").toDouble();
-    obj["discount_percentage"] = q.value("discountPercentage").toDouble();
-    obj["pdf_path"] = q.value("pdfPath").toString();
+    obj["discount_percentage"] = q.value("discountPercent").toDouble();
+    obj["discount_amount"] = q.value("discountAmount").toDouble();
     obj["cover_image_path"] = q.value("coverImagePath").toString();
+    obj["pdf_path"] = q.value("pdfPath").toString();
+    return obj;
+}
+
+static QJsonObject bookFromQueryWithoutPdf(const QSqlQuery& q) {
+    QJsonObject obj;
+    obj["id"] = q.value("id").toInt();
+    obj["title"] = q.value("title").toString();
+    obj["author"] = q.value("author").toString();
+    obj["genre"] = q.value("genre").toString();
+    obj["price"] = q.value("price").toDouble();
+    obj["discount_percentage"] = q.value("discountPercent").toDouble();
+    obj["cover_image_path"] = q.value("coverImagePath").toString();
+
     return obj;
 }
 
@@ -358,7 +408,7 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // فیلتراسیون و دریافت کتاب ها بر اساس یک ژانر مشخص شده
@@ -370,7 +420,7 @@ QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // بازیابی لیست تمام کتاب های نشانه گذاری شده به عنوان محبوب
@@ -381,7 +431,7 @@ QList<QJsonObject> DatabaseManager::getPopularBooks(){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // بازیابی لیست تمام کتاب های تازه اضافه شده به سیستم
@@ -392,7 +442,7 @@ QList<QJsonObject> DatabaseManager::getNewBooks(){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // بازیابی لیست پرفروش ترین کتاب های موجود در پایگاه داده
@@ -403,7 +453,7 @@ QList<QJsonObject> DatabaseManager::getBestsellers(){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // دریافت لیست کتاب هایی که به صورت رایگان در اختیار کاربران قرار دارند
@@ -414,7 +464,7 @@ QList<QJsonObject> DatabaseManager::getFreeBooks(){
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 //JSON دریافت و تجمیع اطلاعات پروفایل شخصی کاربر در قالب یک شیء خلاصه شده
@@ -454,7 +504,7 @@ bool DatabaseManager::updateUserProfile(const QString& username, const QString& 
 // فرآیند احراز هویت رمز عبور فعلی و ثبت رمز عبور جدید به صورت هش شده
 bool DatabaseManager::changePassword(const QString& username,const QString& oldPasswordPlain,const QString& newPasswordPlain){
     QSqlQuery q;
-    q.prepare("SELECT passwordHash FROM users WHERE username = :u");
+    q.prepare("SELECT password_hash FROM users WHERE username = :u");
     q.bindValue(":u", username);
     if (!q.exec() || !q.next())
         return false;
@@ -465,7 +515,7 @@ bool DatabaseManager::changePassword(const QString& username,const QString& oldP
 
     const QString newHash = CryptoHelper::hashPassword(newPasswordPlain);
     QSqlQuery q2;
-    q2.prepare("UPDATE users SET passwordHash = :p WHERE username = :u");
+    q2.prepare("UPDATE users SET password_hash = :p WHERE username = :u");
     q2.bindValue(":p", newHash);
     q2.bindValue(":u", username);
     return q2.exec();
@@ -509,8 +559,6 @@ int DatabaseManager::getTotalPurchases(const QString& username){
 }
 
 
-
-
 //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
 
 
@@ -538,7 +586,7 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
 
     while (q.next()) {
         // استفاده از همان تابع مپینگ استاندارد شده
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     }
     return list;
 }
