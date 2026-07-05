@@ -56,7 +56,11 @@ bool DatabaseManager::createTables(){
         "pdfPath TEXT NOT NULL,"                                                 //مسیر ذخیره سازی فایل پی دی اف کتاب (اجباری)
         "publisher_id INTEGER NOT NULL,"                                        //شناسه ناشر متصل به جدول کاربران (اجباری)
         "isActive INTEGER NOT NULL DEFAULT 1,"                                 //وضعیت فعال بودن کتاب (۱ برای فعال، ۰ برای غیرفعال)
-        "FOREIGN KEY (publisher_id) REFERENCES users(id)"                     //تعریف کلید خارجی برای اتصال شناسه ناشر به شناسه کاربر در جدول کاربران
+        "is_popular INTEGER NOT NULL DEFAULT 0,"                              // ۱ برای محبوب، ۰ برای معمولی
+        "is_new INTEGER NOT NULL DEFAULT 0,"                                 // ۱ برای جدید، ۰ برای قدیمی
+        "is_bestseller INTEGER NOT NULL DEFAULT 0,"                         // ۱ برای پرفروش، ۰ برای معمولی
+        "is_free INTEGER NOT NULL DEFAULT 0,"                              // ۱ برای رایگان، ۰ برای پولی
+        "FOREIGN KEY (publisher_id) REFERENCES users(id)"                 //تعریف کلید خارجی برای اتصال شناسه ناشر به شناسه کاربر در جدول کاربران
         ")";
     if (!q.exec(createBooks)) {
         qDebug() << "Create books failed:" << q.lastError().text();
