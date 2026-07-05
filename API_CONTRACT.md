@@ -425,16 +425,16 @@
       "status": "SUCCESS",
       "comments": [
         {
-          "comment_id": 154,
-          "book_id": 10,
-          "user_id": 42,
+          "id": 154,
           "text": "کتاب بسیار عالی و آموزنده‌ای بود.",
-          "rating": 5
+          "rating": 5,
+          "created_at": "2026-07-05T13:28:00",
+          "updated_at": "2026-07-05T13:28:00",
+          "username": "ali_user"
         }
       ]
     }
-  }
-,
+  },
   "21_ADD_TO_CART": {
     "client_request": {
       "action": "ADD_TO_CART",
@@ -485,8 +485,9 @@
       "status": "SUCCESS",
       "items": [
         {
-          "book_id": 10,
+          "id": 10,
           "title": "شاهنامه",
+          "author": "فردوسی",
           "price": 250000.0,
           "discount": 10.0
         }
