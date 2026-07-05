@@ -96,6 +96,16 @@
       "message": ".پاسخ امنیتی نادرست است"
     }
   }
+
+  },
+  "16_SEARCH_BOOKS": {
+    "client_request": {
+      "action": "SEARCH_BOOKS",
+      "data": {
+        "title": "شاهنامه",
+        "author": "فردوسی",
+        "publisher_name": "انتشارات طوس"
+      }
 ,
   "5_SET_FAVORITE_GENRES": {
     "client_request": {
@@ -108,12 +118,12 @@
     "server_response_success": {
       "action": "SET_FAVORITE_GENRES_RESPONSE",
       "status": "SUCCESS",
-      "message": ".ژانرهای مورد علاقه با موفقیت ذخیره شدند"
+      "message": "ژانرهای مورد علاقه با موفقیت ذخیره شدند."
     },
     "server_response_error": {
       "action": "SET_FAVORITE_GENRES_RESPONSE",
       "status": "ERROR",
-      "message": "تعداد ژانر باید بین ۱ تا ۳ باشد. یا .خطا در ذخیره ژانرهای مورد علاقه"
+      "message": "تعداد ژانر باید بین ۱ تا ۳ باشد. یا خطا در ذخیره ژانرهای مورد علاقه."
     }
   },
   "6_GET_RECOMMENDED_BOOKS": {
@@ -128,11 +138,14 @@
       "status": "SUCCESS",
       "books": [
         {
-          "book_id": 1,
-          "title": "Book Title",
-          "author": "Author Name",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
-          "pdf_base64": ""
+          "id": 1,
+          "title": "عنوان کتاب پیشنهادی",
+          "author": "نام نویسنده",
+          "genre": "Fiction",
+          "price": 180000.0,
+          "discount_percentage": 15.0,
+          "cover_image_path": "/images/covers/book1.jpg",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
         }
       ]
     }
@@ -149,12 +162,14 @@
       "status": "SUCCESS",
       "books": [
         {
-          "book_id": 2,
-          "title": "Another Book",
-          "author": "Author Name",
-          "price": 15000,
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
-          "pdf_base64": ""
+          "id": 2,
+          "title": "کتاب ژانر خاص",
+          "author": "نام نویسنده",
+          "genre": "Fiction",
+          "price": 120000.0,
+          "discount_percentage": 0.0,
+          "cover_image_path": "/images/covers/book2.jpg",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
         }
       ]
     }
@@ -168,11 +183,14 @@
       "status": "SUCCESS",
       "books": [
         {
-          "book_id": 3,
-          "title": "Popular Book",
-          "author": "Author Name",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
-          "pdf_base64": ""
+          "id": 3,
+          "title": "کتاب محبوب و پرطرفدار",
+          "author": "نام نویسنده",
+          "genre": "History",
+          "price": 200000.0,
+          "discount_percentage": 10.0,
+          "cover_image_path": "/images/covers/book3.jpg",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
         }
       ]
     }
@@ -186,11 +204,14 @@
       "status": "SUCCESS",
       "books": [
         {
-          "book_id": 4,
-          "title": "New Book",
-          "author": "Author Name",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
-          "pdf_base64": ""
+          "id": 4,
+          "title": "کتاب تازه اضافه شده",
+          "author": "نام نویسنده",
+          "genre": "Poetry",
+          "price": 85000.0,
+          "discount_percentage": 5.0,
+          "cover_image_path": "/images/covers/book4.jpg",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
         }
       ]
     }
@@ -204,11 +225,14 @@
       "status": "SUCCESS",
       "books": [
         {
-          "book_id": 5,
-          "title": "Bestseller Book",
-          "author": "Author Name",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
-          "pdf_base64": ""
+          "id": 5,
+          "title": "کتاب پرفروش",
+          "author": "نام نویسنده",
+          "genre": "Fiction",
+          "price": 310000.0,
+          "discount_percentage": 20.0,
+          "cover_image_path": "/images/covers/book5.jpg",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
         }
       ]
     }
@@ -222,12 +246,14 @@
       "status": "SUCCESS",
       "books": [
         {
-          "book_id": 6,
-          "title": "Free Book",
-          "author": "Author Name",
-          "price": 0,
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
-          "pdf_base64": ""
+          "id": 6,
+          "title": "کتاب رایگان",
+          "author": "نام نویسنده",
+          "genre": "Academic",
+          "price": 0.0,
+          "discount_percentage": 0.0,
+          "cover_image_path": "/images/covers/book6.jpg",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
         }
       ]
     }
@@ -243,9 +269,10 @@
       "action": "GET_PROFILE_RESPONSE",
       "status": "SUCCESS",
       "profile": {
-        "username": "user123",
-        "name": "Ali",
-        "email": "ali@example.com"
+        "name": "علی محمدی",
+        "email": "ali@example.com",
+        "favorite_genres": ["Fiction", "History"],
+        "total_purchases": 5
       }
     },
     "server_response_error": {
@@ -259,8 +286,8 @@
       "action": "UPDATE_PROFILE",
       "data": {
         "username": "user123",
-        "name": "Ali Moazed",
-        "email": "new_ali@example.com"
+        "name": "علی محمدی جدید",
+        "email": "ali_new@example.com"
       }
     },
     "server_response_success": {
@@ -306,22 +333,15 @@
       "status": "SUCCESS",
       "history": [
         {
-          "purchase_id": 5,
-          "book_title": "Book Name",
-          "date": "2026-06-29"
+          "book_id": 1,
+          "purchase_date": "2026-07-01T10:15:30",
+          "title": "عنوان کتاب پیشنهادی",
+          "author": "نام نویسنده",
+          "price": 180000.0
         }
       ]
     }
   },
-  "16_SEARCH_BOOKS": {
-    "client_request": {
-      "action": "SEARCH_BOOKS",
-      "data": {
-        "title": "شاهنامه",
-        "author": "فردوسی",
-        "publisher_name": "انتشارات طوس"
-      }
-    },
     "server_response_success": {
       "action": "SEARCH_BOOKS_RESPONSE",
       "status": "SUCCESS",
