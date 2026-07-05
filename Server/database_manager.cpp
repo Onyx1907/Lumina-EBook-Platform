@@ -75,7 +75,11 @@ bool DatabaseManager::createTables(){
         "pdfPath TEXT NOT NULL,"                                                 //مسیر ذخیره سازی فایل پی دی اف کتاب (اجباری)
         "publisher_id INTEGER NOT NULL,"                                        //شناسه ناشر متصل به جدول کاربران (اجباری)
         "isActive INTEGER NOT NULL DEFAULT 1,"                                 //وضعیت فعال بودن کتاب (۱ برای فعال، ۰ برای غیرفعال)
-        "FOREIGN KEY (publisher_id) REFERENCES users(id)"                     //تعریف کلید خارجی برای اتصال شناسه ناشر به شناسه کاربر در جدول کاربران
+        "is_popular INTEGER NOT NULL DEFAULT 0,"                              // ۱ برای محبوب، ۰ برای معمولی
+        "is_new INTEGER NOT NULL DEFAULT 0,"                                 // ۱ برای جدید، ۰ برای قدیمی
+        "is_bestseller INTEGER NOT NULL DEFAULT 0,"                         // ۱ برای پرفروش، ۰ برای معمولی
+        "is_free INTEGER NOT NULL DEFAULT 0,"                              // ۱ برای رایگان، ۰ برای پولی
+        "FOREIGN KEY (publisher_id) REFERENCES users(id)"                 //تعریف کلید خارجی برای اتصال شناسه ناشر به شناسه کاربر در جدول کاربران
         ")";
     if (!q.exec(createBooks)) {
         qDebug() << "Create books failed:" << q.lastError().text();
@@ -399,7 +403,7 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
     for (int i = 0; i < genres.size(); ++i)
         placeholders << QString(":g%1").arg(i);
 
-    QString sql = QString("SELECT * FROM books WHERE genre IN (%1)").arg(placeholders.join(","));
+    QString sql = QString("SELECT * FROM books WHERE genre IN (%1) LIMIT 20").arg(placeholders.join(","));
     QSqlQuery q;
     q.prepare(sql);
     for (int i = 0; i < genres.size(); ++i)
@@ -414,7 +418,7 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
 QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE genre = :g");
+    q.prepare("SELECT * FROM books WHERE genre = :g LIMIT 20");
     q.bindValue(":g", genre);
     if(!q.exec())
         return list;
@@ -426,7 +430,7 @@ QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
 QList<QJsonObject> DatabaseManager::getPopularBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_popular = 1");
+    q.prepare("SELECT * FROM books WHERE is_popular = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
@@ -437,7 +441,7 @@ QList<QJsonObject> DatabaseManager::getPopularBooks(){
 QList<QJsonObject> DatabaseManager::getNewBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_new = 1");
+    q.prepare("SELECT * FROM books WHERE is_new = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
@@ -448,7 +452,7 @@ QList<QJsonObject> DatabaseManager::getNewBooks(){
 QList<QJsonObject> DatabaseManager::getBestsellers(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_bestseller = 1");
+    q.prepare("SELECT * FROM books WHERE is_bestseller = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
@@ -459,7 +463,7 @@ QList<QJsonObject> DatabaseManager::getBestsellers(){
 QList<QJsonObject> DatabaseManager::getFreeBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_free = 1");
+    q.prepare("SELECT * FROM books WHERE is_free = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
