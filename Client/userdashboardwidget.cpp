@@ -105,3 +105,9 @@ UserDashboardWidget::~UserDashboardWidget()
 {
     delete ui;
 }
+
+void UserDashboardWidget::on_home_pushButton_clicked()
+{
+    fadeToPage(Page::UserHomePageIndex);
+}
+

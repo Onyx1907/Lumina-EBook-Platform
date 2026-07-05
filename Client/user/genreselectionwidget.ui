@@ -619,7 +619,7 @@ QPushButton:disabled {
     <rect>
      <x>10</x>
      <y>270</y>
-     <width>101</width>
+     <width>91</width>
      <height>51</height>
     </rect>
    </property>
@@ -679,7 +679,7 @@ QPushButton:disabled {
 }</string>
    </property>
    <property name="text">
-    <string>بررسی</string>
+    <string>تایید</string>
    </property>
   </widget>
   <widget class="QLabel" name="error_label">

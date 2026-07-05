@@ -22,6 +22,9 @@ public:
 protected:
     //void resizeEvent(QResizeEvent *event) override;
 
+private slots:
+    void on_home_pushButton_clicked();
+
 private:
     Ui::UserDashboardWidget *ui;
     RegularUser *user;

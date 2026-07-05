@@ -35,44 +35,7 @@
    <enum>Qt::RightToLeft</enum>
   </property>
   <property name="styleSheet">
-   <string notr="true">/* ۱. بوم اصلی صفحه (پشت ویجت‌ها) که ویدیو زیر آن پخش می‌شود */
-QWidget#scrollAreaWidgetContents {
-    /* یک لایه شفاف نسکافه‌ای روشن روی ویدیو می‌کشد */
-    background-color: rgba(235, 220, 203, 0.45); 
-}
-
-/* ۲. حذف کامل کادر و پس‌زمینه اسکرول‌اریا برای دیده شدن ویدیو */
-QScrollArea {
-    border: none;
-    background-color: transparent;
-}
-
-/* ۴. استایل لیست افقی کتاب‌ها */
-QListWidget {
-    border: none;
-    background-color: transparent;
-}
-
-
-/* ۷. استایل دکمه خاصِ &quot;مشاهده همه&quot; در انتهای لیست */
-QWidget#ViewAllCard_Widget {
-    background-color: rgba(74, 46, 27, 0.15); /* تم قهوه‌ای بسیار ملایم */
-    border: 2px dashed rgba(74, 46, 27, 0.4); /* خط‌چین کلاسیک */
-    border-radius: 8px;
-}
-
-QWidget#ViewAllCard_Widget:hover {
-    background-color: rgba(74, 46, 27, 0.3);
-    cursor: pointing;
-}
-
-QLabel {
-    color: #4A2E1B;
-    font-weight: bold;
-    font-size: 13px;
-}
-
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -105,7 +68,7 @@ QLabel {
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-670</y>
+        <y>0</y>
         <width>730</width>
         <height>1200</height>
        </rect>
@@ -122,7 +85,31 @@ QLabel {
         <height>1200</height>
        </size>
       </property>
-      <widget class="QLabel" name="label">
+      <property name="styleSheet">
+       <string notr="true">/* ۱. بوم اصلی صفحه (پشت ویجت‌ها) که ویدیو زیر آن پخش می‌شود */
+QWidget#scrollAreaWidgetContents {
+    /* یک لایه شفاف نسکافه‌ای روشن روی ویدیو می‌کشد */
+    background-color: rgba(235, 220, 203, 0.45); 
+}
+
+/* ۲. حذف کامل کادر و پس‌زمینه اسکرول‌اریا برای دیده شدن ویدیو */
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+QListWidget {
+    background-color: rgba(245, 230, 211, 0.65); /* ۶۵ درصد کدر، بقیه شفاف برای دیدن بک‌گراند */
+    border: 2px solid rgba(111, 78, 55, 0.8); /* حاشیه قهوه‌ای با کمی شفافیت */
+    border-radius: 10px;
+    padding: 5px;
+}
+
+
+
+</string>
+      </property>
+      <widget class="QLabel" name="recommended_label">
        <property name="geometry">
         <rect>
          <x>500</x>
@@ -131,39 +118,56 @@ QLabel {
          <height>21</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">
+QLabel {
+    color: #4A2E1B;
+    font-weight: bold;
+    font-size: 13px;
+}</string>
+       </property>
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;شاید دوست داشته باشید&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
-      <widget class="QListWidget" name="listWidget">
+      <widget class="QListWidget" name="recommended_listWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>40</y>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
        <property name="movement">
         <enum>QListView::Static</enum>
+       </property>
+       <property name="isWrapping" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="resizeMode">
+        <enum>QListView::Adjust</enum>
        </property>
        <property name="viewMode">
         <enum>QListView::IconMode</enum>
        </property>
       </widget>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="popular_label">
        <property name="geometry">
         <rect>
          <x>500</x>
@@ -172,39 +176,56 @@ QLabel {
          <height>21</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">
+QLabel {
+    color: #4A2E1B;
+    font-weight: bold;
+    font-size: 13px;
+}</string>
+       </property>
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;پرطرفدار&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
-      <widget class="QListWidget" name="listWidget_2">
+      <widget class="QListWidget" name="popular_listWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>250</y>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
        <property name="movement">
         <enum>QListView::Static</enum>
+       </property>
+       <property name="isWrapping" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="resizeMode">
+        <enum>QListView::Adjust</enum>
        </property>
        <property name="viewMode">
         <enum>QListView::IconMode</enum>
        </property>
       </widget>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="new_label">
        <property name="geometry">
         <rect>
          <x>500</x>
@@ -213,67 +234,56 @@ QLabel {
          <height>21</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">
+QLabel {
+    color: #4A2E1B;
+    font-weight: bold;
+    font-size: 13px;
+}</string>
+       </property>
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;جدیدترین ها&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
-      <widget class="QListWidget" name="listWidget_3">
-       <property name="geometry">
-        <rect>
-         <x>710</x>
-         <y>450</y>
-         <width>700</width>
-         <height>150</height>
-        </rect>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>700</width>
-         <height>150</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>700</width>
-         <height>150</height>
-        </size>
-       </property>
-       <property name="movement">
-        <enum>QListView::Static</enum>
-       </property>
-       <property name="viewMode">
-        <enum>QListView::IconMode</enum>
-       </property>
-      </widget>
-      <widget class="QListWidget" name="listWidget_4">
+      <widget class="QListWidget" name="new_listWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>460</y>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
        <property name="movement">
         <enum>QListView::Static</enum>
+       </property>
+       <property name="isWrapping" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="resizeMode">
+        <enum>QListView::Adjust</enum>
        </property>
        <property name="viewMode">
         <enum>QListView::IconMode</enum>
        </property>
       </widget>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="bestSellers_label">
        <property name="geometry">
         <rect>
          <x>500</x>
@@ -282,39 +292,56 @@ QLabel {
          <height>21</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">
+QLabel {
+    color: #4A2E1B;
+    font-weight: bold;
+    font-size: 13px;
+}</string>
+       </property>
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;پرفروش ها&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
-      <widget class="QListWidget" name="listWidget_5">
+      <widget class="QListWidget" name="bestSellers_listWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>670</y>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
        <property name="movement">
         <enum>QListView::Static</enum>
+       </property>
+       <property name="isWrapping" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="resizeMode">
+        <enum>QListView::Adjust</enum>
        </property>
        <property name="viewMode">
         <enum>QListView::IconMode</enum>
        </property>
       </widget>
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="free_label">
        <property name="geometry">
         <rect>
          <x>500</x>
@@ -323,42 +350,59 @@ QLabel {
          <height>21</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">
+QLabel {
+    color: #4A2E1B;
+    font-weight: bold;
+    font-size: 13px;
+}</string>
+       </property>
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;کتاب های رایگان&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
-      <widget class="QListWidget" name="listWidget_6">
+      <widget class="QListWidget" name="free_listWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>880</y>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>700</width>
-         <height>150</height>
+         <height>170</height>
         </size>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
        <property name="movement">
         <enum>QListView::Static</enum>
+       </property>
+       <property name="isWrapping" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="resizeMode">
+        <enum>QListView::Adjust</enum>
        </property>
        <property name="viewMode">
         <enum>QListView::IconMode</enum>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="magic_label">
        <property name="geometry">
         <rect>
-         <x>150</x>
+         <x>-10</x>
          <y>1030</y>
          <width>431</width>
          <height>171</height>
