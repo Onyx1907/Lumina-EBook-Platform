@@ -98,6 +98,22 @@ private:
     //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
 
 
+    //+++++کتاب های خریداری شده+++++
+    void handleGetPurchasedBooks(QTcpSocket*, const QJsonObject&);
+
+    //+++++کتاب های ذخیره شده+++++
+    void handleSaveBook(QTcpSocket*, const QJsonObject&);
+    void handleRemoveSavedBook(QTcpSocket*, const QJsonObject&);
+    void handleGetSavedBooks(QTcpSocket*, const QJsonObject&);
+
+    //+++++قفسه ها+++++
+    void handleCreateShelf(QTcpSocket* socket, const QJsonObject& data);
+    void handleRenameShelf(QTcpSocket* socket, const QJsonObject& data);
+    void handleDeleteShelf(QTcpSocket* socket, const QJsonObject& data);
+    void handleAddBookToShelf(QTcpSocket* socket, const QJsonObject& data);
+    void handleMoveBookBetweenShelves(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetShelves(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetShelfBooks(QTcpSocket* socket, const QJsonObject& data);
 
 
 
