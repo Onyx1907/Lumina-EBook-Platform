@@ -25,14 +25,18 @@ bool DatabaseManager::createTables(){
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"                 // شناسه یکتا و خودکار
         "username TEXT UNIQUE NOT NULL,"                       // نام کاربری (یکتا و اجباری)
-        "password_hash TEXT NOT NULL,"                        // هش رمز عبور (عدم ذخیره متن خام)
-        "role TEXT NOT NULL,"                                // نقش کاربر در سیستم
-        "is_blocked INTEGER NOT NULL DEFAULT 0,"            // وضعیت مسدود بودن (پیش فرض: فعال)
-        "security_question TEXT,"                          // سوال امنیتی برای بازیابی رمز
-        "security_answer_encrypted BLOB,"                  // پاسخ امنیتی رمزنگاری شده به صورت باینری
-        "registration_date TEXT NOT NULL,"                // تاریخ ثبت نام
-        "first_login INTEGER DEFAULT 1"
+        "password_hash TEXT NOT NULL,"                        //هش رمز عبور (عدم ذخیره متن خام)
+        "role TEXT NOT NULL,"                                  // نقش کاربر در سیستم
+        "is_blocked INTEGER NOT NULL DEFAULT 0,"               // وضعیت مسدود بودن (پیش فرض: فعال)
+        "security_question TEXT,"                              // سوال امنیتی برای بازیابی رمز
+        "security_answer_encrypted BLOB,"                      // پاسخ امنیتی رمزنگاری شده به صورت باینری
+        "registration_date TEXT NOT NULL,"                     // تاریخ ثبت نام
+        "first_login INTEGER DEFAULT 1,"                       // وضعیت اولین ورود کاربر (پیش‌فرض ۱ برای اولین ورود)
+        "favorite_genres TEXT,"                                // لیست ژانرهای مورد علاقه کاربر به صورت متن
+        "name TEXT,"                                           // برای ماژول پروفایل اضافه شد (نام کاربر)
+        "email TEXT"                                           // برای ماژول پروفایل اضافه شد (ایمیل کاربر)
         ");";
+
     if(!q.exec(createUsers)){
         qDebug() << "Create users failed: " << q.lastError().text();
         return false;
