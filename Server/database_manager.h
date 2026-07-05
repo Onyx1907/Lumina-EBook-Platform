@@ -43,6 +43,8 @@ public:
     bool verifySecurityAnswerAndResetPassword(const QString& username,const QString& answerPlain,const QString& newPlainPassword);
 
     //*********************************************پنل کاربر عادی ( ماژول 1 )****************************************************
+
+    bool setFirstLoginFalseByUsername(const QString& username);
     bool setFavoriteGenres(const QString& username, const QStringList& genres);
     QStringList getFavoriteGenres(const QString& username);
 
