@@ -15,5 +15,6 @@
         <file>resources/genres/biography_genre.svg</file>
         <file>resources/library_icon.svg</file>
         <file>resources/magic_home.png</file>
+        <file>resources/default_book.png</file>
     </qresource>
 </RCC>

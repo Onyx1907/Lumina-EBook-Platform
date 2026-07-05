@@ -105,6 +105,10 @@ void GenreSelectionWidget::processNetworkData(const QString& action, const QJson
         QTimer::singleShot(3000, this, [this](){
             ui->success_label->setText("");
             emit goToHomePage();
+            ui->check_pushButton->setEnabled(true);
+            for(QAbstractButton *button : ui->genres_buttonGroup->buttons()){
+                button->setEnabled(true);
+            }
         });
 
         //رفتن به صفحه اصلی برنامه
@@ -114,12 +118,11 @@ void GenreSelectionWidget::processNetworkData(const QString& action, const QJson
         ui->error_label->setText(message);
         QTimer::singleShot(3000, this, [this](){
             ui->error_label->setText("");
+            ui->check_pushButton->setEnabled(true);
+            for(QAbstractButton *button : ui->genres_buttonGroup->buttons()){
+                button->setEnabled(true);
+            }
         });
-    }
-
-    ui->check_pushButton->setEnabled(true);
-    for(QAbstractButton *button : ui->genres_buttonGroup->buttons()){
-        button->setEnabled(true);
     }
 }
 
