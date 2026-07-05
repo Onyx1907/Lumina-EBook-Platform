@@ -460,7 +460,7 @@ QList<QJsonObject> DatabaseManager::getBestsellers(){
 QList<QJsonObject> DatabaseManager::getFreeBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_free = 1");
+    q.prepare("SELECT * FROM books WHERE is_free = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
