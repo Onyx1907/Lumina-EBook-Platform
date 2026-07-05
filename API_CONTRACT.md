@@ -341,19 +341,30 @@
         }
       ]
     }
-  },
+  }
+,
+  "16_SEARCH_BOOKS": {
+    "client_request": {
+      "action": "SEARCH_BOOKS",
+      "data": {
+        "title": "شاهنامه",
+        "author": "فردوسی",
+        "publisher_name": "انتشارات طوس"
+      }
+    },
     "server_response_success": {
       "action": "SEARCH_BOOKS_RESPONSE",
       "status": "SUCCESS",
       "books": [
         {
-          "book_id": 10,
+          "id": 10,
           "title": "شاهنامه",
           "author": "فردوسی",
-          "publisher_name": "انتشارات طوس",
-          "price": 250000,
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
-          "pdf_base64": ""
+          "genre": "Epic",
+          "price": 250000.0,
+          "discount_percentage": 10.0,
+          "cover_image_path": "/images/covers/shahnameh.jpg",
+          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
         }
       ]
     }
