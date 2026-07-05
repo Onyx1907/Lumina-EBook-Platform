@@ -547,4 +547,226 @@
       "message": ".خطا در نهایی سازی خرید"
     }
   }
+,
+  "25_GET_PURCHASED_BOOKS": {
+    "client_request": {
+      "action": "GET_PURCHASED_BOOKS",
+      "data": {
+        "user_id": 42
+      }
+    },
+    "server_response_success": {
+      "action": "GET_PURCHASED_BOOKS_RESPONSE",
+      "status": "SUCCESS",
+      "books": [
+        {
+          "id": 10,
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "genre": "Epic",
+          "price": 250000.0,
+          "pdfPath": "/var/www/uploads/books/shahnameh.pdf",
+          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg",
+          "pdf_base64": "JVBERi0xLjQKJcOkw7z..."
+        }
+      ]
+    },
+    "server_response_error": {
+      "action": "GET_PURCHASED_BOOKS_RESPONSE",
+      "status": "FAILED",
+      "message": "شناسه کاربر نامعتبر است."
+    }
+  },
+  "26_SAVE_BOOK": {
+    "client_request": {
+      "action": "SAVE_BOOK",
+      "data": {
+        "user_id": 42,
+        "book_id": 10
+      }
+    },
+    "server_response_success": {
+      "action": "SAVE_BOOK_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب ذخیره شد"
+    },
+    "server_response_error": {
+      "action": "SAVE_BOOK_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در ذخیره کتاب"
+    }
+  },
+  "27_REMOVE_SAVED_BOOK": {
+    "client_request": {
+      "action": "REMOVE_SAVED_BOOK",
+      "data": {
+        "user_id": 42,
+        "book_id": 10
+      }
+    },
+    "server_response_success": {
+      "action": "REMOVE_SAVED_BOOK_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب از لیست ذخیره شده حذف شد"
+    },
+    "server_response_error": {
+      "action": "REMOVE_SAVED_BOOK_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در حذف"
+    }
+  },
+  "28_GET_SAVED_BOOKS": {
+    "client_request": {
+      "action": "GET_SAVED_BOOKS",
+      "data": {
+        "user_id": 42
+      }
+    },
+    "server_response_success": {
+      "action": "GET_SAVED_BOOKS_RESPONSE",
+      "status": "SUCCESS",
+      "books": [
+        {
+          "id": 10,
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "genre": "Epic"
+        }
+      ]
+    }
+  },
+  "29_CREATE_SHELF": {
+    "client_request": {
+      "action": "CREATE_SHELF",
+      "data": {
+        "user_id": 42,
+        "name": "کتاب‌های تاریخی"
+      }
+    },
+    "server_response_success": {
+      "action": "CREATE_SHELF_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".قفسه ایجاد شد"
+    },
+    "server_response_error": {
+      "action": "CREATE_SHELF_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در ایجاد قفسه"
+    }
+  },
+  "30_RENAME_SHELF": {
+    "client_request": {
+      "action": "RENAME_SHELF",
+      "data": {
+        "shelf_id": 5,
+        "new_name": "حماسی و تاریخی"
+      }
+    },
+    "server_response_success": {
+      "action": "RENAME_SHELF_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".نام قفسه تغییر کرد"
+    },
+    "server_response_error": {
+      "action": "RENAME_SHELF_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در تغییر نام"
+    }
+  },
+  "31_DELETE_SHELF": {
+    "client_request": {
+      "action": "DELETE_SHELF",
+      "data": {
+        "shelf_id": 5
+      }
+    },
+    "server_response_success": {
+      "action": "DELETE_SHELF_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".قفسه حذف شد"
+    },
+    "server_response_error": {
+      "action": "DELETE_SHELF_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در حذف قفسه"
+    }
+  },
+  "32_ADD_BOOK_TO_SHELF": {
+    "client_request": {
+      "action": "ADD_BOOK_TO_SHELF",
+      "data": {
+        "shelf_id": 5,
+        "book_id": 10
+      }
+    },
+    "server_response_success": {
+      "action": "ADD_BOOK_TO_SHELF_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب به قفسه اضافه شد"
+    },
+    "server_response_error": {
+      "action": "ADD_BOOK_TO_SHELF_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در افزودن"
+    }
+  },
+  "33_MOVE_BOOK_BETWEEN_SHELVES": {
+    "client_request": {
+      "action": "MOVE_BOOK_BETWEEN_SHELVES",
+      "data": {
+        "from_shelf": 5,
+        "to_shelf": 6,
+        "book_id": 10
+      }
+    },
+    "server_response_success": {
+      "action": "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب منتقل شد"
+    },
+    "server_response_error": {
+      "action": "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در انتقال"
+    }
+  },
+  "34_GET_SHELVES": {
+    "client_request": {
+      "action": "GET_SHELVES",
+      "data": {
+        "user_id": 42
+      }
+    },
+    "server_response_success": {
+      "action": "GET_SHELVES_RESPONSE",
+      "status": "SUCCESS",
+      "shelves": [
+        {
+          "id": 5,
+          "name": "حماسی و تاریخی"
+        }
+      ]
+    }
+  },
+  "35_GET_SHELF_BOOKS": {
+    "client_request": {
+      "action": "GET_SHELF_BOOKS",
+      "data": {
+        "shelf_id": 5
+      }
+    },
+    "server_response_success": {
+      "action": "GET_SHELF_BOOKS_RESPONSE",
+      "status": "SUCCESS",
+      "books": [
+        {
+          "id": 10,
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "genre": "Epic",
+          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg"
+        }
+      ]
+    }
+  }
 }
