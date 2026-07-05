@@ -381,7 +381,7 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
     for (int i = 0; i < genres.size(); ++i)
         placeholders << QString(":g%1").arg(i);
 
-    QString sql = QString("SELECT * FROM books WHERE genre IN (%1)").arg(placeholders.join(","));
+    QString sql = QString("SELECT * FROM books WHERE genre IN (%1) LIMIT 20").arg(placeholders.join(","));
     QSqlQuery q;
     q.prepare(sql);
     for (int i = 0; i < genres.size(); ++i)
@@ -396,7 +396,7 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
 QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE genre = :g");
+    q.prepare("SELECT * FROM books WHERE genre = :g LIMIT 20");
     q.bindValue(":g", genre);
     if(!q.exec())
         return list;
@@ -408,7 +408,7 @@ QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
 QList<QJsonObject> DatabaseManager::getPopularBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_popular = 1");
+    q.prepare("SELECT * FROM books WHERE is_popular = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
@@ -419,7 +419,7 @@ QList<QJsonObject> DatabaseManager::getPopularBooks(){
 QList<QJsonObject> DatabaseManager::getNewBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_new = 1");
+    q.prepare("SELECT * FROM books WHERE is_new = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
@@ -430,7 +430,7 @@ QList<QJsonObject> DatabaseManager::getNewBooks(){
 QList<QJsonObject> DatabaseManager::getBestsellers(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_bestseller = 1");
+    q.prepare("SELECT * FROM books WHERE is_bestseller = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
@@ -441,7 +441,7 @@ QList<QJsonObject> DatabaseManager::getBestsellers(){
 QList<QJsonObject> DatabaseManager::getFreeBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_free = 1");
+    q.prepare("SELECT * FROM books WHERE is_free = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
