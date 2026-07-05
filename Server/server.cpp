@@ -187,14 +187,9 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
     resp["user_role"] = roleToString(role);
     resp["first_login"] = firstLogin;
 
-    onlineUsers[username] = socket;
-    socketToUser[socket] = username;
-
     sendJson(socket, resp);
 
-    if (firstLogin == 1) {
-        dbManager.setFirstLoginFalse(userId);
-    }
+
 }
 
 // مدیریت فرآیند ثبت نام کاربر جدید
@@ -234,11 +229,11 @@ void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
     QString step = data.value("step").toString();
 
     QJsonObject resp;
+    resp["action"] = "FORGOT_PASSWORD_RESPONSE"; // مقدار اکشن را در همان ابتدا ثابت می‌گذاریم تا در هر دو حالت ارسال شود
 
     if (step == "REQUEST_QUESTION") {
         QString username = data.value("username").toString();
         QString question;
-        resp["action"] = "FORGOT_PASSWORD_RESPONSE";
 
         if (!dbManager.getSecurityQuestion(username, question)) {
             resp["status"] = "FAILED";
@@ -254,9 +249,7 @@ void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
         QString answerPlain = data.value("security_answer").toString();
         QString newPasswordPlain = data.value("new_password").toString();
 
-        resp["action"] = "FORGOT_PASSWORD_RESPONSE";
-
-        if (!dbManager.verifySecurityAnswerAndResetPassword(username,answerPlain,newPasswordPlain)) {
+        if (!dbManager.verifySecurityAnswerAndResetPassword(username, answerPlain, newPasswordPlain)) {
             resp["status"] = "FAILED";
             resp["message"] = ".پاسخ امنیتی نادرست است";
         }
@@ -289,17 +282,20 @@ void Server::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data
         QJsonObject resp;
         resp["action"] = "SET_FAVORITE_GENRES_RESPONSE";
         resp["status"] = "ERROR";
-        resp["message"] = "تعداد ژانر باید بین ۱ تا ۳ باشد.";
+        resp["message"] = ".تعداد ژانر باید بین ۱ تا ۳ باشد";
         sendJson(socket, resp);
         return;
     }
 
     QStringList genres;
-
     for(const QJsonValue& v : std::as_const(arr))
         genres.append(v.toString());
 
     bool ok = dbManager.setFavoriteGenres(username, genres);
+
+    if (ok) {
+        dbManager.setFirstLoginFalseByUsername(username);
+    }
 
     QJsonObject resp;
     resp["action"] = "SET_FAVORITE_GENRES_RESPONSE";
@@ -309,6 +305,7 @@ void Server::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data
 
     sendJson(socket, resp);
 }
+
 // دریافت لیست کتاب های پیشنهادی بر اساس ژانرهای مورد علاقه کاربر
 void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data) {
     const QString username = data.value("username").toString();
@@ -317,7 +314,7 @@ void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& da
 
     QJsonArray arr;
     for (QJsonObject b : std::as_const(books)) {
-    // خواندن مسیر عکس از دیتابیس
+        // خواندن مسیر عکس از دیتابیس
         QString coverPath = b.value("cover_image_path").toString();
         if (coverPath.isEmpty()) coverPath = b.value("coverImagePath").toString();
 
@@ -325,13 +322,11 @@ void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& da
         if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
             QByteArray coverBytes = coverFile.readAll();
             coverFile.close();
-            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+            b["cover_base64"] = QString::fromLatin1(coverBytes.toBase64());
         } else {
             b["cover_base64"] = "";
         }
 
-// خالی رد کردن فیلد پی دی اف جهت بهینه سازی حجم شبکه
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -343,7 +338,7 @@ void Server::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& da
     sendJson(socket, resp);
 }
 
-//دریافت لیست کتاب‌ها بر اساس یک ژانر خاص
+//دریافت لیست کتاب ها بر اساس یک ژانر خاص
 void Server::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) {
     const QString genre = data.value("genre").toString();
     QList<QJsonObject> books = dbManager.getBooksByGenre(genre);
@@ -357,12 +352,11 @@ void Server::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) 
         if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
             QByteArray coverBytes = coverFile.readAll();
             coverFile.close();
-            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+            b["cover_base64"] = QString::fromLatin1(coverBytes.toBase64());
         } else {
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -374,7 +368,7 @@ void Server::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) 
     sendJson(socket, resp);
 }
 
-//دریافت لیست کتاب‌های محبوب (پرطرفدار)
+//دریافت لیست کتاب های محبوب (پرطرفدار)
 void Server::handleGetPopularBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getPopularBooks();
     QJsonArray arr;
@@ -386,12 +380,11 @@ void Server::handleGetPopularBooks(QTcpSocket* socket) {
         if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
             QByteArray coverBytes = coverFile.readAll();
             coverFile.close();
-            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+            b["cover_base64"] = QString::fromLatin1(coverBytes.toBase64());
         } else {
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -403,7 +396,7 @@ void Server::handleGetPopularBooks(QTcpSocket* socket) {
     sendJson(socket, resp);
 }
 
-//دریافت لیست جدیدترین کتاب‌های اضافه شده
+//دریافت لیست جدیدترین کتاب های اضافه شده
 void Server::handleGetNewBooks(QTcpSocket* socket) {
     QList<QJsonObject> books = dbManager.getNewBooks();
     QJsonArray arr;
@@ -415,12 +408,11 @@ void Server::handleGetNewBooks(QTcpSocket* socket) {
         if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
             QByteArray coverBytes = coverFile.readAll();
             coverFile.close();
-            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+            b["cover_base64"] = QString::fromLatin1(coverBytes.toBase64());
         } else {
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -444,12 +436,11 @@ void Server::handleGetBestsellers(QTcpSocket* socket) {
         if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
             QByteArray coverBytes = coverFile.readAll();
             coverFile.close();
-            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+            b["cover_base64"] = QString::fromLatin1(coverBytes.toBase64());
         } else {
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -473,12 +464,11 @@ void Server::handleGetFreeBooks(QTcpSocket* socket) {
         if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
             QByteArray coverBytes = coverFile.readAll();
             coverFile.close();
-            b["cover_base64"] = QString::fromUtf8(coverBytes.toBase64());
+            b["cover_base64"] = QString::fromLatin1(coverBytes.toBase64());
         } else {
             b["cover_base64"] = "";
         }
 
-        b["pdf_base64"] = "";
 
         arr.append(b);
     }
@@ -586,7 +576,6 @@ void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data)
             book["cover_base64"] = ""; // در صورت عدم وجود تصویر
         }
 
-        book["pdf_base64"] = "";
 
         finalArray.append(book);
     }
