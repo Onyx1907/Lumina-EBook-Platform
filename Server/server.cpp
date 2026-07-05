@@ -570,7 +570,6 @@ void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data)
             book["cover_base64"] = ""; // در صورت عدم وجود تصویر
         }
 
-        book["pdf_base64"] = "";
 
         finalArray.append(book);
     }
