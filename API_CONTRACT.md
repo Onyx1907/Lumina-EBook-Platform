@@ -574,7 +574,7 @@
     "server_response_error": {
       "action": "GET_PURCHASED_BOOKS_RESPONSE",
       "status": "FAILED",
-      "message": "شناسه کاربر نامعتبر است."
+      "message": ".شناسه کاربر نامعتبر است"
     }
   },
   "26_SAVE_BOOK": {
@@ -612,7 +612,7 @@
     "server_response_error": {
       "action": "REMOVE_SAVED_BOOK_RESPONSE",
       "status": "ERROR",
-      "message": ".خطا در حذف"
+      "message": ".خطا در حذف کتاب"
     }
   },
   "28_GET_SAVED_BOOKS": {
@@ -646,12 +646,12 @@
     "server_response_success": {
       "action": "CREATE_SHELF_RESPONSE",
       "status": "SUCCESS",
-      "message": ".قفسه ایجاد شد"
+      "message": ".قفسه با موفقیت ایجاد شد"
     },
     "server_response_error": {
       "action": "CREATE_SHELF_RESPONSE",
       "status": "ERROR",
-      "message": ".خطا در ایجاد قفسه"
+      "message": ".قفسه ای با این نام از قبل وجود دارد یا خطا رخ داده است"
     }
   },
   "30_RENAME_SHELF": {
@@ -670,7 +670,7 @@
     "server_response_error": {
       "action": "RENAME_SHELF_RESPONSE",
       "status": "ERROR",
-      "message": ".خطا در تغییر نام"
+      "message": ".این نام با یکی از قفسه های دیگر شما تداخل دارد یا قفسه یافت نشد"
     }
   },
   "31_DELETE_SHELF": {
@@ -707,7 +707,7 @@
     "server_response_error": {
       "action": "ADD_BOOK_TO_SHELF_RESPONSE",
       "status": "ERROR",
-      "message": ".خطا در افزودن"
+      "message": ".این کتاب از قبل در قفسه مورد نظر موجود است"
     }
   },
   "33_MOVE_BOOK_BETWEEN_SHELVES": {
@@ -722,12 +722,12 @@
     "server_response_success": {
       "action": "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE",
       "status": "SUCCESS",
-      "message": ".کتاب منتقل شد"
+      "message": ".کتاب با موفقیت منتقل شد"
     },
     "server_response_error": {
       "action": "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE",
       "status": "ERROR",
-      "message": ".خطا در انتقال"
+      "message": ".کتاب از قبل در قفسه مقصد موجود بود و از قفسه فعلی حذف شد"
     }
   },
   "34_GET_SHELVES": {
