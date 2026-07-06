@@ -102,18 +102,6 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-    //----------------جدول خودکار-----------------
-    QString createTrigger =
-        "CREATE TRIGGER IF NOT EXISTS update_book_rating_after_insert "
-        "AFTER INSERT ON comments "
-        "BEGIN "
-        "  UPDATE books SET "
-        "    averageRating = (SELECT AVG(rating) FROM comments WHERE book_id = NEW.book_id), "
-        "    ratingCount = (SELECT COUNT(rating) FROM comments WHERE book_id = NEW.book_id) "
-        "  WHERE id = NEW.book_id; "
-        "END;";
-    q.exec(createTrigger);
-
     //--------------جدول سبد خرید--------------
     QString createCart =
         "CREATE TABLE IF NOT EXISTS cart ("
@@ -596,7 +584,7 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
 
     if (!title.isEmpty()) queryStr += " AND b.title LIKE :title";
     if (!author.isEmpty()) queryStr += " AND b.author LIKE :author";
-    if (!publisherName.isEmpty()) queryStr += " AND u.username LIKE :pub";
+    if (!publisherName.isEmpty()) queryStr += " AND (u.username LIKE :pub OR u.name LIKE :pub)";
 
     q.prepare(queryStr);
     if (!title.isEmpty()) q.bindValue(":title", "%" + title + "%");
@@ -766,7 +754,7 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
     QList<QJsonObject> list;
 
     QSqlQuery q;
-    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercentage "
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent "
               "FROM cart c "
               "JOIN books b ON c.book_id = b.id "
               "WHERE c.user_id = :u");
@@ -781,7 +769,7 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
         obj["title"] = q.value("title").toString();
         obj["author"] = q.value("author").toString();
         obj["price"] = q.value("price").toDouble();
-        obj["discount"] = q.value("discountPercentage").toDouble();
+        obj["discount"] = q.value("discountPercent").toDouble();
         list.append(obj);
     }
 
@@ -809,6 +797,16 @@ bool DatabaseManager::finalizePurchase(int userId) {
 
     while (q.next()) {
         int bookId = q.value(0).toInt();
+
+        QSqlQuery check;
+        check.prepare("SELECT 1 FROM library WHERE user_id = :u AND book_id = :b");
+        check.bindValue(":u", userId);
+        check.bindValue(":b", bookId);
+
+        if (check.exec() && check.next()) {
+        // کاربر قبلاً این کتاب را خریده، پس نیاز به خرید مجدد نیست و سراغ کتاب بعدی سبد خرید میرویم
+            continue;
+        }
 
         QSqlQuery insert;
         insert.prepare("INSERT INTO library (user_id, book_id, purchase_date) "
@@ -890,6 +888,10 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
               "WHERE s.user_id = :u");
     q.bindValue(":u", userId);
     q.exec();
+    if (!q.exec()) {
+        qDebug() << "getSavedBooks failed:" << q.lastError().text();
+        return list;
+    }
 
     while (q.next()) {
         QJsonObject o;
@@ -947,6 +949,21 @@ bool DatabaseManager::addBookToShelf(int shelfId, int bookId) {
 
 //انتقال کتاب بین قفسه ها
 bool DatabaseManager::moveBookBetweenShelves(int fromShelfId, int toShelfId, int bookId) {
+  //بررسی اینکه آیا کتاب از قبل در قفسه مقصد هست یا خیر؟
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
+    check.bindValue(":s", toShelfId);
+    check.bindValue(":b", bookId);
+
+    if (check.exec() && check.next()) {
+    // کتاب از قبل در قفسه مقصد هست، پس فقط باید از قفسه مبدأ حذفش کنیم تا تداخل ایجاد نشود
+        QSqlQuery q1;
+        q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
+        q1.bindValue(":s", fromShelfId);
+        q1.bindValue(":b", bookId);
+        return q1.exec();
+    }
+
     QSqlQuery q1;
     q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
     q1.bindValue(":s", fromShelfId);
