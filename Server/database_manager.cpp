@@ -908,7 +908,7 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
 
 //ایجاد قفسه
 bool DatabaseManager::createShelf(int userId, const QString& name) {
-    // بررسی اینکه آیا این کاربر قفسه ای با این نام دارد یا خیر
+    // بررسی اینکه آیا این کاربر قفسه‌ای با این نام دارد یا خیر
     QSqlQuery check;
     check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n");
     check.bindValue(":u", userId);
@@ -1003,7 +1003,8 @@ bool DatabaseManager::moveBookBetweenShelves(int fromShelfId, int toShelfId, int
         q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
         q1.bindValue(":s", fromShelfId);
         q1.bindValue(":b", bookId);
-        return q1.exec();
+        q1.exec();
+        return false;
     }
 
     QSqlQuery q1;
