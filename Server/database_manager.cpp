@@ -57,7 +57,10 @@ bool DatabaseManager::createTables(){
         "pdfPath TEXT NOT NULL,"                                                 //مسیر ذخیره سازی فایل پی دی اف کتاب (اجباری)
         "publisher_id INTEGER NOT NULL,"                                        //شناسه ناشر متصل به جدول کاربران (اجباری)
         "isActive INTEGER NOT NULL DEFAULT 1,"                                 //وضعیت فعال بودن کتاب (۱ برای فعال، ۰ برای غیرفعال)
-        "FOREIGN KEY (publisher_id) REFERENCES users(id)"                     //تعریف کلید خارجی برای اتصال شناسه ناشر به شناسه کاربر در جدول کاربران
+        "averageRating REAL DEFAULT 0.0,"
+        "ratingCount INTEGER DEFAULT 0,"
+        "created_at TEXT DEFAULT (DATETIME('now', 'localtime')),"
+        "FOREIGN KEY (publisher_id) REFERENCES users(id)"                 //تعریف کلید خارجی برای اتصال شناسه ناشر به شناسه کاربر در جدول کاربران
         ")";
     if (!q.exec(createBooks)) {
         qDebug() << "Create books failed:" << q.lastError().text();
@@ -80,6 +83,18 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create comments failed:" << q.lastError().text();
         return false;
     }
+
+    //----------------جدول خودکار-----------------
+    QString createTrigger =
+        "CREATE TRIGGER IF NOT EXISTS update_book_rating_after_insert "
+        "AFTER INSERT ON comments "
+        "BEGIN "
+        "  UPDATE books SET "
+        "    averageRating = (SELECT AVG(rating) FROM comments WHERE book_id = NEW.book_id), "
+        "    ratingCount = (SELECT COUNT(rating) FROM comments WHERE book_id = NEW.book_id) "
+        "  WHERE id = NEW.book_id; "
+        "END;";
+    q.exec(createTrigger);
 
     //--------------جدول سبد خرید--------------
     QString createCart =
@@ -355,6 +370,20 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     obj["discount_amount"] = q.value("discountAmount").toDouble();
     obj["cover_image_path"] = q.value("coverImagePath").toString();
     obj["pdf_path"] = q.value("pdfPath").toString();
+    obj["averageRating"] = q.value("averageRating").toDouble();
+    return obj;
+}
+
+static QJsonObject bookFromQueryWithoutPdf(const QSqlQuery& q) {
+    QJsonObject obj;
+    obj["id"] = q.value("id").toInt();
+    obj["title"] = q.value("title").toString();
+    obj["author"] = q.value("author").toString();
+    obj["genre"] = q.value("genre").toString();
+    obj["price"] = q.value("price").toDouble();
+    obj["discount_percentage"] = q.value("discountPercent").toDouble();
+    obj["cover_image_path"] = q.value("coverImagePath").toString();
+
     return obj;
 }
 
@@ -368,7 +397,7 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
     for (int i = 0; i < genres.size(); ++i)
         placeholders << QString(":g%1").arg(i);
 
-    QString sql = QString("SELECT * FROM books WHERE genre IN (%1)").arg(placeholders.join(","));
+    QString sql = QString("SELECT * FROM books WHERE genre IN (%1) AND isActive = 1 LIMIT 20").arg(placeholders.join(","));
     QSqlQuery q;
     q.prepare(sql);
     for (int i = 0; i < genres.size(); ++i)
@@ -376,63 +405,69 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // فیلتراسیون و دریافت کتاب ها بر اساس یک ژانر مشخص شده
 QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE genre = :g");
+    q.prepare("SELECT * FROM books WHERE genre = :g AND isActive = 1 LIMIT 20");
     q.bindValue(":g", genre);
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // بازیابی لیست تمام کتاب های نشانه گذاری شده به عنوان محبوب
 QList<QJsonObject> DatabaseManager::getPopularBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_popular = 1");
+    q.prepare("SELECT * FROM books WHERE isActive = 1 ORDER BY averageRating DESC LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // بازیابی لیست تمام کتاب های تازه اضافه شده به سیستم
 QList<QJsonObject> DatabaseManager::getNewBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_new = 1");
+    q.prepare("SELECT * FROM books WHERE isActive = 1 ORDER BY created_at DESC LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // بازیابی لیست پرفروش ترین کتاب های موجود در پایگاه داده
 QList<QJsonObject> DatabaseManager::getBestsellers(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_bestseller = 1");
+    q.prepare("SELECT b.*, COUNT(l.id) AS salesCount "
+              "FROM books b "
+              "LEFT JOIN library l ON l.book_id = b.id "
+              "WHERE b.isActive = 1 "
+              "GROUP BY b.id "
+              "ORDER BY salesCount DESC "
+              "LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 // دریافت لیست کتاب هایی که به صورت رایگان در اختیار کاربران قرار دارند
 QList<QJsonObject> DatabaseManager::getFreeBooks(){
     QList<QJsonObject> list;
     QSqlQuery q;
-    q.prepare("SELECT * FROM books WHERE is_free = 1");
+    q.prepare("SELECT * FROM books WHERE price = 0 AND isActive = 1 LIMIT 20");
     if(!q.exec())
         return list;
     while(q.next())
-        list.append(bookFromQuery(q));
+        list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
 //JSON دریافت و تجمیع اطلاعات پروفایل شخصی کاربر در قالب یک شیء خلاصه شده
