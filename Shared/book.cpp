@@ -14,3 +14,5 @@ QString Book::getAuthor() const { return author; }
 BookGenre Book::getGenre() const { return genre; }
 
 double Book::getFinalPrice() const { return price * (1.0 - (discountPercentage / 100.0)); }
+
+QString Book::getCoverImagePath() const { return coverImagePath; }

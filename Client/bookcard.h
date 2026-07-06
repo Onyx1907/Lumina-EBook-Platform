@@ -25,7 +25,7 @@ private:
     Ui::BookCard *ui;
     Book book;
 
-    QPushButton book_pushbutton = nullptr;
+    QPushButton* book_pushbutton = nullptr;
 };
 
 #endif // BOOKCARD_H

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>134</width>
-    <height>165</height>
+    <width>125</width>
+    <height>150</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>134</width>
-    <height>165</height>
+    <width>125</width>
+    <height>150</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>134</width>
-    <height>165</height>
+    <width>125</width>
+    <height>150</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -42,14 +42,14 @@
     <widget class="QPushButton" name="book_cover">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>101</horstretch>
-       <verstretch>121</verstretch>
+       <horstretch>95</horstretch>
+       <verstretch>112</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>101</width>
-       <height>121</height>
+       <width>95</width>
+       <height>112</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -73,30 +73,30 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>120</width>
-       <height>120</height>
+       <width>110</width>
+       <height>110</height>
       </size>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="price_label">
+    <widget class="QLabel" name="title_label">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>116</horstretch>
-       <verstretch>31</verstretch>
+       <horstretch>110</horstretch>
+       <verstretch>25</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>116</width>
-       <height>31</height>
+       <width>110</width>
+       <height>25</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>116</width>
-       <height>31</height>
+       <width>110</width>
+       <height>25</height>
       </size>
      </property>
      <property name="styleSheet">

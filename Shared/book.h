@@ -26,6 +26,8 @@ public:
     QString getAuthor() const;
     BookGenre getGenre() const;
     double getFinalPrice() const;
+
+    QString getCoverImagePath() const;
 };
 
 #endif // BOOK_H

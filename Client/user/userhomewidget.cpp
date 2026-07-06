@@ -66,7 +66,7 @@ void UserHomeWidget::showEvent(QShowEvent *event) {
     book2["genre"] = "SciFi";
     book2["price"] = 85000;
     book2["discount_percentage"] = 0.0;
-    book2["cover_base64"] = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+    book2["cover_base64"] = "";
     mockBooks.append(book2);
 
     // ۲. بسته‌بندی نهایی دیتا درون آبجکت اصلی
