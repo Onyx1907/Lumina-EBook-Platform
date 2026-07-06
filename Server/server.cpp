@@ -166,6 +166,9 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     if (action == "GET_SHELF_BOOKS") return handleGetShelfBooks(socket, data);
 
 
+    //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
+
+
 
 
 }
@@ -1026,5 +1029,11 @@ void Server::handleGetShelfBooks(QTcpSocket* socket, const QJsonObject& data) {
 
     sendJson(socket, resp);
 }
+
+
+//*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
+
+
+
 
 
