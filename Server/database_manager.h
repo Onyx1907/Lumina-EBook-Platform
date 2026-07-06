@@ -123,7 +123,8 @@ public:
     //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
 
 
-
+    int getLastReadPage(int userId, int bookId);
+    bool updateLastReadPage(int userId, int bookId, int page);
 
 
 

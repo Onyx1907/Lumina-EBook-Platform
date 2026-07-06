@@ -887,7 +887,6 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
               "JOIN books b ON s.book_id = b.id "
               "WHERE s.user_id = :u");
     q.bindValue(":u", userId);
-    q.exec();
     if (!q.exec()) {
         qDebug() << "getSavedBooks failed:" << q.lastError().text();
         return list;
@@ -909,6 +908,17 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
 
 //ایجاد قفسه
 bool DatabaseManager::createShelf(int userId, const QString& name) {
+    // بررسی اینکه آیا این کاربر قفسه‌ای با این نام دارد یا خیر
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n");
+    check.bindValue(":u", userId);
+    check.bindValue(":n", name.trimmed()); // حذف فاصله های خالی احتمالی
+
+    if (check.exec() && check.next()) {
+        qDebug() << ".قفسه ای با این نام برای این کاربر از قبل وجود دارد";
+        return false;
+    }
+
     QSqlQuery q;
     q.prepare("INSERT INTO shelves (user_id, name) VALUES (:u, :n)");
     q.bindValue(":u", userId);
@@ -918,6 +928,25 @@ bool DatabaseManager::createShelf(int userId, const QString& name) {
 
 //تغییر نام قفسه
 bool DatabaseManager::renameShelf(int shelfId, const QString& newName) {
+    //پیدا کردن شناسه کاربرِ صاحب قفسه
+    QSqlQuery getUser;
+    getUser.prepare("SELECT user_id FROM shelves WHERE id = :id");
+    getUser.bindValue(":id", shelfId);
+    if (!getUser.exec() || !getUser.next()) return false;
+    int userId = getUser.value(0).toInt();
+
+    //بررسی تکراری نبودن نام جدید در قفسه های دیگرِ این کاربر
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n AND id != :id");
+    check.bindValue(":u", userId);
+    check.bindValue(":n", newName.trimmed());
+    check.bindValue(":id", shelfId);
+
+    if (check.exec() && check.next()) {
+        qDebug() << ".نام جدید با یکی از قفسه های دیگر شما تداخل دارد";
+        return false;
+    }
+
     QSqlQuery q;
     q.prepare("UPDATE shelves SET name = :n WHERE id = :id");
     q.bindValue(":n", newName);
@@ -940,6 +969,17 @@ bool DatabaseManager::deleteShelf(int shelfId) {
 
 //افزودن کتاب به قفسه
 bool DatabaseManager::addBookToShelf(int shelfId, int bookId) {
+    //بررسی اینکه آیا این کتاب از قبل در این قفسه مشخص وجود دارد یا خیر
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
+    check.bindValue(":s", shelfId);
+    check.bindValue(":b", bookId);
+
+    if (check.exec() && check.next()) {
+        qDebug() << ".این کتاب از قبل در این قفسه موجود است و دوباره اضافه نمیشود";
+        return false; // خروجی فالس یعنی عملیات اضافه کردن انجام نشد (چون تکراری بود)
+    }
+
     QSqlQuery q;
     q.prepare("INSERT INTO shelf_books (shelf_id, book_id) VALUES (:s, :b)");
     q.bindValue(":s", shelfId);
@@ -949,14 +989,14 @@ bool DatabaseManager::addBookToShelf(int shelfId, int bookId) {
 
 //انتقال کتاب بین قفسه ها
 bool DatabaseManager::moveBookBetweenShelves(int fromShelfId, int toShelfId, int bookId) {
-  //بررسی اینکه آیا کتاب از قبل در قفسه مقصد هست یا خیر؟
+    //بررسی اینکه آیا کتاب از قبل در قفسه مقصد هست یا خیر؟
     QSqlQuery check;
     check.prepare("SELECT 1 FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
     check.bindValue(":s", toShelfId);
     check.bindValue(":b", bookId);
 
     if (check.exec() && check.next()) {
-    // کتاب از قبل در قفسه مقصد هست، پس فقط باید از قفسه مبدأ حذفش کنیم تا تداخل ایجاد نشود
+        //کتاب از قبل در قفسه مقصد هست، پس فقط باید از قفسه مبدأ حذفش کنیم تا تداخل ایجاد نشود
         QSqlQuery q1;
         q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
         q1.bindValue(":s", fromShelfId);
@@ -1025,7 +1065,44 @@ QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
 //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
 
 
+//گرفتن آخرین صفحه خوانده شده
+int DatabaseManager::getLastReadPage(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("SELECT last_page FROM reading_progress WHERE user_id = :u AND book_id = :b");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
 
+    if (!q.exec() || !q.next())
+        return 1;
+
+    return q.value(0).toInt();
+}
+
+//آپدیت آخرین صفحه خوانده شده
+bool DatabaseManager::updateLastReadPage(int userId, int bookId, int page) {
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM reading_progress WHERE user_id = :u AND book_id = :b");
+    check.bindValue(":u", userId);
+    check.bindValue(":b", bookId);
+
+    if (check.exec() && check.next()) {
+        // ردیف از قبل وجود دارد، پس آپدیتش می کنیم
+        QSqlQuery updateQuery;
+        updateQuery.prepare("UPDATE reading_progress SET last_page = :p WHERE user_id = :u AND book_id = :b");
+        updateQuery.bindValue(":p", page);
+        updateQuery.bindValue(":u", userId);
+        updateQuery.bindValue(":b", bookId);
+        return updateQuery.exec();
+    } else {
+        // ردیفی وجود ندارد، پس ردیف جدید می سازیم
+        QSqlQuery insertQuery;
+        insertQuery.prepare("INSERT INTO reading_progress (user_id, book_id, last_page) VALUES (:u, :b, :p)");
+        insertQuery.bindValue(":u", userId);
+        insertQuery.bindValue(":b", bookId);
+        insertQuery.bindValue(":p", page);
+        return insertQuery.exec();
+    }
+}
 
 
 
