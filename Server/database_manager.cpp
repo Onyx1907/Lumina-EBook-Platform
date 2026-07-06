@@ -83,18 +83,6 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
-    //----------------جدول خودکار-----------------
-    QString createTrigger =
-        "CREATE TRIGGER IF NOT EXISTS update_book_rating_after_insert "
-        "AFTER INSERT ON comments "
-        "BEGIN "
-        "  UPDATE books SET "
-        "    averageRating = (SELECT AVG(rating) FROM comments WHERE book_id = NEW.book_id), "
-        "    ratingCount = (SELECT COUNT(rating) FROM comments WHERE book_id = NEW.book_id) "
-        "  WHERE id = NEW.book_id; "
-        "END;";
-    q.exec(createTrigger);
-
     //--------------جدول سبد خرید--------------
     QString createCart =
         "CREATE TABLE IF NOT EXISTS cart ("
@@ -579,7 +567,7 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
 
     if (!title.isEmpty()) queryStr += " AND b.title LIKE :title";
     if (!author.isEmpty()) queryStr += " AND b.author LIKE :author";
-    if (!publisherName.isEmpty()) queryStr += " AND u.username LIKE :pub";
+    if (!publisherName.isEmpty()) queryStr += " AND (u.username LIKE :pub OR u.name LIKE :pub)";
 
     q.prepare(queryStr);
     if (!title.isEmpty()) q.bindValue(":title", "%" + title + "%");
