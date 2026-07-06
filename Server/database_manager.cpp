@@ -996,12 +996,15 @@ bool DatabaseManager::moveBookBetweenShelves(int fromShelfId, int toShelfId, int
     check.bindValue(":b", bookId);
 
     if (check.exec() && check.next()) {
+        qDebug() << ".این کتاب از قبل در این قفسه موجود است و دوباره اضافه نمیشود";
+
         //کتاب از قبل در قفسه مقصد هست، پس فقط باید از قفسه مبدأ حذفش کنیم تا تداخل ایجاد نشود
         QSqlQuery q1;
         q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
         q1.bindValue(":s", fromShelfId);
         q1.bindValue(":b", bookId);
-        return q1.exec();
+        q1.exec();
+        return false;
     }
 
     QSqlQuery q1;
