@@ -769,4 +769,39 @@
       ]
     }
   }
+,
+  "36_GET_LAST_READ_PAGE": {
+    "client_request": {
+      "action": "GET_LAST_READ_PAGE",
+      "data": {
+        "user_id": 42,
+        "book_id": 10
+      }
+    },
+    "server_response_success": {
+      "action": "GET_LAST_READ_PAGE_RESPONSE",
+      "status": "SUCCESS",
+      "page": 24
+    }
+  },
+  "37_UPDATE_LAST_READ_PAGE": {
+    "client_request": {
+      "action": "UPDATE_LAST_READ_PAGE",
+      "data": {
+        "user_id": 42,
+        "book_id": 10,
+        "page": 25
+      }
+    },
+    "server_response_success": {
+      "action": "UPDATE_LAST_READ_PAGE_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".آخرین صفحه ذخیره شد"
+    },
+    "server_response_error": {
+      "action": "UPDATE_LAST_READ_PAGE_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در ذخیره صفحه"
+    }
+  }
 }
