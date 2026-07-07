@@ -120,6 +120,9 @@ private:
     //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
 
 
+    void handleGetLastReadPage(QTcpSocket* socket, const QJsonObject& data);
+    void handleUpdateLastReadPage(QTcpSocket* socket, const QJsonObject& data);
+
 
 
 

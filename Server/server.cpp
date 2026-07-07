@@ -1027,6 +1027,39 @@ void Server::handleGetShelfBooks(QTcpSocket* socket, const QJsonObject& data) {
 //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
 
 
+//مدیریت دریافت آخرین صفحه
+void Server::handleGetLastReadPage(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    int bookId = data["book_id"].toInt();
+
+    int page = dbManager.getLastReadPage(userId, bookId);
+
+    QJsonObject resp;
+    resp["action"] = "GET_LAST_READ_PAGE_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["page"] = page;
+
+    sendJson(socket, resp);
+}
+
+//مدیریت آپدیت آخرین صفحه مطالعه شده
+void Server::handleUpdateLastReadPage(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    int bookId = data["book_id"].toInt();
+    int page = data["page"].toInt();
+
+    bool ok = dbManager.updateLastReadPage(userId, bookId, page);
+
+    QJsonObject resp;
+    resp["action"] = "UPDATE_LAST_READ_PAGE_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".آخرین صفحه ذخیره شد"
+                         : ".خطا در ذخیره صفحه";
+
+    sendJson(socket, resp);
+}
+
 
 
 
