@@ -169,6 +169,9 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
 
 
+    if (action == "GET_LAST_READ_PAGE") return handleGetLastReadPage(socket, data);
+    if (action == "UPDATE_LAST_READ_PAGE") return handleUpdateLastReadPage(socket, data);
+
 
 
 }
@@ -581,7 +584,7 @@ void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data)
     QList<QJsonObject> books = dbManager.searchBooks(title, author, publisher);
     QJsonArray finalArray;
 
-    for (QJsonObject book : books) {
+    for (QJsonObject &book : books) {
         //استخراج مسیر فیزیکی عکس کاور کتاب
         QString coverPath = book.value("cover_image_path").toString();
         if (coverPath.isEmpty()) {
