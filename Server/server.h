@@ -62,6 +62,9 @@ private:
 
     void handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& data);
 
+    void handleCheckBookOwnership(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetBookPdfPath(QTcpSocket* socket, const QJsonObject& data);
+    void handleStreamFileData(QTcpSocket* socket, const QJsonObject& data);
 
 
     //*********************************************پنل کاربر عادی ( ماژول 2 )***************************************************
