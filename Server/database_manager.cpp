@@ -579,6 +579,49 @@ int DatabaseManager::getTotalPurchases(const QString& username){
     return q.value(0).toInt();
 }
 
+//بررسی اینکه کاربر کتاب را خریداری کرده و در کتابخانه شخصی‌اش دارد یا خیر
+bool DatabaseManager::isBookPurchased(int userId, int bookId)
+{
+    QSqlQuery q;
+    q.prepare("SELECT 1 FROM library WHERE user_id = :userId AND book_id = :bookId LIMIT 1");
+    q.bindValue(":userId", userId);
+    q.bindValue(":bookId", bookId);
+
+    return (q.exec() && q.next());
+}
+
+//بررسی اکتیو بودن کتاب و گرفتن اطلاعات ناشر و ریتینگ از جدول
+bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, double &rating)
+{
+    QSqlQuery q;
+    q.prepare("SELECT u.name, b.averageRating "
+              "FROM books b "
+              "JOIN users u ON b.publisher_id = u.id "
+              "WHERE b.id = :bookId AND b.isActive = 1 AND b.is_deleted = 0 LIMIT 1");
+
+    q.bindValue(":bookId", bookId);
+
+    if (q.exec() && q.next()) {
+        publisherName = q.value("name").toString();
+        rating = q.value("averageRating").toDouble();
+        return true;
+    }
+    return false;
+}
+
+//گرفتن مسیر فیزیکی فایل پی  دی اف از جدول کتاب‌ها
+QString DatabaseManager::getBookPdfPath(int bookId)
+{
+    QSqlQuery q;
+    q.prepare("SELECT pdfPath FROM books WHERE id = :bookId AND is_deleted = 0 LIMIT 1");
+    q.bindValue(":bookId", bookId);
+
+    if (q.exec() && q.next()) {
+        return q.value("pdfPath").toString();
+    }
+    return "";
+}
+
 
 //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
 
