@@ -42,6 +42,12 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
+    // اضافه کردن ستون حذف منطقی به جدول کاربران (اگر از قبل وجود نداشته باشد)
+    if (!q.exec("ALTER TABLE users ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
+        // اگر ستون از قبل وجود داشته باشد دیتابیس خطا میدهد که طبیعی است، پس برنامه را متوقف نمیکنیم
+        qDebug() << "Note: is_deleted column might already exist.";
+    }
+
     //--------------جدول اعلان ها--------------
     QString createNotifications =
         "CREATE TABLE IF NOT EXISTS notifications ("
@@ -84,6 +90,12 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create books failed:" << q.lastError().text();
         return false;
     }
+
+    // اضافه کردن ستون حذف منطقی به جدول کتاب ها (اگر از قبل وجود نداشته باشد)
+    if (!q.exec("ALTER TABLE books ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
+        qDebug() << "Note: is_deleted column in books might already exist.";
+    }
+
     //--------------جدول کامنت ها--------------
     QString createComments =
         "CREATE TABLE IF NOT EXISTS comments ("
@@ -734,7 +746,9 @@ bool DatabaseManager::recalculateBookRating(int bookId) {
 //افزودن به سبد خرید
 bool DatabaseManager::addToCart(int userId, int bookId) {
     QSqlQuery q;
-    q.prepare("INSERT INTO cart (user_id, book_id) VALUES (:u, :b)");
+    q.prepare("INSERT INTO cart (user_id, book_id) "
+              "SELECT :u, id FROM books "
+              "WHERE id = :b AND isActive = 1");
     q.bindValue(":u", userId);
     q.bindValue(":b", bookId);
     return q.exec();
@@ -754,7 +768,7 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
     QList<QJsonObject> list;
 
     QSqlQuery q;
-    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent "
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.isActive "
               "FROM cart c "
               "JOIN books b ON c.book_id = b.id "
               "WHERE c.user_id = :u");
@@ -770,6 +784,10 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
         obj["author"] = q.value("author").toString();
         obj["price"] = q.value("price").toDouble();
         obj["discount"] = q.value("discountPercent").toDouble();
+
+        //فرستادن وضعیت دسترسی به کلاینت (۱ یعنی موجود، ۰ یعنی مسدود/حذف شده)
+        obj["isActive"] = (q.value("isActive").toInt() == 1);
+
         list.append(obj);
     }
 
@@ -786,39 +804,77 @@ bool DatabaseManager::clearCart(int userId) {
 
 //نهایی کردن خرید
 bool DatabaseManager::finalizePurchase(int userId) {
+    //به دیتابیس میگوییم: یک تراکنش امن باز کن (تغییرات را موقتی نگه دار)
+    QSqlDatabase::database().transaction();
+
+    //بررسی وجود کتاب مسدود/غیرفعال در سبد کاربر
+    QSqlQuery qCheck;
+    qCheck.prepare("SELECT COUNT(*) FROM cart c "
+                   "JOIN books b ON c.book_id = b.id "
+                   "WHERE c.user_id = :u AND b.isActive = 0");
+    qCheck.bindValue(":u", userId);
+
+    if (!qCheck.exec() || !qCheck.next()) {
+        QSqlDatabase::database().rollback(); // خطای ناگهانی دیتابیس -> همه‌چیز لغو
+        return false;
+    }
+
+    //اگر شمارش کتاب های مسدود بیشتر از 0 بود
+    if (qCheck.value(0).toInt() > 0) {
+        qDebug() << "Purchase failed: Inactive books detected.";
+        QSqlDatabase::database().rollback(); //همه چیز را به حالت قبل برگردان و لغو کن
+        return false;
+    }
+
+    //خواندن کتاب های داخل سبد خرید
     QSqlQuery q;
     q.prepare("SELECT book_id FROM cart WHERE user_id = :u");
     q.bindValue(":u", userId);
 
-    if (!q.exec())
+    if (!q.exec()) {
+        QSqlDatabase::database().rollback(); // خطا در خواندن -> لغو
         return false;
+    }
 
     const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
 
+    // شروع حلقه روی کتاب های سبد خرید
     while (q.next()) {
         int bookId = q.value(0).toInt();
 
-    // بررسی هوشمندانه: آیا کاربر این کتاب را قبلاً خریده است؟
+        //بررسی اینکه کاربر قبلاً این کتاب را نخریده باشد
         QSqlQuery check;
         check.prepare("SELECT 1 FROM library WHERE user_id = :u AND book_id = :b");
         check.bindValue(":u", userId);
         check.bindValue(":b", bookId);
 
         if (check.exec() && check.next()) {
-        // کاربر قبلاً این کتاب را خریده، پس نیاز به خرید مجدد نیست و سراغ کتاب بعدی سبد خرید میرویم
+            // کاربر قبلاً این کتاب را خریده، پس بدون خطا رفتن به کتاب بعدی سبد خرید
             continue;
         }
 
+        //درج کتاب در کتابخانه کاربر
         QSqlQuery insert;
         insert.prepare("INSERT INTO library (user_id, book_id, purchase_date) "
                        "VALUES (:u, :b, :d)");
         insert.bindValue(":u", userId);
         insert.bindValue(":b", bookId);
         insert.bindValue(":d", now);
-        insert.exec();
+
+        if (!insert.exec()) {
+            QSqlDatabase::database().rollback(); // اگر درج این کتاب ارور داد -> کل خرید لغو
+            return false;
+        }
     }
 
-    return clearCart(userId);
+    //پاک کردن سبد خرید بعد از اتمام حلقه
+    if (!clearCart(userId)) {
+        QSqlDatabase::database().rollback(); // اگر سبد پاک نشد -> کل خرید لغو
+        return false;
+    }
+
+    //همه چیز عالی بود! حالا تغییرات را در دیتابیس قطعی و ماندگار کن
+    return QSqlDatabase::database().commit();
 }
 
 
