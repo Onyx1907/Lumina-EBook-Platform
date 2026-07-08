@@ -65,6 +65,10 @@ public:
     QList<QJsonObject> getPurchaseHistory(const QString& username);
     int getTotalPurchases(const QString& username);
 
+    bool isBookPurchased(int userId, int bookId);
+    bool getActiveBookDetails(int bookId, QString &publisherName, double &rating);
+    QString getBookPdfPath(int bookId);
+
 
 //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
 
