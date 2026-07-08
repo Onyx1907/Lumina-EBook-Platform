@@ -545,12 +545,14 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
 
      QString publisher = "";
      double rating = 0.0;
+     QString coverPath = "";
+
 
      QJsonObject resp;
      resp["action"] = "CHECK_BOOK_OWNERSHIP_RESPONSE";
      resp["book_id"] = bookId;
 
-     if (!dbManager.getActiveBookDetails(bookId, publisher, rating)) {
+     if (!dbManager.getActiveBookDetails(bookId, publisher, rating, coverPath)) {
          resp["status"] = "FAILED";
          resp["message"] = ".این کتاب در حال حاضر غیرفعال یا ناموجود است";
          sendJson(socket, resp);

@@ -560,19 +560,20 @@ bool DatabaseManager::isBookPurchased(int userId, int bookId)
 }
 
 //بررسی اکتیو بودن کتاب و گرفتن اطلاعات ناشر و ریتینگ از جدول
-bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, double &rating)
+bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath)
 {
     QSqlQuery q;
-    q.prepare("SELECT u.name, b.averageRating "
+    // اضافه کردن ستون آدرس عکس کتاب به کوئری
+    q.prepare("SELECT u.name, b.averageRating, b.cover_path "
               "FROM books b "
               "JOIN users u ON b.publisher_id = u.id "
               "WHERE b.id = :bookId AND b.isActive = 1 AND b.is_deleted = 0 LIMIT 1");
-
     q.bindValue(":bookId", bookId);
 
     if (q.exec() && q.next()) {
         publisherName = q.value("name").toString();
         rating = q.value("averageRating").toDouble();
+        coverPath = q.value("cover_path").toString(); // استخراج آدرس عکس از دیتابیس
         return true;
     }
     return false;
