@@ -538,20 +538,36 @@ void Server::handleGetProfile(QTcpSocket* socket, const QJsonObject& data) {
 }
 // به روزرسانی اطلاعات پروفایل کاربر
 void Server::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data) {
-    const QString username = data.value("username").toString();
-    const QString name = data.value("name").toString();
-    const QString email = data.value("email").toString();
-
-    bool ok = dbManager.updateUserProfile(username, name, email);
+    const int userId = data.value("user_id").toInt();
+    const QString newUsername = data.value("username").toString().trimmed();
+    const QString name = data.value("name").toString().trimmed();
+    const QString email = data.value("email").toString().trimmed();
 
     QJsonObject resp;
     resp["action"] = "UPDATE_PROFILE_RESPONSE";
-    resp["status"] = ok ? "SUCCESS" : "ERROR";
-    resp["message"] = ok ? ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد"
-                         : ".خطا در به روزرسانی اطلاعات حساب کاربری";
+
+    // بررسی خطای خالی بودن یوزرنیم جدید در لایه بک‌اند
+    if (newUsername.isEmpty()) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد";
+        sendJson(socket, resp);
+        return;
+    }
+
+    // صدا زدن متد دیتابیس سرور اصلی
+    bool ok = dbManager.updateUserProfile(userId, newUsername, name, email);
+
+    if (ok) {
+        resp["status"] = "SUCCESS";
+        resp["message"] = ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد";
+    } else {
+        resp["status"] = "FAILED";
+        resp["message"] = ".این نام کاربری، نام نمایش یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است";
+    }
 
     sendJson(socket, resp);
 }
+
 // تغییر رمز عبور کاربر
 void Server::handleChangePassword(QTcpSocket* socket, const QJsonObject& data) {
     const QString username = data.value("username").toString();
