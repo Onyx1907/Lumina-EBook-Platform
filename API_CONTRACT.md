@@ -520,7 +520,8 @@
           "title": "شاهنامه",
           "author": "فردوسی",
           "price": 250000.0,
-          "discount": 10.0
+          "discount": 10.0,
+          "isActive" : 0 "OR" 1
         }
       ],
       "total_price": 250000.0,
