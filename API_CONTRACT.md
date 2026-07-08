@@ -284,21 +284,27 @@
   "13_UPDATE_PROFILE": {
     "client_request": {
       "action": "UPDATE_PROFILE",
-      "data": {
-        "username": "user123",
-        "name": "علی محمدی جدید",
-        "email": "ali_new@example.com"
+      "user_id": 12,
+      "username": "new_username",
+      "name": "نام جدید",
+      "email": "user@example.com"
+    },
+    "server_responses": {
+      "success_updated": {
+        "action": "UPDATE_PROFILE_RESPONSE",
+        "status": "SUCCESS",
+        "message": ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد"
+      },
+      "failed_empty_username": {
+        "action": "UPDATE_PROFILE_RESPONSE",
+        "status": "FAILED",
+        "message": ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد"
+      },
+      "failed_duplicate_data": {
+        "action": "UPDATE_PROFILE_RESPONSE",
+        "status": "FAILED",
+        "message": ".این نام کاربری، نام نمایش یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است"
       }
-    },
-    "server_response_success": {
-      "action": "UPDATE_PROFILE_RESPONSE",
-      "status": "SUCCESS",
-      "message": ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد"
-    },
-    "server_response_error": {
-      "action": "UPDATE_PROFILE_RESPONSE",
-      "status": "ERROR",
-      "message": ".خطا در به روزرسانی اطلاعات حساب کاربری"
     }
   },
   "14_CHANGE_PASSWORD": {
