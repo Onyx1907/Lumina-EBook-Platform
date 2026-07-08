@@ -57,7 +57,7 @@ public:
     QList<QJsonObject> getFreeBooks();
 
     QJsonObject getUserProfile(const QString& username);
-    bool updateUserProfile(const QString& username, const QString& name, const QString& email);
+    bool updateUserProfile(int userId, const QString& newUsername, const QString& name, const QString& email);
 
     bool changePassword(const QString& username,const QString& oldPasswordPlain,const QString& newPasswordPlain);
 
