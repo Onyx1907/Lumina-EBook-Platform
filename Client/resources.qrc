@@ -16,5 +16,7 @@
         <file>resources/library_icon.svg</file>
         <file>resources/magic_home.png</file>
         <file>resources/default_book.png</file>
+        <file>resources/user/profile_logo.png</file>
+        <file>resources/user/profile_edit.png</file>
     </qresource>
 </RCC>

@@ -2,9 +2,10 @@
 #define USERDASHBOARDWIDGET_H
 
 #include <QWidget>
-#include <regularuser.h>
-#include <genreselectionwidget.h>
-#include <userhomewidget.h>
+#include "regularuser.h"
+#include "genreselectionwidget.h"
+#include "userhomewidget.h"
+#include "profilewidget.h"
 
 
 namespace Ui {
@@ -25,18 +26,22 @@ protected:
 private slots:
     void on_home_pushButton_clicked();
 
+    void on_profile_pushButton_clicked();
+
 private:
     Ui::UserDashboardWidget *ui;
     RegularUser *user;
 
     GenreSelectionWidget  *GenreSelectionPage;
     UserHomeWidget *UserHomePage;
+    ProfileWidget* ProfilePage;
 
     void fadeToPage(int pageIndex);
 
     enum Page{
         GenreSelectionPageIndex = 0,
-        UserHomePageIndex = 1
+        UserHomePageIndex = 1,
+        ProfilePageIndex = 2
     };
 
 };
