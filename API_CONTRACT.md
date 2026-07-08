@@ -343,6 +343,83 @@
     }
   }
 ,
+*******************************
+{
+  "check_book_ownership_api": {
+    "client_request": {
+      "action": "CHECK_BOOK_OWNERSHIP",
+      "user_id": 12,
+      "book_id": 45
+    },
+    "server_responses": {
+      "success_purchased": {
+        "action": "CHECK_BOOK_OWNERSHIP_RESPONSE",
+        "book_id": 45,
+        "status": "SUCCESS",
+        "is_purchased": true,
+        "publisher_name": "انتشارات نمونه",
+        "rating": 4.7
+      },
+      "success_not_purchased": {
+        "action": "CHECK_BOOK_OWNERSHIP_RESPONSE",
+        "book_id": 45,
+        "status": "SUCCESS",
+        "is_purchased": false,
+        "publisher_name": "انتشارات نمونه",
+        "rating": 4.7
+      },
+      "failed_book_inactive_or_not_found": {
+        "action": "CHECK_BOOK_OWNERSHIP_RESPONSE",
+        "book_id": 45,
+        "status": "FAILED",
+        "message": ".این کتاب در حال حاضر غیرفعال یا ناموجود است"
+      }
+    }
+  },
+  "get_book_pdf_path_api": {
+    "client_request": {
+      "action": "GET_BOOK_PDF_PATH",
+      "user_id": 12,
+      "book_id": 45
+    },
+    "server_responses": {
+      "success_path_found": {
+        "action": "GET_BOOK_PDF_PATH_RESPONSE",
+        "book_id": 45,
+        "status": "SUCCESS",
+        "pdf_path": "/var/www/uploads/books/book_45.pdf"
+      },
+      "failed_not_purchased": {
+        "action": "GET_BOOK_PDF_PATH_RESPONSE",
+        "book_id": 45,
+        "status": "FAILED",
+        "message": ".شما دسترسی به این کتاب ندارید. ابتدا باید آن را خریداری کنید"
+      },
+      "failed_pdf_not_found_in_db": {
+        "action": "GET_BOOK_PDF_PATH_RESPONSE",
+        "book_id": 45,
+        "status": "FAILED",
+        "message": ".فایل پی‌دی‌اف این کتاب یافت نشد"
+      }
+    }
+  },
+  "stream_file_data_api": {
+    "client_request": {
+      "action": "STREAM_FILE_DATA",
+      "file_path": "/var/www/uploads/books/book_45.pdf"
+    },
+    "server_responses": {
+      "failed_file_not_found_on_disk": {
+        "action": "STREAM_FILE_DATA_RESPONSE",
+        "status": "FAILED",
+        "message": ".فایل مورد نظر روی سرور یافت نشد"
+      },
+      "note_on_success": "توضیح: در صورت موفقیت، طبق کد هیچ جی‌سونی ارسال نمی‌شود؛ بلکه بایت‌های فایل به صورت باینری (تکه‌های ۴ کیلوبایتی) روی سوکت رایت می‌شوند."
+    }
+  }
+***********************************
+}
+,
   "16_SEARCH_BOOKS": {
     "client_request": {
       "action": "SEARCH_BOOKS",
