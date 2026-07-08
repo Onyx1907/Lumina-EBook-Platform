@@ -358,6 +358,7 @@
         "status": "SUCCESS",
         "is_purchased": true,
         "publisher_name": "انتشارات نمونه",
+        "cover_path": "server_storage/covers/book_52.jpg",
         "rating": 4.7
       },
       "success_not_purchased": {
@@ -366,6 +367,7 @@
         "status": "SUCCESS",
         "is_purchased": false,
         "publisher_name": "انتشارات نمونه",
+        "cover_path": "server_storage/covers/book_52.jpg",
         "rating": 4.7
       },
       "failed_book_inactive_or_not_found": {
