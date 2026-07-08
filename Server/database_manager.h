@@ -66,7 +66,7 @@ public:
     int getTotalPurchases(const QString& username);
 
     bool isBookPurchased(int userId, int bookId);
-    bool getActiveBookDetails(int bookId, QString &publisherName, double &rating);
+    bool getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath);
     QString getBookPdfPath(int bookId);
 
 
