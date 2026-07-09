@@ -227,6 +227,7 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
     resp["message"] = "!خوش آمدی";
     resp["user_role"] = roleToString(role);
     resp["first_login"] = firstLogin;
+    resp["user_id"] = userId;
 
     sendJson(socket, resp);
 
@@ -549,7 +550,7 @@ void Server::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data) {
     // بررسی خطای خالی بودن یوزرنیم جدید در لایه بک‌اند
     if (newUsername.isEmpty()) {
         resp["status"] = "FAILED";
-        resp["message"] = ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد";
+        resp["message"] = ".نام کاربری (یوزرنیم) نمی تواند خالی باشد";
         sendJson(socket, resp);
         return;
     }
