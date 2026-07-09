@@ -19,6 +19,9 @@ public:
 signals:
     void goToHomePage();
 
+public slots:
+    void onGeresChangeClicked();
+
 private slots:
     void on_check_pushButton_clicked();
 

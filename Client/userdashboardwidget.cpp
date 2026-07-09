@@ -24,7 +24,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
 
     GenreSelectionPage = new GenreSelectionWidget(user->getUsername(), this);
     UserHomePage = new UserHomeWidget(user->getUsername(), this);
-    ProfilePage = new ProfileWidget(this);
+    ProfilePage = new ProfileWidget(user, this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
@@ -50,6 +50,11 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
             button->setEnabled(true);
         }
         ui->home_pushButton->setChecked(true);
+    });
+
+    connect(ProfilePage, &ProfileWidget::goToGenreSelectionPage, this, [this](){
+        fadeToPage(Page::GenreSelectionPageIndex);
+        GenreSelectionPage->onGeresChangeClicked();
     });
 }
 
@@ -116,6 +121,7 @@ void UserDashboardWidget::on_home_pushButton_clicked()
 
 void UserDashboardWidget::on_profile_pushButton_clicked()
 {
+    ProfilePage->loadProfile();
     fadeToPage(Page::ProfilePageIndex);
 }
 

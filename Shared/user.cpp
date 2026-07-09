@@ -12,3 +12,5 @@ UserRole User::getRole() const { return role; }
 bool User::getIsBlocked() const { return isBlocked; }
 
 void User::setBlockStatus(bool status) { isBlocked = status; }
+
+void User::setUsername(QString name){ username = name; }

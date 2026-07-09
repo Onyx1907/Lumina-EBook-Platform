@@ -20,6 +20,7 @@ public:
     UserRole getRole() const;
     bool getIsBlocked() const;
     void setBlockStatus(bool status);
+    void setUsername(QString name);
 };
 
 #endif // USER_H

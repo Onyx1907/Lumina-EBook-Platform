@@ -1,6 +1,7 @@
 #include "genreselectionwidget.h"
 #include "ui_genreselectionwidget.h"
 #include "clientnetworkmanager.h"
+#include "profilewidget.h"
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -38,6 +39,13 @@ GenreSelectionWidget::GenreSelectionWidget(QString cur_username, QWidget *parent
             this, &GenreSelectionWidget::processNetworkData);
 }
 
+
+void GenreSelectionWidget::onGeresChangeClicked(){
+    for(QAbstractButton* btn : ui->genres_buttonGroup->buttons()){
+        btn->setChecked(false);
+    }
+    ui->check_pushButton->setEnabled(false);
+}
 
 void GenreSelectionWidget::on_check_pushButton_clicked()
 {
