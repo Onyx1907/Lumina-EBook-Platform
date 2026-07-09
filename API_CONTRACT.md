@@ -303,7 +303,7 @@
       "failed_duplicate_data": {
         "action": "UPDATE_PROFILE_RESPONSE",
         "status": "FAILED",
-        "message": ".این نام کاربری، نام نمایش یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است"
+        "message": ".این نام کاربری یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است"
       }
     }
   },
