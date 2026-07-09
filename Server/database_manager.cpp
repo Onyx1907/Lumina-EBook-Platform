@@ -531,15 +531,6 @@ bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, 
         return false; // یوزرنیم تکراری است
     }
 
-    if (!name.trimmed().isEmpty()) {
-        QSqlQuery checkName;
-        checkName.prepare("SELECT 1 FROM users WHERE name = :name AND id != :id LIMIT 1");
-        checkName.bindValue(":name", name.trimmed());
-        checkName.bindValue(":id", userId);
-        if (checkName.exec() && checkName.next()) {
-            return false; // نام نمایش تکراری است
-        }
-    }
 
     if (!email.trimmed().isEmpty()) {
         QSqlQuery checkEmail;

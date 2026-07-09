@@ -270,7 +270,7 @@ void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
     QString step = data.value("step").toString();
 
     QJsonObject resp;
-    resp["action"] = "FORGOT_PASSWORD_RESPONSE"; // مقدار اکشن را در همان ابتدا ثابت می‌گذاریم تا در هر دو حالت ارسال شود
+    resp["action"] = "FORGOT_PASSWORD_RESPONSE"; // مقدار اکشن را در همان ابتدا ثابت میگذاریم تا در هر دو حالت ارسال شود
 
     if (step == "REQUEST_QUESTION") {
         QString username = data.value("username").toString();
@@ -562,7 +562,7 @@ void Server::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data) {
         resp["message"] = ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد";
     } else {
         resp["status"] = "FAILED";
-        resp["message"] = ".این نام کاربری، نام نمایش یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است";
+        resp["message"] = ".این نام کاربری یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است";
     }
 
     sendJson(socket, resp);
