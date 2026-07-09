@@ -20,8 +20,9 @@
       "action": "LOGIN_RESPONSE",
       "status": "SUCCESS",
       "message": "!خوش آمدی",
-      "user_role": "User"
-      "first_login": 1    "OR"     "first_login": 0
+      "user_role": "User",
+      "first_login": 1    "OR"     "first_login": 0,
+      "user_id" : 11
     },
     "server_response_failed": {
       "action": "LOGIN_RESPONSE",
