@@ -543,7 +543,7 @@ void Server::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data) {
     // بررسی خطای خالی بودن یوزرنیم جدید در لایه بک‌اند
     if (newUsername.isEmpty()) {
         resp["status"] = "FAILED";
-        resp["message"] = ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد";
+        resp["message"] = ".نام کاربری (یوزرنیم) نمی تواند خالی باشد";
         sendJson(socket, resp);
         return;
     }
@@ -556,7 +556,7 @@ void Server::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data) {
         resp["message"] = ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد";
     } else {
         resp["status"] = "FAILED";
-        resp["message"] = ".این نام کاربری، نام نمایش یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است";
+        resp["message"] = ".این نام کاربری یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است";
     }
 
     sendJson(socket, resp);
