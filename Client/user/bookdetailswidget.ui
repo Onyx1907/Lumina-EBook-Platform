@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BookDetailsWidget</class>
+ <widget class="QWidget" name="BookDetailsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="minimumSize">
+      <size>
+       <width>730</width>
+       <height>530</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>730</width>
+       <height>530</height>
+      </size>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>false</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>730</width>
+        <height>700</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>730</width>
+        <height>700</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>730</width>
+        <height>700</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">/* ۱. بوم اصلی صفحه (پشت ویجت‌ها) که ویدیو زیر آن پخش می‌شود */
+QWidget#scrollAreaWidgetContents {
+    /* یک لایه شفاف نسکافه‌ای روشن روی ویدیو می‌کشد */
+    background-color: rgba(235, 220, 203, 0.45); 
+}
+
+/* ۲. حذف کامل کادر و پس‌زمینه اسکرول‌اریا برای دیده شدن ویدیو */
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+QListWidget {
+    background-color: rgba(245, 230, 211, 0.65); /* ۶۵ درصد کدر، بقیه شفاف برای دیدن بک‌گراند */
+    border: 2px solid rgba(111, 78, 55, 0.8); /* حاشیه قهوه‌ای با کمی شفافیت */
+    border-radius: 10px;
+    padding: 5px;
+}
+
+
+
+</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

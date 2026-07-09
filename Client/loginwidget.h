@@ -1,5 +1,6 @@
 #ifndef LOGINWIDGET_H
 #define LOGINWIDGET_H
+#include "regularuser.h"
 
 #include <QWidget>
 #include <QStackedWidget>
@@ -19,6 +20,7 @@ signals:
     //  سیگنال‌هایی که به مِین‌ویندو می‌گویند کاربر می‌خواهد جابجا شود
     void goToRegisterRequested();
     void goToForgotPasswordRequested();
+    void goToUSerDashboard(User *user, bool is_first_login);
 
 
 private slots:
@@ -34,6 +36,8 @@ private:
     Ui::LoginWidget *ui;
 
     void enableFormWithError(const QString& errorMsg);
+
+    QString current_username;
 
 };
 

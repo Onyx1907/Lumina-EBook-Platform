@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GenreSelectionWidget</class>
+ <widget class="QWidget" name="GenreSelectionWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="title_label">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>0</y>
+     <width>611</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;به کتابخونه جادویی خودت خوش اومدی&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;برای تجربه بهتر اول ژانر های مورد علاقه خودت رو انتخاب کن&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;(بین ۱ تا ۳ انتخاب)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="biography_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>130</y>
+     <width>141</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* -------------------------------------------------------------
+   استایل دکمه‌های ژانر (تم جادویی و کلاسیک روشن)
+------------------------------------------------------------- */
+QPushButton {
+    /* پس‌زمینه سفید شیری ملایم و نیمه‌شفاف (برای دیده شدن آیکون‌ها) */
+    background-color: rgba(255, 255, 255, 0.75); 
+    
+    /* لبه‌های ظریف شکلاتی-کرمی برای وایب قدیمی */
+    border: 1px solid rgba(139, 90, 43, 0.25);
+    border-radius: 12px;
+    
+    /* رنگ متن شکلاتی تیره */
+    color: #4a2f15;
+    font-family: &quot;Segoe UI&quot;, &quot;Georgia&quot;, &quot;Vazirmatn&quot;;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 16px;
+    
+    /* فاصله مناسب برای آیکون و متن */
+    text-align: center;
+}
+
+/* 🌟 حالت ماوس روی دکمه (Hover) */
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(212, 163, 89, 0.6);
+    /* یک هاله بسیار خفیف طلایی در هاور */
+    color: #8b5a2b;
+}
+
+/* ⚡ حالت انتخاب شده (Checked) -&gt; افکت درخشش و پس‌زمینه طلایی */
+QPushButton:checked {
+    /* پس‌زمینه طلایی ملایم و شفاف */
+    background-color: rgba(254, 241, 203, 0.9);
+    
+    /* مرز دکمه با رنگ طلایی درخشان */
+    border: 1.5px solid rgba(244, 180, 26, 0.85);
+    color: #b0720b; /* متن کاراملی تیره و گرم */
+}
+
+/* 🌟 درخشش قوی‌تر در حالت انتخاب شده وقتی ماوس روی آن می‌رود */
+QPushButton:checked:hover {
+    background-color: rgba(254, 235, 180, 0.95);
+    border: 1.5px solid rgba(255, 200, 50, 1);
+}
+
+/* ❌ حالت غیرفعال (اگر تعداد انتخاب‌ها بیش از ۳ شد و دکمه‌های دیگر غیرفعال شدند) */
+QPushButton:disabled {
+    background-color: rgba(240, 240, 240, 0.4);
+    border: 1.5px solid rgba(200, 200, 200, 0.3);
+    color: rgba(130, 130, 130, 0.6);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/biography_genre.svg</normaloff>:/resources/genres/biography_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>150</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <attribute name="buttonGroup">
+    <string notr="true">genres_buttonGroup</string>
+   </attribute>
+  </widget>
+  <widget class="QPushButton" name="educational_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>130</y>
+     <width>141</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* -------------------------------------------------------------
+   استایل دکمه‌های ژانر (تم جادویی و کلاسیک روشن)
+------------------------------------------------------------- */
+QPushButton {
+    /* پس‌زمینه سفید شیری ملایم و نیمه‌شفاف (برای دیده شدن آیکون‌ها) */
+    background-color: rgba(255, 255, 255, 0.75); 
+    
+    /* لبه‌های ظریف شکلاتی-کرمی برای وایب قدیمی */
+    border: 1px solid rgba(139, 90, 43, 0.25);
+    border-radius: 12px;
+    
+    /* رنگ متن شکلاتی تیره */
+    color: #4a2f15;
+    font-family: &quot;Segoe UI&quot;, &quot;Georgia&quot;, &quot;Vazirmatn&quot;;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 16px;
+    
+    /* فاصله مناسب برای آیکون و متن */
+    text-align: center;
+}
+
+/* 🌟 حالت ماوس روی دکمه (Hover) */
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(212, 163, 89, 0.6);
+    /* یک هاله بسیار خفیف طلایی در هاور */
+    color: #8b5a2b;
+}
+
+/* ⚡ حالت انتخاب شده (Checked) -&gt; افکت درخشش و پس‌زمینه طلایی */
+QPushButton:checked {
+    /* پس‌زمینه طلایی ملایم و شفاف */
+    background-color: rgba(254, 241, 203, 0.9);
+    
+    /* مرز دکمه با رنگ طلایی درخشان */
+    border: 1.5px solid rgba(244, 180, 26, 0.85);
+    color: #b0720b; /* متن کاراملی تیره و گرم */
+}
+
+/* 🌟 درخشش قوی‌تر در حالت انتخاب شده وقتی ماوس روی آن می‌رود */
+QPushButton:checked:hover {
+    background-color: rgba(254, 235, 180, 0.95);
+    border: 1.5px solid rgba(255, 200, 50, 1);
+}
+
+/* ❌ حالت غیرفعال (اگر تعداد انتخاب‌ها بیش از ۳ شد و دکمه‌های دیگر غیرفعال شدند) */
+QPushButton:disabled {
+    background-color: rgba(240, 240, 240, 0.4);
+    border: 1.5px solid rgba(200, 200, 200, 0.3);
+    color: rgba(130, 130, 130, 0.6);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/educational_genre.svg</normaloff>:/resources/genres/educational_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>150</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <attribute name="buttonGroup">
+    <string notr="true">genres_buttonGroup</string>
+   </attribute>
+  </widget>
+  <widget class="QPushButton" name="psychology_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>130</y>
+     <width>141</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* -------------------------------------------------------------
+   استایل دکمه‌های ژانر (تم جادویی و کلاسیک روشن)
+------------------------------------------------------------- */
+QPushButton {
+    /* پس‌زمینه سفید شیری ملایم و نیمه‌شفاف (برای دیده شدن آیکون‌ها) */
+    background-color: rgba(255, 255, 255, 0.8); 
+    
+    /* لبه‌های ظریف شکلاتی-کرمی برای وایب قدیمی */
+    border: 1px solid rgba(139, 90, 43, 0.25);
+    border-radius: 12px;
+    
+    /* رنگ متن شکلاتی تیره */
+    color: #4a2f15;
+    font-family: &quot;Segoe UI&quot;, &quot;Georgia&quot;, &quot;Vazirmatn&quot;;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 16px;
+    
+    /* فاصله مناسب برای آیکون و متن */
+    text-align: center;
+}
+
+/* 🌟 حالت ماوس روی دکمه (Hover) */
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(212, 163, 89, 0.6);
+    /* یک هاله بسیار خفیف طلایی در هاور */
+    color: #8b5a2b;
+}
+
+/* ⚡ حالت انتخاب شده (Checked) -&gt; افکت درخشش و پس‌زمینه طلایی */
+QPushButton:checked {
+    /* پس‌زمینه طلایی ملایم و شفاف */
+    background-color: rgba(254, 241, 203, 0.9);
+    
+    /* مرز دکمه با رنگ طلایی درخشان */
+    border: 1.5px solid rgba(244, 180, 26, 0.85);
+    color: #b0720b; /* متن کاراملی تیره و گرم */
+}
+
+/* 🌟 درخشش قوی‌تر در حالت انتخاب شده وقتی ماوس روی آن می‌رود */
+QPushButton:checked:hover {
+    background-color: rgba(254, 235, 180, 0.95);
+    border: 1.5px solid rgba(255, 200, 50, 1);
+}
+
+/* ❌ حالت غیرفعال (اگر تعداد انتخاب‌ها بیش از ۳ شد و دکمه‌های دیگر غیرفعال شدند) */
+QPushButton:disabled {
+    background-color: rgba(240, 240, 240, 0.4);
+    border: 1.5px solid rgba(200, 200, 200, 0.3);
+    color: rgba(130, 130, 130, 0.6);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/Psychology_genre.svg</normaloff>:/resources/genres/Psychology_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>140</width>
+     <height>140</height>
+    </size>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <attribute name="buttonGroup">
+    <string notr="true">genres_buttonGroup</string>
+   </attribute>
+  </widget>
+  <widget class="QPushButton" name="scifi_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>310</y>
+     <width>141</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* -------------------------------------------------------------
+   استایل دکمه‌های ژانر (تم جادویی و کلاسیک روشن)
+------------------------------------------------------------- */
+QPushButton {
+    /* پس‌زمینه سفید شیری ملایم و نیمه‌شفاف (برای دیده شدن آیکون‌ها) */
+    background-color: rgba(255, 255, 255, 0.75); 
+    
+    /* لبه‌های ظریف شکلاتی-کرمی برای وایب قدیمی */
+    border: 1px solid rgba(139, 90, 43, 0.25);
+    border-radius: 12px;
+    
+    /* رنگ متن شکلاتی تیره */
+    color: #4a2f15;
+    font-family: &quot;Segoe UI&quot;, &quot;Georgia&quot;, &quot;Vazirmatn&quot;;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 16px;
+    
+    /* فاصله مناسب برای آیکون و متن */
+    text-align: center;
+}
+
+/* 🌟 حالت ماوس روی دکمه (Hover) */
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(212, 163, 89, 0.6);
+    /* یک هاله بسیار خفیف طلایی در هاور */
+    color: #8b5a2b;
+}
+
+/* ⚡ حالت انتخاب شده (Checked) -&gt; افکت درخشش و پس‌زمینه طلایی */
+QPushButton:checked {
+    /* پس‌زمینه طلایی ملایم و شفاف */
+    background-color: rgba(254, 241, 203, 0.9);
+    
+    /* مرز دکمه با رنگ طلایی درخشان */
+    border: 1.5px solid rgba(244, 180, 26, 0.85);
+    color: #b0720b; /* متن کاراملی تیره و گرم */
+}
+
+/* 🌟 درخشش قوی‌تر در حالت انتخاب شده وقتی ماوس روی آن می‌رود */
+QPushButton:checked:hover {
+    background-color: rgba(254, 235, 180, 0.95);
+    border: 1.5px solid rgba(255, 200, 50, 1);
+}
+
+/* ❌ حالت غیرفعال (اگر تعداد انتخاب‌ها بیش از ۳ شد و دکمه‌های دیگر غیرفعال شدند) */
+QPushButton:disabled {
+    background-color: rgba(240, 240, 240, 0.4);
+    border: 1.5px solid rgba(200, 200, 200, 0.3);
+    color: rgba(130, 130, 130, 0.6);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/scifi_genre.svg</normaloff>:/resources/genres/scifi_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>150</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <attribute name="buttonGroup">
+    <string notr="true">genres_buttonGroup</string>
+   </attribute>
+  </widget>
+  <widget class="QPushButton" name="history_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>310</y>
+     <width>141</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* -------------------------------------------------------------
+   استایل دکمه‌های ژانر (تم جادویی و کلاسیک روشن)
+------------------------------------------------------------- */
+QPushButton {
+    /* پس‌زمینه سفید شیری ملایم و نیمه‌شفاف (برای دیده شدن آیکون‌ها) */
+    background-color: rgba(255, 255, 255, 0.75); 
+    
+    /* لبه‌های ظریف شکلاتی-کرمی برای وایب قدیمی */
+    border: 1px solid rgba(139, 90, 43, 0.25);
+    border-radius: 12px;
+    
+    /* رنگ متن شکلاتی تیره */
+    color: #4a2f15;
+    font-family: &quot;Segoe UI&quot;, &quot;Georgia&quot;, &quot;Vazirmatn&quot;;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 16px;
+    
+    /* فاصله مناسب برای آیکون و متن */
+    text-align: center;
+}
+
+/* 🌟 حالت ماوس روی دکمه (Hover) */
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(212, 163, 89, 0.6);
+    /* یک هاله بسیار خفیف طلایی در هاور */
+    color: #8b5a2b;
+}
+
+/* ⚡ حالت انتخاب شده (Checked) -&gt; افکت درخشش و پس‌زمینه طلایی */
+QPushButton:checked {
+    /* پس‌زمینه طلایی ملایم و شفاف */
+    background-color: rgba(254, 241, 203, 0.9);
+    
+    /* مرز دکمه با رنگ طلایی درخشان */
+    border: 1.5px solid rgba(244, 180, 26, 0.85);
+    color: #b0720b; /* متن کاراملی تیره و گرم */
+}
+
+/* 🌟 درخشش قوی‌تر در حالت انتخاب شده وقتی ماوس روی آن می‌رود */
+QPushButton:checked:hover {
+    background-color: rgba(254, 235, 180, 0.95);
+    border: 1.5px solid rgba(255, 200, 50, 1);
+}
+
+/* ❌ حالت غیرفعال (اگر تعداد انتخاب‌ها بیش از ۳ شد و دکمه‌های دیگر غیرفعال شدند) */
+QPushButton:disabled {
+    background-color: rgba(240, 240, 240, 0.4);
+    border: 1.5px solid rgba(200, 200, 200, 0.3);
+    color: rgba(130, 130, 130, 0.6);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/history_genre.svg</normaloff>:/resources/genres/history_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>150</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <attribute name="buttonGroup">
+    <string notr="true">genres_buttonGroup</string>
+   </attribute>
+  </widget>
+  <widget class="QPushButton" name="ficition_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>310</y>
+     <width>141</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* -------------------------------------------------------------
+   استایل دکمه‌های ژانر (تم جادویی و کلاسیک روشن)
+------------------------------------------------------------- */
+QPushButton {
+    /* پس‌زمینه سفید شیری ملایم و نیمه‌شفاف (برای دیده شدن آیکون‌ها) */
+    background-color: rgba(255, 255, 255, 0.75); 
+    
+    /* لبه‌های ظریف شکلاتی-کرمی برای وایب قدیمی */
+    border: 1px solid rgba(139, 90, 43, 0.25);
+    border-radius: 12px;
+    
+    /* رنگ متن شکلاتی تیره */
+    color: #4a2f15;
+    font-family: &quot;Segoe UI&quot;, &quot;Georgia&quot;, &quot;Vazirmatn&quot;;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 16px;
+    
+    /* فاصله مناسب برای آیکون و متن */
+    text-align: center;
+}
+
+/* 🌟 حالت ماوس روی دکمه (Hover) */
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(212, 163, 89, 0.6);
+    /* یک هاله بسیار خفیف طلایی در هاور */
+    color: #8b5a2b;
+}
+
+/* ⚡ حالت انتخاب شده (Checked) -&gt; افکت درخشش و پس‌زمینه طلایی */
+QPushButton:checked {
+    /* پس‌زمینه طلایی ملایم و شفاف */
+    background-color: rgba(254, 241, 203, 0.9);
+    
+    /* مرز دکمه با رنگ طلایی درخشان */
+    border: 1.5px solid rgba(244, 180, 26, 0.85);
+    color: #b0720b; /* متن کاراملی تیره و گرم */
+}
+
+/* 🌟 درخشش قوی‌تر در حالت انتخاب شده وقتی ماوس روی آن می‌رود */
+QPushButton:checked:hover {
+    background-color: rgba(254, 235, 180, 0.95);
+    border: 1.5px solid rgba(255, 200, 50, 1);
+}
+
+/* ❌ حالت غیرفعال (اگر تعداد انتخاب‌ها بیش از ۳ شد و دکمه‌های دیگر غیرفعال شدند) */
+QPushButton:disabled {
+    background-color: rgba(240, 240, 240, 0.4);
+    border: 1.5px solid rgba(200, 200, 200, 0.3);
+    color: rgba(130, 130, 130, 0.6);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/ficition_genre.svg</normaloff>:/resources/genres/ficition_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>150</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <attribute name="buttonGroup">
+    <string notr="true">genres_buttonGroup</string>
+   </attribute>
+  </widget>
+  <widget class="QLabel" name="biography_label">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>270</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;زندگینامه&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="educational_label">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>270</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;علمی/تحصیلی&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="scifi_label">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>450</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;علمی تخیلی&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="history_label">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>450</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تاریخی&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="ficition_label">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>450</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;ادبیات داستانی&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="psychology_label">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>270</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;روانشناسی&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="check_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>270</y>
+     <width>91</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    /* موکا/نسکافه‌ای با گرادیان نرم */
+    background: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 rgba(176, 124, 78, 245),   /* latte-mocha */
+        stop:1 rgba(128, 84, 52, 245)     /* deeper nescafe */
+    );
+
+    color: rgba(255, 250, 242, 245);      /* کرمِ نزدیک به شیر */
+    border: 1px solid rgba(86, 52, 28, 180);
+    border-radius: 16px;
+
+    padding: 12px 26px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+
+    /* حس “قابل کلیک بودن” با border نرم */
+}
+
+QPushButton:hover:enabled {
+    /* کاراملی‌تر و روشن‌تر */
+    background: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 rgba(198, 146, 92, 255),
+        stop:1 rgba(148, 98, 60, 255)
+    );
+
+    border: 1px solid rgba(212, 163, 89, 170);  /* رگه‌ی طلایی خیلی ظریف */
+    color: rgba(255, 253, 248, 255);
+}
+
+QPushButton:pressed:enabled {
+    /* فرو رفتن: تیره‌تر + حس فشرده شدن */
+    background: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 rgba(118, 76, 46, 255),
+        stop:1 rgba(96, 60, 36, 255)
+    );
+
+    border: 1px solid rgba(60, 35, 18, 200);
+
+    /* ترفند ساده برای حس pressed */
+    padding-top: 13px;
+    padding-bottom: 11px;
+}
+
+QPushButton:disabled {
+    /* شیشه‌ای و کم‌رنگ که مزاحم نشه */
+    background: rgba(170, 150, 135, 70);
+    color: rgba(255, 255, 255, 120);
+    border: 1px solid rgba(120, 100, 90, 70);
+}</string>
+   </property>
+   <property name="text">
+    <string>تایید</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="error_label">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>500</y>
+     <width>331</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: #a63a3a;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;
+</string>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="success_label">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>490</y>
+     <width>331</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+color: #9a7b56;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;
+</string>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="genres_buttonGroup">
+   <property name="exclusive">
+    <bool>false</bool>
+   </property>
+  </buttongroup>
+ </buttongroups>
+</ui>

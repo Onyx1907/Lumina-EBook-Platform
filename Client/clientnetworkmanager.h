@@ -31,6 +31,8 @@ private:
     ClientNetworkManager& operator=(const ClientNetworkManager&) = delete;
 
     QTcpSocket* socket;
+
+    QByteArray m_buffer;
 };
 
 #endif // CLIENTNETWORKMANAGER_H

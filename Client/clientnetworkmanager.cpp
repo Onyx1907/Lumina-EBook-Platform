@@ -48,20 +48,53 @@ void ClientNetworkManager::sendRequest(const QString& action, const QJsonObject&
 }
 
 void ClientNetworkManager::onReadyRead() {
-    QByteArray raw = socket->readAll();
+    m_buffer.append(socket->readAll());
 
-    qDebug() << "data is recieved...";
+    while (!m_buffer.isEmpty()) {
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(m_buffer, &parseError);
 
-    QJsonDocument doc = QJsonDocument::fromJson(raw);
-    if (!doc.isObject() || doc.isNull()){
-        qDebug() << "invalid json data from server";
-        return;
+        // حالت اول: پکت کاملاً معتبر و تکی است
+        if (parseError.error == QJsonParseError::NoError) {
+            QJsonObject response = doc.object();
+            QString action = response.value("action").toString();
+
+            //  اول بافر را خالی و حلقه را آزاد می‌کنیم، بعد سیگنال می‌دهیم
+            m_buffer.clear();
+
+            emit responseReceived(action, response);
+            break; // چون بافر خالی شد خارج می‌شویم
+        }
+
+        // حالت دوم: چند پکت به هم چسبیده‌اند
+        else if (parseError.error == QJsonParseError::GarbageAtEnd) {
+            int endIndex = parseError.offset;
+
+            QByteArray firstPacket = m_buffer.left(endIndex);
+            QJsonDocument firstDoc = QJsonDocument::fromJson(firstPacket);
+
+            //  اول پکت پردازش شده را از بافر حذف می‌کنیم تا حلقه در امان باشد
+            m_buffer.remove(0, endIndex);
+
+            if (!firstDoc.isNull() && firstDoc.isObject()) {
+                QJsonObject response = firstDoc.object();
+                QString action = response.value("action").toString();
+                emit responseReceived(action, response);
+            }
+            // حلقه ادامه پیدا می‌کند تا پکت‌های بعدیِ چسبیده را بخواند
+        }
+
+        // حالت سوم: پکت ناقص است (Fragmented TCP)
+        else if (parseError.error == QJsonParseError::UnterminatedObject ||
+                 parseError.error == QJsonParseError::IllegalValue) {
+            break;
+        }
+
+        // حالت چهارم: خطای ساختاری
+        else {
+            qDebug() << "Real JSON conversion error:" << parseError.errorString();
+            m_buffer.clear();
+            break;
+        }
     }
-
-    QJsonObject response = doc.object();
-    QString action = response.value("action").toString();
-
-
-    emit responseReceived(action, response);
 }
-
