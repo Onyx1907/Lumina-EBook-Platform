@@ -108,6 +108,21 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
         return;
     }
 
+    if (action == "CHECK_BOOK_OWNERSHIP") {
+        handleCheckBookOwnership(socket, data);
+        return;
+    }
+
+    if (action == "GET_BOOK_PDF_PATH") {
+        handleGetBookPdfPath(socket, data);
+        return;
+    }
+
+    if (action == "STREAM_FILE_DATA") {
+        handleStreamFileData(socket, data);
+        return;
+    }
+
     QJsonObject resp;
     resp["action"] = action + "_RESPONSE";
     resp["status"] = "ERROR";
@@ -464,20 +479,36 @@ void Server::handleGetProfile(QTcpSocket* socket, const QJsonObject& data) {
 }
 // به روزرسانی اطلاعات پروفایل کاربر
 void Server::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data) {
-    const QString username = data.value("username").toString();
-    const QString name = data.value("name").toString();
-    const QString email = data.value("email").toString();
-
-    bool ok = dbManager.updateUserProfile(username, name, email);
+    const int userId = data.value("user_id").toInt();
+    const QString newUsername = data.value("username").toString().trimmed();
+    const QString name = data.value("name").toString().trimmed();
+    const QString email = data.value("email").toString().trimmed();
 
     QJsonObject resp;
     resp["action"] = "UPDATE_PROFILE_RESPONSE";
-    resp["status"] = ok ? "SUCCESS" : "ERROR";
-    resp["message"] = ok ? ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد"
-                         : ".خطا در به روزرسانی اطلاعات حساب کاربری";
+
+    // بررسی خطای خالی بودن یوزرنیم جدید در لایه بک‌اند
+    if (newUsername.isEmpty()) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد";
+        sendJson(socket, resp);
+        return;
+    }
+
+    // صدا زدن متد دیتابیس سرور اصلی
+    bool ok = dbManager.updateUserProfile(userId, newUsername, name, email);
+
+    if (ok) {
+        resp["status"] = "SUCCESS";
+        resp["message"] = ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد";
+    } else {
+        resp["status"] = "FAILED";
+        resp["message"] = ".این نام کاربری یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است";
+    }
 
     sendJson(socket, resp);
 }
+
 // تغییر رمز عبور کاربر
 void Server::handleChangePassword(QTcpSocket* socket, const QJsonObject& data) {
     const QString username = data.value("username").toString();
@@ -511,3 +542,91 @@ void Server::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& dat
 }
 
 
+// متد بررسی وضعیت خرید و اطلاعات تکمیلی کتاب در لحظه کلیک
+void Server::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObject& data)
+{
+    int userId = data.value("user_id").toInt();
+    int bookId = data.value("book_id").toInt();
+
+    QString publisher = "";
+    double rating = 0.0;
+    QString coverPath = "";
+
+    QJsonObject resp;
+    resp["action"] = "CHECK_BOOK_OWNERSHIP_RESPONSE";
+    resp["book_id"] = bookId;
+
+    if (!dbManager.getActiveBookDetails(bookId, publisher, rating, coverPath)) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".این کتاب در حال حاضر غیرفعال یا ناموجود است";
+        sendJson(socket, resp);
+        return;
+    }
+
+    // بررسی وضعیت خرید از جدول
+    bool purchased = dbManager.isBookPurchased(userId, bookId);
+
+    resp["status"] = "SUCCESS";
+    resp["is_purchased"] = purchased;
+    resp["publisher_name"] = publisher;
+    resp["rating"] = rating;
+
+    sendJson(socket, resp);
+}
+
+// متد بررسی و فرستادن آدرس فایل پی دی اف برای دانلود
+void Server::handleGetBookPdfPath(QTcpSocket* socket, const QJsonObject& data)
+{
+    int userId = data.value("user_id").toInt();
+    int bookId = data.value("book_id").toInt();
+
+    QJsonObject resp;
+    resp["action"] = "GET_BOOK_PDF_PATH_RESPONSE";
+    resp["book_id"] = bookId;
+
+    if (!dbManager.isBookPurchased(userId, bookId)) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".شما دسترسی به این کتاب ندارید. ابتدا باید آن را خریداری کنید";
+        sendJson(socket, resp);
+        return;
+    }
+
+    // گرفتن آدرس فیزیکی فایل از جدول
+    QString pdfPath = dbManager.getBookPdfPath(bookId);
+
+    if (!pdfPath.isEmpty()) {
+        resp["status"] = "SUCCESS";
+        resp["pdf_path"] = pdfPath;
+    } else {
+        resp["status"] = "FAILED";
+        resp["message"] = ".فایل پی دی اف این کتاب یافت نشد";
+    }
+
+    sendJson(socket, resp);
+}
+
+void Server::handleStreamFileData(QTcpSocket* socket, const QJsonObject& data)
+{
+    QString filePath = data.value("file_path").toString(); // آدرس فیزیکی فایل روی سرور
+
+    QFile file(filePath);
+    // اگر فایل باز نشد، خطای جی سون می فرستیم
+    if (!file.open(QIODevice::ReadOnly)) {
+        QJsonObject resp;
+        resp["action"] = "STREAM_FILE_DATA_RESPONSE";
+        resp["status"] = "FAILED";
+        resp["message"] = ".فایل مورد نظر روی سرور یافت نشد";
+        sendJson(socket, resp);
+        return;
+    }
+
+    const qint64 chunkSize = 4096; // هر بار فقط ۴ کیلوبایت ارسال میشود
+    while (!file.atEnd()) {
+        QByteArray chunk = file.read(chunkSize);
+        socket->write(chunk);
+    }
+
+    file.close();
+    socket->flush(); // تخلیه نهایی سوکت و پایان ارسال بایت ها
+    return;
+}

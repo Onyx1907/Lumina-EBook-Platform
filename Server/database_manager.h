@@ -57,13 +57,16 @@ public:
     QList<QJsonObject> getFreeBooks();
 
     QJsonObject getUserProfile(const QString& username);
-    bool updateUserProfile(const QString& username, const QString& name, const QString& email);
+    bool updateUserProfile(int userId, const QString& newUsername, const QString& name, const QString& email);
 
     bool changePassword(const QString& username,const QString& oldPasswordPlain,const QString& newPasswordPlain);
 
     QList<QJsonObject> getPurchaseHistory(const QString& username);
     int getTotalPurchases(const QString& username);
 
+    bool isBookPurchased(int userId, int bookId);
+    bool getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath);
+    QString getBookPdfPath(int bookId);
 
 
 

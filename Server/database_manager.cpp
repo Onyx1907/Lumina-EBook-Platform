@@ -495,15 +495,50 @@ QJsonObject DatabaseManager::getUserProfile(const QString& username){
     return obj;
 
 }
-// به روزرسانی اطلاعات هویتی پایه (نام و ایمیل) کاربر بر اساس نام کاربری
-bool DatabaseManager::updateUserProfile(const QString& username, const QString& name, const QString& email){
+bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, const QString& name, const QString& email) {
+
+    //شرط بسیار مهم: یوزرنیم اصلی سیستم به هیچ وجه نباید خالی فرستاده بشه
+    if (newUsername.trimmed().isEmpty()) {
+        qDebug() << "Username cannot be empty!";
+        return false;
+    }
+
+    //بررسی تکراری نبودن یوزرنیم جدید با بقیه کاربران
+    QSqlQuery checkUsername;
+    checkUsername.prepare("SELECT 1 FROM users WHERE username = :username AND id != :id LIMIT 1");
+    checkUsername.bindValue(":username", newUsername.trimmed());
+    checkUsername.bindValue(":id", userId);
+    if (checkUsername.exec() && checkUsername.next()) {
+        qDebug() << "Username is already taken!";
+        return false; // یوزرنیم تکراری است
+    }
+
+
+    if (!email.trimmed().isEmpty()) {
+        QSqlQuery checkEmail;
+        checkEmail.prepare("SELECT 1 FROM users WHERE email = :email AND id != :id LIMIT 1");
+        checkEmail.bindValue(":email", email.trimmed());
+        checkEmail.bindValue(":id", userId);
+        if (checkEmail.exec() && checkEmail.next()) {
+            return false; // ایمیل تکراری است
+        }
+    }
+
     QSqlQuery q;
-    q.prepare("UPDATE users SET name = :n, email = :e WHERE username = :u");
-    q.bindValue(":n", name);
-    q.bindValue(":e", email);
-    q.bindValue(":u", username);
+    q.prepare("UPDATE users SET "
+              "username = :u, "
+              "name = CASE WHEN :n = '' THEN name ELSE :n END, "
+              "email = CASE WHEN :e = '' THEN email ELSE :e END "
+              "WHERE id = :id");
+
+    q.bindValue(":u", newUsername.trimmed());
+    q.bindValue(":n", name.trimmed());
+    q.bindValue(":e", email.trimmed());
+    q.bindValue(":id", userId);
+
     return q.exec();
 }
+
 // فرآیند احراز هویت رمز عبور فعلی و ثبت رمز عبور جدید به صورت هش شده
 bool DatabaseManager::changePassword(const QString& username,const QString& oldPasswordPlain,const QString& newPasswordPlain){
     QSqlQuery q;
@@ -559,4 +594,48 @@ int DatabaseManager::getTotalPurchases(const QString& username){
     if (!q.exec() || !q.next())
         return 0;
     return q.value(0).toInt();
+}
+
+//بررسی اینکه کاربر کتاب را خریداری کرده و در کتابخانه شخصی اش دارد یا خیر
+bool DatabaseManager::isBookPurchased(int userId, int bookId)
+{
+    QSqlQuery q;
+    q.prepare("SELECT 1 FROM library WHERE user_id = :userId AND book_id = :bookId LIMIT 1");
+    q.bindValue(":userId", userId);
+    q.bindValue(":bookId", bookId);
+
+    return (q.exec() && q.next());
+}
+
+//بررسی اکتیو بودن کتاب و گرفتن اطلاعات ناشر و ریتینگ از جدول
+bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath)
+{
+    QSqlQuery q;
+    // اضافه کردن ستون آدرس عکس کتاب به کوئری
+    q.prepare("SELECT u.name, b.averageRating, b.coverImagePath "
+              "FROM books b "
+              "JOIN users u ON b.publisher_id = u.id "
+              "WHERE b.id = :bookId AND b.isActive = 1 AND b.is_deleted = 0 LIMIT 1");
+    q.bindValue(":bookId", bookId);
+
+    if (q.exec() && q.next()) {
+        publisherName = q.value("name").toString();
+        rating = q.value("averageRating").toDouble();
+        coverPath = q.value("coverImagePath").toString(); // استخراج آدرس عکس از دیتابیس
+        return true;
+    }
+    return false;
+}
+
+//گرفتن مسیر فیزیکی فایل پی  دی اف از جدول کتاب ها
+QString DatabaseManager::getBookPdfPath(int bookId)
+{
+    QSqlQuery q;
+    q.prepare("SELECT pdfPath FROM books WHERE id = :bookId AND is_deleted = 0 LIMIT 1");
+    q.bindValue(":bookId", bookId);
+
+    if (q.exec() && q.next()) {
+        return q.value("pdfPath").toString();
+    }
+    return "";
 }
