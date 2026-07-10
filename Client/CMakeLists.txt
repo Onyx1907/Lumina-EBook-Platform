@@ -24,7 +24,6 @@ set(PROJECT_SOURCES
         resources.qrc
 )
 
-# ۳. نام تارگت رو از Client به LuminaClient تغییر دادم
 qt_add_executable(LuminaClient
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}

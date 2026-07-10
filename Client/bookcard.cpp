@@ -2,9 +2,9 @@
 #include "ui_bookcard.h"
 #include <QPixmap>
 
-BookCard::BookCard(Book book, QWidget *parent)
+BookCard::BookCard(Book b, QWidget *parent)
     : QWidget(parent)
-    , ui(new Ui::BookCard), book(book)
+    , ui(new Ui::BookCard), book(b)
 {
     ui->setupUi(this);
 
@@ -61,6 +61,10 @@ BookCard::BookCard(Book book, QWidget *parent)
         "}"
         );
     //اتصال کتاب به صفحه جزییات کتاب
+
+    connect(book_pushbutton, &QPushButton::clicked, this, [this](){
+        emit clicked(&book);
+    });
 }
 
 
@@ -72,6 +76,7 @@ void BookCard::resizeEvent(QResizeEvent *event){
         book_pushbutton->raise();
     }
 }
+
 
 BookCard::~BookCard()
 {

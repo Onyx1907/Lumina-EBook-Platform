@@ -8,7 +8,19 @@ BookDetailsWidget::BookDetailsWidget(QWidget *parent)
     ui->setupUi(this);
 }
 
+void BookDetailsWidget::loadBook(Book *book){
+
+}
+
 BookDetailsWidget::~BookDetailsWidget()
 {
     delete ui;
 }
+
+
+
+void BookDetailsWidget::on_back_pushButton_clicked()
+{
+    emit backPrevious();
+}
+

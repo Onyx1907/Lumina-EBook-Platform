@@ -6,6 +6,7 @@
 #include "genreselectionwidget.h"
 #include "userhomewidget.h"
 #include "profilewidget.h"
+#include "bookdetailswidget.h"
 
 
 namespace Ui {
@@ -35,13 +36,17 @@ private:
     GenreSelectionWidget  *GenreSelectionPage;
     UserHomeWidget *UserHomePage;
     ProfileWidget* ProfilePage;
+    BookDetailsWidget* BookDetailsPage;
+
+    int previousPageIndex = 0;
 
     void fadeToPage(int pageIndex);
 
     enum Page{
         GenreSelectionPageIndex = 0,
         UserHomePageIndex = 1,
-        ProfilePageIndex = 2
+        ProfilePageIndex = 2,
+        BookDetailsPageIndex = 3
     };
 
 };

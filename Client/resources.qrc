@@ -18,5 +18,8 @@
         <file>resources/default_book.png</file>
         <file>resources/user/profile_logo.png</file>
         <file>resources/user/profile_edit.png</file>
+        <file>resources/user/author_logo.png</file>
+        <file>resources/user/star.svg</file>
+        <file>resources/back_icon.svg</file>
     </qresource>
 </RCC>

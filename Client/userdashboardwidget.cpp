@@ -25,10 +25,12 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     GenreSelectionPage = new GenreSelectionWidget(user->getUsername(), this);
     UserHomePage = new UserHomeWidget(user->getUsername(), this);
     ProfilePage = new ProfileWidget(user, this);
+    BookDetailsPage = new BookDetailsWidget(this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
     ui->stackedWidget->addWidget(ProfilePage);
+    ui->stackedWidget->addWidget(BookDetailsPage);
 
     if(is_first_login){
         ui->stackedWidget->setCurrentIndex(Page::GenreSelectionPageIndex);
@@ -55,6 +57,15 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     connect(ProfilePage, &ProfileWidget::goToGenreSelectionPage, this, [this](){
         fadeToPage(Page::GenreSelectionPageIndex);
         GenreSelectionPage->onGeresChangeClicked();
+    });
+
+    connect(UserHomePage, &UserHomeWidget::bookSelected, this, [this]( Book* book){
+        previousPageIndex = UserHomePageIndex;
+        fadeToPage(BookDetailsPageIndex);
+    });
+
+    connect(BookDetailsPage, &BookDetailsWidget::backPrevious, this, [this](){
+        fadeToPage(previousPageIndex);
     });
 }
 

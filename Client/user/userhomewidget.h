@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QListWidget>
+#include "book.h"
 
 
 namespace Ui {
@@ -19,6 +20,9 @@ public:
 
 protected:
     void showEvent(QShowEvent *event) override;
+
+signals:
+    void bookSelected(Book* book);
 
 private slots:
     void processNetworkData(const QString& action, const QJsonObject& data);

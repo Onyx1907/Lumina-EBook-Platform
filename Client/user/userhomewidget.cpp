@@ -120,6 +120,9 @@ void UserHomeWidget::parseAndFillList(const QJsonObject &data, QListWidget *targ
         item->setSizeHint(card->sizeHint());
         targetList->setItemWidget(item, card);
         //کانکت به کلیک روی کتاب
+        connect(card, &BookCard::clicked, this, [this](Book* bookptr){
+           emit bookSelected(bookptr);
+        });
     }
 //تست و عیب یابی
     // QListWidgetItem *testItem = new QListWidgetItem(targetList);
