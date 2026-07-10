@@ -9,9 +9,11 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QList>
 #include <QFile>
 #include <QDir>
 #include <QByteArray>
+
 
 
 #include "constants.h"
@@ -43,7 +45,6 @@ public:
 
     //*********************************************پنل کاربر عادی ( ماژول 1 )****************************************************
 
-
     bool setFirstLoginFalseByUsername(const QString& username);
     bool setFavoriteGenres(const QString& username, const QStringList& genres);
     QStringList getFavoriteGenres(const QString& username);
@@ -67,6 +68,72 @@ public:
     bool isBookPurchased(int userId, int bookId);
     bool getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath);
     QString getBookPdfPath(int bookId);
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+
+
+    QList<QJsonObject> searchBooks(const QString& title,const QString& author,const QString& publisherName);
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
+
+
+    bool addComment(int bookId, int userId, const QString& text, int rating);
+    bool editComment(int commentId, const QString& newText, int newRating);
+    bool deleteComment(int commentId);
+    QList<QJsonObject> getCommentsForBook(int bookId);
+    bool recalculateBookRating(int bookId);
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
+
+
+
+    bool addToCart(int userId, int bookId);
+    bool removeFromCart(int userId, int bookId);
+    QList<QJsonObject> getCartItems(int userId);
+    bool clearCart(int userId);
+
+    bool finalizePurchase(int userId);
+
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
+
+
+    //+++++کتاب های خریداری شده+++++
+    QList<QJsonObject> getPurchasedBooks(int userId);
+
+    //+++++کتاب های ذخیره شده+++++
+    bool saveBook(int userId, int bookId);
+    bool removeSavedBook(int userId, int bookId);
+    QList<QJsonObject> getSavedBooks(int userId);
+
+    //+++++قفسه ها+++++
+    bool createShelf(int userId, const QString& name);
+    bool renameShelf(int shelfId, const QString& newName);
+    bool deleteShelf(int shelfId);
+
+    bool addBookToShelf(int shelfId, int bookId);
+    bool removeBookFromShelf(int shelfId, int bookId);
+    bool moveBookBetweenShelves(int fromShelfId, int toShelfId, int bookId);
+
+    QList<QJsonObject> getShelves(int userId);
+    QList<QJsonObject> getBooksInShelf(int shelfId);
+
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
+
+
+    int getLastReadPage(int userId, int bookId);
+    bool updateLastReadPage(int userId, int bookId, int page);
+
+
+
+
+
 
 
 

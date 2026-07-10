@@ -43,7 +43,12 @@ void Server::onReadyRead(){
 // اسلات مدیریت قطع اتصال: حافظه سوکت کلاینتی که خارج شده را آزاد می کند
 void Server::onDisconnected(){
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
-    if (socket) socket->deleteLater();
+    if (socket){
+        QString username = socketToUser.value(socket);
+        onlineUsers.remove(username);
+        socketToUser.remove(socket);
+        socket->deleteLater();
+    }
 }
 // کلاینت را به متد مربوطه هدایت می کند "action" متد بررسی اولیه درخواست: بر اساس کلید
 void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
@@ -59,6 +64,7 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     } if (action == "FORGOT_PASSWORD") {
         handleForgotPassword(socket, data);return;
     }
+
     //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
     if (action == "SET_FAVORITE_GENRES") {
         handleSetFavoriteGenres(socket, data);
@@ -130,6 +136,59 @@ void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
     sendJson(socket, resp);
 
 
+    //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+
+
+    if (action == "SEARCH_BOOKS") {
+        handleSearchBooks(socket, data);
+        return;
+    }
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
+
+
+    if (action == "ADD_COMMENT") { handleAddComment(socket, data); return; }
+    if (action == "EDIT_COMMENT") { handleEditComment(socket, data); return; }
+    if (action == "DELETE_COMMENT") { handleDeleteComment(socket, data); return; }
+    if (action == "GET_COMMENTS") { handleGetComments(socket, data); return; }
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
+
+
+    if (action == "ADD_TO_CART") return handleAddToCart(socket, data);
+    if (action == "REMOVE_FROM_CART") return handleRemoveFromCart(socket, data);
+    if (action == "GET_CART") return handleGetCart(socket, data);
+    if (action == "FINALIZE_PURCHASE") return handleFinalizePurchase(socket, data);
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
+
+
+    if (action == "GET_PURCHASED_BOOKS") return handleGetPurchasedBooks(socket, data);
+
+    if (action == "SAVE_BOOK") return handleSaveBook(socket, data);
+    if (action == "REMOVE_SAVED_BOOK") return handleRemoveSavedBook(socket, data);
+    if (action == "GET_SAVED_BOOKS") return handleGetSavedBooks(socket, data);
+
+    if (action == "CREATE_SHELF") return handleCreateShelf(socket, data);
+    if (action == "RENAME_SHELF") return handleRenameShelf(socket, data);
+    if (action == "DELETE_SHELF") return handleDeleteShelf(socket, data);
+    if (action == "ADD_BOOK_TO_SHELF") return handleAddBookToShelf(socket, data);
+    if (action == "MOVE_BOOK_BETWEEN_SHELVES") return handleMoveBookBetweenShelves(socket, data);
+    if (action == "GET_SHELVES") return handleGetShelves(socket, data);
+    if (action == "GET_SHELF_BOOKS") return handleGetShelfBooks(socket, data);
+
+
+    //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
+
+
+    if (action == "GET_LAST_READ_PAGE") return handleGetLastReadPage(socket, data);
+    if (action == "UPDATE_LAST_READ_PAGE") return handleUpdateLastReadPage(socket, data);
+
+
+
 }
 
 //***************************************************احراز هویت مرکزی******************************************************
@@ -168,6 +227,7 @@ void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
     resp["message"] = "!خوش آمدی";
     resp["user_role"] = roleToString(role);
     resp["first_login"] = firstLogin;
+    resp["user_id"] = userId;
 
     sendJson(socket, resp);
 
@@ -211,7 +271,7 @@ void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
     QString step = data.value("step").toString();
 
     QJsonObject resp;
-    resp["action"] = "FORGOT_PASSWORD_RESPONSE"; // مقدار اکشن را در همان ابتدا ثابت می‌گذاریم تا در هر دو حالت ارسال شود
+    resp["action"] = "FORGOT_PASSWORD_RESPONSE"; // مقدار اکشن را در همان ابتدا ثابت میگذاریم تا در هر دو حالت ارسال شود
 
     if (step == "REQUEST_QUESTION") {
         QString username = data.value("username").toString();
@@ -490,7 +550,7 @@ void Server::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data) {
     // بررسی خطای خالی بودن یوزرنیم جدید در لایه بک‌اند
     if (newUsername.isEmpty()) {
         resp["status"] = "FAILED";
-        resp["message"] = ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد";
+        resp["message"] = ".نام کاربری (یوزرنیم) نمی تواند خالی باشد";
         sendJson(socket, resp);
         return;
     }
@@ -541,7 +601,6 @@ void Server::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& dat
     sendJson(socket, resp);
 }
 
-
 // متد بررسی وضعیت خرید و اطلاعات تکمیلی کتاب در لحظه کلیک
 void Server::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObject& data)
 {
@@ -551,6 +610,7 @@ void Server::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObject& dat
     QString publisher = "";
     double rating = 0.0;
     QString coverPath = "";
+
 
     QJsonObject resp;
     resp["action"] = "CHECK_BOOK_OWNERSHIP_RESPONSE";
@@ -630,3 +690,501 @@ void Server::handleStreamFileData(QTcpSocket* socket, const QJsonObject& data)
     socket->flush(); // تخلیه نهایی سوکت و پایان ارسال بایت ها
     return;
 }
+
+
+//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+
+
+// مدیریت درخواست جستجوی کتاب
+void Server::handleSearchBooks(QTcpSocket* socket, const QJsonObject& data)
+{
+    QString title = data.value("title").toString();
+    QString author = data.value("author").toString();
+    QString publisher = data.value("publisher_name").toString();
+
+    //دریافت نتایج جستجو از دیتابیس (که مسیرهای فیزیکی فایل‌ها را هم شامل می‌شود)
+    QList<QJsonObject> books = dbManager.searchBooks(title, author, publisher);
+    QJsonArray finalArray;
+
+    for (QJsonObject &book : books) {
+        //استخراج مسیر فیزیکی عکس کاور کتاب
+        QString coverPath = book.value("cover_image_path").toString();
+        if (coverPath.isEmpty()) {
+            coverPath = book.value("coverImagePath").toString();
+        }
+
+        QFile coverFile(coverPath);
+        if (!coverPath.isEmpty() && coverFile.exists() && coverFile.open(QIODevice::ReadOnly)) {
+            QByteArray coverBytes = coverFile.readAll();
+            coverFile.close();
+
+            book["cover_base64"] = QString::fromLatin1(coverBytes.toBase64());
+        } else {
+            book["cover_base64"] = ""; // در صورت عدم وجود تصویر
+        }
+
+
+        finalArray.append(book);
+    }
+
+    QJsonObject resp;
+    resp["action"] = "SEARCH_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = finalArray;
+
+    sendJson(socket, resp);
+}
+
+
+//*********************************************پنل کاربر عادی ( ماژول 3 )***************************************************
+
+//مدیریت ثبت نظرات
+void Server::handleAddComment(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId = data["book_id"].toInt();
+    int userId = data["user_id"].toInt();
+    QString text = data["text"].toString();
+    int rating = data["rating"].toInt();
+
+    bool ok = dbManager.addComment(bookId, userId, text, rating);
+
+    QJsonObject resp;
+    resp["action"] = "ADD_COMMENT_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".نظر ثبت شد"
+                         :".خطا در ثبت نظر";
+
+    sendJson(socket, resp);
+
+    if (ok) {
+        QJsonObject b;
+        b["action"] = "COMMENT_UPDATED";
+        b["book_id"] = bookId;
+        b["type"] = "ADD";
+        broadcastToAll(b);
+    }
+}
+
+//مدیریت ویرایش نظرات
+void Server::handleEditComment(QTcpSocket* socket, const QJsonObject& data) {
+    int commentId = data["comment_id"].toInt();
+    QString text = data["text"].toString();
+    int rating = data["rating"].toInt();
+
+    bool ok = dbManager.editComment(commentId, text, rating);
+
+    QJsonObject resp;
+    resp["action"] = "EDIT_COMMENT_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".نظر ویرایش شد"
+                         : ".خطا در ویرایش";
+
+    sendJson(socket, resp);
+
+    if (ok) {
+        QJsonObject b;
+        b["action"] = "COMMENT_UPDATED";
+        b["comment_id"] = commentId;
+        b["type"] = "EDIT";
+        broadcastToAll(b);
+    }
+}
+
+//مدیریت حذف نظرات
+void Server::handleDeleteComment(QTcpSocket* socket, const QJsonObject& data) {
+    int commentId = data["comment_id"].toInt();
+
+    bool ok = dbManager.deleteComment(commentId);
+
+    QJsonObject resp;
+    resp["action"] = "DELETE_COMMENT_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".نظر حذف شد"
+                         : ".خطا در حذف";
+
+    sendJson(socket, resp);
+
+    if (ok) {
+        QJsonObject b;
+        b["action"] = "COMMENT_UPDATED";
+        b["comment_id"] = commentId;
+        b["type"] = "DELETE";
+        broadcastToAll(b);
+    }
+}
+
+//مدیریت دیدن نظرات
+void Server::handleGetComments(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId = data["book_id"].toInt();
+
+    QList<QJsonObject> list = dbManager.getCommentsForBook(bookId);
+
+    QJsonArray arr;
+    for (auto &c : list)
+        arr.append(c);
+
+    QJsonObject resp;
+    resp["action"] = "GET_COMMENTS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["comments"] = arr;
+    sendJson(socket, resp);
+}
+
+//ارسال پیام به همه کلاینت ها
+void Server::broadcastToAll(const QJsonObject& obj) {
+    for (QTcpSocket* client : std::as_const(clients)) {
+        sendJson(client, obj);
+    }
+}
+
+
+//*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
+
+//مدیریت افزودن به سبد خرید
+void Server::handleAddToCart(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    int bookId = data["book_id"].toInt();
+
+    bool ok = dbManager.addToCart(userId, bookId);
+
+    QJsonObject resp;
+    resp["action"] = "ADD_TO_CART_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".کتاب به سبد خرید اضافه شد"
+                         : ".خطا در افزودن کتاب";
+
+    sendJson(socket, resp);
+}
+
+//مدیریت حذف از سبد خرید
+void Server::handleRemoveFromCart(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    int bookId = data["book_id"].toInt();
+
+    bool ok = dbManager.removeFromCart(userId, bookId);
+
+    QJsonObject resp;
+    resp["action"] = "REMOVE_FROM_CART_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".کتاب از سبد خرید حذف شد"
+                         : ".خطا در حذف کتاب";
+
+    sendJson(socket, resp);
+}
+
+//مدیریت گرفتن یک لیست از سبد خرید
+void Server::handleGetCart(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+
+    QList<QJsonObject> items = dbManager.getCartItems(userId);
+
+    QJsonArray arr;
+    double total = 0;
+    double discountTotal = 0;
+
+    for (auto &i : items) {
+        double price = i["price"].toDouble();
+        double discount = i["discount"].toDouble();
+
+        discountTotal += price * (discount / 100.0);
+        total += price;
+
+        arr.append(i);
+    }
+
+    double finalPrice = total - discountTotal;
+
+
+    QJsonObject resp;
+    resp["action"] = "GET_CART_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["items"] = arr;
+    resp["total_price"] = total;
+    resp["discount"] = discountTotal;
+    resp["final_price"] = finalPrice;
+    resp["count"] = items.count();
+
+    sendJson(socket, resp);
+}
+
+//مدیریت نهایی کردن سبد خرید
+void Server::handleFinalizePurchase(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+
+    bool ok = dbManager.finalizePurchase(userId);
+
+    QJsonObject resp;
+    resp["action"] = "FINALIZE_PURCHASE_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".خرید با موفقیت انجام شد"
+                         : ".خطا در نهایی سازی خرید";
+
+    sendJson(socket, resp);
+}
+
+
+//*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
+
+
+//+++++ کتاب های خریداری شده +++++
+
+// مدیریت کتاب های خریداری شده
+void Server::handleGetPurchasedBooks(QTcpSocket* socket, const QJsonObject& data)
+{
+    int userId = data.value("user_id").toInt();
+    QJsonObject resp;
+    resp["action"] = "GET_PURCHASED_BOOKS_RESPONSE";
+
+    if (userId <= 0) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".شناسه کاربر نامعتبر است";
+        sendJson(socket, resp);
+        return;
+    }
+
+  // دریافت لیست کتاب ها از دیتابیس
+    QList<QJsonObject> purchasedList = dbManager.getPurchasedBooks(userId);
+    QJsonArray finalArray;
+
+    for (QJsonObject &book : purchasedList) {
+    // خواندن مسیر متنی فایل پی دی اف ثبت شده در دیتابیس
+        QString pdfPath = book.value("pdfPath").toString();
+        if (pdfPath.isEmpty()) {
+            pdfPath = book.value("pdf_path").toString();
+        }
+
+        QFile file(pdfPath);
+
+        if (!pdfPath.isEmpty() && file.exists() && file.open(QIODevice::ReadOnly)) {
+            QByteArray pdfBytes = file.readAll();
+            file.close();
+            book["pdf_base64"] = QString::fromLatin1(pdfBytes.toBase64());
+        } else {
+            book["pdf_base64"] = ""; // در صورت عدم وجود فایل فیزیکی، مقدار خالی برمیگردد
+        }
+
+        finalArray.append(book);
+    }
+
+    resp["status"] = "SUCCESS";
+    resp["books"] = finalArray;
+    sendJson(socket, resp);
+}
+
+
+//+++++ کتاب های ذخیره شده +++++
+
+// مدیریت ذخیره کتاب
+void Server::handleSaveBook(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    int bookId = data["book_id"].toInt();
+
+    bool ok = dbManager.saveBook(userId, bookId);
+
+    QJsonObject resp;
+    resp["action"] = "SAVE_BOOK_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".کتاب ذخیره شد"
+                         : ".خطا در ذخیره کتاب";
+
+    sendJson(socket, resp);
+}
+
+// مدیریت حذف کتاب ذخیره شده
+void Server::handleRemoveSavedBook(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    int bookId = data["book_id"].toInt();
+
+    bool ok = dbManager.removeSavedBook(userId, bookId);
+
+    QJsonObject resp;
+    resp["action"] = "REMOVE_SAVED_BOOK_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".کتاب از لیست ذخیره شده حذف شد"
+                         : ".خطا در حذف کتاب";
+
+    sendJson(socket, resp);
+}
+
+// مدیریت دریافت لیستی از کتاب های ذخیره شده
+void Server::handleGetSavedBooks(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+
+    QList<QJsonObject> list = dbManager.getSavedBooks(userId);
+
+    QJsonArray arr;
+    for (auto &o : list)
+        arr.append(o);
+
+    QJsonObject resp;
+    resp["action"] = "GET_SAVED_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+
+    sendJson(socket, resp);
+}
+
+
+//+++++ قفسه ها +++++
+
+// مدیریت ایجاد قفسه
+void Server::handleCreateShelf(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    QString name = data["name"].toString();
+
+    bool ok = dbManager.createShelf(userId, name);
+
+    QJsonObject resp;
+    resp["action"] = "CREATE_SHELF_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".قفسه با موفقیت ایجاد شد"
+                         : ".قفسه ای با این نام از قبل وجود دارد یا خطا رخ داده است";
+
+    sendJson(socket, resp);
+}
+
+// مدیریت تغییر نام قفسه
+void Server::handleRenameShelf(QTcpSocket* socket, const QJsonObject& data) {
+    int shelfId = data["shelf_id"].toInt();
+    QString newName = data["new_name"].toString();
+
+    bool ok = dbManager.renameShelf(shelfId, newName);
+
+    QJsonObject resp;
+    resp["action"] = "RENAME_SHELF_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".نام قفسه تغییر کرد"
+                         : ".این نام با یکی از قفسه های دیگر شما تداخل دارد یا قفسه یافت نشد";
+
+    sendJson(socket, resp);
+}
+
+// مدیریت حذف قفسه
+void Server::handleDeleteShelf(QTcpSocket* socket, const QJsonObject& data) {
+    int shelfId = data["shelf_id"].toInt();
+
+    bool ok = dbManager.deleteShelf(shelfId);
+
+    QJsonObject resp;
+    resp["action"] = "DELETE_SHELF_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".قفسه حذف شد"
+                         : ".خطا در حذف قفسه";
+
+    sendJson(socket, resp);
+}
+
+// مدیریت اضافه کردن کتاب به قفسه
+void Server::handleAddBookToShelf(QTcpSocket* socket, const QJsonObject& data) {
+    int shelfId = data["shelf_id"].toInt();
+    int bookId = data["book_id"].toInt();
+
+    bool ok = dbManager.addBookToShelf(shelfId, bookId);
+
+    QJsonObject resp;
+    resp["action"] = "ADD_BOOK_TO_SHELF_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".کتاب به قفسه اضافه شد"
+                         : ".این کتاب از قبل در قفسه مورد نظر موجود است";
+
+    sendJson(socket, resp);
+}
+
+// مدیریت انتقال کتاب بین قفسه ها
+void Server::handleMoveBookBetweenShelves(QTcpSocket* socket, const QJsonObject& data) {
+    int fromShelf = data["from_shelf"].toInt();
+    int toShelf = data["to_shelf"].toInt();
+    int bookId = data["book_id"].toInt();
+
+    bool ok = dbManager.moveBookBetweenShelves(fromShelf, toShelf, bookId);
+
+    QJsonObject resp;
+    resp["action"] = "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".کتاب با موفقیت منتقل شد"
+                         : ".کتاب از قبل در قفسه مقصد موجود بود و از قفسه فعلی حذف شد";
+
+    sendJson(socket, resp);
+}
+
+// مدیریت گرفتن لیست قفسه ها
+void Server::handleGetShelves(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+
+    QList<QJsonObject> list = dbManager.getShelves(userId);
+
+    QJsonArray arr;
+    for (auto &o : list)
+        arr.append(o);
+
+    QJsonObject resp;
+    resp["action"] = "GET_SHELVES_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["shelves"] = arr;
+
+    sendJson(socket, resp);
+}
+
+// مدیریت گرفتن لیستی از کتاب های یک قفسه
+void Server::handleGetShelfBooks(QTcpSocket* socket, const QJsonObject& data) {
+    int shelfId = data["shelf_id"].toInt();
+
+    QList<QJsonObject> list = dbManager.getBooksInShelf(shelfId);
+
+    QJsonArray arr;
+    for (auto &o : list)
+        arr.append(o);
+
+    QJsonObject resp;
+    resp["action"] = "GET_SHELF_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+
+    sendJson(socket, resp);
+}
+
+
+//*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
+
+
+//مدیریت دریافت آخرین صفحه
+void Server::handleGetLastReadPage(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    int bookId = data["book_id"].toInt();
+
+    int page = dbManager.getLastReadPage(userId, bookId);
+
+    QJsonObject resp;
+    resp["action"] = "GET_LAST_READ_PAGE_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["page"] = page;
+
+    sendJson(socket, resp);
+}
+
+//مدیریت آپدیت آخرین صفحه مطالعه شده
+void Server::handleUpdateLastReadPage(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    int bookId = data["book_id"].toInt();
+    int page = data["page"].toInt();
+
+    bool ok = dbManager.updateLastReadPage(userId, bookId, page);
+
+    QJsonObject resp;
+    resp["action"] = "UPDATE_LAST_READ_PAGE_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".آخرین صفحه ذخیره شد"
+                         : ".خطا در ذخیره صفحه";
+
+    sendJson(socket, resp);
+}
+
+
+
+

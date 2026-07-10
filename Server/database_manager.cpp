@@ -42,6 +42,30 @@ bool DatabaseManager::createTables(){
         return false;
     }
 
+    // اضافه کردن ستون حذف منطقی به جدول کاربران (اگر از قبل وجود نداشته باشد)
+    if (!q.exec("ALTER TABLE users ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
+        // اگر ستون از قبل وجود داشته باشد دیتابیس خطا می‌دهد که طبیعی است، پس برنامه را متوقف نمی‌کنیم
+        qDebug() << "Note: is_deleted column might already exist.";
+    }
+
+    //--------------جدول اعلان ها--------------
+    QString createNotifications =
+        "CREATE TABLE IF NOT EXISTS notifications ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                       //شناسه یکتا، عددی و خودکارافزایش (کلید اصلی)
+        "username TEXT NOT NULL,"                                                    //نام کاربری دریافت کننده اعلان (متنی و اجباری)
+        "role TEXT,"                                                                //نقش کاربری (متنی و اختیاری)
+        "type TEXT NOT NULL,"                                                      //نوع اعلان مثلاً سیستم، پیام یا هشدار (متنی و اجباری)
+        "message TEXT NOT NULL,"                                                  //متن اصلی اعلان (متنی و اجباری)
+        "related_id INTEGER,"                                                    //شناسه مرتبط با اعلان مثل شناسه پست یا فاکتور (عددی و اختیاری)
+        "is_read INTEGER NOT NULL DEFAULT 0,"                                   //وضعیت خوانده شدن: 0 یعنی خوانده نشده، 1 یعنی خوانده‌شده (پیش فرض 0)
+        "created_at TEXT NOT NULL"                                             //تاریخ و زمان ثبت اعلان (متنی و اجباری)
+        ");";
+
+    if (!q.exec(createNotifications)) {
+        qDebug() << "Create notifications failed:" << q.lastError().text();
+        return false;
+    }
+
     //--------------جدول کتاب ها--------------
     QString createBooks =
         "CREATE TABLE IF NOT EXISTS books ("
@@ -66,6 +90,12 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create books failed:" << q.lastError().text();
         return false;
     }
+
+    // اضافه کردن ستون حذف منطقی به جدول کتاب‌ها (اگر از قبل وجود نداشته باشد)
+    if (!q.exec("ALTER TABLE books ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
+        qDebug() << "Note: is_deleted column in books might already exist.";
+    }
+
     //--------------جدول کامنت ها--------------
     QString createComments =
         "CREATE TABLE IF NOT EXISTS comments ("
@@ -83,18 +113,6 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create comments failed:" << q.lastError().text();
         return false;
     }
-
-    //----------------جدول خودکار-----------------
-    QString createTrigger =
-        "CREATE TRIGGER IF NOT EXISTS update_book_rating_after_insert "
-        "AFTER INSERT ON comments "
-        "BEGIN "
-        "  UPDATE books SET "
-        "    averageRating = (SELECT AVG(rating) FROM comments WHERE book_id = NEW.book_id), "
-        "    ratingCount = (SELECT COUNT(rating) FROM comments WHERE book_id = NEW.book_id) "
-        "  WHERE id = NEW.book_id; "
-        "END;";
-    q.exec(createTrigger);
 
     //--------------جدول سبد خرید--------------
     QString createCart =
@@ -596,7 +614,7 @@ int DatabaseManager::getTotalPurchases(const QString& username){
     return q.value(0).toInt();
 }
 
-//بررسی اینکه کاربر کتاب را خریداری کرده و در کتابخانه شخصی اش دارد یا خیر
+//بررسی اینکه کاربر کتاب را خریداری کرده و در کتابخانه شخصی‌اش دارد یا خیر
 bool DatabaseManager::isBookPurchased(int userId, int bookId)
 {
     QSqlQuery q;
@@ -627,7 +645,7 @@ bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, d
     return false;
 }
 
-//گرفتن مسیر فیزیکی فایل پی  دی اف از جدول کتاب ها
+//گرفتن مسیر فیزیکی فایل پی  دی اف از جدول کتاب‌ها
 QString DatabaseManager::getBookPdfPath(int bookId)
 {
     QSqlQuery q;
@@ -639,3 +657,591 @@ QString DatabaseManager::getBookPdfPath(int bookId)
     }
     return "";
 }
+
+
+//*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
+
+
+//تابع جستوجوی کتاب
+QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QString& author, const QString& publisherName) {
+    QList<QJsonObject> list;
+    QSqlQuery q;
+
+    QString queryStr = "SELECT b.id, b.title, b.author, b.genre, b.description, b.price, "
+                       "b.discountPercent, b.discountAmount, b.coverImagePath, b.pdfPath, b.publisher_id, b.isActive "
+                       "FROM books b "
+                       "JOIN users u ON b.publisher_id = u.id "
+                       "WHERE b.isActive = 1";
+
+    if (!title.isEmpty()) queryStr += " AND b.title LIKE :title";
+    if (!author.isEmpty()) queryStr += " AND b.author LIKE :author";
+    if (!publisherName.isEmpty()) queryStr += " AND (u.username LIKE :pub OR u.name LIKE :pub)";
+
+    q.prepare(queryStr);
+    if (!title.isEmpty()) q.bindValue(":title", "%" + title + "%");
+    if (!author.isEmpty()) q.bindValue(":author", "%" + author + "%");
+    if (!publisherName.isEmpty()) q.bindValue(":pub", "%" + publisherName + "%");
+
+    if (!q.exec()) return list;
+
+    while (q.next()) {
+        // استفاده از همان تابع مپینگ استاندارد شده
+        list.append(bookFromQueryWithoutPdf(q));
+    }
+    return list;
+}
+
+//*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
+
+
+//اضافه کردن نظر
+bool DatabaseManager::addComment(int bookId, int userId,
+                                 const QString& text, int rating) {
+    const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    QSqlQuery q;
+    q.prepare("INSERT INTO comments (book_id, user_id, comment_text, rating, created_at, updated_at) "
+              "VALUES (:b, :u, :t, :r, :c, :u2)");
+    q.bindValue(":b", bookId);
+    q.bindValue(":u", userId);
+    q.bindValue(":t", text);
+    q.bindValue(":r", rating);
+    q.bindValue(":c", now);
+    q.bindValue(":u2", now);
+
+    if (!q.exec())
+        return false;
+
+    return recalculateBookRating(bookId);
+}
+
+//ویرایش نظر
+bool DatabaseManager::editComment(int commentId,
+                                  const QString& newText, int newRating) {
+    const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);  //این خط کد، زمان و تاریخ فعلی سیستم را میگیرد
+    //و آن را به یک متن (رشته) استاندارد و قابل فهم برای کامپیوتر تبدیل میکند
+
+    QSqlQuery qGet;
+    qGet.prepare("SELECT book_id FROM comments WHERE id = :id");
+    qGet.bindValue(":id", commentId);
+    if (!qGet.exec() || !qGet.next())
+        return false;
+
+    int bookId = qGet.value(0).toInt();
+
+    QSqlQuery q;
+    q.prepare("UPDATE comments SET comment_text = :t, rating = :r, updated_at = :u WHERE id = :id");
+    q.bindValue(":t", newText);
+    q.bindValue(":r", newRating);
+    q.bindValue(":u", now);
+    q.bindValue(":id", commentId);
+
+    if (!q.exec())
+        return false;
+
+    return recalculateBookRating(bookId);
+}
+
+//حذف نظر
+bool DatabaseManager::deleteComment(int commentId) {
+    QSqlQuery qGet;
+    qGet.prepare("SELECT book_id FROM comments WHERE id = :id");
+    qGet.bindValue(":id", commentId);
+    if (!qGet.exec() || !qGet.next())
+        return false;
+
+    int bookId = qGet.value(0).toInt();
+
+    QSqlQuery q;
+    q.prepare("DELETE FROM comments WHERE id = :id");
+    q.bindValue(":id", commentId);
+
+    if (!q.exec())
+        return false;
+
+    return recalculateBookRating(bookId);
+}
+
+//دیدن نظرات یک کتاب
+QList<QJsonObject> DatabaseManager::getCommentsForBook(int bookId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT c.id, c.comment_text, c.rating, c.created_at, c.updated_at, "
+              "u.username "
+              "FROM comments c "
+              "JOIN users u ON c.user_id = u.id "
+              "WHERE c.book_id = :b "
+              "ORDER BY c.created_at DESC");
+    q.bindValue(":b", bookId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject obj;
+        obj["id"] = q.value("id").toInt();
+        obj["text"] = q.value("comment_text").toString();
+        obj["rating"] = q.value("rating").toInt();
+        obj["created_at"] = q.value("created_at").toString();
+        obj["updated_at"] = q.value("updated_at").toString();
+        obj["username"] = q.value("username").toString();
+        list.append(obj);
+    }
+
+    return list;
+}
+
+//محاسبه امتیاز کتاب
+bool DatabaseManager::recalculateBookRating(int bookId) {
+    QSqlQuery q;
+    q.prepare("SELECT rating FROM comments WHERE book_id = :b");
+    q.bindValue(":b", bookId);
+
+    if (!q.exec())
+        return false;
+
+    int count = 0;
+    double sum = 0.0;
+    while (q.next()) {
+        sum += q.value(0).toInt();
+        ++count;
+    }
+
+    double avg = (count == 0) ? 0.0 : (sum / count);
+
+    QSqlQuery qUpdate;
+    qUpdate.prepare("UPDATE books SET averageRating = :a, ratingCount = :c WHERE id = :b");
+    qUpdate.bindValue(":a", avg);
+    qUpdate.bindValue(":c", count);
+    qUpdate.bindValue(":b", bookId);
+
+    return qUpdate.exec();
+}
+
+//*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
+
+
+//افزودن به سبد خرید
+bool DatabaseManager::addToCart(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("INSERT INTO cart (user_id, book_id) "
+              "SELECT :u, id FROM books "
+              "WHERE id = :b AND isActive = 1");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+//حذف از سبد خرید
+bool DatabaseManager::removeFromCart(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("DELETE FROM cart WHERE user_id = :u AND book_id = :b");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+//گرفتن یک لیست از سبد خرید
+QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.isActive "
+              "FROM cart c "
+              "JOIN books b ON c.book_id = b.id "
+              "WHERE c.user_id = :u");
+    q.bindValue(":u", userId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject obj;
+        obj["id"] = q.value("id").toInt();
+        obj["title"] = q.value("title").toString();
+        obj["author"] = q.value("author").toString();
+        obj["price"] = q.value("price").toDouble();
+        obj["discount"] = q.value("discountPercent").toDouble();
+
+        //فرستادن وضعیت دسترسی به کلاینت (۱ یعنی موجود، ۰ یعنی مسدود/حذف شده)
+        obj["isActive"] = (q.value("isActive").toInt() == 1);
+
+        list.append(obj);
+    }
+
+    return list;
+}
+
+//پاک کردن سبد خرید
+bool DatabaseManager::clearCart(int userId) {
+    QSqlQuery q;
+    q.prepare("DELETE FROM cart WHERE user_id = :u");
+    q.bindValue(":u", userId);
+    return q.exec();
+}
+
+//نهایی کردن خرید
+bool DatabaseManager::finalizePurchase(int userId) {
+    //به دیتابیس میگوییم: یک تراکنش امن باز کن (تغییرات را موقتی نگه دار)
+    QSqlDatabase::database().transaction();
+
+    //بررسی وجود کتاب مسدود/غیرفعال در سبد کاربر
+    QSqlQuery qCheck;
+    qCheck.prepare("SELECT COUNT(*) FROM cart c "
+                   "JOIN books b ON c.book_id = b.id "
+                   "WHERE c.user_id = :u AND b.isActive = 0");
+    qCheck.bindValue(":u", userId);
+
+    if (!qCheck.exec() || !qCheck.next()) {
+        QSqlDatabase::database().rollback(); // خطای ناگهانی دیتابیس -> همه‌چیز لغو
+        return false;
+    }
+
+    //اگر شمارش کتاب های مسدود بیشتر از 0 بود
+    if (qCheck.value(0).toInt() > 0) {
+        qDebug() << "Purchase failed: Inactive books detected.";
+        QSqlDatabase::database().rollback(); //همه‌چیز را به حالت قبل برگردان و لغو کن
+        return false;
+    }
+
+    //خواندن کتاب های داخل سبد خرید
+    QSqlQuery q;
+    q.prepare("SELECT book_id FROM cart WHERE user_id = :u");
+    q.bindValue(":u", userId);
+
+    if (!q.exec()) {
+        QSqlDatabase::database().rollback(); // خطا در خواندن -> لغو
+        return false;
+    }
+
+    const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    // شروع حلقه روی کتاب های سبد خرید
+    while (q.next()) {
+        int bookId = q.value(0).toInt();
+
+        //بررسی اینکه کاربر قبلاً این کتاب را نخریده باشد
+        QSqlQuery check;
+        check.prepare("SELECT 1 FROM library WHERE user_id = :u AND book_id = :b");
+        check.bindValue(":u", userId);
+        check.bindValue(":b", bookId);
+
+        if (check.exec() && check.next()) {
+            // کاربر قبلاً این کتاب را خریده، پس بدون خطا رفتن به کتاب بعدی سبد خرید
+            continue;
+        }
+
+        //درج کتاب در کتابخانه کاربر
+        QSqlQuery insert;
+        insert.prepare("INSERT INTO library (user_id, book_id, purchase_date) "
+                       "VALUES (:u, :b, :d)");
+        insert.bindValue(":u", userId);
+        insert.bindValue(":b", bookId);
+        insert.bindValue(":d", now);
+
+        if (!insert.exec()) {
+            QSqlDatabase::database().rollback(); // اگر درج این کتاب ارور داد -> کل خرید لغو
+            return false;
+        }
+    }
+
+    //پاک کردن سبد خرید بعد از اتمام حلقه
+    if (!clearCart(userId)) {
+        QSqlDatabase::database().rollback(); // اگر سبد پاک نشد -> کل خرید لغو
+        return false;
+    }
+
+    //همه چیز عالی بود! حالا تغییرات را در دیتابیس قطعی و ماندگار کن
+    return QSqlDatabase::database().commit();
+}
+
+
+//*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
+
+
+//+++++کتاب های خریداری شده+++++
+
+//دیدن کتاب های خریده شده
+QList<QJsonObject> DatabaseManager::getPurchasedBooks(int userId) {
+    QList<QJsonObject> list;
+    QSqlQuery q;
+
+    // انتخاب دقیق فیلدهای مسیر فیزیکی کتاب از دیتابیس
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.price, b.pdfPath, b.coverImagePath "
+              "FROM library l "
+              "JOIN books b ON l.book_id = b.id "
+              "WHERE l.user_id = :u");
+    q.bindValue(":u", userId);
+
+    if (!q.exec()) {
+        qDebug() << "getPurchasedBooks failed:" << q.lastError().text();
+        return list;
+    }
+
+    while (q.next()) {
+        QJsonObject o;
+        o["id"] = q.value("id").toInt();
+        o["title"] = q.value("title").toString();
+        o["author"] = q.value("author").toString();
+        o["genre"] = q.value("genre").toString();
+        o["price"] = q.value("price").toDouble();
+        o["pdfPath"] = q.value("pdfPath").toString();                 // فیلد فیزیکی هارد سرور
+        o["coverImagePath"] = q.value("coverImagePath").toString();   // فیلد فیزیکی هارد سرور
+        list.append(o);
+    }
+    return list;
+}
+
+//+++++کتاب های ذخیره شده+++++
+
+//ذخیره کتاب
+bool DatabaseManager::saveBook(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("INSERT INTO saved_books (user_id, book_id) VALUES (:u, :b)");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+//حذف کتاب ذخیره شده
+bool DatabaseManager::removeSavedBook(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("DELETE FROM saved_books WHERE user_id = :u AND book_id = :b");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+//دیدن لیستی از کتاب های ذخیره شده
+QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT b.id, b.title, b.author, b.genre "
+              "FROM saved_books s "
+              "JOIN books b ON s.book_id = b.id "
+              "WHERE s.user_id = :u");
+    q.bindValue(":u", userId);
+    if (!q.exec()) {
+        qDebug() << "getSavedBooks failed:" << q.lastError().text();
+        return list;
+    }
+
+    while (q.next()) {
+        QJsonObject o;
+        o["id"] = q.value("id").toInt();
+        o["title"] = q.value("title").toString();
+        o["author"] = q.value("author").toString();
+        o["genre"] = q.value("genre").toString();
+        list.append(o);
+    }
+
+    return list;
+}
+
+//+++++قفسه ها+++++
+
+//ایجاد قفسه
+bool DatabaseManager::createShelf(int userId, const QString& name) {
+    // بررسی اینکه آیا این کاربر قفسه‌ای با این نام دارد یا خیر
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n");
+    check.bindValue(":u", userId);
+    check.bindValue(":n", name.trimmed()); // حذف فاصله های خالی احتمالی
+
+    if (check.exec() && check.next()) {
+        qDebug() << ".قفسه ای با این نام برای این کاربر از قبل وجود دارد";
+        return false;
+    }
+
+    QSqlQuery q;
+    q.prepare("INSERT INTO shelves (user_id, name) VALUES (:u, :n)");
+    q.bindValue(":u", userId);
+    q.bindValue(":n", name);
+    return q.exec();
+}
+
+//تغییر نام قفسه
+bool DatabaseManager::renameShelf(int shelfId, const QString& newName) {
+    //پیدا کردن شناسه کاربرِ صاحب قفسه
+    QSqlQuery getUser;
+    getUser.prepare("SELECT user_id FROM shelves WHERE id = :id");
+    getUser.bindValue(":id", shelfId);
+    if (!getUser.exec() || !getUser.next()) return false;
+    int userId = getUser.value(0).toInt();
+
+    //بررسی تکراری نبودن نام جدید در قفسه های دیگرِ این کاربر
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n AND id != :id");
+    check.bindValue(":u", userId);
+    check.bindValue(":n", newName.trimmed());
+    check.bindValue(":id", shelfId);
+
+    if (check.exec() && check.next()) {
+        qDebug() << ".نام جدید با یکی از قفسه های دیگر شما تداخل دارد";
+        return false;
+    }
+
+    QSqlQuery q;
+    q.prepare("UPDATE shelves SET name = :n WHERE id = :id");
+    q.bindValue(":n", newName);
+    q.bindValue(":id", shelfId);
+    return q.exec();
+}
+
+//حذف قفسه
+bool DatabaseManager::deleteShelf(int shelfId) {
+    QSqlQuery q1;
+    q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :id");
+    q1.bindValue(":id", shelfId);
+    q1.exec();
+
+    QSqlQuery q2;
+    q2.prepare("DELETE FROM shelves WHERE id = :id");
+    q2.bindValue(":id", shelfId);
+    return q2.exec();
+}
+
+//افزودن کتاب به قفسه
+bool DatabaseManager::addBookToShelf(int shelfId, int bookId) {
+    //بررسی اینکه آیا این کتاب از قبل در این قفسه مشخص وجود دارد یا خیر
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
+    check.bindValue(":s", shelfId);
+    check.bindValue(":b", bookId);
+
+    if (check.exec() && check.next()) {
+        qDebug() << ".این کتاب از قبل در این قفسه موجود است و دوباره اضافه نمیشود";
+        return false; // خروجی فالس یعنی عملیات اضافه کردن انجام نشد (چون تکراری بود)
+    }
+
+    QSqlQuery q;
+    q.prepare("INSERT INTO shelf_books (shelf_id, book_id) VALUES (:s, :b)");
+    q.bindValue(":s", shelfId);
+    q.bindValue(":b", bookId);
+    return q.exec();
+}
+
+//انتقال کتاب بین قفسه ها
+bool DatabaseManager::moveBookBetweenShelves(int fromShelfId, int toShelfId, int bookId) {
+    //بررسی اینکه آیا کتاب از قبل در قفسه مقصد هست یا خیر؟
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
+    check.bindValue(":s", toShelfId);
+    check.bindValue(":b", bookId);
+
+    if (check.exec() && check.next()) {
+        qDebug() << ".این کتاب از قبل در این قفسه موجود است و دوباره اضافه نمیشود";
+
+        //کتاب از قبل در قفسه مقصد هست، پس فقط باید از قفسه مبدأ حذفش کنیم تا تداخل ایجاد نشود
+        QSqlQuery q1;
+        q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
+        q1.bindValue(":s", fromShelfId);
+        q1.bindValue(":b", bookId);
+        q1.exec();
+        return false;
+    }
+
+    QSqlQuery q1;
+    q1.prepare("DELETE FROM shelf_books WHERE shelf_id = :s AND book_id = :b");
+    q1.bindValue(":s", fromShelfId);
+    q1.bindValue(":b", bookId);
+    q1.exec();
+
+    return addBookToShelf(toShelfId, bookId);
+}
+
+//گرفتن لیست قفسه ها
+QList<QJsonObject> DatabaseManager::getShelves(int userId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT id, name FROM shelves WHERE user_id = :u");
+    q.bindValue(":u", userId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject shelf;
+        shelf["id"] = q.value("id").toInt();
+        shelf["name"] = q.value("name").toString();
+        list.append(shelf);
+    }
+
+    return list;
+}
+
+//گرفتن لیستی از کتاب های یک قفسه
+QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
+    QList<QJsonObject> list;
+
+    QSqlQuery q;
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath "
+              "FROM shelf_books sb "
+              "JOIN books b ON sb.book_id = b.id "
+              "WHERE sb.shelf_id = :s");
+    q.bindValue(":s", shelfId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject book;
+        book["id"] = q.value("id").toInt();
+        book["title"] = q.value("title").toString();
+        book["author"] = q.value("author").toString();
+        book["genre"] = q.value("genre").toString();
+        book["coverImagePath"] = q.value("coverImagePath").toString();
+        list.append(book);
+    }
+
+    return list;
+}
+
+
+//*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
+
+
+//گرفتن آخرین صفحه خوانده شده
+int DatabaseManager::getLastReadPage(int userId, int bookId) {
+    QSqlQuery q;
+    q.prepare("SELECT last_page FROM reading_progress WHERE user_id = :u AND book_id = :b");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+
+    if (!q.exec() || !q.next())
+        return 1;
+
+    return q.value(0).toInt();
+}
+
+//آپدیت آخرین صفحه خوانده شده
+bool DatabaseManager::updateLastReadPage(int userId, int bookId, int page) {
+    QSqlQuery check;
+    check.prepare("SELECT 1 FROM reading_progress WHERE user_id = :u AND book_id = :b");
+    check.bindValue(":u", userId);
+    check.bindValue(":b", bookId);
+
+    if (check.exec() && check.next()) {
+        // ردیف از قبل وجود دارد، پس آپدیتش می کنیم
+        QSqlQuery updateQuery;
+        updateQuery.prepare("UPDATE reading_progress SET last_page = :p WHERE user_id = :u AND book_id = :b");
+        updateQuery.bindValue(":p", page);
+        updateQuery.bindValue(":u", userId);
+        updateQuery.bindValue(":b", bookId);
+        return updateQuery.exec();
+    } else {
+        // ردیفی وجود ندارد، پس ردیف جدید می سازیم
+        QSqlQuery insertQuery;
+        insertQuery.prepare("INSERT INTO reading_progress (user_id, book_id, last_page) VALUES (:u, :b, :p)");
+        insertQuery.bindValue(":u", userId);
+        insertQuery.bindValue(":b", bookId);
+        insertQuery.bindValue(":p", page);
+        return insertQuery.exec();
+    }
+}
+
+
+
