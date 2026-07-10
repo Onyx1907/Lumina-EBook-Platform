@@ -32,17 +32,29 @@ bool ClientNetworkManager::connectToServer() {
     return false; // اتصال ناموفق بود
 }
 
-void ClientNetworkManager::sendRequest(const QString& action, const QJsonObject& data) {
+void ClientNetworkManager::sendRequest(const QString& action,
+                                       const QJsonObject& data,
+                                       bool isFlat) {
     if (socket->state() != QAbstractSocket::ConnectedState) {
         qDebug() << "cannot send request";
         return;
     }
+
     QJsonObject packet;
     packet["action"] = action;
-    packet["data"] = data;
+
+    if (isFlat) {
+        for (auto it = data.begin(); it != data.end(); ++it)
+            packet.insert(it.key(), it.value());
+    } else {
+        packet["data"] = data;
+    }
 
     QJsonDocument doc(packet);
     QByteArray bytes = doc.toJson(QJsonDocument::Compact) + "\n";
+
+    // qDebug().noquote() << bytes;
+
     socket->write(bytes);
     socket->flush();
 }

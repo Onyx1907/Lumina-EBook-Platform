@@ -125,6 +125,9 @@ QLineEdit:focus {
     background-color: #ffffff;
 }</string>
       </property>
+      <property name="echoMode">
+       <enum>QLineEdit::PasswordEchoOnEdit</enum>
+      </property>
       <property name="placeholderText">
        <string>رمز عبور فعلی</string>
       </property>
@@ -153,6 +156,9 @@ QLineEdit:focus {
     border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
     background-color: #ffffff;
 }</string>
+      </property>
+      <property name="echoMode">
+       <enum>QLineEdit::PasswordEchoOnEdit</enum>
       </property>
       <property name="placeholderText">
        <string>رمز عبور جدید</string>
@@ -298,7 +304,7 @@ QLineEdit:focus {
 }</string>
       </property>
       <property name="placeholderText">
-       <string>نام کاربری</string>
+       <string>نام کاربری جدید</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="email_lineEdit">
@@ -489,6 +495,9 @@ QLineEdit:focus {
     border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
     background-color: #ffffff;
 }</string>
+      </property>
+      <property name="echoMode">
+       <enum>QLineEdit::PasswordEchoOnEdit</enum>
       </property>
       <property name="placeholderText">
        <string>تکرار رمز عبور جدید</string>
@@ -689,6 +698,94 @@ QPushButton:disabled {
       </property>
       <property name="styleSheet">
        <string notr="true">color: #a63a3a;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="pass_error_label">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>510</y>
+        <width>251</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #a63a3a;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="prof_error_label">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>510</y>
+        <width>251</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #a63a3a;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="pass_success_label">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>510</y>
+        <width>251</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">    color: #4A3728;  
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="prof_success_label">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>510</y>
+        <width>251</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">    color: #4A3728;  
 font-size: 11px;
 font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
 font-weight: bold;
