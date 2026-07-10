@@ -125,3 +125,15 @@ public:
     int getLastReadPage(int userId, int bookId);
     bool updateLastReadPage(int userId, int bookId, int page);
 
+
+
+
+private:
+    QSqlDatabase db;
+    bool createTables();
+
+};
+
+#endif // DATABASE_MANAGER_H
+
+
