@@ -26,10 +26,15 @@ private slots:
 
     void processNetworkData(const QString& action, const QJsonObject& data);
 
+    void on_submitProfile_pushButton_clicked();
+
+    void on_submitPass_pushButton_clicked();
+
 private:
     Ui::ProfileWidget *ui;
 
     RegularUser *user;
+    QString new_username = "";
 
 };
 

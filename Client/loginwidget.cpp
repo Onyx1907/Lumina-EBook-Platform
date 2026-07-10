@@ -63,8 +63,8 @@ void LoginWidget::on_login_pushButton_clicked()
         return;
     }
 
-    if(password.length() < 6) {
-        ui->error_label->setText("رمز عبور نمی‌تواند کمتر از ۶ کارکتر باشد");
+    if(password.length() < 5) {
+        ui->error_label->setText("رمز عبور نمی‌تواند کمتر از ۵ کارکتر باشد");
         return;
     }
 
@@ -105,11 +105,12 @@ void LoginWidget::processNetworkData(const QString& action, const QJsonObject& d
 
         QString role = data.value("user_role").toString();
         bool is_first_login = (data.value("first_login").toInt() == 1);
+        int id = data.value("user_id").toInt();
 
         User *user;
 
         if(role == "RegularUser"){
-            user = new RegularUser(1, current_username);
+            user = new RegularUser(id, current_username);
         }
         //else if(role == "Publisher"){}
 
