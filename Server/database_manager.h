@@ -22,9 +22,12 @@
 class DatabaseManager
 {
 public:
+
+    void setConnectionName(const QString& name);
+
     //**************************************************احراز هویت مرکزی********************************************************
     DatabaseManager();
-    bool initDatabase();
+    bool initDatabase(const QString& connectionName);
 
     //Registration(ثبت نام)
     bool isUsernameTaken(const QString& username);
@@ -131,6 +134,7 @@ public:
 private:
     QSqlDatabase db;
     bool createTables();
+    QString m_connectionName;
 
 };
 

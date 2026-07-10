@@ -11,6 +11,7 @@
 #include <QDebug>
 
 #include "database_manager.h"
+#include "networkWorker.h"
 #include "constants.h"
 
 class Server : public QTcpServer
@@ -26,9 +27,9 @@ protected:
     void incomingConnection(qintptr socketDescriptor) override;
 
 private:
-    QMap<int, QTcpSocket*> onlineUsers;       // کلید: userId -> مقدار: سوکت
-    QMap<QTcpSocket*, int> socketToUser;      // کلید: سوکت -> مقدار: userId
-    QMap<QTcpSocket*, QString> socketToName;  // کلید: سوکت -> مقدار: username
+    QMap<int, QTcpSocket*> onlineUsers;
+    QMap<QTcpSocket*, int> socketToUser;
+    QMap<QTcpSocket*, QString> socketToName;
 
     DatabaseManager dbManager;
     QMutex mutex; // قفل برای امنیت مپ ها در محیط مالتی تردینگ
