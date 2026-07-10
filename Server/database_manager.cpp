@@ -14,6 +14,10 @@ bool DatabaseManager::initDatabase(){
         qDebug() << "db open failed: " << db.lastError().text();
         return false;
     }
+
+    //یعنی وقتی دیتابیس قفل است (مثلاً یک ترد دیگر در حال نوشتن است)، به جای اینکه فوراً خطا بدهد، صبر کند.(مقدار ۵۰۰۰ یعنی ۵۰۰۰ میلی ثانیه = ۵ ثانیه)
+    db.setConnectOptions("QSQLITE_BUSY_TIMEOUT=5000");
+
     return createTables();
 }
 // ایجاد جدول های مورد نیاز در پایگاه داده (در صورت عدم وجود)
@@ -41,7 +45,6 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create users failed: " << q.lastError().text();
         return false;
     }
-
     // اضافه کردن ستون حذف منطقی به جدول کاربران (اگر از قبل وجود نداشته باشد)
     if (!q.exec("ALTER TABLE users ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
         // اگر ستون از قبل وجود داشته باشد دیتابیس خطا می‌دهد که طبیعی است، پس برنامه را متوقف نمی‌کنیم
@@ -51,7 +54,8 @@ bool DatabaseManager::createTables(){
     //--------------جدول اعلان ها--------------
     QString createNotifications =
         "CREATE TABLE IF NOT EXISTS notifications ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                       //شناسه یکتا، عددی و خودکارافزایش (کلید اصلی)
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"                                        //شناسه یکتا، عددی و خودکارافزایش (کلید اصلی)
+        "user_id INTEGER NOT NULL,"                                                   //شناسه کاربر
         "username TEXT NOT NULL,"                                                    //نام کاربری دریافت کننده اعلان (متنی و اجباری)
         "role TEXT,"                                                                //نقش کاربری (متنی و اختیاری)
         "type TEXT NOT NULL,"                                                      //نوع اعلان مثلاً سیستم، پیام یا هشدار (متنی و اجباری)
@@ -90,7 +94,6 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create books failed:" << q.lastError().text();
         return false;
     }
-
     // اضافه کردن ستون حذف منطقی به جدول کتاب‌ها (اگر از قبل وجود نداشته باشد)
     if (!q.exec("ALTER TABLE books ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
         qDebug() << "Note: is_deleted column in books might already exist.";
@@ -200,6 +203,12 @@ bool DatabaseManager::createTables(){
     }
 
 
+    QSqlQuery walQuery;
+    if (walQuery.exec("PRAGMA journal_mode=WAL;")) {
+        qDebug() << "SQLite WAL mode activated successfully!";
+    } else {
+        qDebug() << "Failed to activate WAL mode:" << walQuery.lastError().text();
+    }
 
 
     return true;
@@ -325,7 +334,6 @@ bool DatabaseManager::verifySecurityAnswerAndResetPassword(const QString& userna
     return q2.exec();
 
 }
-
 
 
 //*********************************************پنل کاربر عادی ( ماژول 1 )****************************************************
@@ -513,15 +521,16 @@ QJsonObject DatabaseManager::getUserProfile(const QString& username){
     return obj;
 
 }
+//آپدیت پروفایل
 bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, const QString& name, const QString& email) {
 
-    //شرط بسیار مهم: یوزرنیم اصلی سیستم به هیچ وجه نباید خالی فرستاده بشه
+    // شرط بسیار مهم: یوزرنیم اصلی سیستم به هیچ وجه نباید خالی فرستاده بشه
     if (newUsername.trimmed().isEmpty()) {
         qDebug() << "Username cannot be empty!";
         return false;
     }
 
-    //بررسی تکراری نبودن یوزرنیم جدید با بقیه کاربران
+    // بررسی تکراری نبودن یوزرنیم جدید با بقیه کاربران
     QSqlQuery checkUsername;
     checkUsername.prepare("SELECT 1 FROM users WHERE username = :username AND id != :id LIMIT 1");
     checkUsername.bindValue(":username", newUsername.trimmed());
@@ -531,14 +540,16 @@ bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, 
         return false; // یوزرنیم تکراری است
     }
 
-
-    if (!email.trimmed().isEmpty()) {
-        QSqlQuery checkEmail;
-        checkEmail.prepare("SELECT 1 FROM users WHERE email = :email AND id != :id LIMIT 1");
-        checkEmail.bindValue(":email", email.trimmed());
-        checkEmail.bindValue(":id", userId);
-        if (checkEmail.exec() && checkEmail.next()) {
-            return false; // ایمیل تکراری است
+    // اصلاح این بخش: فقط و فقط اگر نام فرستاده شده خالی نبود، تکراری بودنش چک شود
+    QString trimmedName = name.trimmed();
+    if (!trimmedName.isEmpty()) {
+        QSqlQuery checkName;
+        checkName.prepare("SELECT 1 FROM users WHERE name = :name AND id != :id LIMIT 1");
+        checkName.bindValue(":name", trimmedName);
+        checkName.bindValue(":id", userId);
+        if (checkName.exec() && checkName.next()) {
+            qDebug() << "Name is already taken!";
+            return false; // نام نمایش تکراری است
         }
     }
 
@@ -550,7 +561,7 @@ bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, 
               "WHERE id = :id");
 
     q.bindValue(":u", newUsername.trimmed());
-    q.bindValue(":n", name.trimmed());
+    q.bindValue(":n", trimmedName); // مقدار تمیز شده
     q.bindValue(":e", email.trimmed());
     q.bindValue(":id", userId);
 
@@ -667,8 +678,10 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
     QList<QJsonObject> list;
     QSqlQuery q;
 
+    // استفاده از IFNULL یا COALESCE باعث می‌شود اگر ناشر نام اصلی (name) نداشت، نام کاربری‌اش (username) جایگزین شود.
     QString queryStr = "SELECT b.id, b.title, b.author, b.genre, b.description, b.price, "
-                       "b.discountPercent, b.discountAmount, b.coverImagePath, b.pdfPath, b.publisher_id, b.isActive "
+                       "b.discountPercent, b.discountAmount, b.coverImagePath, b.pdfPath, b.publisher_id, b.isActive, "
+                       "IFNULL(NULLIF(u.name, ''), u.username) AS publisher_name "
                        "FROM books b "
                        "JOIN users u ON b.publisher_id = u.id "
                        "WHERE b.isActive = 1";
@@ -685,8 +698,13 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
     if (!q.exec()) return list;
 
     while (q.next()) {
-        // استفاده از همان تابع مپینگ استاندارد شده
-        list.append(bookFromQueryWithoutPdf(q));
+        // ابتدا اطلاعات پایه کتاب را از تابع مپینگ بدون دستکاری می‌گیریم
+        QJsonObject obj = bookFromQueryWithoutPdf(q);
+
+        //تزریق منطقی نام ناشر به شیء جی‌سون کتاب
+        obj["publisher_name"] = q.value("publisher_name").toString();
+
+        list.append(obj);
     }
     return list;
 }
@@ -697,6 +715,20 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
 //اضافه کردن نظر
 bool DatabaseManager::addComment(int bookId, int userId,
                                  const QString& text, int rating) {
+
+    // بررسی وضعیت زنده بودن کتاب و مجاز بودن کاربر به صورت همزمان
+    QSqlQuery qCheck;
+    qCheck.prepare("SELECT 1 FROM books b, users u "
+                   "WHERE b.id = :b AND b.isActive = 1 "
+                   "AND u.id = :u AND u.is_blocked = 0 AND u.is_deleted = 0");
+    qCheck.bindValue(":b", bookId);
+    qCheck.bindValue(":u", userId);
+
+    if (!qCheck.exec() || !qCheck.next()) {
+        qDebug() << "Comment blocked: Book is inactive/deleted OR user is blocked/deleted.";
+        return false; // اجازه ثبت نظر داده نمی‌شود
+    }
+
     const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     QSqlQuery q;
@@ -718,16 +750,22 @@ bool DatabaseManager::addComment(int bookId, int userId,
 //ویرایش نظر
 bool DatabaseManager::editComment(int commentId,
                                   const QString& newText, int newRating) {
-    const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);  //این خط کد، زمان و تاریخ فعلی سیستم را میگیرد
-    //و آن را به یک متن (رشته) استاندارد و قابل فهم برای کامپیوتر تبدیل میکند
 
     QSqlQuery qGet;
-    qGet.prepare("SELECT book_id FROM comments WHERE id = :id");
+    qGet.prepare("SELECT c.book_id FROM comments c "
+                 "JOIN books b ON c.book_id = b.id "
+                 "JOIN users u ON c.user_id = u.id "
+                 "WHERE c.id = :id AND b.isActive = 1 AND u.is_blocked = 0 AND u.is_deleted = 0");
     qGet.bindValue(":id", commentId);
-    if (!qGet.exec() || !qGet.next())
+
+    if (!qGet.exec() || !qGet.next()) {
+        qDebug() << "Edit blocked: Associated book is inactive OR user is blocked/deleted.";
         return false;
+    }
 
     int bookId = qGet.value(0).toInt();
+    const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);  //این خط کد، زمان و تاریخ فعلی سیستم را میگیرد
+    //و آن را به یک متن (رشته) استاندارد و قابل فهم برای کامپیوتر تبدیل میکند
 
     QSqlQuery q;
     q.prepare("UPDATE comments SET comment_text = :t, rating = :r, updated_at = :u WHERE id = :id");
@@ -771,7 +809,7 @@ QList<QJsonObject> DatabaseManager::getCommentsForBook(int bookId) {
               "u.username "
               "FROM comments c "
               "JOIN users u ON c.user_id = u.id "
-              "WHERE c.book_id = :b "
+              "WHERE c.book_id = :b  AND u.is_deleted = 0"
               "ORDER BY c.created_at DESC");
     q.bindValue(":b", bookId);
 
@@ -795,7 +833,10 @@ QList<QJsonObject> DatabaseManager::getCommentsForBook(int bookId) {
 //محاسبه امتیاز کتاب
 bool DatabaseManager::recalculateBookRating(int bookId) {
     QSqlQuery q;
-    q.prepare("SELECT rating FROM comments WHERE book_id = :b");
+    // محاسبه امتیازها فقط از روی کاربران حذف نشده سیستم
+    q.prepare("SELECT c.rating FROM comments c "
+              "JOIN users u ON c.user_id = u.id "
+              "WHERE c.book_id = :b AND u.is_deleted = 0");
     q.bindValue(":b", bookId);
 
     if (!q.exec())
@@ -847,7 +888,8 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
     QList<QJsonObject> list;
 
     QSqlQuery q;
-    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.isActive "
+
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.coverImagePath, b.isActive "
               "FROM cart c "
               "JOIN books b ON c.book_id = b.id "
               "WHERE c.user_id = :u");
@@ -863,8 +905,9 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
         obj["author"] = q.value("author").toString();
         obj["price"] = q.value("price").toDouble();
         obj["discount"] = q.value("discountPercent").toDouble();
+        obj["coverImagePath"] = q.value("coverImagePath").toString(); // مسیر نسبی عکس
 
-        //فرستادن وضعیت دسترسی به کلاینت (۱ یعنی موجود، ۰ یعنی مسدود/حذف شده)
+        // فرستادن وضعیت دسترسی به کلاینت (۱ یعنی موجود، ۰ یعنی مسدود/حذف شده)
         obj["isActive"] = (q.value("isActive").toInt() == 1);
 
         list.append(obj);
@@ -883,7 +926,7 @@ bool DatabaseManager::clearCart(int userId) {
 
 //نهایی کردن خرید
 bool DatabaseManager::finalizePurchase(int userId) {
-    //به دیتابیس میگوییم: یک تراکنش امن باز کن (تغییرات را موقتی نگه دار)
+    //به دیتابیس می‌گوییم: یک تراکنش امن باز کن (تغییرات را موقتی نگه دار)
     QSqlDatabase::database().transaction();
 
     //بررسی وجود کتاب مسدود/غیرفعال در سبد کاربر
@@ -898,14 +941,14 @@ bool DatabaseManager::finalizePurchase(int userId) {
         return false;
     }
 
-    //اگر شمارش کتاب های مسدود بیشتر از 0 بود
+    //اگر شمارش کتاب‌های مسدود بیشتر از 0 بود
     if (qCheck.value(0).toInt() > 0) {
         qDebug() << "Purchase failed: Inactive books detected.";
         QSqlDatabase::database().rollback(); //همه‌چیز را به حالت قبل برگردان و لغو کن
         return false;
     }
 
-    //خواندن کتاب های داخل سبد خرید
+    //خواندن کتاب‌های داخل سبد خرید
     QSqlQuery q;
     q.prepare("SELECT book_id FROM cart WHERE user_id = :u");
     q.bindValue(":u", userId);
@@ -917,7 +960,7 @@ bool DatabaseManager::finalizePurchase(int userId) {
 
     const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
 
-    // شروع حلقه روی کتاب های سبد خرید
+    // شروع حلقه روی کتاب‌های سبد خرید
     while (q.next()) {
         int bookId = q.value(0).toInt();
 
@@ -952,7 +995,7 @@ bool DatabaseManager::finalizePurchase(int userId) {
         return false;
     }
 
-    //همه چیز عالی بود! حالا تغییرات را در دیتابیس قطعی و ماندگار کن
+    //همه‌چیز عالی بود! حالا تغییرات را در دیتابیس قطعی و ماندگار کن
     return QSqlDatabase::database().commit();
 }
 
@@ -1018,11 +1061,13 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
     QList<QJsonObject> list;
 
     QSqlQuery q;
-    q.prepare("SELECT b.id, b.title, b.author, b.genre "
+
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath "
               "FROM saved_books s "
               "JOIN books b ON s.book_id = b.id "
               "WHERE s.user_id = :u");
     q.bindValue(":u", userId);
+
     if (!q.exec()) {
         qDebug() << "getSavedBooks failed:" << q.lastError().text();
         return list;
@@ -1034,6 +1079,7 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
         o["title"] = q.value("title").toString();
         o["author"] = q.value("author").toString();
         o["genre"] = q.value("genre").toString();
+        o["coverImagePath"] = q.value("coverImagePath").toString(); // مسیر نسبی ذخیره شده (مثلا server_storage/pic.jpg)
         list.append(o);
     }
 
@@ -1225,7 +1271,7 @@ bool DatabaseManager::updateLastReadPage(int userId, int bookId, int page) {
     check.bindValue(":b", bookId);
 
     if (check.exec() && check.next()) {
-        // ردیف از قبل وجود دارد، پس آپدیتش می کنیم
+        // ردیف از قبل وجود دارد، پس آپدیتش میکنیم
         QSqlQuery updateQuery;
         updateQuery.prepare("UPDATE reading_progress SET last_page = :p WHERE user_id = :u AND book_id = :b");
         updateQuery.bindValue(":p", page);
@@ -1233,7 +1279,7 @@ bool DatabaseManager::updateLastReadPage(int userId, int bookId, int page) {
         updateQuery.bindValue(":b", bookId);
         return updateQuery.exec();
     } else {
-        // ردیفی وجود ندارد، پس ردیف جدید می سازیم
+        // ردیفی وجود ندارد، پس ردیف جدید میسازیم
         QSqlQuery insertQuery;
         insertQuery.prepare("INSERT INTO reading_progress (user_id, book_id, last_page) VALUES (:u, :b, :p)");
         insertQuery.bindValue(":u", userId);
@@ -1242,6 +1288,3 @@ bool DatabaseManager::updateLastReadPage(int userId, int bookId, int page) {
         return insertQuery.exec();
     }
 }
-
-
-
