@@ -528,23 +528,19 @@ bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, 
     QString trimmedName = name.trimmed();
     QString trimmedEmail = email.trimmed();
 
-    //شرط اصلی: یوزرنیم به هیچ وجه نباید خالی باشد
-    if (trimmedUsername.isEmpty()) {
-        qDebug() << "Database Error: Username cannot be empty!";
-        return false;
+    //بررسی تکراری نبودن یوزرنیم (فقط اگر یوزرنیم جدیدی وارد شده باشد)
+    if (!trimmedUsername.isEmpty()) {
+        QSqlQuery checkUsername(db);
+        checkUsername.prepare("SELECT 1 FROM users WHERE username = :username AND id != :id LIMIT 1");
+        checkUsername.bindValue(":username", trimmedUsername);
+        checkUsername.bindValue(":id", userId);
+        if (checkUsername.exec() && checkUsername.next()) {
+            qDebug() << "Database Error: Username is already taken!";
+            return false;
+        }
     }
 
-    //بررسی تکراری نبودن یوزرنیم با بقیه کاربران
-    QSqlQuery checkUsername(db);
-    checkUsername.prepare("SELECT 1 FROM users WHERE username = :username AND id != :id LIMIT 1");
-    checkUsername.bindValue(":username", trimmedUsername);
-    checkUsername.bindValue(":id", userId);
-    if (checkUsername.exec() && checkUsername.next()) {
-        qDebug() << "Database Error: Username is already taken!";
-        return false; // یوزرنیم تکراری است
-    }
-
-    //بررسی تکراری نبودن ایمیل (فقط در صورتی که ایمیل جدیدی فرستاده شده باشد)
+    //بررسی تکراری نبودن ایمیل (فقط اگر ایمیل جدیدی وارد شده باشد)
     if (!trimmedEmail.isEmpty()) {
         QSqlQuery checkEmail(db);
         checkEmail.prepare("SELECT 1 FROM users WHERE email = :email AND id != :id LIMIT 1");
@@ -552,38 +548,37 @@ bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, 
         checkEmail.bindValue(":id", userId);
         if (checkEmail.exec() && checkEmail.next()) {
             qDebug() << "Database Error: Email is already taken!";
-            return false; // ایمیل تکراری است
+            return false;
         }
     }
 
-    //ساخت هوشمند و دینامیکِ کوئری UPDATE
-    // یوزرنیم همیشه آپدیت میشود چون اجباری است
-    QString queryStr = "UPDATE users SET username = :u";
+    //ساخت کاملاً پویا و دینامیک کوئری UPDATE
+    QStringList updateFields;
 
-    // اگر نام خالی نبود، به کوئری اضافه میشود (اگر خالی باشد، مقدار قبلی دیتابیس حفظ میشود)
+    if (!trimmedUsername.isEmpty()) {
+        updateFields.append("username = :u");
+    }
     if (!trimmedName.isEmpty()) {
-        queryStr += ", name = :n";
+        updateFields.append("name = :n");
     }
-
-    // اگر ایمیل خالی نبود، به کوئری اضافه میشود (اگر خالی باشد، مقدار قبلی دیتابیس حفظ میشود)
     if (!trimmedEmail.isEmpty()) {
-        queryStr += ", email = :e";
+        updateFields.append("email = :e");
     }
 
-    queryStr += " WHERE id = :id";
+    // اگر کاربر دکمه تایید را زده ولی عملاً هیچ فیلدی را تغییر نداده باشد
+    if (updateFields.isEmpty()) {
+        return true;
+    }
 
-    //اجرای کوئری نهایی
+    QString queryStr = "UPDATE users SET " + updateFields.join(", ") + " WHERE id = :id";
+
     QSqlQuery q(db);
     q.prepare(queryStr);
 
-    // بایند کردن مقادیر موجود
-    q.bindValue(":u", trimmedUsername);
-    if (!trimmedName.isEmpty()) {
-        q.bindValue(":n", trimmedName);
-    }
-    if (!trimmedEmail.isEmpty()) {
-        q.bindValue(":e", trimmedEmail);
-    }
+    // بایند کردن هوشمند مقادیر
+    if (!trimmedUsername.isEmpty()) q.bindValue(":u", trimmedUsername);
+    if (!trimmedName.isEmpty())     q.bindValue(":n", trimmedName);
+    if (!trimmedEmail.isEmpty())    q.bindValue(":e", trimmedEmail);
     q.bindValue(":id", userId);
 
     if (!q.exec()) {

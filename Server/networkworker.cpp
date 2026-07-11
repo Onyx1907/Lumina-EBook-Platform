@@ -472,22 +472,24 @@ void NetworkWorker::handleGetProfile(QTcpSocket* socket, const QJsonObject& data
     sendJson(socket, resp);
 }
 
-void NetworkWorker::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data) {
-    const int userId = data.value("user_id").toInt();
-    const QString newUsername = data.value("username").toString().trimmed();
-    const QString name = data.value("name").toString().trimmed();
-    const QString email = data.value("email").toString().trimmed();
+void NetworkWorker::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& requestDoc) {
+    // حل مشکل اصلی: ورود به لایه data برای استخراج درست مقادیر
+    QJsonObject dataObj = requestDoc.value("data").toObject();
+
+    // اگر کلاینت ساختار data را نفرستاده باشد، از خود شیء اصلی استفاده میکند
+    if (dataObj.isEmpty()) {
+        dataObj = requestDoc;
+    }
+
+    const int userId = dataObj.value("user_id").toInt();
+    const QString newUsername = dataObj.value("username").toString().trimmed();
+    const QString name = dataObj.value("name").toString().trimmed();
+    const QString email = dataObj.value("email").toString().trimmed();
 
     QJsonObject resp;
     resp["action"] = "UPDATE_PROFILE_RESPONSE";
 
-    if (newUsername.isEmpty()) {
-        resp["status"] = "FAILED";
-        resp["message"] = ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد";
-        sendJson(socket, resp);
-        return;
-    }
-
+    // اجرای تابع دیتابیس با منطق جدید و منعطف
     bool ok = m_dbManager->updateUserProfile(userId, newUsername, name, email);
 
     if (ok) {
