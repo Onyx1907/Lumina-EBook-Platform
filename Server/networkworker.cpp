@@ -1,4 +1,4 @@
-#include "networkWorker.h"
+#include "networkworker.h"
 
 void NetworkWorker::sendJsonToClient(const QJsonObject& obj) {
     if (m_socket && m_socket->isOpen()) {

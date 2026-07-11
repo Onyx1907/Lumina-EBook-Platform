@@ -1,5 +1,5 @@
 #include "server.h"
-#include "networkWorker.h"
+#include "networkworker.h"
 
 Server::Server(QObject* parent) : QTcpServer(parent) {
     dbManager.setConnectionName(QSqlDatabase::defaultConnection);

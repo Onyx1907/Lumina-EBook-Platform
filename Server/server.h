@@ -11,7 +11,7 @@
 #include <QDebug>
 
 #include "database_manager.h"
-#include "networkWorker.h"
+#include "networkworker.h"
 #include "constants.h"
 
 class Server : public QTcpServer
