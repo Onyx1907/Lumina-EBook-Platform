@@ -5,133 +5,40 @@
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
-// #include <QtPreprocessorSupport>
-#include <QFile>
-#include <QDir>
-#include <QByteArray>
-
+#include <QThread>
+#include <QMap>
+#include <QMutex>
+#include <QDebug>
 
 #include "database_manager.h"
+#include "networkWorker.h"
 #include "constants.h"
 
-
-class Server:public QTcpServer
+class Server : public QTcpServer
 {
     Q_OBJECT
 public:
     explicit Server(QObject* parent = nullptr);
     bool start();
 
+    void pushNotification(int userId, const QJsonObject& notif);
+
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
 
-private slots:
-    void onReadyRead();
-    void onDisconnected();
-
 private:
+    QMap<int, QTcpSocket*> onlineUsers;
+    QMap<QTcpSocket*, int> socketToUser;
+    QMap<QTcpSocket*, QString> socketToName;
 
-    QMap<QString, QTcpSocket*> onlineUsers;      // username → socket
-    QMap<QTcpSocket*, QString> socketToUser;    // socket → username
-
-
-    //***************************************************احراز هویت مرکزی******************************************************
     DatabaseManager dbManager;
+    QMutex mutex; // قفل برای امنیت مپ ها در محیط مالتی تردینگ
 
-    void handleRequest(QTcpSocket* socket, const QJsonObject& obj);
-    void handleLogin(QTcpSocket* socket, const QJsonObject& data);
-    void handleRegister(QTcpSocket* socket, const QJsonObject& data);
-    void handleForgotPassword(QTcpSocket* socket, const QJsonObject& data);
-    void sendJson(QTcpSocket* socket, const QJsonObject& obj);
-
-
-    //*********************************************پنل کاربر عادی ( ماژول 1 ) *************************************************
-
-    void handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObject& data);
-    void handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data);
-    void handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data);
-
-    void handleGetPopularBooks(QTcpSocket* socket);
-    void handleGetNewBooks(QTcpSocket* socket);
-    void handleGetBestsellers(QTcpSocket* socket);
-    void handleGetFreeBooks(QTcpSocket* socket);
-
-    void handleGetProfile(QTcpSocket* socket, const QJsonObject& data);
-    void handleUpdateProfile(QTcpSocket* socket, const QJsonObject& data);
-    void handleChangePassword(QTcpSocket* socket, const QJsonObject& data);
-
-    void handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& data);
-
-
-    void handleCheckBookOwnership(QTcpSocket* socket, const QJsonObject& data);
-    void handleGetBookPdfPath(QTcpSocket* socket, const QJsonObject& data);
-    void handleStreamFileData(QTcpSocket* socket, const QJsonObject& data);
-
-
-    //*********************************************پنل کاربر عادی ( ماژول 2 )***************************************************
-
-
-    void handleSearchBooks(QTcpSocket* socket, const QJsonObject& data);
-
-
-
-    //*********************************************پنل کاربر عادی ( ماژول 3 )***************************************************
-
-
-    QList<QTcpSocket*> clients;
-
-    void handleAddComment(QTcpSocket* socket, const QJsonObject& data);
-    void handleEditComment(QTcpSocket* socket, const QJsonObject& data);
-    void handleDeleteComment(QTcpSocket* socket, const QJsonObject& data);
-    void handleGetComments(QTcpSocket* socket, const QJsonObject& data);
-
-    void broadcastToAll(const QJsonObject& obj);
-
-
-
-    //*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
-
-
-    void handleAddToCart(QTcpSocket* socket, const QJsonObject& data);
-    void handleRemoveFromCart(QTcpSocket* socket, const QJsonObject& data);
-    void handleGetCart(QTcpSocket* socket, const QJsonObject& data);
-    void handleFinalizePurchase(QTcpSocket* socket, const QJsonObject& data);
-
-
-
-    //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
-
-
-    //+++++کتاب های خریداری شده+++++
-    void handleGetPurchasedBooks(QTcpSocket*, const QJsonObject&);
-
-    //+++++کتاب های ذخیره شده+++++
-    void handleSaveBook(QTcpSocket*, const QJsonObject&);
-    void handleRemoveSavedBook(QTcpSocket*, const QJsonObject&);
-    void handleGetSavedBooks(QTcpSocket*, const QJsonObject&);
-
-    //+++++قفسه ها+++++
-    void handleCreateShelf(QTcpSocket* socket, const QJsonObject& data);
-    void handleRenameShelf(QTcpSocket* socket, const QJsonObject& data);
-    void handleDeleteShelf(QTcpSocket* socket, const QJsonObject& data);
-    void handleAddBookToShelf(QTcpSocket* socket, const QJsonObject& data);
-    void handleMoveBookBetweenShelves(QTcpSocket* socket, const QJsonObject& data);
-    void handleGetShelves(QTcpSocket* socket, const QJsonObject& data);
-    void handleGetShelfBooks(QTcpSocket* socket, const QJsonObject& data);
-
-
-
-    //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
-
-
-    void handleGetLastReadPage(QTcpSocket* socket, const QJsonObject& data);
-    void handleUpdateLastReadPage(QTcpSocket* socket, const QJsonObject& data);
-
-
-
-
-
-
+signals:
+    void onlineCountChanged(int count);
+    void logGenerated(const QString &logMessage);
+    void systemNotificationGenerated(const QString &message);
+    void clientListChanged(const QStringList &usernames);
 };
 
 #endif // SERVER_H

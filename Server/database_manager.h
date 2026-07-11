@@ -15,7 +15,6 @@
 #include <QByteArray>
 
 
-
 #include "constants.h"
 #include "cryptohelper.h"
 #include "user.h"
@@ -23,9 +22,12 @@
 class DatabaseManager
 {
 public:
+
+    void setConnectionName(const QString& name);
+
     //**************************************************احراز هویت مرکزی********************************************************
     DatabaseManager();
-    bool initDatabase();
+    bool initDatabase(const QString& connectionName);
 
     //Registration(ثبت نام)
     bool isUsernameTaken(const QString& username);
@@ -69,7 +71,6 @@ public:
     bool getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath);
     QString getBookPdfPath(int bookId);
 
-
     //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
 
 
@@ -89,14 +90,12 @@ public:
     //*********************************************پنل کاربر عادی ( ماژول 4 )****************************************************
 
 
-
     bool addToCart(int userId, int bookId);
     bool removeFromCart(int userId, int bookId);
     QList<QJsonObject> getCartItems(int userId);
     bool clearCart(int userId);
 
     bool finalizePurchase(int userId);
-
 
 
     //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
@@ -123,7 +122,6 @@ public:
     QList<QJsonObject> getBooksInShelf(int shelfId);
 
 
-
     //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
 
 
@@ -133,15 +131,13 @@ public:
 
 
 
-
-
-
-
 private:
-    //**************************************************احراز هویت مرکزی*********************************************************
     QSqlDatabase db;
     bool createTables();
+    QString m_connectionName;
 
 };
 
 #endif // DATABASE_MANAGER_H
+
+
