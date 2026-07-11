@@ -575,23 +575,25 @@
     }
   },
   "26_FINALIZE_PURCHASE": {
-    "client_request": {
-      "action": "FINALIZE_PURCHASE",
-      "data": {
-        "user_id": 42
-      }
-    },
-    "server_response_success": {
-      "action": "FINALIZE_PURCHASE_RESPONSE",
-      "status": "SUCCESS",
-      "message": ".خرید با موفقیت انجام شد"
-    },
-    "server_response_error": {
-      "action": "FINALIZE_PURCHASE_RESPONSE",
-      "status": "ERROR",
-      "message": ".خطا در نهایی سازی خرید"
+  "client_request": {
+    "action": "FINALIZE_PURCHASE",
+    "data": {
+      "user_id": 42,
+      "client_final_price": 145000.0
     }
+  },
+  "server_response_success": {
+    "action": "FINALIZE_PURCHASE_RESPONSE",
+    "status": "SUCCESS",
+    "message": ".خرید با موفقیت انجام شد"
+  },
+  "server_response_error": {
+    "action": "FINALIZE_PURCHASE_RESPONSE",
+    "status": "ERROR",
+    "message": ".قیمت یا موجودی کتاب‌ها تغییر یافته است. سبد خرید شما به‌روزرسانی می‌شود"
   }
+}
+  
 ,
   "27_GET_PURCHASED_BOOKS": {
     "client_request": {
