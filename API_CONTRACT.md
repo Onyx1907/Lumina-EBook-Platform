@@ -271,33 +271,28 @@
       "status": "ERROR",
       "message": ".کاربر یافت نشد"
     }
-  },
-  "13_UPDATE_PROFILE": {
-    "client_request": {
-      "action": "UPDATE_PROFILE",
-      "data": {
-        "user_id": 42,
-        "username": "user42_new",
-        "name": "فرهاد احمدی علوی",
-        "email": "farhad_new@example.com"
-      }
-    },
-    "server_response_success": {
-      "action": "UPDATE_PROFILE_RESPONSE",
-      "status": "SUCCESS",
-      "message": ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد"
-    },
-    "server_response_error_empty": {
-      "action": "UPDATE_PROFILE_RESPONSE",
-      "status": "FAILED",
-      "message": ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد"
-    },
-    "server_response_error_conflict": {
-      "action": "UPDATE_PROFILE_RESPONSE",
-      "status": "FAILED",
-      "message": ".این نام کاربری یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است"
+  },"13_UPDATE_PROFILE": {
+  "client_request": {
+    "action": "UPDATE_PROFILE",
+    "data": {
+      "user_id": 42,
+      "username": "user42_new",
+      "name": "فرهاد احمدی علوی",
+      "email": "farhad_new@example.com"
     }
   },
+  "server_response_success": {
+    "action": "UPDATE_PROFILE_RESPONSE",
+    "status": "SUCCESS",
+    "message": ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد"
+  },
+  "server_response_error": {
+    "action": "UPDATE_PROFILE_RESPONSE",
+    "status": "FAILED",
+    "message": ".این نام کاربری یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است"
+  }
+}
+ ,
   "14_CHANGE_PASSWORD": {
     "client_request": {
       "action": "CHANGE_PASSWORD",
