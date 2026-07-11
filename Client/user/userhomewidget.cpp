@@ -24,21 +24,21 @@ void UserHomeWidget::showEvent(QShowEvent *event) {
 
     QJsonObject data;
     data["username"] = username;
+    //بخش اصلی که برای تست موقتا کامنت کردم
+    // QJsonObject emptyData;
 
-    QJsonObject emptyData;
+    // if(ClientNetworkManager::instance().connectToServer()){
 
-    if(ClientNetworkManager::instance().connectToServer()){
+    //     ClientNetworkManager::instance().sendRequest("GET_RECOMMENDED_BOOKS", data);
 
-        ClientNetworkManager::instance().sendRequest("GET_RECOMMENDED_BOOKS", data);
-
-        ClientNetworkManager::instance().sendRequest("GET_POPULAR_BOOKS", emptyData);
-        ClientNetworkManager::instance().sendRequest("GET_NEW_BOOKS", emptyData);
-        ClientNetworkManager::instance().sendRequest("GET_BESTSELLERS", emptyData);
-        ClientNetworkManager::instance().sendRequest("GET_FREE_BOOKS", emptyData);
-    }
-    else{
-        //نمایش صفحه نمایش خطای برقراری اتصال
-    }
+    //     ClientNetworkManager::instance().sendRequest("GET_POPULAR_BOOKS", emptyData);
+    //     ClientNetworkManager::instance().sendRequest("GET_NEW_BOOKS", emptyData);
+    //     ClientNetworkManager::instance().sendRequest("GET_BESTSELLERS", emptyData);
+    //     ClientNetworkManager::instance().sendRequest("GET_FREE_BOOKS", emptyData);
+    // }
+    // else{
+    //     //نمایش صفحه نمایش خطای برقراری اتصال
+    // }
 
     //*************تست خارج از سرور*************
     qDebug() << "--- حالت تست گرافیک با دیتای فیک ---";
@@ -78,7 +78,7 @@ void UserHomeWidget::showEvent(QShowEvent *event) {
     parseAndFillList(mockData, ui->new_listWidget);
 }
 
-void UserHomeWidget::processNetworkData(const QString& action, const QJsonObject& data){
+void UserHomeWidget::processNetworkData(const QString& action, const QJsonObject& data){    
     if (action == "GET_RECOMMENDED_BOOKS_RESPONSE") {
         parseAndFillList(data, ui->recommended_listWidget);
     }
@@ -109,7 +109,7 @@ void UserHomeWidget::parseAndFillList(const QJsonObject &data, QListWidget *targ
         QJsonObject bookObj = booksArray[i].toObject();
 
         Book book(bookObj["id"].toInt(), bookObj["title"].toString(),
-                bookObj["author"].toString(), 1,
+                bookObj["author"].toString(), bookObj["publisher"].toString(),
                 stringToGenre(bookObj["genre"].toString()), bookObj["cover_base64"].toString(),
                 bookObj["price"].toDouble(), bookObj["discount_percentage"].toDouble());
 

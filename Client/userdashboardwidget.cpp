@@ -61,6 +61,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
 
     connect(UserHomePage, &UserHomeWidget::bookSelected, this, [this]( Book* book){
         previousPageIndex = UserHomePageIndex;
+        BookDetailsPage->loadBook(book);
         fadeToPage(BookDetailsPageIndex);
     });
 
