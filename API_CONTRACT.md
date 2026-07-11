@@ -97,41 +97,37 @@
       "message": ".پاسخ امنیتی نادرست است"
     }
   }
-
-  },
-  "16_SEARCH_BOOKS": {
-    "client_request": {
-      "action": "SEARCH_BOOKS",
-      "data": {
-        "title": "شاهنامه",
-        "author": "فردوسی",
-        "publisher_name": "انتشارات طوس"
-      }
+  
 ,
   "5_SET_FAVORITE_GENRES": {
     "client_request": {
       "action": "SET_FAVORITE_GENRES",
       "data": {
-        "username": "user123",
-        "genres": ["Fiction", "History"]
+        "username": "user42",
+        "genres": ["Epic", "History"]
       }
     },
     "server_response_success": {
       "action": "SET_FAVORITE_GENRES_RESPONSE",
       "status": "SUCCESS",
-      "message": "ژانرهای مورد علاقه با موفقیت ذخیره شدند."
+      "message": ".ژانرهای مورد علاقه با موفقیت ذخیره شدند"
     },
-    "server_response_error": {
+    "server_response_error_validation": {
       "action": "SET_FAVORITE_GENRES_RESPONSE",
       "status": "ERROR",
-      "message": "تعداد ژانر باید بین ۱ تا ۳ باشد. یا خطا در ذخیره ژانرهای مورد علاقه."
+      "message": ".تعداد ژانر باید بین ۱ تا ۳ باشد"
+    },
+    "server_response_error_db": {
+      "action": "SET_FAVORITE_GENRES_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در ذخیره ژانرهای مورد علاقه"
     }
   },
   "6_GET_RECOMMENDED_BOOKS": {
     "client_request": {
       "action": "GET_RECOMMENDED_BOOKS",
       "data": {
-        "username": "user123"
+        "username": "user42"
       }
     },
     "server_response_success": {
@@ -139,14 +135,13 @@
       "status": "SUCCESS",
       "books": [
         {
-          "id": 1,
-          "title": "عنوان کتاب پیشنهادی",
-          "author": "نام نویسنده",
-          "genre": "Fiction",
-          "price": 180000.0,
-          "discount_percentage": 15.0,
-          "cover_image_path": "/images/covers/book1.jpg",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
+          "id": 10,
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "genre": "Epic",
+          "price": 250000.0,
+          "discount_percentage": 10.0,
+          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
         }
       ]
     }
@@ -155,7 +150,7 @@
     "client_request": {
       "action": "GET_BOOKS_BY_GENRE",
       "data": {
-        "genre": "Fiction"
+        "genre": "Epic"
       }
     },
     "server_response_success": {
@@ -163,14 +158,13 @@
       "status": "SUCCESS",
       "books": [
         {
-          "id": 2,
-          "title": "کتاب ژانر خاص",
-          "author": "نام نویسنده",
-          "genre": "Fiction",
-          "price": 120000.0,
-          "discount_percentage": 0.0,
-          "cover_image_path": "/images/covers/book2.jpg",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
+          "id": 10,
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "genre": "Epic",
+          "price": 250000.0,
+          "discount_percentage": 10.0,
+          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
         }
       ]
     }
@@ -184,14 +178,13 @@
       "status": "SUCCESS",
       "books": [
         {
-          "id": 3,
-          "title": "کتاب محبوب و پرطرفدار",
-          "author": "نام نویسنده",
-          "genre": "History",
-          "price": 200000.0,
+          "id": 10,
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "genre": "Epic",
+          "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/images/covers/book3.jpg",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
+          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
         }
       ]
     }
@@ -205,14 +198,13 @@
       "status": "SUCCESS",
       "books": [
         {
-          "id": 4,
-          "title": "کتاب تازه اضافه شده",
-          "author": "نام نویسنده",
-          "genre": "Poetry",
-          "price": 85000.0,
-          "discount_percentage": 5.0,
-          "cover_image_path": "/images/covers/book4.jpg",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
+          "id": 10,
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "genre": "Epic",
+          "price": 250000.0,
+          "discount_percentage": 10.0,
+          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
         }
       ]
     }
@@ -226,14 +218,13 @@
       "status": "SUCCESS",
       "books": [
         {
-          "id": 5,
-          "title": "کتاب پرفروش",
-          "author": "نام نویسنده",
-          "genre": "Fiction",
-          "price": 310000.0,
-          "discount_percentage": 20.0,
-          "cover_image_path": "/images/covers/book5.jpg",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
+          "id": 10,
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "genre": "Epic",
+          "price": 250000.0,
+          "discount_percentage": 10.0,
+          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
         }
       ]
     }
@@ -247,14 +238,13 @@
       "status": "SUCCESS",
       "books": [
         {
-          "id": 6,
-          "title": "کتاب رایگان",
-          "author": "نام نویسنده",
-          "genre": "Academic",
+          "id": 12,
+          "title": "دیوان حافظ",
+          "author": "حافظ",
+          "genre": "Poetry",
           "price": 0.0,
           "discount_percentage": 0.0,
-          "cover_image_path": "/images/covers/book6.jpg",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
+          "cover_image_path": "/var/www/uploads/covers/hafez.jpg"
         }
       ]
     }
@@ -263,16 +253,16 @@
     "client_request": {
       "action": "GET_PROFILE",
       "data": {
-        "username": "user123"
+        "username": "user42"
       }
     },
     "server_response_success": {
       "action": "GET_PROFILE_RESPONSE",
       "status": "SUCCESS",
       "profile": {
-        "name": "علی محمدی",
-        "email": "ali@example.com",
-        "favorite_genres": ["Fiction", "History"],
+        "name": "فرهاد احمدی",
+        "email": "farhad@example.com",
+        "favorite_genres": ["Epic", "History"],
         "total_purchases": 5
       }
     },
@@ -285,36 +275,36 @@
   "13_UPDATE_PROFILE": {
     "client_request": {
       "action": "UPDATE_PROFILE",
-      "user_id": 12,
-      "username": "new_username",
-      "name": "نام جدید",
-      "email": "user@example.com"
-    },
-    "server_responses": {
-      "success_updated": {
-        "action": "UPDATE_PROFILE_RESPONSE",
-        "status": "SUCCESS",
-        "message": ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد"
-      },
-      "failed_empty_username": {
-        "action": "UPDATE_PROFILE_RESPONSE",
-        "status": "FAILED",
-        "message": ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد"
-      },
-      "failed_duplicate_data": {
-        "action": "UPDATE_PROFILE_RESPONSE",
-        "status": "FAILED",
-        "message": ".این نام کاربری یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است"
+      "data": {
+        "user_id": 42,
+        "username": "user42_new",
+        "name": "فرهاد احمدی علوی",
+        "email": "farhad_new@example.com"
       }
+    },
+    "server_response_success": {
+      "action": "UPDATE_PROFILE_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد"
+    },
+    "server_response_error_empty": {
+      "action": "UPDATE_PROFILE_RESPONSE",
+      "status": "FAILED",
+      "message": ".نام کاربری (یوزرنیم) نمی‌تواند خالی باشد"
+    },
+    "server_response_error_conflict": {
+      "action": "UPDATE_PROFILE_RESPONSE",
+      "status": "FAILED",
+      "message": ".این نام کاربری یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است"
     }
   },
   "14_CHANGE_PASSWORD": {
     "client_request": {
       "action": "CHANGE_PASSWORD",
       "data": {
-        "username": "user123",
-        "old_password": "old_password_123",
-        "new_password": "new_password_456"
+        "username": "user42",
+        "old_password": "OldPassword123",
+        "new_password": "NewSecurePassword456"
       }
     },
     "server_response_success": {
@@ -332,7 +322,7 @@
     "client_request": {
       "action": "GET_PURCHASE_HISTORY",
       "data": {
-        "username": "user123"
+        "username": "user42"
       }
     },
     "server_response_success": {
@@ -340,102 +330,74 @@
       "status": "SUCCESS",
       "history": [
         {
-          "book_id": 1,
-          "purchase_date": "2026-07-01T10:15:30",
-          "title": "عنوان کتاب پیشنهادی",
-          "author": "نام نویسنده",
-          "price": 180000.0
+          "book_id": 10,
+          "purchase_date": "2026-03-15 14:30:00",
+          "title": "شاهنامه",
+          "author": "فردوسی",
+          "price": 250000.0
         }
       ]
     }
-  }
-,
-"*******************************"
-{
-  "check_book_ownership_api": {
+  },
+  "16_CHECK_BOOK_OWNERSHIP": {
     "client_request": {
       "action": "CHECK_BOOK_OWNERSHIP",
-      "user_id": 12,
-      "book_id": 45
-    },
-    "server_responses": {
-      "success_purchased": {
-        "action": "CHECK_BOOK_OWNERSHIP_RESPONSE",
-        "book_id": 45,
-        "status": "SUCCESS",
-        "is_purchased": true,
-        "publisher_name": "انتشارات نمونه",
-        "cover_path": "server_storage/covers/book_52.jpg",
-        "rating": 4.7
-      },
-      "success_not_purchased": {
-        "action": "CHECK_BOOK_OWNERSHIP_RESPONSE",
-        "book_id": 45,
-        "status": "SUCCESS",
-        "is_purchased": false,
-        "publisher_name": "انتشارات نمونه",
-        "cover_path": "server_storage/covers/book_52.jpg",
-        "rating": 4.7
-      },
-      "failed_book_inactive_or_not_found": {
-        "action": "CHECK_BOOK_OWNERSHIP_RESPONSE",
-        "book_id": 45,
-        "status": "FAILED",
-        "message": ".این کتاب در حال حاضر غیرفعال یا ناموجود است"
+      "data": {
+        "user_id": 42,
+        "book_id": 10
       }
+    },
+    "server_response_success": {
+      "action": "CHECK_BOOK_OWNERSHIP_RESPONSE",
+      "book_id": 10,
+      "status": "SUCCESS",
+      "is_purchased": true,
+      "publisher_name": "انتشارات طوس",
+      "rating": 4.8,
+      "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
+    },
+    "server_response_error_inactive": {
+      "action": "CHECK_BOOK_OWNERSHIP_RESPONSE",
+      "book_id": 10,
+      "status": "FAILED",
+      "message": ".این کتاب در حال حاضر غیرفعال یا ناموجود است"
     }
   },
-  "get_book_pdf_path_api": {
+  "17_GET_BOOK_PDF_PATH": {
     "client_request": {
       "action": "GET_BOOK_PDF_PATH",
-      "user_id": 12,
-      "book_id": 45
-    },
-    "server_responses": {
-      "success_path_found": {
-        "action": "GET_BOOK_PDF_PATH_RESPONSE",
-        "book_id": 45,
-        "status": "SUCCESS",
-        "pdf_path": "/var/www/uploads/books/book_45.pdf"
-      },
-      "failed_not_purchased": {
-        "action": "GET_BOOK_PDF_PATH_RESPONSE",
-        "book_id": 45,
-        "status": "FAILED",
-        "message": ".شما دسترسی به این کتاب ندارید. ابتدا باید آن را خریداری کنید"
-      },
-      "failed_pdf_not_found_in_db": {
-        "action": "GET_BOOK_PDF_PATH_RESPONSE",
-        "book_id": 45,
-        "status": "FAILED",
-        "message": ".فایل پی‌دی‌اف این کتاب یافت نشد"
+      "data": {
+        "user_id": 42,
+        "book_id": 10
       }
-    }
-  },
-  "stream_file_data_api": {
-    "client_request": {
-      "action": "STREAM_FILE_DATA",
-      "file_path": "/var/www/uploads/books/book_45.pdf"
     },
-    "server_responses": {
-      "failed_file_not_found_on_disk": {
-        "action": "STREAM_FILE_DATA_RESPONSE",
-        "status": "FAILED",
-        "message": ".فایل مورد نظر روی سرور یافت نشد"
-      },
-      "note_on_success": "توضیح: در صورت موفقیت، طبق کد هیچ جی‌سونی ارسال نمی‌شود؛ بلکه بایت‌های فایل به صورت باینری (تکه‌های ۴ کیلوبایتی) روی سوکت رایت می‌شوند."
+    "server_response_success": {
+      "action": "GET_BOOK_PDF_PATH_RESPONSE",
+      "book_id": 10,
+      "status": "SUCCESS",
+      "pdf_path": "/var/www/uploads/books/shahnameh.pdf"
+    },
+    "server_response_error_access": {
+      "action": "GET_BOOK_PDF_PATH_RESPONSE",
+      "book_id": 10,
+      "status": "FAILED",
+      "message": ".شما دسترسی به این کتاب ندارید. ابتدا باید آن را خریداری کنید"
+    },
+    "server_response_error_missing": {
+      "action": "GET_BOOK_PDF_PATH_RESPONSE",
+      "book_id": 10,
+      "status": "FAILED",
+      "message": ".فایل پی‌دی‌اف این کتاب یافت نشد"
     }
   }
-"***********************************"
-}
 ,
-  "16_SEARCH_BOOKS": {
+  "18_SEARCH_BOOKS": {
     "client_request": {
       "action": "SEARCH_BOOKS",
       "data": {
         "title": "شاهنامه",
         "author": "فردوسی",
-        "publisher_name": "انتشارات طوس"
+        "publisher_name": "انتشارات"
       }
     },
     "server_response_success": {
@@ -449,22 +411,20 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/images/covers/shahnameh.jpg",
-          "cover_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
+          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg",
+          "publisher_name": "انتشارات طوس"
         }
       ]
     }
   }
 ,
-  "17_ADD_COMMENT": {
+  "19_ADD_COMMENT": {
     "client_request": {
       "action": "ADD_COMMENT",
-      "data": {
-        "book_id": 10,
-        "user_id": 42,
-        "text": "کتاب بسیار عالی و آموزنده‌ای بود.",
-        "rating": 5
-      }
+      "book_id": 10,
+      "user_id": 42,
+      "text": "کتاب فوق‌العاده‌ای بود، خواندنش را توصیه می‌کنم.",
+      "rating": 5
     },
     "server_response_success": {
       "action": "ADD_COMMENT_RESPONSE",
@@ -476,20 +436,18 @@
       "status": "ERROR",
       "message": ".خطا در ثبت نظر"
     },
-    "broadcast_response": {
+    "server_broadcast_on_success": {
       "action": "COMMENT_UPDATED",
       "book_id": 10,
       "type": "ADD"
     }
   },
-  "18_EDIT_COMMENT": {
+  "20_EDIT_COMMENT": {
     "client_request": {
       "action": "EDIT_COMMENT",
-      "data": {
-        "comment_id": 154,
-        "text": "ویرایش: کتاب خوبی بود اما بخش دوم کمی طولانی بود.",
-        "rating": 4
-      }
+      "comment_id": 257,
+      "text": "کتاب بسیار عالی بود، متن آن روان و جذاب است.",
+      "rating": 4
     },
     "server_response_success": {
       "action": "EDIT_COMMENT_RESPONSE",
@@ -501,18 +459,16 @@
       "status": "ERROR",
       "message": ".خطا در ویرایش"
     },
-    "broadcast_response": {
+    "server_broadcast_on_success": {
       "action": "COMMENT_UPDATED",
-      "comment_id": 154,
+      "comment_id": 257,
       "type": "EDIT"
     }
   },
-  "19_DELETE_COMMENT": {
+  "21_DELETE_COMMENT": {
     "client_request": {
       "action": "DELETE_COMMENT",
-      "data": {
-        "comment_id": 154
-      }
+      "comment_id": 257
     },
     "server_response_success": {
       "action": "DELETE_COMMENT_RESPONSE",
@@ -524,35 +480,34 @@
       "status": "ERROR",
       "message": ".خطا در حذف"
     },
-    "broadcast_response": {
+    "server_broadcast_on_success": {
       "action": "COMMENT_UPDATED",
-      "comment_id": 154,
+      "comment_id": 257,
       "type": "DELETE"
     }
   },
-  "20_GET_COMMENTS": {
+  "22_GET_COMMENTS": {
     "client_request": {
       "action": "GET_COMMENTS",
-      "data": {
-        "book_id": 10
-      }
+      "book_id": 10
     },
     "server_response_success": {
       "action": "GET_COMMENTS_RESPONSE",
       "status": "SUCCESS",
       "comments": [
         {
-          "id": 154,
-          "text": "کتاب بسیار عالی و آموزنده‌ای بود.",
+          "id": 257,
+          "text": "کتاب فوق‌العاده‌ای بود، خواندنش را توصیه می‌کنم.",
           "rating": 5,
-          "created_at": "2026-07-05T13:28:00",
-          "updated_at": "2026-07-05T13:28:00",
-          "username": "ali_user"
+          "created_at": "2026-07-11T12:08:28",
+          "updated_at": "2026-07-11T12:08:28",
+          "username": "user42"
         }
       ]
     }
-  },
-  "21_ADD_TO_CART": {
+  }
+,
+  "23_ADD_TO_CART": {
     "client_request": {
       "action": "ADD_TO_CART",
       "data": {
@@ -571,7 +526,7 @@
       "message": ".خطا در افزودن کتاب"
     }
   },
-  "22_REMOVE_FROM_CART": {
+  "24_REMOVE_FROM_CART": {
     "client_request": {
       "action": "REMOVE_FROM_CART",
       "data": {
@@ -590,7 +545,7 @@
       "message": ".خطا در حذف کتاب"
     }
   },
-  "23_GET_CART": {
+  "25_GET_CART": {
     "client_request": {
       "action": "GET_CART",
       "data": {
@@ -607,7 +562,8 @@
           "author": "فردوسی",
           "price": 250000.0,
           "discount": 10.0,
-          "isActive" : 0 "OR" 1
+          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg",
+          "isActive": true
         }
       ],
       "total_price": 250000.0,
@@ -616,7 +572,7 @@
       "count": 1
     }
   },
-  "24_FINALIZE_PURCHASE": {
+  "26_FINALIZE_PURCHASE": {
     "client_request": {
       "action": "FINALIZE_PURCHASE",
       "data": {
@@ -635,7 +591,7 @@
     }
   }
 ,
-  "25_GET_PURCHASED_BOOKS": {
+  "27_GET_PURCHASED_BOOKS": {
     "client_request": {
       "action": "GET_PURCHASED_BOOKS",
       "data": {
@@ -652,25 +608,22 @@
           "author": "فردوسی",
           "genre": "Epic",
           "price": 250000.0,
-          "pdfPath": "/var/www/uploads/books/shahnameh.pdf",
-          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg",
-          "pdf_base64": "JVBERi0xLjQKJcOkw7z..."
+          "pdfPath": "/var/www/uploads/pdfs/shahnameh.pdf",
+          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg"
         }
       ]
     },
-    "server_response_error": {
+    "server_response_failed": {
       "action": "GET_PURCHASED_BOOKS_RESPONSE",
       "status": "FAILED",
       "message": ".شناسه کاربر نامعتبر است"
     }
   },
-  "26_SAVE_BOOK": {
+  "28_SAVE_BOOK": {
     "client_request": {
       "action": "SAVE_BOOK",
-      "data": {
-        "user_id": 42,
-        "book_id": 10
-      }
+      "user_id": 42,
+      "book_id": 10
     },
     "server_response_success": {
       "action": "SAVE_BOOK_RESPONSE",
@@ -683,13 +636,11 @@
       "message": ".خطا در ذخیره کتاب"
     }
   },
-  "27_REMOVE_SAVED_BOOK": {
+  "29_REMOVE_SAVED_BOOK": {
     "client_request": {
       "action": "REMOVE_SAVED_BOOK",
-      "data": {
-        "user_id": 42,
-        "book_id": 10
-      }
+      "user_id": 42,
+      "book_id": 10
     },
     "server_response_success": {
       "action": "REMOVE_SAVED_BOOK_RESPONSE",
@@ -702,12 +653,10 @@
       "message": ".خطا در حذف کتاب"
     }
   },
-  "28_GET_SAVED_BOOKS": {
+  "30_GET_SAVED_BOOKS": {
     "client_request": {
       "action": "GET_SAVED_BOOKS",
-      "data": {
-        "user_id": 42
-      }
+      "user_id": 42
     },
     "server_response_success": {
       "action": "GET_SAVED_BOOKS_RESPONSE",
@@ -717,18 +666,17 @@
           "id": 10,
           "title": "شاهنامه",
           "author": "فردوسی",
-          "genre": "Epic"
+          "genre": "Epic",
+          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg"
         }
       ]
     }
   },
-  "29_CREATE_SHELF": {
+  "31_CREATE_SHELF": {
     "client_request": {
       "action": "CREATE_SHELF",
-      "data": {
-        "user_id": 42,
-        "name": "کتاب‌های تاریخی"
-      }
+      "user_id": 42,
+      "name": "کتاب‌های تاریخی"
     },
     "server_response_success": {
       "action": "CREATE_SHELF_RESPONSE",
@@ -741,13 +689,11 @@
       "message": ".قفسه ای با این نام از قبل وجود دارد یا خطا رخ داده است"
     }
   },
-  "30_RENAME_SHELF": {
+  "32_RENAME_SHELF": {
     "client_request": {
       "action": "RENAME_SHELF",
-      "data": {
-        "shelf_id": 5,
-        "new_name": "حماسی و تاریخی"
-      }
+      "shelf_id": 5,
+      "new_name": "حماسی و تاریخی"
     },
     "server_response_success": {
       "action": "RENAME_SHELF_RESPONSE",
@@ -760,12 +706,10 @@
       "message": ".این نام با یکی از قفسه های دیگر شما تداخل دارد یا قفسه یافت نشد"
     }
   },
-  "31_DELETE_SHELF": {
+  "33_DELETE_SHELF": {
     "client_request": {
       "action": "DELETE_SHELF",
-      "data": {
-        "shelf_id": 5
-      }
+      "shelf_id": 5
     },
     "server_response_success": {
       "action": "DELETE_SHELF_RESPONSE",
@@ -778,13 +722,11 @@
       "message": ".خطا در حذف قفسه"
     }
   },
-  "32_ADD_BOOK_TO_SHELF": {
+  "34_ADD_BOOK_TO_SHELF": {
     "client_request": {
       "action": "ADD_BOOK_TO_SHELF",
-      "data": {
-        "shelf_id": 5,
-        "book_id": 10
-      }
+      "shelf_id": 5,
+      "book_id": 10
     },
     "server_response_success": {
       "action": "ADD_BOOK_TO_SHELF_RESPONSE",
@@ -797,14 +739,12 @@
       "message": ".این کتاب از قبل در قفسه مورد نظر موجود است"
     }
   },
-  "33_MOVE_BOOK_BETWEEN_SHELVES": {
+  "35_MOVE_BOOK_BETWEEN_SHELVES": {
     "client_request": {
       "action": "MOVE_BOOK_BETWEEN_SHELVES",
-      "data": {
-        "from_shelf": 5,
-        "to_shelf": 6,
-        "book_id": 10
-      }
+      "from_shelf": 5,
+      "to_shelf": 6,
+      "book_id": 10
     },
     "server_response_success": {
       "action": "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE",
@@ -817,12 +757,10 @@
       "message": ".کتاب از قبل در قفسه مقصد موجود بود و از قفسه فعلی حذف شد"
     }
   },
-  "34_GET_SHELVES": {
+  "36_GET_SHELVES": {
     "client_request": {
       "action": "GET_SHELVES",
-      "data": {
-        "user_id": 42
-      }
+      "user_id": 42
     },
     "server_response_success": {
       "action": "GET_SHELVES_RESPONSE",
@@ -835,12 +773,10 @@
       ]
     }
   },
-  "35_GET_SHELF_BOOKS": {
+  "37_GET_SHELF_BOOKS": {
     "client_request": {
       "action": "GET_SHELF_BOOKS",
-      "data": {
-        "shelf_id": 5
-      }
+      "shelf_id": 5
     },
     "server_response_success": {
       "action": "GET_SHELF_BOOKS_RESPONSE",
@@ -857,28 +793,24 @@
     }
   }
 ,
-  "36_GET_LAST_READ_PAGE": {
+  "38_GET_LAST_READ_PAGE": {
     "client_request": {
       "action": "GET_LAST_READ_PAGE",
-      "data": {
-        "user_id": 42,
-        "book_id": 10
-      }
+      "user_id": 42,
+      "book_id": 10
     },
     "server_response_success": {
       "action": "GET_LAST_READ_PAGE_RESPONSE",
       "status": "SUCCESS",
-      "page": 24
+      "page": 12
     }
   },
-  "37_UPDATE_LAST_READ_PAGE": {
+  "39_UPDATE_LAST_READ_PAGE": {
     "client_request": {
       "action": "UPDATE_LAST_READ_PAGE",
-      "data": {
-        "user_id": 42,
-        "book_id": 10,
-        "page": 25
-      }
+      "user_id": 42,
+      "book_id": 10,
+      "page": 13
     },
     "server_response_success": {
       "action": "UPDATE_LAST_READ_PAGE_RESPONSE",
@@ -892,3 +824,10 @@
     }
   }
 }
+}
+
+
+
+
+    
+      
