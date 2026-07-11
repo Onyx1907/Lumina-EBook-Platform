@@ -1,10 +1,5 @@
 #include "networkworker.h"
 
-void NetworkWorker::sendJsonToClient(const QJsonObject& obj) {
-    if (m_socket && m_socket->isOpen()) {
-        sendJson(m_socket, obj); // از تابع اصلی خودت استفاده میکند
-    }
-}
 
 //تابع کمکی استاتیک
 static QString roleToString(UserRole role) {
@@ -16,38 +11,21 @@ static QString roleToString(UserRole role) {
     return "RegularUser";
 }
 
-// در سازنده networkWorker.cpp دیتابیس سرور را نگیر، جایش این کار را بکن:
-NetworkWorker::NetworkWorker(qintptr socketDescriptor, DatabaseManager* dbManager, QObject* parent)
-    : QObject(parent), m_socketDescriptor(socketDescriptor)
+NetworkWorker::NetworkWorker(qintptr socketDescriptor, DatabaseManager* db)
+    : m_socketDescriptor(socketDescriptor),
+    m_socket(nullptr),
+    m_dbManager(db)
 {
-
-    m_dbManager = *dbManager;
-
-    m_socket = nullptr;
+    qRegisterMetaType<QTcpSocket*>("QTcpSocket*");
 }
-
-// در متدی که با شروع ترد صدا زده می‌شود (مثلاً startProcessing)
 void NetworkWorker::startProcessing() {
-    // ۱. ساخت سوکت در داخل خودِ ترد فرعی (خیلی مهم)
-    m_socket = new QTcpSocket(this);
+    m_socket = new QTcpSocket();
     if (!m_socket->setSocketDescriptor(m_socketDescriptor)) {
         emit finished();
         return;
     }
     connect(m_socket, &QTcpSocket::readyRead, this, &NetworkWorker::onReadyRead);
-    connect(m_socket, &QTcpSocket::disconnected, this, &NetworkWorker::finished);
-
-    // ۲. حل مشکل دیتابیس: ساخت یک کانکشن کاملاً اختصاصی برای همین ترد
-    // استفاده از آیدی ترد به عنوان نام کانکشن باعث می‌شود نام‌ها کاملاً منحصربه‌فرد باشند
-    QString connectionName = "Thread_Db_" + QString::number(quintptr(QThread::currentThreadId()));
-
-    // باز کردن یک کانکشن جدید به دیتابیس (مثلاً SQLite)
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-    db.setDatabaseName("database_name.db"); // نام فایل دیتابیس خودت را اینجا بگذار
-
-    if (!db.open()) {
-        qCritical() << "Worker Thread could not open database:" << connectionName;
-    }
+    connect(m_socket, &QTcpSocket::disconnected, this, &NetworkWorker::onDisconnected);
 }
 
 void NetworkWorker::onReadyRead() {
@@ -73,12 +51,12 @@ void NetworkWorker::onDisconnected() {
     //ابتدا به سرور خبر می‌دهیم که این سوکت دیسکانکت شد تا از مپ آنلاین‌ها حذف شود
     emit userDisconnected(m_socket);
 
-    //به خودِ سوکت دستور میدهیم که به محض پایان کارهای جاری، حافظه خودش را آزاد کند
+    //به خودِ سوکت دستور می‌دهیم که به محض پایان کارهای جاری، حافظه خودش را آزاد کند
     if (m_socket) {
         m_socket->deleteLater();
     }
 
-    //ترد فرعی را خاتمه میدهیم
+    //ترد فرعی را خاتمه می‌دهیم
     emit finished();
 }
 
@@ -98,6 +76,7 @@ void NetworkWorker::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
 void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     QString action = obj.value("action").toString();
     QJsonObject data = obj.value("data").toObject();
+
 
 
     //***************************************************احراز هویت مرکزی******************************************************
@@ -188,7 +167,7 @@ void NetworkWorker::handleLogin(QTcpSocket* socket, const QJsonObject& data) {
     QJsonObject resp;
     resp["action"] = "LOGIN_RESPONSE";
 
-    if (!m_dbManager.verifyUser(username, passwordPlain, role, isBlocked, userId, firstLogin)) {
+    if (!m_dbManager->verifyUser(username, passwordPlain, role, isBlocked, userId, firstLogin)) {
         resp["status"] = "FAILED";
         resp["message"] = ".نام کاربری یا رمز عبور اشتباه است یا حساب شما مسدود است";
         sendJson(socket, resp);
@@ -222,13 +201,13 @@ void NetworkWorker::handleRegister(QTcpSocket* socket, const QJsonObject& data) 
     QJsonObject resp;
     resp["action"] = "REGISTER_RESPONSE";
 
-    if (m_dbManager.isUsernameTaken(username)) {
+    if (m_dbManager->isUsernameTaken(username)) {
         resp["status"] = "FAILED";
         resp["message"] = ".نام کاربری تکراری است";
         sendJson(socket, resp);
         return;
     }
-    if (!m_dbManager.registerUser(username, passwordPlain, role, securityQuestion, securityAnswerPlain)) {
+    if (!m_dbManager->registerUser(username, passwordPlain, role, securityQuestion, securityAnswerPlain)) {
         resp["status"] = "FAILED";
         resp["message"] = ".خطا در ثبت نام";
         sendJson(socket, resp);
@@ -249,7 +228,7 @@ void NetworkWorker::handleForgotPassword(QTcpSocket* socket, const QJsonObject& 
         QString question;
         resp["action"] = "FORGOT_PASSWORD_RESPONSE";
 
-        if (!m_dbManager.getSecurityQuestion(username, question)) {
+        if (!m_dbManager->getSecurityQuestion(username, question)) {
             resp["status"] = "FAILED";
             resp["message"] = ".کاربر یافت نشد";
         } else {
@@ -264,7 +243,7 @@ void NetworkWorker::handleForgotPassword(QTcpSocket* socket, const QJsonObject& 
         QString newPasswordPlain = data.value("new_password").toString();
         resp["action"] = "FORGOT_PASSWORD_RESPONSE";
 
-        if (!m_dbManager.verifySecurityAnswerAndResetPassword(username, answerPlain, newPasswordPlain)) {
+        if (!m_dbManager->verifySecurityAnswerAndResetPassword(username, answerPlain, newPasswordPlain)) {
             resp["status"] = "FAILED";
             resp["message"] = ".پاسخ امنیتی نادرست است";
         } else {
@@ -294,10 +273,10 @@ void NetworkWorker::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObjec
     for(const QJsonValue& v : std::as_const(arr))
         genres.append(v.toString());
 
-    bool ok = m_dbManager.setFavoriteGenres(username, genres);
+    bool ok = m_dbManager->setFavoriteGenres(username, genres);
 
     if (ok) {
-        m_dbManager.setFirstLoginFalseByUsername(username);
+        m_dbManager->setFirstLoginFalseByUsername(username);
     }
 
     QJsonObject resp;
@@ -311,8 +290,8 @@ void NetworkWorker::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObjec
 
 void NetworkWorker::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data) {
     const QString username = data.value("username").toString();
-    QStringList genres = m_dbManager.getFavoriteGenres(username);
-    const QList<QJsonObject> books = m_dbManager.getRecommendedBooks(genres);
+    QStringList genres = m_dbManager->getFavoriteGenres(username);
+    const QList<QJsonObject> books = m_dbManager->getRecommendedBooks(genres);
 
     QJsonArray arr;
     QString baseDir = QCoreApplication::applicationDirPath();
@@ -342,7 +321,7 @@ void NetworkWorker::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObj
 
 void NetworkWorker::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) {
     const QString genre = data.value("genre").toString();
-    const QList<QJsonObject> books = m_dbManager.getBooksByGenre(genre);
+    const QList<QJsonObject> books = m_dbManager->getBooksByGenre(genre);
 
     QJsonArray arr;
     QString baseDir = QCoreApplication::applicationDirPath();
@@ -370,7 +349,7 @@ void NetworkWorker::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject&
 }
 
 void NetworkWorker::handleGetPopularBooks(QTcpSocket* socket) {
-    const QList<QJsonObject> books = m_dbManager.getPopularBooks();
+    const QList<QJsonObject> books = m_dbManager->getPopularBooks();
     QJsonArray arr;
     QString baseDir = QCoreApplication::applicationDirPath();
 
@@ -397,7 +376,7 @@ void NetworkWorker::handleGetPopularBooks(QTcpSocket* socket) {
 }
 
 void NetworkWorker::handleGetNewBooks(QTcpSocket* socket) {
-    const QList<QJsonObject> books = m_dbManager.getNewBooks();
+    const QList<QJsonObject> books = m_dbManager->getNewBooks();
     QJsonArray arr;
     QString baseDir = QCoreApplication::applicationDirPath();
 
@@ -424,7 +403,7 @@ void NetworkWorker::handleGetNewBooks(QTcpSocket* socket) {
 }
 
 void NetworkWorker::handleGetBestsellers(QTcpSocket* socket) {
-    const QList<QJsonObject> books = m_dbManager.getBestsellers();
+    const QList<QJsonObject> books = m_dbManager->getBestsellers();
     QJsonArray arr;
     QString baseDir = QCoreApplication::applicationDirPath();
 
@@ -451,7 +430,7 @@ void NetworkWorker::handleGetBestsellers(QTcpSocket* socket) {
 }
 
 void NetworkWorker::handleGetFreeBooks(QTcpSocket* socket) {
-    const QList<QJsonObject> books = m_dbManager.getFreeBooks();
+    const QList<QJsonObject> books = m_dbManager->getFreeBooks();
     QJsonArray arr;
     QString baseDir = QCoreApplication::applicationDirPath();
 
@@ -479,7 +458,7 @@ void NetworkWorker::handleGetFreeBooks(QTcpSocket* socket) {
 
 void NetworkWorker::handleGetProfile(QTcpSocket* socket, const QJsonObject& data) {
     const QString username = data.value("username").toString();
-    QJsonObject profile = m_dbManager.getUserProfile(username);
+    QJsonObject profile = m_dbManager->getUserProfile(username);
 
     QJsonObject resp;
     resp["action"] = "GET_PROFILE_RESPONSE";
@@ -509,7 +488,7 @@ void NetworkWorker::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& d
         return;
     }
 
-    bool ok = m_dbManager.updateUserProfile(userId, newUsername, name, email);
+    bool ok = m_dbManager->updateUserProfile(userId, newUsername, name, email);
 
     if (ok) {
         resp["status"] = "SUCCESS";
@@ -527,7 +506,7 @@ void NetworkWorker::handleChangePassword(QTcpSocket* socket, const QJsonObject& 
     const QString oldPass = data.value("old_password").toString();
     const QString newPass = data.value("new_password").toString();
 
-    bool ok = m_dbManager.changePassword(username, oldPass, newPass);
+    bool ok = m_dbManager->changePassword(username, oldPass, newPass);
 
     QJsonObject resp;
     resp["action"] = "CHANGE_PASSWORD_RESPONSE";
@@ -540,7 +519,7 @@ void NetworkWorker::handleChangePassword(QTcpSocket* socket, const QJsonObject& 
 
 void NetworkWorker::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& data) {
     const QString username = data.value("username").toString();
-    QList<QJsonObject> history = m_dbManager.getPurchaseHistory(username);
+    QList<QJsonObject> history = m_dbManager->getPurchaseHistory(username);
 
     QJsonArray arr;
     for (const QJsonObject& h : std::as_const(history))
@@ -567,14 +546,14 @@ void NetworkWorker::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObje
     resp["action"] = "CHECK_BOOK_OWNERSHIP_RESPONSE";
     resp["book_id"] = bookId;
 
-    if (!m_dbManager.getActiveBookDetails(bookId, publisher, rating, coverPath)) {
+    if (!m_dbManager->getActiveBookDetails(bookId, publisher, rating, coverPath)) {
         resp["status"] = "FAILED";
         resp["message"] = ".این کتاب در حال حاضر غیرفعال یا ناموجود است";
         sendJson(socket, resp);
         return;
     }
 
-    bool purchased = m_dbManager.isBookPurchased(userId, bookId);
+    bool purchased = m_dbManager->isBookPurchased(userId, bookId);
 
     resp["status"] = "SUCCESS";
     resp["is_purchased"] = purchased;
@@ -603,7 +582,7 @@ void NetworkWorker::handleGetBookPdfPath(QTcpSocket* socket, const QJsonObject& 
     resp["book_id"] = bookId;
 
     // لایه امنیتی: حتماً چک شود که کاربر کتاب را خریده باشد
-    if (!m_dbManager.isBookPurchased(userId, bookId)) {
+    if (!m_dbManager->isBookPurchased(userId, bookId)) {
         resp["status"] = "FAILED";
         resp["message"] = ".شما دسترسی به این کتاب ندارید. ابتدا باید آن را خریداری کنید";
         sendJson(socket, resp);
@@ -611,7 +590,7 @@ void NetworkWorker::handleGetBookPdfPath(QTcpSocket* socket, const QJsonObject& 
     }
 
     // گرفتن آدرس نسبی از دیتابیس
-    QString pdfPath = m_dbManager.getBookPdfPath(bookId);
+    QString pdfPath = m_dbManager->getBookPdfPath(bookId);
 
     if (!pdfPath.isEmpty()) {
         resp["status"] = "SUCCESS";
@@ -635,7 +614,7 @@ void NetworkWorker::handleSearchBooks(QTcpSocket* socket, const QJsonObject& dat
     QString publisher = data.value("publisher_name").toString();
 
     // دریافت نتایج جستجو از دیتابیس
-    const QList<QJsonObject> books = m_dbManager.searchBooks(title, author, publisher);
+    const QList<QJsonObject> books = m_dbManager->searchBooks(title, author, publisher);
     QJsonArray finalArray;
 
     // پیدا کردن مسیر پوشه اجرایی سرور برای سرهم کردن آدرس کامل
@@ -677,7 +656,7 @@ void NetworkWorker::handleAddComment(QTcpSocket* socket, const QJsonObject& data
     QString text = data["text"].toString();
     int rating = data["rating"].toInt();
 
-    bool ok = m_dbManager.addComment(bookId, userId, text, rating);
+    bool ok = m_dbManager->addComment(bookId, userId, text, rating);
 
     QJsonObject resp;
     resp["action"] = "ADD_COMMENT_RESPONSE";
@@ -702,7 +681,7 @@ void NetworkWorker::handleEditComment(QTcpSocket* socket, const QJsonObject& dat
     QString text = data["text"].toString();
     int rating = data["rating"].toInt();
 
-    bool ok = m_dbManager.editComment(commentId, text, rating);
+    bool ok = m_dbManager->editComment(commentId, text, rating);
 
     QJsonObject resp;
     resp["action"] = "EDIT_COMMENT_RESPONSE";
@@ -725,7 +704,7 @@ void NetworkWorker::handleEditComment(QTcpSocket* socket, const QJsonObject& dat
 void NetworkWorker::handleDeleteComment(QTcpSocket* socket, const QJsonObject& data) {
     int commentId = data["comment_id"].toInt();
 
-    bool ok = m_dbManager.deleteComment(commentId);
+    bool ok = m_dbManager->deleteComment(commentId);
 
     QJsonObject resp;
     resp["action"] = "DELETE_COMMENT_RESPONSE";
@@ -748,7 +727,7 @@ void NetworkWorker::handleDeleteComment(QTcpSocket* socket, const QJsonObject& d
 void NetworkWorker::handleGetComments(QTcpSocket* socket, const QJsonObject& data) {
     int bookId = data["book_id"].toInt();
 
-    QList<QJsonObject> list = m_dbManager.getCommentsForBook(bookId);
+    QList<QJsonObject> list = m_dbManager->getCommentsForBook(bookId);
 
     QJsonArray arr;
     for (auto &c : list)
@@ -767,7 +746,7 @@ void NetworkWorker::handleAddToCart(QTcpSocket* socket, const QJsonObject& data)
     int userId = data["user_id"].toInt();
     int bookId = data["book_id"].toInt();
 
-    bool ok = m_dbManager.addToCart(userId, bookId);
+    bool ok = m_dbManager->addToCart(userId, bookId);
 
     QJsonObject resp;
     resp["action"] = "ADD_TO_CART_RESPONSE";
@@ -783,7 +762,7 @@ void NetworkWorker::handleRemoveFromCart(QTcpSocket* socket, const QJsonObject& 
     int userId = data["user_id"].toInt();
     int bookId = data["book_id"].toInt();
 
-    bool ok = m_dbManager.removeFromCart(userId, bookId);
+    bool ok = m_dbManager->removeFromCart(userId, bookId);
 
     QJsonObject resp;
     resp["action"] = "REMOVE_FROM_CART_RESPONSE";
@@ -798,7 +777,7 @@ void NetworkWorker::handleRemoveFromCart(QTcpSocket* socket, const QJsonObject& 
 void NetworkWorker::handleGetCart(QTcpSocket* socket, const QJsonObject& data) {
     int userId = data["user_id"].toInt();
 
-    QList<QJsonObject> items = m_dbManager.getCartItems(userId);
+    QList<QJsonObject> items = m_dbManager->getCartItems(userId);
 
     QJsonArray arr;
     double total = 0;
@@ -839,7 +818,7 @@ void NetworkWorker::handleGetCart(QTcpSocket* socket, const QJsonObject& data) {
 void NetworkWorker::handleFinalizePurchase(QTcpSocket* socket, const QJsonObject& data) {
     int userId = data["user_id"].toInt();
 
-    bool ok = m_dbManager.finalizePurchase(userId);
+    bool ok = m_dbManager->finalizePurchase(userId);
 
     QJsonObject resp;
     resp["action"] = "FINALIZE_PURCHASE_RESPONSE";
@@ -868,7 +847,7 @@ void NetworkWorker::handleGetPurchasedBooks(QTcpSocket* socket, const QJsonObjec
     }
 
     // دریافت لیست کتاب ها از دیتابیس
-    QList<QJsonObject> purchasedList = m_dbManager.getPurchasedBooks(userId);
+    QList<QJsonObject> purchasedList = m_dbManager->getPurchasedBooks(userId);
     QJsonArray finalArray;
 
     //پیدا کردن مسیر پوشه اجرایی سرور
@@ -901,7 +880,7 @@ void NetworkWorker::handleSaveBook(QTcpSocket* socket, const QJsonObject& data) 
     int userId = data["user_id"].toInt();
     int bookId = data["book_id"].toInt();
 
-    bool ok = m_dbManager.saveBook(userId, bookId);
+    bool ok = m_dbManager->saveBook(userId, bookId);
 
     QJsonObject resp;
     resp["action"] = "SAVE_BOOK_RESPONSE";
@@ -916,7 +895,7 @@ void NetworkWorker::handleRemoveSavedBook(QTcpSocket* socket, const QJsonObject&
     int userId = data["user_id"].toInt();
     int bookId = data["book_id"].toInt();
 
-    bool ok = m_dbManager.removeSavedBook(userId, bookId);
+    bool ok = m_dbManager->removeSavedBook(userId, bookId);
 
     QJsonObject resp;
     resp["action"] = "REMOVE_SAVED_BOOK_RESPONSE";
@@ -930,7 +909,7 @@ void NetworkWorker::handleRemoveSavedBook(QTcpSocket* socket, const QJsonObject&
 void NetworkWorker::handleGetSavedBooks(QTcpSocket* socket, const QJsonObject& data) {
     int userId = data["user_id"].toInt();
 
-    QList<QJsonObject> list = m_dbManager.getSavedBooks(userId);
+    QList<QJsonObject> list = m_dbManager->getSavedBooks(userId);
     QJsonArray arr;
 
     //پیدا کردن مسیر پوشه اجرایی سرور
@@ -959,7 +938,7 @@ void NetworkWorker::handleCreateShelf(QTcpSocket* socket, const QJsonObject& dat
     int userId = data["user_id"].toInt();
     QString name = data["name"].toString();
 
-    bool ok = m_dbManager.createShelf(userId, name);
+    bool ok = m_dbManager->createShelf(userId, name);
 
     QJsonObject resp;
     resp["action"] = "CREATE_SHELF_RESPONSE";
@@ -974,7 +953,7 @@ void NetworkWorker::handleRenameShelf(QTcpSocket* socket, const QJsonObject& dat
     int shelfId = data["shelf_id"].toInt();
     QString newName = data["new_name"].toString();
 
-    bool ok = m_dbManager.renameShelf(shelfId, newName);
+    bool ok = m_dbManager->renameShelf(shelfId, newName);
 
     QJsonObject resp;
     resp["action"] = "RENAME_SHELF_RESPONSE";
@@ -988,7 +967,7 @@ void NetworkWorker::handleRenameShelf(QTcpSocket* socket, const QJsonObject& dat
 void NetworkWorker::handleDeleteShelf(QTcpSocket* socket, const QJsonObject& data) {
     int shelfId = data["shelf_id"].toInt();
 
-    bool ok = m_dbManager.deleteShelf(shelfId);
+    bool ok = m_dbManager->deleteShelf(shelfId);
 
     QJsonObject resp;
     resp["action"] = "DELETE_SHELF_RESPONSE";
@@ -1003,7 +982,7 @@ void NetworkWorker::handleAddBookToShelf(QTcpSocket* socket, const QJsonObject& 
     int shelfId = data["shelf_id"].toInt();
     int bookId = data["book_id"].toInt();
 
-    bool ok = m_dbManager.addBookToShelf(shelfId, bookId);
+    bool ok = m_dbManager->addBookToShelf(shelfId, bookId);
 
     QJsonObject resp;
     resp["action"] = "ADD_BOOK_TO_SHELF_RESPONSE";
@@ -1019,7 +998,7 @@ void NetworkWorker::handleMoveBookBetweenShelves(QTcpSocket* socket, const QJson
     int toShelf = data["to_shelf"].toInt();
     int bookId = data["book_id"].toInt();
 
-    bool ok = m_dbManager.moveBookBetweenShelves(fromShelf, toShelf, bookId);
+    bool ok = m_dbManager->moveBookBetweenShelves(fromShelf, toShelf, bookId);
 
     QJsonObject resp;
     resp["action"] = "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE";
@@ -1033,7 +1012,7 @@ void NetworkWorker::handleMoveBookBetweenShelves(QTcpSocket* socket, const QJson
 void NetworkWorker::handleGetShelves(QTcpSocket* socket, const QJsonObject& data) {
     int userId = data["user_id"].toInt();
 
-    QList<QJsonObject> list = m_dbManager.getShelves(userId);
+    QList<QJsonObject> list = m_dbManager->getShelves(userId);
 
     QJsonArray arr;
     for (auto &o : list)
@@ -1050,7 +1029,7 @@ void NetworkWorker::handleGetShelves(QTcpSocket* socket, const QJsonObject& data
 void NetworkWorker::handleGetShelfBooks(QTcpSocket* socket, const QJsonObject& data) {
     int shelfId = data["shelf_id"].toInt();
 
-    QList<QJsonObject> list = m_dbManager.getBooksInShelf(shelfId);
+    QList<QJsonObject> list = m_dbManager->getBooksInShelf(shelfId);
     QJsonArray arr;
 
     // پیدا کردن مسیر کامل پوشه اجرایی سرور روی هارد
@@ -1081,7 +1060,7 @@ void NetworkWorker::handleGetLastReadPage(QTcpSocket* socket, const QJsonObject&
     int userId = data["user_id"].toInt();
     int bookId = data["book_id"].toInt();
 
-    int page = m_dbManager.getLastReadPage(userId, bookId);
+    int page = m_dbManager->getLastReadPage(userId, bookId);
 
     QJsonObject resp;
     resp["action"] = "GET_LAST_READ_PAGE_RESPONSE";
@@ -1096,7 +1075,7 @@ void NetworkWorker::handleUpdateLastReadPage(QTcpSocket* socket, const QJsonObje
     int bookId = data["book_id"].toInt();
     int page = data["page"].toInt();
 
-    bool ok = m_dbManager.updateLastReadPage(userId, bookId, page);
+    bool ok = m_dbManager->updateLastReadPage(userId, bookId, page);
 
     QJsonObject resp;
     resp["action"] = "UPDATE_LAST_READ_PAGE_RESPONSE";

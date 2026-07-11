@@ -25,7 +25,7 @@
 class NetworkWorker : public QObject {
     Q_OBJECT
 public:
-      NetworkWorker(qintptr socketDescriptor, DatabaseManager* dbManager, QObject* parent = nullptr);
+    NetworkWorker(qintptr socketDescriptor, DatabaseManager* db);
 
 signals:
     void finished();
@@ -39,12 +39,11 @@ public slots:
     void startProcessing();
     void onReadyRead();
     void onDisconnected();
-    void sendJsonToClient(const QJsonObject& obj);
 
 private:
     qintptr m_socketDescriptor;
     QTcpSocket* m_socket;
-    DatabaseManager m_dbManager;
+    DatabaseManager* m_dbManager;
 
     void handleRequest(QTcpSocket* socket, const QJsonObject& obj);
     void sendJson(QTcpSocket* socket, const QJsonObject& obj);
@@ -119,6 +118,11 @@ private:
 
     void handleGetLastReadPage(QTcpSocket* socket, const QJsonObject& data);
     void handleUpdateLastReadPage(QTcpSocket* socket, const QJsonObject& data);
+
+
+
+
+
 
 
 
