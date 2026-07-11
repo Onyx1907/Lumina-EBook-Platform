@@ -36,7 +36,7 @@ bool DatabaseManager::createTables(){
         "security_question TEXT,"                              // سوال امنیتی برای بازیابی رمز
         "security_answer_encrypted BLOB,"                      // پاسخ امنیتی رمزنگاری شده به صورت باینری
         "registration_date TEXT NOT NULL,"                     // تاریخ ثبت نام
-        "first_login INTEGER DEFAULT 1,"                       // وضعیت اولین ورود کاربر (پیش‌فرض ۱ برای اولین ورود)
+        "first_login INTEGER DEFAULT 1,"                       // وضعیت اولین ورود کاربر (پیش فرض ۱ برای اولین ورود)
         "favorite_genres TEXT,"                                // لیست ژانرهای مورد علاقه کاربر به صورت متن
         "name TEXT,"                                           // برای ماژول پروفایل اضافه شد (نام کاربر)
         "email TEXT"                                           // برای ماژول پروفایل اضافه شد (ایمیل کاربر)
@@ -524,49 +524,74 @@ QJsonObject DatabaseManager::getUserProfile(const QString& username){
 }
 //آپدیت پروفایل
 bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, const QString& name, const QString& email) {
+    QString trimmedUsername = newUsername.trimmed();
+    QString trimmedName = name.trimmed();
+    QString trimmedEmail = email.trimmed();
 
-    // شرط بسیار مهم: یوزرنیم اصلی سیستم به هیچ وجه نباید خالی فرستاده بشه
-    if (newUsername.trimmed().isEmpty()) {
-        qDebug() << "Username cannot be empty!";
+    //شرط اصلی: یوزرنیم به هیچ وجه نباید خالی باشد
+    if (trimmedUsername.isEmpty()) {
+        qDebug() << "Database Error: Username cannot be empty!";
         return false;
     }
 
-    // بررسی تکراری نبودن یوزرنیم جدید با بقیه کاربران
+    //بررسی تکراری نبودن یوزرنیم با بقیه کاربران
     QSqlQuery checkUsername(db);
     checkUsername.prepare("SELECT 1 FROM users WHERE username = :username AND id != :id LIMIT 1");
-    checkUsername.bindValue(":username", newUsername.trimmed());
+    checkUsername.bindValue(":username", trimmedUsername);
     checkUsername.bindValue(":id", userId);
     if (checkUsername.exec() && checkUsername.next()) {
-        qDebug() << "Username is already taken!";
+        qDebug() << "Database Error: Username is already taken!";
         return false; // یوزرنیم تکراری است
     }
 
-    // فقط و فقط اگر نام فرستاده شده خالی نبود، تکراری بودنش چک شود
-    QString trimmedName = name.trimmed();
-    if (!trimmedName.isEmpty()) {
-        QSqlQuery checkName(db);
-        checkName.prepare("SELECT 1 FROM users WHERE name = :name AND id != :id LIMIT 1");
-        checkName.bindValue(":name", trimmedName);
-        checkName.bindValue(":id", userId);
-        if (checkName.exec() && checkName.next()) {
-            qDebug() << "Name is already taken!";
-            return false; // نام نمایش تکراری است
+    //بررسی تکراری نبودن ایمیل (فقط در صورتی که ایمیل جدیدی فرستاده شده باشد)
+    if (!trimmedEmail.isEmpty()) {
+        QSqlQuery checkEmail(db);
+        checkEmail.prepare("SELECT 1 FROM users WHERE email = :email AND id != :id LIMIT 1");
+        checkEmail.bindValue(":email", trimmedEmail);
+        checkEmail.bindValue(":id", userId);
+        if (checkEmail.exec() && checkEmail.next()) {
+            qDebug() << "Database Error: Email is already taken!";
+            return false; // ایمیل تکراری است
         }
     }
 
-    QSqlQuery q(db);
-    q.prepare("UPDATE users SET "
-              "username = :u, "
-              "name = CASE WHEN :n = '' THEN name ELSE :n END, "
-              "email = CASE WHEN :e = '' THEN email ELSE :e END "
-              "WHERE id = :id");
+    //ساخت هوشمند و دینامیکِ کوئری UPDATE
+    // یوزرنیم همیشه آپدیت میشود چون اجباری است
+    QString queryStr = "UPDATE users SET username = :u";
 
-    q.bindValue(":u", newUsername.trimmed());
-    q.bindValue(":n", trimmedName); // مقدار تمیز شده
-    q.bindValue(":e", email.trimmed());
+    // اگر نام خالی نبود، به کوئری اضافه میشود (اگر خالی باشد، مقدار قبلی دیتابیس حفظ میشود)
+    if (!trimmedName.isEmpty()) {
+        queryStr += ", name = :n";
+    }
+
+    // اگر ایمیل خالی نبود، به کوئری اضافه میشود (اگر خالی باشد، مقدار قبلی دیتابیس حفظ میشود)
+    if (!trimmedEmail.isEmpty()) {
+        queryStr += ", email = :e";
+    }
+
+    queryStr += " WHERE id = :id";
+
+    //اجرای کوئری نهایی
+    QSqlQuery q(db);
+    q.prepare(queryStr);
+
+    // بایند کردن مقادیر موجود
+    q.bindValue(":u", trimmedUsername);
+    if (!trimmedName.isEmpty()) {
+        q.bindValue(":n", trimmedName);
+    }
+    if (!trimmedEmail.isEmpty()) {
+        q.bindValue(":e", trimmedEmail);
+    }
     q.bindValue(":id", userId);
 
-    return q.exec();
+    if (!q.exec()) {
+        qDebug() << "Database Query Failed:" << q.lastError().text();
+        return false;
+    }
+
+    return true;
 }
 
 // فرآیند احراز هویت رمز عبور فعلی و ثبت رمز عبور جدید به صورت هش شده
@@ -626,7 +651,7 @@ int DatabaseManager::getTotalPurchases(const QString& username){
     return q.value(0).toInt();
 }
 
-//بررسی اینکه کاربر کتاب را خریداری کرده و در کتابخانه شخصی‌اش دارد یا خیر
+//بررسی اینکه کاربر کتاب را خریداری کرده و در کتابخانه شخصی اش دارد یا خیر
 bool DatabaseManager::isBookPurchased(int userId, int bookId)
 {
     QSqlQuery q(db);
@@ -635,6 +660,19 @@ bool DatabaseManager::isBookPurchased(int userId, int bookId)
     q.bindValue(":bookId", bookId);
 
     return (q.exec() && q.next());
+}
+
+// بررسی اینکه آیا کتاب در سبد خرید هست یا خیر
+bool DatabaseManager::isBookInCart(int userId, int bookId) {
+    QSqlQuery q(db);
+    q.prepare("SELECT 1 FROM cart WHERE user_id = :u AND book_id = :b LIMIT 1");
+    q.bindValue(":u", userId);
+    q.bindValue(":b", bookId);
+
+    if (q.exec() && q.next()) {
+        return true; // کتاب در سبد خرید وجود دارد
+    }
+    return false; // کتاب در سبد خرید نیست
 }
 
 //بررسی اکتیو بودن کتاب و گرفتن اطلاعات ناشر و ریتینگ از جدول
@@ -657,7 +695,7 @@ bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, d
     return false;
 }
 
-//گرفتن مسیر فیزیکی فایل پی  دی اف از جدول کتاب‌ها
+//گرفتن مسیر فیزیکی فایل پی  دی اف از جدول کتاب ها
 QString DatabaseManager::getBookPdfPath(int bookId)
 {
     QSqlQuery q(db);
@@ -807,11 +845,11 @@ QList<QJsonObject> DatabaseManager::getCommentsForBook(int bookId) {
 
     QSqlQuery q(db);
     q.prepare("SELECT c.id, c.comment_text, c.rating, c.created_at, c.updated_at, "
-              "u.username "
-              "FROM comments c "
-              "JOIN users u ON c.user_id = u.id "
-              "WHERE c.book_id = :b  AND u.is_deleted = 0"
-              "ORDER BY c.created_at DESC");
+               "u.username, c.user_id "
+               "FROM comments c "
+               "JOIN users u ON c.user_id = u.id "
+               "WHERE c.book_id = :b AND u.is_deleted = 0 "
+               "ORDER BY c.created_at DESC");
     q.bindValue(":b", bookId);
 
     if (!q.exec())
@@ -820,6 +858,7 @@ QList<QJsonObject> DatabaseManager::getCommentsForBook(int bookId) {
     while (q.next()) {
         QJsonObject obj;
         obj["id"] = q.value("id").toInt();
+        obj["user_id"] = q.value("user_id").toInt();
         obj["text"] = q.value("comment_text").toString();
         obj["rating"] = q.value("rating").toInt();
         obj["created_at"] = q.value("created_at").toString();
@@ -893,7 +932,7 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
     q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.coverImagePath, b.isActive "
               "FROM cart c "
               "JOIN books b ON c.book_id = b.id "
-              "WHERE c.user_id = :u");
+              "WHERE c.user_id = :u AND b.is_deleted = 0");
     q.bindValue(":u", userId);
 
     if (!q.exec())
@@ -926,57 +965,77 @@ bool DatabaseManager::clearCart(int userId) {
 }
 
 //نهایی کردن خرید
-bool DatabaseManager::finalizePurchase(int userId) {
-    //به دیتابیس می‌گوییم: یک تراکنش امن باز کن (تغییرات را موقتی نگه دار)
-    QSqlDatabase::database().transaction();
+bool DatabaseManager::finalizePurchase(int userId, double clientFinalPrice) {
+    // به دیتابیس میگوییم: یک تراکنش امن باز کن
+    if (!db.transaction()) return false;
 
-    //بررسی وجود کتاب مسدود/غیرفعال در سبد کاربر
+    //بررسی وجود کتاب مسدود یا حذف منطقی شده در سبد کاربر
     QSqlQuery qCheck(db);
     qCheck.prepare("SELECT COUNT(*) FROM cart c "
                    "JOIN books b ON c.book_id = b.id "
-                   "WHERE c.user_id = :u AND b.isActive = 0");
+                   "WHERE c.user_id = :u AND (b.isActive = 0 OR b.is_deleted = 1)");
     qCheck.bindValue(":u", userId);
 
     if (!qCheck.exec() || !qCheck.next()) {
-        db.rollback(); // خطای ناگهانی دیتابیس -> همه‌چیز لغو
+        db.rollback();
         return false;
     }
 
-    //اگر شمارش کتاب‌های مسدود بیشتر از 0 بود
     if (qCheck.value(0).toInt() > 0) {
-        qDebug() << "Purchase failed: Inactive books detected.";
-        db.rollback(); //همه‌چیز را به حالت قبل برگردان و لغو کن
+        qDebug() << "Purchase failed: Inactive or deleted books detected.";
+        db.rollback();
         return false;
     }
 
-    //خواندن کتاب‌های داخل سبد خرید
+    //محاسبه مجموع قیمت زنده دیتابیس برای این سبد خرید
+    QSqlQuery qPrice(db);
+    qPrice.prepare("SELECT SUM(b.price - (b.price * (b.discountPercent / 100.0))) "
+                   "FROM cart c "
+                   "JOIN books b ON c.book_id = b.id "
+                   "WHERE c.user_id = :u");
+    qPrice.bindValue(":u", userId);
+
+    if (!qPrice.exec() || !qPrice.next()) {
+        db.rollback();
+        return false;
+    }
+
+    double dbFinalPrice = qPrice.value(0).toDouble();
+
+    // مقایسه قیمت کلاینت با قیمت واقعی دیتابیس (با احتساب خطای اعشار در دابل)
+    if (qAbs(clientFinalPrice - dbFinalPrice) > 0.01) {
+        qDebug() << "Purchase failed: Prices do not match. DB:" << dbFinalPrice << "Client:" << clientFinalPrice;
+        db.rollback(); // لغو تراکنش به دلیل تغییر قیمت توسط ناشر
+        return false;
+    }
+
+    // خواندن کتاب های داخل سبد خرید
     QSqlQuery q(db);
     q.prepare("SELECT book_id FROM cart WHERE user_id = :u");
     q.bindValue(":u", userId);
 
     if (!q.exec()) {
-        db.rollback(); // خطا در خواندن -> لغو
+        db.rollback();
         return false;
     }
 
     const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
 
-    // شروع حلقه روی کتاب‌های سبد خرید
+    // شروع حلقه روی کتاب های سبد خرید
     while (q.next()) {
         int bookId = q.value(0).toInt();
 
-        //بررسی اینکه کاربر قبلاً این کتاب را نخریده باشد
+        // بررسی اینکه کاربر قبلاً این کتاب را نخریده باشد
         QSqlQuery check(db);
         check.prepare("SELECT 1 FROM library WHERE user_id = :u AND book_id = :b");
         check.bindValue(":u", userId);
         check.bindValue(":b", bookId);
 
         if (check.exec() && check.next()) {
-            // کاربر قبلاً این کتاب را خریده، پس بدون خطا رفتن به کتاب بعدی سبد خرید
             continue;
         }
 
-        //درج کتاب در کتابخانه کاربر
+        // درج کتاب در کتابخانه کاربر
         QSqlQuery insert(db);
         insert.prepare("INSERT INTO library (user_id, book_id, purchase_date) "
                        "VALUES (:u, :b, :d)");
@@ -985,18 +1044,18 @@ bool DatabaseManager::finalizePurchase(int userId) {
         insert.bindValue(":d", now);
 
         if (!insert.exec()) {
-            db.rollback(); // اگر درج این کتاب ارور داد -> کل خرید لغو
+            db.rollback();
             return false;
         }
     }
 
-    //پاک کردن سبد خرید بعد از اتمام حلقه
+    // پاک کردن سبد خرید بعد از اتمام حلقه
     if (!clearCart(userId)) {
-        db.rollback(); // اگر سبد پاک نشد -> کل خرید لغو
+        db.rollback();
         return false;
     }
 
-    //همه‌چیز عالی بود! حالا تغییرات را در دیتابیس قطعی و ماندگار کن
+    // همه چیز عالی بود! حالا تغییرات را ماندگار کن
     return db.commit();
 }
 

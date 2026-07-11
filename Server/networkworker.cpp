@@ -554,9 +554,11 @@ void NetworkWorker::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObje
     }
 
     bool purchased = m_dbManager->isBookPurchased(userId, bookId);
+    bool inCart = m_dbManager->isBookInCart(userId, bookId);
 
     resp["status"] = "SUCCESS";
     resp["is_purchased"] = purchased;
+    resp["is_in_cart"] = inCart;
     resp["publisher_name"] = publisher;
     resp["rating"] = rating;
 
@@ -571,7 +573,7 @@ void NetworkWorker::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObje
     sendJson(socket, resp);
 }
 
-// فرستادن آدرس کامل فیزیکی پی‌دی‌اف برای مطالعه/دانلود کلاینت
+// فرستادن آدرس کامل فیزیکی پی دی اف برای مطالعه/دانلود کلاینت
 void NetworkWorker::handleGetBookPdfPath(QTcpSocket* socket, const QJsonObject& data)
 {
     int userId = data.value("user_id").toInt();
@@ -599,7 +601,7 @@ void NetworkWorker::handleGetBookPdfPath(QTcpSocket* socket, const QJsonObject& 
         resp["pdf_path"] = QDir::cleanPath(baseDir + "/" + pdfPath); // ارسال آدرس کامل هارد برای کپی مستقیم کلاینت
     } else {
         resp["status"] = "FAILED";
-        resp["message"] = ".فایل پی‌دی‌اف این کتاب یافت نشد";
+        resp["message"] = ".فایل پی دی اف این کتاب یافت نشد";
     }
 
     sendJson(socket, resp);
@@ -818,14 +820,17 @@ void NetworkWorker::handleGetCart(QTcpSocket* socket, const QJsonObject& data) {
 void NetworkWorker::handleFinalizePurchase(QTcpSocket* socket, const QJsonObject& data) {
     int userId = data["user_id"].toInt();
 
-    bool ok = m_dbManager->finalizePurchase(userId);
+    // دریافت قیمتی که کلاینت در ظاهر اپلیکیشن خود دیده است
+    double clientFinalPrice = data["client_final_price"].toDouble();
+
+    // پاس دادن قیمت به دیتابیس جهت صحت سنجی
+    bool ok = m_dbManager->finalizePurchase(userId, clientFinalPrice);
 
     QJsonObject resp;
     resp["action"] = "FINALIZE_PURCHASE_RESPONSE";
-    resp["status"] = ok ? "SUCCESS"
-                        : "ERROR";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
     resp["message"] = ok ? ".خرید با موفقیت انجام شد"
-                         : ".خطا در نهایی سازی خرید";
+                         : ".قیمت یا موجودی کتاب‌ها تغییر یافته است. سبد خرید شما به‌روزرسانی می‌شود";
 
     sendJson(socket, resp);
 }
@@ -918,7 +923,7 @@ void NetworkWorker::handleGetSavedBooks(QTcpSocket* socket, const QJsonObject& d
     for (auto b : list) {
         QString relativeCover = b["coverImagePath"].toString();
 
-        // ۲ و ۳. فرمول جدید برای ساخت آدرس فیزیکی کامل و بدون باگ روی هارد
+        //فرمول جدید برای ساخت آدرس فیزیکی کامل و بدون باگ روی هارد
         if (!relativeCover.isEmpty()) {
             b["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
         }
