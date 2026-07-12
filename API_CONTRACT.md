@@ -348,6 +348,7 @@
       "status": "SUCCESS",
       "is_purchased": true,
       "is_in_cart" : false,
+      "is_saved": true,
       "publisher_name": "انتشارات طوس",
       "rating": 4.8,
       "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
