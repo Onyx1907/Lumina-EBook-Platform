@@ -127,7 +127,7 @@
     "client_request": {
       "action": "GET_RECOMMENDED_BOOKS",
       "data": {
-        "username": "user42"
+        "user_id": 42
       }
     },
     "server_response_success": {
@@ -253,7 +253,7 @@
     "client_request": {
       "action": "GET_PROFILE",
       "data": {
-        "username": "user42"
+        "user_id": 42
       }
     },
     "server_response_success": {
@@ -297,7 +297,7 @@
     "client_request": {
       "action": "CHANGE_PASSWORD",
       "data": {
-        "username": "user42",
+        "user_id": 42,
         "old_password": "OldPassword123",
         "new_password": "NewSecurePassword456"
       }
@@ -317,7 +317,7 @@
     "client_request": {
       "action": "GET_PURCHASE_HISTORY",
       "data": {
-        "username": "user42"
+        "user_id": 42
       }
     },
     "server_response_success": {
