@@ -46,7 +46,7 @@ public:
 
     bool setFirstLoginFalseByUsername(const QString& username);
     bool setFavoriteGenres(const QString& username, const QStringList& genres);
-    QStringList getFavoriteGenres(const QString& username);
+    QStringList getFavoriteGenres(int userId);
 
     QList<QJsonObject> getRecommendedBooks(const QStringList& genres);
     QList<QJsonObject> getBooksByGenre(const QString& genre);
@@ -56,13 +56,13 @@ public:
     QList<QJsonObject> getBestsellers();
     QList<QJsonObject> getFreeBooks();
 
-    QJsonObject getUserProfile(const QString& username);
+    QJsonObject getUserProfile(int userId);
     bool updateUserProfile(int userId, const QString& newUsername, const QString& name, const QString& email);
 
-    bool changePassword(const QString& username,const QString& oldPasswordPlain,const QString& newPasswordPlain);
+    bool changePassword(int userId,const QString& oldPasswordPlain,const QString& newPasswordPlain);
 
-    QList<QJsonObject> getPurchaseHistory(const QString& username);
-    int getTotalPurchases(const QString& username);
+    QList<QJsonObject> getPurchaseHistory(int userId);
+    int getTotalPurchases(int userId);
 
     bool isBookPurchased(int userId, int bookId);
     bool isBookInCart(int userId, int bookId);
@@ -128,6 +128,9 @@ public:
 
 
    //************************************************پنل ناشر ( ماژول 1 )*******************************************************
+
+
+    QJsonObject getPublisherProfile(int publisherId);
 
 
 

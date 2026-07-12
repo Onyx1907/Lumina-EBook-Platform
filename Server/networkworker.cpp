@@ -296,8 +296,8 @@ void NetworkWorker::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObjec
 }
 
 void NetworkWorker::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data) {
-    const QString username = data.value("username").toString();
-    QStringList genres = m_dbManager->getFavoriteGenres(username);
+    const int userId = data.value("user_id").toInt();
+    QStringList genres = m_dbManager->getFavoriteGenres(userId);
     const QList<QJsonObject> books = m_dbManager->getRecommendedBooks(genres);
 
     QJsonArray arr;
@@ -464,8 +464,8 @@ void NetworkWorker::handleGetFreeBooks(QTcpSocket* socket) {
 }
 
 void NetworkWorker::handleGetProfile(QTcpSocket* socket, const QJsonObject& data) {
-    const QString username = data.value("username").toString();
-    QJsonObject profile = m_dbManager->getUserProfile(username);
+    const int userId = data.value("user_id").toInt();
+    QJsonObject profile = m_dbManager->getUserProfile(userId);
 
     QJsonObject resp;
     resp["action"] = "GET_PROFILE_RESPONSE";
@@ -502,6 +502,7 @@ void NetworkWorker::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& r
     if (ok) {
         resp["status"] = "SUCCESS";
         resp["message"] = ".اطلاعات حساب کاربری با موفقیت به روزرسانی شد";
+
     } else {
         resp["status"] = "FAILED";
         resp["message"] = ".این نام کاربری یا ایمیل قبلاً توسط شخص دیگری انتخاب شده است";
@@ -511,11 +512,11 @@ void NetworkWorker::handleUpdateProfile(QTcpSocket* socket, const QJsonObject& r
 }
 
 void NetworkWorker::handleChangePassword(QTcpSocket* socket, const QJsonObject& data) {
-    const QString username = data.value("username").toString();
+    const int userId = data.value("user_id").toInt();
     const QString oldPass = data.value("old_password").toString();
     const QString newPass = data.value("new_password").toString();
 
-    bool ok = m_dbManager->changePassword(username, oldPass, newPass);
+    bool ok = m_dbManager->changePassword(userId, oldPass, newPass);
 
     QJsonObject resp;
     resp["action"] = "CHANGE_PASSWORD_RESPONSE";
@@ -527,8 +528,8 @@ void NetworkWorker::handleChangePassword(QTcpSocket* socket, const QJsonObject& 
 }
 
 void NetworkWorker::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& data) {
-    const QString username = data.value("username").toString();
-    QList<QJsonObject> history = m_dbManager->getPurchaseHistory(username);
+    const int userId = data.value("user_id").toInt();
+    QList<QJsonObject> history = m_dbManager->getPurchaseHistory(userId);
 
     QJsonArray arr;
     for (const QJsonObject& h : std::as_const(history))
