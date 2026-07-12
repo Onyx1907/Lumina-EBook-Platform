@@ -565,10 +565,12 @@ void NetworkWorker::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObje
 
     bool purchased = m_dbManager->isBookPurchased(userId, bookId);
     bool inCart = m_dbManager->isBookInCart(userId, bookId);
+    bool isSaved = m_dbManager->isBookSaved(userId, bookId);
 
     resp["status"] = "SUCCESS";
     resp["is_purchased"] = purchased;
     resp["is_in_cart"] = inCart;
+    resp["is_saved"] = isSaved;
     resp["publisher_name"] = publisher;
     resp["rating"] = rating;
 

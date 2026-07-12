@@ -24,6 +24,7 @@ bool DatabaseManager::initDatabase() {
 // ایجاد جدول های مورد نیاز در پایگاه داده (در صورت عدم وجود)
 bool DatabaseManager::createTables(){
     QSqlQuery q(db);
+    q.exec("PRAGMA foreign_keys = ON;");
 
     //--------------جدول کاربران--------------
     QString createUsers =
@@ -671,6 +672,16 @@ bool DatabaseManager::isBookInCart(int userId, int bookId) {
         return true; // کتاب در سبد خرید وجود دارد
     }
     return false; // کتاب در سبد خرید نیست
+}
+
+bool DatabaseManager::isBookSaved(int userId, int bookId)
+{
+    QSqlQuery q(db);
+    q.prepare("SELECT 1 FROM saved_books WHERE user_id = :userId AND book_id = :bookId LIMIT 1");
+    q.bindValue(":userId", userId);
+    q.bindValue(":bookId", bookId);
+
+    return (q.exec() && q.next());
 }
 
 //بررسی اکتیو بودن کتاب و گرفتن اطلاعات ناشر و ریتینگ از جدول
