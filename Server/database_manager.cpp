@@ -1343,3 +1343,12 @@ bool DatabaseManager::updateLastReadPage(int userId, int bookId, int page) {
         return insertQuery.exec();
     }
 }
+
+
+//************************************************پنل ناشر ( ماژول 1 )*******************************************************
+
+
+
+
+
+

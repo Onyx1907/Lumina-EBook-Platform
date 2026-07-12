@@ -150,6 +150,13 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "UPDATE_LAST_READ_PAGE") { handleUpdateLastReadPage(socket, data); return; }
 
 
+    //************************************************پنل ناشر ( ماژول 1 )*******************************************************
+
+
+
+
+
+
 
 }
 
@@ -790,19 +797,21 @@ void NetworkWorker::handleGetCart(QTcpSocket* socket, const QJsonObject& data) {
     //پیدا کردن مسیر پوشه اجرایی سرور
     QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (auto i : items) {
-        double price = i["price"].toDouble();
-        double discount = i["discount"].toDouble();
+    for (const QJsonObject& i : std::as_const(items)) {
+        QJsonObject mutableItem = i;
+
+        double price = mutableItem["price"].toDouble();
+        double discount = mutableItem["discount"].toDouble();
 
         discountTotal += price * (discount / 100.0);
         total += price;
 
-        QString relativeCover = i["coverImagePath"].toString();
+        QString relativeCover = mutableItem["coverImagePath"].toString();
         if (!relativeCover.isEmpty()) {
-            i["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
+            mutableItem["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
         }
 
-        arr.append(i);
+        arr.append(mutableItem);
     }
 
     double finalPrice = total - discountTotal;
@@ -860,21 +869,22 @@ void NetworkWorker::handleGetPurchasedBooks(QTcpSocket* socket, const QJsonObjec
     //پیدا کردن مسیر پوشه اجرایی سرور
     QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (auto book : purchasedList) {
+    for (const QJsonObject& book : std::as_const(purchasedList)) {
+        QJsonObject mutableBook = book;
 
         // --- اعمال فرمول جدید روی مسیر عکس کاور ---
-        QString relativeCover = book["coverImagePath"].toString();
+        QString relativeCover = mutableBook["coverImagePath"].toString();
         if (!relativeCover.isEmpty()) {
-            book["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
+            mutableBook["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
         }
 
         // --- اعمال فرمول روی مسیر فایل کتاب ---
-        QString relativePdf = book["pdfPath"].toString();
+        QString relativePdf = mutableBook["pdfPath"].toString();
         if (!relativePdf.isEmpty()) {
-            book["pdfPath"] = QDir::cleanPath(baseDir + "/" + relativePdf);
+            mutableBook["pdfPath"] = QDir::cleanPath(baseDir + "/" + relativePdf);
         }
 
-        finalArray.append(book);
+        finalArray.append(mutableBook);
     }
 
     resp["status"] = "SUCCESS";
@@ -922,14 +932,16 @@ void NetworkWorker::handleGetSavedBooks(QTcpSocket* socket, const QJsonObject& d
     //پیدا کردن مسیر پوشه اجرایی سرور
     QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (auto b : list) {
-        QString relativeCover = b["coverImagePath"].toString();
+    for (const QJsonObject& b : std::as_const(list)) {
+        QJsonObject mutableBook = b;
+
+        QString relativeCover = mutableBook["coverImagePath"].toString();
 
         //فرمول جدید برای ساخت آدرس فیزیکی کامل و بدون باگ روی هارد
         if (!relativeCover.isEmpty()) {
-            b["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
+            mutableBook["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
         }
-        arr.append(b);
+        arr.append(mutableBook);
     }
 
     QJsonObject resp;
@@ -1022,8 +1034,9 @@ void NetworkWorker::handleGetShelves(QTcpSocket* socket, const QJsonObject& data
     QList<QJsonObject> list = m_dbManager->getShelves(userId);
 
     QJsonArray arr;
-    for (auto &o : list)
+    for (const QJsonObject &o : std::as_const(list)){
         arr.append(o);
+    }
 
     QJsonObject resp;
     resp["action"] = "GET_SHELVES_RESPONSE";
@@ -1042,15 +1055,17 @@ void NetworkWorker::handleGetShelfBooks(QTcpSocket* socket, const QJsonObject& d
     // پیدا کردن مسیر کامل پوشه اجرایی سرور روی هارد
     QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (auto b : list) { // رفرنس (&) را برداشتیم تا کپی شیء را ویرایش کنیم
-        QString relativeCover = b["coverImagePath"].toString();
+    for (const QJsonObject& b : std::as_const(list)) {
+        QJsonObject mutableBook = b;
+
+        QString relativeCover = mutableBook["coverImagePath"].toString();
 
         // اگر کتاب کاور داشت، مسیر آن را به آدرس کامل فیزیکی تبدیل کن
         if (!relativeCover.isEmpty()) {
-            b["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
+            mutableBook["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
         }
 
-        arr.append(b);
+        arr.append(mutableBook);
     }
 
     QJsonObject resp;
@@ -1093,5 +1108,12 @@ void NetworkWorker::handleUpdateLastReadPage(QTcpSocket* socket, const QJsonObje
 
     sendJson(socket, resp);
 }
+
+
+//************************************************پنل ناشر ( ماژول 1 )*******************************************************
+
+
+
+
 
 
