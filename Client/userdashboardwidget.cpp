@@ -23,7 +23,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     this->setLayout(finalLayout);
 
     GenreSelectionPage = new GenreSelectionWidget(user->getUsername(), this);
-    UserHomePage = new UserHomeWidget(user->getUsername(), this);
+    UserHomePage = new UserHomeWidget(user->getId(), this);
     ProfilePage = new ProfileWidget(user, this);
     BookDetailsPage = new BookDetailsWidget(user->getId(), this);
 

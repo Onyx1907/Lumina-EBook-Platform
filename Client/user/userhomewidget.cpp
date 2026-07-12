@@ -7,8 +7,8 @@
 #include <QListWidgetItem>
 #include <QJsonArray>
 
-UserHomeWidget::UserHomeWidget(QString cur_username, QWidget *parent)
-    : QWidget(parent), username(cur_username)
+UserHomeWidget::UserHomeWidget(int ID, QWidget *parent)
+    : QWidget(parent), userID(ID)
     , ui(new Ui::UserHomeWidget)
 {
     ui->setupUi(this);
@@ -23,9 +23,9 @@ void UserHomeWidget::showEvent(QShowEvent *event) {
     QWidget::showEvent(event);
 
     QJsonObject data;
-    data["username"] = username;
+    data["user_id"] = userID;
     //بخش اصلی که برای تست موقتا کامنت کردم
-    // QJsonObject emptyData;
+    QJsonObject emptyData;
 
     // if(ClientNetworkManager::instance().connectToServer()){
 

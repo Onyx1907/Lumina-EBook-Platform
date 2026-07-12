@@ -199,6 +199,9 @@ qproperty-alignment: 'AlignHCenter | AlignVCenter';
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
       </widget>
       <widget class="QLabel" name="author_label">
        <property name="geometry">
@@ -233,6 +236,9 @@ qproperty-alignment: 'AlignHCenter | AlignVCenter';
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
       <widget class="QPushButton" name="back_pushButton">
@@ -316,6 +322,9 @@ QPushButton:pressed {
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
       <widget class="QLabel" name="rating_label">
@@ -741,6 +750,9 @@ QPushButton:hover {
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
       <widget class="QLabel" name="tooman_label">

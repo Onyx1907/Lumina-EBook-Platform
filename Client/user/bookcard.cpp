@@ -18,7 +18,7 @@ BookCard::BookCard(Book b, QWidget *parent)
 
         pix.loadFromData(byteArray);
 
-        qDebug() << "شرط اولی";
+        // qDebug() << "شرط اولی";
     }
 
 
@@ -34,7 +34,7 @@ BookCard::BookCard(Book b, QWidget *parent)
         ui->book_cover->setIcon(icon);
         ui->book_cover->setIconSize(targetSize);
 
-        qDebug() << "شرط دومی";
+        // qDebug() << "شرط دومی";
     }
 
 

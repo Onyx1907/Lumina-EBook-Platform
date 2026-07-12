@@ -15,7 +15,7 @@ class UserHomeWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit UserHomeWidget(QString cur_username, QWidget *parent = nullptr);
+    explicit UserHomeWidget(int ID, QWidget *parent = nullptr);
     ~UserHomeWidget();
 
 protected:
@@ -30,7 +30,7 @@ private slots:
 private:
     Ui::UserHomeWidget *ui;
 
-    QString username;
+    int userID;
 
     void parseAndFillList(const QJsonObject &data, QListWidget *targetList);
 };

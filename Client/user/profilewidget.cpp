@@ -20,12 +20,19 @@ ProfileWidget::ProfileWidget(RegularUser *cur_user, QWidget *parent)
 }
 
 void ProfileWidget::loadProfile(){
+    ui->confirmPass_lineEdit->setText("");
+    ui->email_lineEdit->setText("");
+    ui->name_lineEdit->setText("");
+    ui->newPass_lineEdit->setText("");
+    ui->pass_lineEdit->setText("");
+    ui->username_lineEdit->setText("");
+
     ui->username_label->setText(user->getUsername());
 
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
-        data["username"] = user->getUsername();
+        data["user_id"] = user->getId();
 
         ClientNetworkManager::instance().sendRequest("GET_PROFILE", data);
     }
@@ -119,6 +126,10 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
                 ui->prof_error_label->setText("");
             });
         }
+
+        ui->email_lineEdit->setText("");
+        ui->name_lineEdit->setText("");
+        ui->username_lineEdit->setText("");
     }
 
     if (action == "CHANGE_PASSWORD_RESPONSE"){
@@ -139,6 +150,10 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
                 ui->pass_error_label->setText("");
             });
         }
+
+        ui->confirmPass_lineEdit->setText("");
+        ui->newPass_lineEdit->setText("");
+        ui->pass_lineEdit->setText("");
     }
 }
 
@@ -176,7 +191,7 @@ void ProfileWidget::on_submitProfile_pushButton_clicked()
 
         qDebug() << data;
 
-        ClientNetworkManager::instance().sendRequest("UPDATE_PROFILE", data, true);
+        ClientNetworkManager::instance().sendRequest("UPDATE_PROFILE", data);
         ui->submitProfile_pushButton->setEnabled(false);
     }
     else{
@@ -214,7 +229,7 @@ void ProfileWidget::on_submitPass_pushButton_clicked()
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
-        data["username"] = user->getUsername();
+        data["user_id"] = user->getId();
         data["old_password"] = cur_pass;
         data["new_password"] = new_pass;
 
@@ -227,5 +242,6 @@ void ProfileWidget::on_submitPass_pushButton_clicked()
             ui->pass_error_label->setText("");
         });
     }
+
 }
 
