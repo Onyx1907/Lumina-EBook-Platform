@@ -27,6 +27,8 @@ public:
     BookGenre getGenre() const;
     double getFinalPrice() const;
     QString getPublisher() const;
+    double getPrice() const;
+    double getDiscountPercentage() const;
 
     QString getCoverImagePath() const;
 };

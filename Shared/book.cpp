@@ -18,3 +18,7 @@ double Book::getFinalPrice() const { return price * (1.0 - (discountPercentage /
 QString Book::getCoverImagePath() const { return coverImagePath; }
 
 QString Book::getPublisher() const{ return publisher; }
+
+double Book::getPrice() const{ return price; }
+
+double Book::getDiscountPercentage() const{ return discountPercentage; }

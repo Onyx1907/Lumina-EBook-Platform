@@ -109,7 +109,7 @@ void UserHomeWidget::parseAndFillList(const QJsonObject &data, QListWidget *targ
         QJsonObject bookObj = booksArray[i].toObject();
 
         Book book(bookObj["id"].toInt(), bookObj["title"].toString(),
-                bookObj["author"].toString(), bookObj["publisher"].toString(),
+                bookObj["author"].toString(), "",
                 stringToGenre(bookObj["genre"].toString()), bookObj["cover_base64"].toString(),
                 bookObj["price"].toDouble(), bookObj["discount_percentage"].toDouble());
 

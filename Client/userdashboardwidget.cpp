@@ -25,7 +25,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     GenreSelectionPage = new GenreSelectionWidget(user->getUsername(), this);
     UserHomePage = new UserHomeWidget(user->getUsername(), this);
     ProfilePage = new ProfileWidget(user, this);
-    BookDetailsPage = new BookDetailsWidget(this);
+    BookDetailsPage = new BookDetailsWidget(user->getId(), this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);

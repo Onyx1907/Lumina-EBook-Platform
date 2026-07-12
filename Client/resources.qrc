@@ -23,5 +23,6 @@
         <file>resources/back_icon.svg</file>
         <file>resources/user/save_logo.png</file>
         <file>resources/user/comments_logo.png</file>
+        <file>resources/disconnected.png</file>
     </qresource>
 </RCC>

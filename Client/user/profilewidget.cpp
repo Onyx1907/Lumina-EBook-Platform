@@ -57,6 +57,8 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
 
             QJsonObject profileObj = data.value("profile").toObject();
 
+            qDebug() << profileObj;
+
             ui->name_label->setText(profileObj.value("name").toString());
             ui->email_label->setText(profileObj.value("email").toString());
 
@@ -101,7 +103,9 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
         if (data.value("status").toString() == "SUCCESS") {
             ui->prof_error_label->setText("");
             ui->prof_success_label->setText(data.value("message").toString());
-            user->setUsername(new_username);
+            if(!new_username.isEmpty()){
+                user->setUsername(new_username);
+            }
             loadProfile();
             QTimer::singleShot(3000, this, [this](){
                 ui->prof_success_label->setText("");
@@ -169,6 +173,8 @@ void ProfileWidget::on_submitProfile_pushButton_clicked()
         data["username"] = new_username;
         data["name"] = name;
         data["email"] = email;
+
+        qDebug() << data;
 
         ClientNetworkManager::instance().sendRequest("UPDATE_PROFILE", data, true);
         ui->submitProfile_pushButton->setEnabled(false);
