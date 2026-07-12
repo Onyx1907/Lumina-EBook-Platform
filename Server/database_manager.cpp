@@ -363,11 +363,11 @@ bool DatabaseManager::setFavoriteGenres(const QString& username, const QStringLi
     return q.exec();
 }
 // بازیابی و استخراج ژانرهای مورد علاقه کاربر به صورت لیست متنی در سی پلاس پلاس
-QStringList DatabaseManager::getFavoriteGenres(const QString& username){
+QStringList DatabaseManager::getFavoriteGenres(int userId){
     QStringList result;
     QSqlQuery q(db);
-    q.prepare("SELECT favorite_genres FROM users WHERE username = :u");
-    q.bindValue(":u", username);
+    q.prepare("SELECT favorite_genres FROM users WHERE id = :id");
+    q.bindValue(":id", userId);
     if (!q.exec() || !q.next())
         return result;
 
@@ -498,11 +498,14 @@ QList<QJsonObject> DatabaseManager::getFreeBooks(){
     return list;
 }
 //JSON دریافت و تجمیع اطلاعات پروفایل شخصی کاربر در قالب یک شیء خلاصه شده
-QJsonObject DatabaseManager::getUserProfile(const QString& username){
+QJsonObject DatabaseManager::getUserProfile(int userId) {
     QJsonObject obj;
     QSqlQuery q(db);
-    q.prepare("SELECT name, email, favorite_genres FROM users WHERE username = :u");
-    q.bindValue(":u", username);
+
+    // فقط فیلدهای مورد نیاز را بر اساس آیدی واکشی میکنیم
+    q.prepare("SELECT name, email, favorite_genres FROM users WHERE id = :id");
+    q.bindValue(":id", userId);
+
     if (!q.exec() || !q.next())
         return obj;
 
@@ -518,9 +521,9 @@ QJsonObject DatabaseManager::getUserProfile(const QString& username){
     }
     obj["favorite_genres"] = genresArr;
 
-    obj["total_purchases"] = getTotalPurchases(username);
-    return obj;
+    obj["total_purchases"] = getTotalPurchases(userId);
 
+    return obj;
 }
 //آپدیت پروفایل
 bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, const QString& name, const QString& email) {
@@ -590,10 +593,10 @@ bool DatabaseManager::updateUserProfile(int userId, const QString& newUsername, 
 }
 
 // فرآیند احراز هویت رمز عبور فعلی و ثبت رمز عبور جدید به صورت هش شده
-bool DatabaseManager::changePassword(const QString& username,const QString& oldPasswordPlain,const QString& newPasswordPlain){
+bool DatabaseManager::changePassword(int userId,const QString& oldPasswordPlain,const QString& newPasswordPlain){
     QSqlQuery q(db);
-    q.prepare("SELECT password_hash FROM users WHERE username = :u");
-    q.bindValue(":u", username);
+    q.prepare("SELECT password_hash FROM users WHERE id = :id");
+    q.bindValue(":id", userId);
     if (!q.exec() || !q.next())
         return false;
 
@@ -603,22 +606,22 @@ bool DatabaseManager::changePassword(const QString& username,const QString& oldP
 
     const QString newHash = CryptoHelper::hashPassword(newPasswordPlain);
     QSqlQuery q2(db);
-    q2.prepare("UPDATE users SET password_hash = :p WHERE username = :u");
+    q2.prepare("UPDATE users SET password_hash = :p WHERE id = :id");
     q2.bindValue(":p", newHash);
-    q2.bindValue(":u", username);
+    q2.bindValue(":id", userId);
     return q2.exec();
 }
 // استخراج تاریخچه کامل کتاب های خریداری شده توسط کاربر به همراه جزئیات فاکتور
-QList<QJsonObject> DatabaseManager::getPurchaseHistory(const QString& username){
+QList<QJsonObject> DatabaseManager::getPurchaseHistory(int userId){
     QList<QJsonObject> list;
     QSqlQuery q(db);
     q.prepare("SELECT p.book_id, p.purchase_date, b.title, b.author, b.price "
               "FROM purchases p "
-              "JOIN users u ON p.user_id = u.id "
               "JOIN books b ON p.book_id = b.id "
-              "WHERE u.username = :u "
+              "WHERE p.user_id = :userId "
               "ORDER BY p.purchase_date DESC");
-    q.bindValue(":u", username);
+
+    q.bindValue(":userId", userId);
     if (!q.exec())
         return list;
 
@@ -634,15 +637,15 @@ QList<QJsonObject> DatabaseManager::getPurchaseHistory(const QString& username){
     return list;
 }
 // محاسبه و شمارش تعداد کل فاکتورهای ثبت شده برای یک کاربر مشخص
-int DatabaseManager::getTotalPurchases(const QString& username){
+int DatabaseManager::getTotalPurchases(int userId) {
     QSqlQuery q(db);
-    q.prepare("SELECT COUNT(*) "
-              "FROM purchases p "
-              "JOIN users u ON p.user_id = u.id "
-              "WHERE u.username = :u");
-    q.bindValue(":u", username);
+
+    q.prepare("SELECT COUNT(*) FROM purchases WHERE user_id = :userId");
+    q.bindValue(":userId", userId);
+
     if (!q.exec() || !q.next())
         return 0;
+
     return q.value(0).toInt();
 }
 
@@ -712,7 +715,6 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
     QList<QJsonObject> list;
     QSqlQuery q(db);
 
-    // استفاده از IFNULL یا COALESCE باعث می‌شود اگر ناشر نام اصلی (name) نداشت، نام کاربری‌اش (username) جایگزین شود.
     QString queryStr = "SELECT b.id, b.title, b.author, b.genre, b.description, b.price, "
                        "b.discountPercent, b.discountAmount, b.coverImagePath, b.pdfPath, b.publisher_id, b.isActive, "
                        "IFNULL(NULLIF(u.name, ''), u.username) AS publisher_name "
@@ -1343,3 +1345,30 @@ bool DatabaseManager::updateLastReadPage(int userId, int bookId, int page) {
         return insertQuery.exec();
     }
 }
+
+
+//************************************************پنل ناشر ( ماژول 1 )*******************************************************
+
+// گرفتن اطلاعات ناشر
+QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
+    QJsonObject profile;
+    QSqlQuery q(db);
+
+    // انتخاب دقیق فیلدهای موجود و بررسی متنی نقش
+    q.prepare("SELECT id, username, name, email FROM users WHERE id = :id AND role = 'publisher'");
+    q.bindValue(":id", publisherId);
+
+    if (!q.exec() || !q.next())
+        return profile; // در صورت عدم یافتن، جیسون خالی برمیگردد
+
+    profile["id"] = q.value("id").toInt();
+    profile["username"] = q.value("username").toString();
+    profile["name"] = q.value("name").toString();
+    profile["email"] = q.value("email").toString();
+
+    return profile;
+}
+
+
+
+
