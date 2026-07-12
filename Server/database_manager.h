@@ -65,6 +65,7 @@ public:
     int getTotalPurchases(const QString& username);
 
     bool isBookPurchased(int userId, int bookId);
+    bool isBookInCart(int userId, int bookId);
     bool getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath);
     QString getBookPdfPath(int bookId);
 
@@ -92,7 +93,7 @@ public:
     QList<QJsonObject> getCartItems(int userId);
     bool clearCart(int userId);
 
-    bool finalizePurchase(int userId);
+    bool finalizePurchase(int userId, double clientFinalPrice);
 
 
     //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
