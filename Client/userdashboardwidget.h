@@ -8,6 +8,7 @@
 #include "profilewidget.h"
 #include "bookdetailswidget.h"
 #include "searchwidget.h"
+#include "resultwidget.h"
 
 
 namespace Ui {
@@ -41,6 +42,7 @@ private:
     ProfileWidget* ProfilePage;
     BookDetailsWidget* BookDetailsPage;
     SearchWidget* SearchPage;
+    ResultWidget* ResultPage;
 
     int previousPageIndex = 0;
 
@@ -51,8 +53,12 @@ private:
         UserHomePageIndex = 1,
         ProfilePageIndex = 2,
         BookDetailsPageIndex = 3,
-        SearchPageIndex = 4
+        SearchPageIndex = 4,
+        ResultPageIndex = 5
     };
+
+
+    void testSearchLayout();
 
 };
 

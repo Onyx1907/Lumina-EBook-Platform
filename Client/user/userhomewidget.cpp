@@ -110,7 +110,7 @@ void UserHomeWidget::parseAndFillList(const QJsonObject &data, QListWidget *targ
 
         Book book(bookObj["id"].toInt(), bookObj["title"].toString(),
                 bookObj["author"].toString(), "",
-                stringToGenre(bookObj["genre"].toString()), bookObj["cover_base64"].toString(),
+                stringToGenre(bookObj["genre"].toString()), bookObj["cover_image_path"].toString(),
                 bookObj["price"].toDouble(), bookObj["discount_percentage"].toDouble());
 
         // ساخت کارت و تزریق به لیست
