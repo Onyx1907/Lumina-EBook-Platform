@@ -141,8 +141,7 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg",
-          "publisher_name": "انتشارات فردوسی"
+          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
         }
       ]
     }
@@ -165,7 +164,8 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
+          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg",
+          "publisher_name": "انتشارات فردوسی"
         }
       ]
     }
