@@ -7,6 +7,7 @@
 #include "userhomewidget.h"
 #include "profilewidget.h"
 #include "bookdetailswidget.h"
+#include "searchwidget.h"
 
 
 namespace Ui {
@@ -29,6 +30,8 @@ private slots:
 
     void on_profile_pushButton_clicked();
 
+    void on_search_pushButton_clicked();
+
 private:
     Ui::UserDashboardWidget *ui;
     RegularUser *user;
@@ -37,6 +40,7 @@ private:
     UserHomeWidget *UserHomePage;
     ProfileWidget* ProfilePage;
     BookDetailsWidget* BookDetailsPage;
+    SearchWidget* SearchPage;
 
     int previousPageIndex = 0;
 
@@ -46,7 +50,8 @@ private:
         GenreSelectionPageIndex = 0,
         UserHomePageIndex = 1,
         ProfilePageIndex = 2,
-        BookDetailsPageIndex = 3
+        BookDetailsPageIndex = 3,
+        SearchPageIndex = 4
     };
 
 };

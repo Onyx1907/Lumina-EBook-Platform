@@ -26,11 +26,13 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     UserHomePage = new UserHomeWidget(user->getId(), this);
     ProfilePage = new ProfileWidget(user, this);
     BookDetailsPage = new BookDetailsWidget(user->getId(), this);
+    SearchPage = new SearchWidget(this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
     ui->stackedWidget->addWidget(ProfilePage);
     ui->stackedWidget->addWidget(BookDetailsPage);
+    ui->stackedWidget->addWidget(SearchPage);
 
     if(is_first_login){
         ui->stackedWidget->setCurrentIndex(Page::GenreSelectionPageIndex);
@@ -135,5 +137,11 @@ void UserDashboardWidget::on_profile_pushButton_clicked()
 {
     ProfilePage->loadProfile();
     fadeToPage(Page::ProfilePageIndex);
+}
+
+
+void UserDashboardWidget::on_search_pushButton_clicked()
+{
+    fadeToPage(Page::SearchPageIndex);
 }
 
