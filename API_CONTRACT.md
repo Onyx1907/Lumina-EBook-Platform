@@ -141,7 +141,8 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
+          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg",
+          "publisher_name": "انتشارات فردوسی"
         }
       ]
     }
@@ -821,6 +822,49 @@
       "action": "UPDATE_LAST_READ_PAGE_RESPONSE",
       "status": "ERROR",
       "message": ".خطا در ذخیره صفحه"
+    }
+  }
+,
+  "40_GET_PUBLISHER_PROFILE": {
+    "client_request": {
+      "action": "GET_PUBLISHER_PROFILE",
+      "publisher_id": 5
+    },
+    "server_response_success": {
+      "action": "GET_PUBLISHER_PROFILE_RESPONSE",
+      "status": "SUCCESS",
+      "profile": {
+        "id": 5,
+        "username": "ghoqnoos_pub",
+        "name": "انتشارات ققنوس",
+        "email": "info@ghoqnoos.com"
+      }
+    },
+    "server_response_failed": {
+      "action": "GET_PUBLISHER_PROFILE_RESPONSE",
+      "status": "FAILED",
+      "message": ".ناشر یافت نشد یا نقش کاربر ناشر نیست"
+    }
+  },
+  "41_UPDATE_PUBLISHER_PROFILE": {
+    "client_request": {
+      "action": "UPDATE_PUBLISHER_PROFILE",
+      "publisher_id": 5,
+      "info": {
+        "username": "ghoqnoos_press",
+        "name": "نشر ققنوس جدید",
+        "email": "new_info@ghoqnoos.com"
+      }
+    },
+    "server_response_success": {
+      "action": "UPDATE_PUBLISHER_PROFILE_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".اطلاعات پروفایل ناشر با موفقیت به روزرسانی شد"
+    },
+    "server_response_failed": {
+      "action": "UPDATE_PUBLISHER_PROFILE_RESPONSE",
+      "status": "FAILED",
+      "message": ".خطا در ویرایش اطلاعات. این نام کاربری، نام یا ایمیل قبلاً توسط شخص دیگری انتخاب شده یا ناشر یافت نشد"
     }
   }
 }
