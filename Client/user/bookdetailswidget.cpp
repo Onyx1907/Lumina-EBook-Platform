@@ -108,6 +108,12 @@ void BookDetailsWidget::processNetworkData(const QString& action, const QJsonObj
             else{
                 ui->addCart_pushButton->show();
             }
+            if(data.value("is_saved").toBool()){
+                ui->savedBook_pushButton->show();
+            }
+            else{
+                ui->saveBook_pushButton->show();
+            }
 
             ui->rating_label->setText(QString::number(data.value("rating").toDouble(), 'f', 1));
             ui->publisher_label->setText(data.value("publisher").toString());
