@@ -49,7 +49,7 @@ bool DatabaseManager::createTables(){
     }
     // اضافه کردن ستون حذف منطقی به جدول کاربران (اگر از قبل وجود نداشته باشد)
     if (!q.exec("ALTER TABLE users ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
-        // اگر ستون از قبل وجود داشته باشد دیتابیس خطا می‌دهد که طبیعی است، پس برنامه را متوقف نمی‌کنیم
+        // اگر ستون از قبل وجود داشته باشد دیتابیس خطا می‌دهد که طبیعی است، پس برنامه را متوقف نمی کنیم
         qDebug() << "Note: is_deleted column might already exist.";
     }
 
@@ -96,7 +96,7 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create books failed:" << q.lastError().text();
         return false;
     }
-    // اضافه کردن ستون حذف منطقی به جدول کتاب‌ها (اگر از قبل وجود نداشته باشد)
+    // اضافه کردن ستون حذف منطقی به جدول کتاب ها (اگر از قبل وجود نداشته باشد)
     if (!q.exec("ALTER TABLE books ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
         qDebug() << "Note: is_deleted column in books might already exist.";
     }
@@ -391,14 +391,12 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     obj["id"] = q.value("id").toInt();
     obj["title"] = q.value("title").toString();
     obj["author"] = q.value("author").toString();
-    obj["publisher_id"] = q.value("publisher_id").toInt();
     obj["genre"] = q.value("genre").toString();
     obj["price"] = q.value("price").toDouble();
     obj["discount_percentage"] = q.value("discountPercent").toDouble();
-    obj["discount_amount"] = q.value("discountAmount").toDouble();
     obj["cover_image_path"] = q.value("coverImagePath").toString();
-    obj["pdf_path"] = q.value("pdfPath").toString();
-    obj["averageRating"] = q.value("averageRating").toDouble();
+    obj["publisher_name"] = q.value("publisher_name").toString();
+
     return obj;
 }
 
@@ -425,17 +423,30 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
     for (int i = 0; i < genres.size(); ++i)
         placeholders << QString(":g%1").arg(i);
 
-    QString sql = QString("SELECT * FROM books WHERE genre IN (%1) AND isActive = 1 LIMIT 20").arg(placeholders.join(","));
+    // تغییر کوئری برای جوین با جدول users جهت دریافت نام ناشر
+    QString sql = QString(
+                      "SELECT b.*, u.name AS publisher_name "
+                      "FROM books b "
+                      "LEFT JOIN users u ON b.publisher_id = u.id "
+                      "WHERE b.genre IN (%1) AND b.isActive = 1 "
+                      "LIMIT 20"
+                      ).arg(placeholders.join(","));
+
     QSqlQuery q(db);
     q.prepare(sql);
+
     for (int i = 0; i < genres.size(); ++i)
         q.bindValue(QString(":g%1").arg(i), genres[i]);
+
     if(!q.exec())
         return list;
-    while(q.next())
-        list.append(bookFromQueryWithoutPdf(q));
+
+    while(q.next()) {
+        list.append(bookFromQuery(q));
+    }
     return list;
 }
+
 // فیلتراسیون و دریافت کتاب ها بر اساس یک ژانر مشخص شده
 QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
     QList<QJsonObject> list;
