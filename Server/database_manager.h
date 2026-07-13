@@ -132,7 +132,7 @@ public:
 
 
     QJsonObject getPublisherProfile(int publisherId);
-
+    bool updatePublisherProfile(int publisherId, const QJsonObject& info);
 
 
 

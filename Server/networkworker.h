@@ -122,6 +122,10 @@ private:
 
    //************************************************پنل ناشر ( ماژول 1 )*******************************************************
 
+    void handleGetPublisherProfile(QTcpSocket* socket, const QJsonObject& data);
+    void handleUpdatePublisherProfile(QTcpSocket* socket, const QJsonObject& data);
+
+
 
 
 

@@ -1380,6 +1380,93 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
     return profile;
 }
 
+// آپدیت اطلاعات ناشر
+bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject& info) {
+    //خواندن اطلاعات فعلی ناشر از دیتابیس
+    QSqlQuery currentQuery(db);
+    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = 'publisher'");
+    currentQuery.bindValue(":id", publisherId);
+
+    if (!currentQuery.exec() || !currentQuery.next()) {
+        qDebug() << "Publisher not found or invalid role!";
+        return false;
+    }
+
+    QString currentUsername = currentQuery.value("username").toString();
+    QString currentName = currentQuery.value("name").toString();
+    QString currentEmail = currentQuery.value("email").toString();
+
+    // استخراج مقادیر جدید ارسالی از کلاینت
+    QString newUsername = info.value("username").toString().trimmed();
+    QString newName = info.value("name").toString().trimmed();
+    QString newEmail = info.value("email").toString().trimmed();
+
+    // اگر فیلدی خالی بود، همان مقدار فعلی دیتابیس حفظ می‌شود
+    if (newUsername.isEmpty()) newUsername = currentUsername;
+    if (newName.isEmpty())      newName = currentName;
+    if (newEmail.isEmpty())     newEmail = currentEmail;
+
+    // بررسی خطای نهایی خالی بودن (جهت اطمینان صد در صد)
+    if (newUsername.isEmpty()) {
+        qDebug() << "Publisher username cannot be empty!";
+        return false;
+    }
+
+    //بررسی تکراری نبودن نام کاربری (فقط اگر ناشر خواسته باشد آن را تغییر دهد)
+    if (newUsername != currentUsername) {
+        QSqlQuery checkUsername(db);
+        checkUsername.prepare("SELECT 1 FROM users WHERE username = :username AND id != :id LIMIT 1");
+        checkUsername.bindValue(":username", newUsername);
+        checkUsername.bindValue(":id", publisherId);
+        if (checkUsername.exec() && checkUsername.next()) {
+            qDebug() << "Publisher username is already taken!";
+            return false;
+        }
+    }
+
+    //بررسی تکراری نبودن نام نمایش (فقط اگر تغییر کرده باشد و خالی نباشد)
+    if (!newName.isEmpty() && newName != currentName) {
+        QSqlQuery checkName(db);
+        checkName.prepare("SELECT 1 FROM users WHERE name = :name AND id != :id LIMIT 1");
+        checkName.bindValue(":name", newName);
+        checkName.bindValue(":id", publisherId);
+        if (checkName.exec() && checkName.next()) {
+            qDebug() << "Publisher name is already taken!";
+            return false;
+        }
+    }
+
+    //بررسی تکراری نبودن ایمیل (فقط اگر تغییر کرده باشد و خالی نباشد)
+    if (!newEmail.isEmpty() && newEmail != currentEmail) {
+        QSqlQuery checkEmail(db);
+        checkEmail.prepare("SELECT 1 FROM users WHERE email = :email AND id != :id LIMIT 1");
+        checkEmail.bindValue(":email", newEmail);
+        checkEmail.bindValue(":id", publisherId);
+        if (checkEmail.exec() && checkEmail.next()) {
+            qDebug() << "Publisher email is already taken!";
+            return false;
+        }
+    }
+
+    QSqlQuery q(db);
+    q.prepare("UPDATE users SET "
+              "username = :username, "
+              "name = :name, "
+              "email = :email "
+              "WHERE id = :id AND role = 'publisher'");
+
+    q.bindValue(":username", newUsername);
+    q.bindValue(":name", newName);
+    q.bindValue(":email", newEmail);
+    q.bindValue(":id", publisherId);
+
+    return q.exec();
+}
+
+
+
+
+
 
 
 

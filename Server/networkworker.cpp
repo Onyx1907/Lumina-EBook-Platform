@@ -48,15 +48,15 @@ void NetworkWorker::onReadyRead() {
 }
 
 void NetworkWorker::onDisconnected() {
-    //ابتدا به سرور خبر می‌دهیم که این سوکت دیسکانکت شد تا از مپ آنلاین‌ها حذف شود
+    //ابتدا به سرور خبر میدهیم که این سوکت دیسکانکت شد تا از مپ آنلاین ها حذف شود
     emit userDisconnected(m_socket);
 
-    //به خودِ سوکت دستور می‌دهیم که به محض پایان کارهای جاری، حافظه خودش را آزاد کند
+    //به خودِ سوکت دستور میدهیم که به محض پایان کارهای جاری، حافظه خودش را آزاد کند
     if (m_socket) {
         m_socket->deleteLater();
     }
 
-    //ترد فرعی را خاتمه می‌دهیم
+    //ترد فرعی را خاتمه میدهیم
     emit finished();
 }
 
@@ -66,7 +66,7 @@ void NetworkWorker::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
     QJsonDocument doc(obj);
     QByteArray bytes = doc.toJson(QJsonDocument::Compact);
 
-    // اضافه کردن کاراکتر \n به انتهای پیام تا کلاینت هم بتواند آن را خط‌به‌خط بخواند
+    // اضافه کردن کاراکتر \n به انتهای پیام تا کلاینت هم بتواند آن را خط به خط بخواند
     bytes.append('\n');
 
     socket->write(bytes);
