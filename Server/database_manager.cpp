@@ -423,40 +423,38 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
     for (int i = 0; i < genres.size(); ++i)
         placeholders << QString(":g%1").arg(i);
 
-    // تغییر کوئری برای جوین با جدول users جهت دریافت نام ناشر
-    QString sql = QString(
-                      "SELECT b.*, u.name AS publisher_name "
-                      "FROM books b "
-                      "LEFT JOIN users u ON b.publisher_id = u.id "
-                      "WHERE b.genre IN (%1) AND b.isActive = 1 "
-                      "LIMIT 20"
-                      ).arg(placeholders.join(","));
-
+    QString sql = QString("SELECT * FROM books WHERE genre IN (%1) AND isActive = 1 LIMIT 20").arg(placeholders.join(","));
     QSqlQuery q(db);
     q.prepare(sql);
-
     for (int i = 0; i < genres.size(); ++i)
         q.bindValue(QString(":g%1").arg(i), genres[i]);
-
-    if(!q.exec())
-        return list;
-
-    while(q.next()) {
-        list.append(bookFromQuery(q));
-    }
-    return list;
-}
-
-// فیلتراسیون و دریافت کتاب ها بر اساس یک ژانر مشخص شده
-QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
-    QList<QJsonObject> list;
-    QSqlQuery q(db);
-    q.prepare("SELECT * FROM books WHERE genre = :g AND isActive = 1 LIMIT 20");
-    q.bindValue(":g", genre);
     if(!q.exec())
         return list;
     while(q.next())
         list.append(bookFromQueryWithoutPdf(q));
+    return list;
+}
+
+// فیلتراسیون و دریافت کتاب ها بر اساس یک ژانر مشخص شده
+QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre) {
+    QList<QJsonObject> list;
+
+    QString sql = "SELECT b.*, u.name AS publisher_name "
+                  "FROM books b "
+                  "LEFT JOIN users u ON b.publisher_id = u.id "
+                  "WHERE b.genre = :g AND b.isActive = 1 "
+                  "LIMIT 20";
+
+    QSqlQuery q(db);
+    q.prepare(sql);
+    q.bindValue(":g", genre);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        list.append(bookFromQuery(q));
+    }
     return list;
 }
 // بازیابی لیست تمام کتاب های نشانه گذاری شده به عنوان محبوب
