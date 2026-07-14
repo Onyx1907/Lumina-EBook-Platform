@@ -102,6 +102,11 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
         CommentsPage->loadComments(bookID);
         fadeToPage(Page::CommentsPageIndex);
     });
+
+    //برگشت به صفحه اطلاعات کتاب از بخش نظرات
+    connect(CommentsPage, &CommentsWidget::backToBookDatailPage, this, [this](){
+        fadeToPage(Page::BookDetailsPageIndex);
+    });
 }
 
 

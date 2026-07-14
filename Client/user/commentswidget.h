@@ -19,6 +19,9 @@ public:
 
     void loadComments(int bookid);
 
+signals:
+    void backToBookDatailPage();
+
 private slots:
     void processNetworkData(const QString& action, const QJsonObject& data);
 
@@ -26,6 +29,8 @@ private slots:
     void onCommentDeleteRequested(int commentId);
 
     void on_submit_pushButton_clicked();
+
+    void on_back_pushButton_clicked();
 
 private:
     Ui::CommentsWidget *ui;
