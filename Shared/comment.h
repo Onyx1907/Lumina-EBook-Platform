@@ -20,7 +20,7 @@ public:
     QString getUsername() const;
     QString getText() const;
     QDateTime createdAt() const;
-    QString formattedData() const;
+    QString formattedDate() const;
 };
 
 #endif // COMMENT_H

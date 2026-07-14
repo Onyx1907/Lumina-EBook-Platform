@@ -25,5 +25,7 @@
         <file>resources/user/comments_logo.png</file>
         <file>resources/disconnected.png</file>
         <file>resources/user/search_logo.png</file>
+        <file>resources/edit_icon.svg</file>
+        <file>resources/delete_icon.png</file>
     </qresource>
 </RCC>

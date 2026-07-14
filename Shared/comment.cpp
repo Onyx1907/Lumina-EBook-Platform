@@ -34,6 +34,6 @@ QDateTime Comment::createdAt() const{
     return QDateTime::fromString(dateStr, Qt::ISODate);
 }
 
-QString Comment::formattedData() const{
+QString Comment::formattedDate() const{
     return createdAt().toString("yyyy/MM/dd - hh:mm");
 }

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CommentItemWidget</class>
+ <widget class="QWidget" name="CommentItemWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>211</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>500</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QFrame" name="main_frame">
+     <property name="styleSheet">
+      <string notr="true">/* ۱. استایل فریم اصلی (کارت شیشه‌ای نسکافه‌ای) */
+QFrame#main_frame {
+    background-color: rgba(30, 25, 20, 0.4); /* پس‌زمینه تیره و بسیار ملایم نسکافه‌ای */
+    border: 1px solid rgba(193, 154, 107, 0.18); /* مرز نسکافه‌ای شفاف */
+    border-radius: 14px; /* لبه‌های کاملاً نرم و مدرن */
+}
+
+/* ۲. نام کاربری (@username) */
+QLabel#username_label {
+    color: #D2B48C; /* رنگ کرم خامه‌ای جذاب */
+    font-weight: bold;
+    font-size: 13px;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+}
+
+/* ۳. ریتینگ (ستاره‌ها) */
+QLabel#rating_label {
+    color: #FFD700; /* رنگ طلایی درخشان برای ستاره‌ها */
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* ۴. متن اصلی کامنت */
+QLabel#text_label {
+    color: #E6D7C3; /* نسکافه‌ای روشن برای خوانایی عالی در تاریکی */
+    font-size: 13px;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 4px 2px;
+}
+
+/* ۵. تاریخ ثبت نظر */
+QLabel#date_label {
+    color: rgba(230, 215, 195, 0.45); /* رنگ خاکستری-کرم بسیار ملایم */
+    font-size: 11px;
+}
+
+/* ۶. استایل عمومی دکمه‌های آیکون‌دار (ویرایش و حذف) */
+QPushButton#edit_pushButton, QPushButton#delete_pushButton {
+    background-color: rgba(255, 255, 255, 0.03); /* شیشه‌ای خنثی */
+    border: 1px solid rgba(193, 154, 107, 0.15);
+    border-radius: 8px;
+    padding: 5px; /* فضای کافی دور آیکون */
+    min-width: 28px;
+    min-height: 28px;
+    max-width: 28px;
+    max-height: 28px;
+}
+
+/* ۷. حالت هاور دکمه ویرایش (تم نسکافه‌ای فعال) */
+QPushButton#edit_pushButton:hover {
+    background-color: rgba(193, 154, 107, 0.25);
+    border-color: #C19A6B;
+}
+
+QPushButton#edit_pushButton:pressed {
+    background-color: rgba(193, 154, 107, 0.4);
+}
+
+/* ۸. حالت هاور دکمه حذف (تم قرمز ملو هشداری) */
+QPushButton#delete_pushButton:hover {
+    background-color: rgba(231, 76, 60, 0.18); /* قرمز شیشه‌ای ملایم */
+    border-color: #E74C3C;
+}
+
+QPushButton#delete_pushButton:pressed {
+    background-color: rgba(231, 76, 60, 0.3);
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="username_label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="rating_label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="text_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="date_label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="edit_pushButton">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">    background: none;
+    background-color: transparent;
+
+    border: 1px solid transparent;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/resources/edit_icon.svg</normaloff>:/resources/edit_icon.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>26</width>
+            <height>26</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="delete_pushButton">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">    background: none;
+    background-color: transparent;
+
+    border: 1px solid transparent;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/resources/delete_icon.png</normaloff>:/resources/delete_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>26</width>
+            <height>26</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

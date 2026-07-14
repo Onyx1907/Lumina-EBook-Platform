@@ -42,6 +42,9 @@ qt_add_executable(LuminaClient
     user/searchwidget.h user/searchwidget.cpp user/searchwidget.ui
     bookinfocard.h bookinfocard.cpp bookinfocard.ui
     user/resultwidget.h user/resultwidget.cpp user/resultwidget.ui
+    user/commentitemwidget.h user/commentitemwidget.cpp user/commentitemwidget.ui
+    user/commentswidget.h user/commentswidget.cpp user/commentswidget.ui
+
 
 
 
