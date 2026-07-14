@@ -2,19 +2,25 @@
 #define COMMENT_H
 
 #include <QString>
+#include <QDateTime>
+#include <QJsonObject>
 
 class Comment
 {
 private:
-    int id;
-    int bookID;
-    int userID;
-    QString username;
-    QString text;
-
+    QJsonObject raw_data;
 
 public:
-    Comment();
+    Comment(const QJsonObject& data);
+
+    int getId() const;
+    int getBookID() const;
+    int getUserID() const;
+    int getRating() const;
+    QString getUsername() const;
+    QString getText() const;
+    QDateTime createdAt() const;
+    QString formattedData() const;
 };
 
 #endif // COMMENT_H
