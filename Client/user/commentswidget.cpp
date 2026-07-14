@@ -1,14 +1,234 @@
 #include "commentswidget.h"
 #include "ui_commentswidget.h"
+#include "clientnetworkmanager.h"
+#include "commentitemwidget.h"
+#include <QTimer>
+#include <QJsonArray>
 
-CommentsWidget::CommentsWidget(QWidget *parent)
-    : QWidget(parent)
+CommentsWidget::CommentsWidget(int userid, QWidget *parent)
+    : QWidget(parent), userID(userid)
     , ui(new Ui::CommentsWidget)
 {
     ui->setupUi(this);
+    ui->error_label->hide();
+
+
+    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
+            this, &CommentsWidget::processNetworkData);
+}
+
+void CommentsWidget::loadComments(int bookid){
+    bookID = bookid;
+
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+        data["book_id"] = bookID;
+
+        ClientNetworkManager::instance().sendRequest("GET_COMMENTS", data, true);
+    }
+    else{
+        ui->error_label->setText("خطا در برقراری اتصال");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
 }
 
 CommentsWidget::~CommentsWidget()
 {
     delete ui;
 }
+
+
+void CommentsWidget::processNetworkData(const QString& action, const QJsonObject& data){
+    if(action == "GET_COMMENTS_RESPONSE"){
+        updateListUi(data);
+        return;
+    }
+    if(action == "COMMENT_UPDATED"){
+        if(data.contains("book_id") && data["book_id"].toInt() == bookID){
+            loadComments(bookID);
+        }
+        else if(!data.contains("book_id")){
+            loadComments(bookID);
+        }
+    }
+    else if(action == "ADD_COMMENT_RESPONSE"){
+        if(data["status"].toString() != "SUCCESS"){
+            ui->error_label->setText(data["message"].toString());
+            ui->error_label->show();
+            QTimer::singleShot(3000, this, [this](){
+                ui->error_label->setText("");
+                ui->error_label->hide();
+            });
+        }
+        else{
+            loadComments(bookID);
+        }
+    }
+    else if("EDIT_COMMENT_RESPONSE"){
+        if(data["status"].toString() != "SUCCESS"){
+            ui->error_label->setText(data["message"].toString());
+            ui->error_label->show();
+            QTimer::singleShot(3000, this, [this](){
+                ui->error_label->setText("");
+                ui->error_label->hide();
+            });
+        }
+        else{
+            loadComments(bookID);
+        }
+    }
+    else if("DELETE_COMMENT_RESPONSE"){
+        if(data["status"].toString() != "SUCCESS"){
+            ui->error_label->setText(data["message"].toString());
+            ui->error_label->show();
+            QTimer::singleShot(3000, this, [this](){
+                ui->error_label->setText("");
+                ui->error_label->hide();
+            });
+        }
+        else{
+            loadComments(bookID);
+        }
+    }
+}
+
+
+void CommentsWidget::updateListUi (const QJsonObject& response) {
+    if (response["status"].toString() != "SUCCESS") return;
+
+    // ۱. پاکسازی لیست قبلی
+    ui->listWidget->clear();
+
+    // حالت پیش‌فرض: فریم ثبت نظر جدید باز است و فیلدها خالی هستند
+    ui->write_frame->show();
+    ui->comment_textEdit->clear();
+    ui->rating_spinBox->setValue(5);
+    m_editingCommentId = -1; // پرچم ادیت را ریست می‌کنیم (اگر تعریفش کرده‌اید)
+
+    QJsonArray commentsArray = response["comments"].toArray();
+
+    // حل مشکل باگ حافظه: به جای آدرس‌دهی مستقیم به شیء روی استک،
+    // جیسونِ کامنت کاربر را ذخیره می‌کنیم تا خارج از حلقه دوباره آن را بسازیم.
+    QJsonObject userCommentJson;
+    bool hasUserComment = false;
+
+    // ۲. چرخش روی کامنت‌ها و ساخت مدل شیءگرا
+    for (const QJsonValue& value : commentsArray) {
+        QJsonObject commentObj = value.toObject();
+        commentObj["book_id"] = bookID;
+        Comment comment(commentObj); // ساخت شیء موقت
+
+        if (comment.getUserID() == userID) {
+            hasUserComment = true;
+            userCommentJson = commentObj; // کپی کردن اطلاعات کامنت کاربر
+        } else {
+            // حل باگ حافظه: ویجت‌ها حتما باید با new روی Heap ساخته شوند تا زنده بمانند
+            CommentItemWidget* itemWidget = new CommentItemWidget(comment, userID, this);
+
+            QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
+            item->setSizeHint(itemWidget->sizeHint());
+            ui->listWidget->setItemWidget(item, itemWidget);
+        }
+    }
+
+    // ۳. اگر کاربر قبلا کامنت ثبت کرده بود، آن را به عنوان اولین آیتم بالا سنجاق می‌کنیم
+    if (hasUserComment) {
+        ui->write_frame->hide(); // مخفی کردن فریم ثبت نظر شما (بر اساس اسم معماری خودتان)
+
+        Comment userComment(userCommentJson);
+        // ساخت ویجت با پوینتر (new)
+        CommentItemWidget* userItemWidget = new CommentItemWidget(userComment, userID, this);
+
+        // اتصال سیگنال‌های دکمه‌های کامنت کاربر به فیلدهای متنی این صفحه اصلی
+        connect(userItemWidget, &CommentItemWidget::editRequested, this, &CommentsWidget::onCommentEditRequested);
+        connect(userItemWidget, &CommentItemWidget::deleteRequested, this, &CommentsWidget::onCommentDeleteRequested);
+
+        QListWidgetItem* item = new QListWidgetItem();
+        ui->listWidget->insertItem(0, item); // قرار دادن در ردیف اول (ایندکس 0)
+        item->setSizeHint(userItemWidget->sizeHint());
+        ui->listWidget->setItemWidget(item, userItemWidget);
+    }
+}
+
+
+void CommentsWidget::onCommentEditRequested(const Comment& comment) {
+    // ۱. نمایش فریم نوشتن
+    ui->write_frame->show();
+
+    // ۲. استخراج اطلاعات از شیء کامنت دریافتی و ریختن در فیلدها
+    ui->comment_textEdit->setPlainText(comment.getText());
+    ui->rating_spinBox->setValue(comment.getRating());
+
+    // ۳. تنظیم پرچم ادیت با آیدی کامنت
+    m_editingCommentId = comment.getId();
+
+    ui->comment_textEdit->setFocus();
+}
+
+void CommentsWidget::onCommentDeleteRequested(int commentId) {
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+        data["comment_id"] = bookID;
+
+        ClientNetworkManager::instance().sendRequest("DELETE_COMMENT", data, true);
+    }
+    else{
+        ui->error_label->setText("خطا در برقراری اتصال");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+void CommentsWidget::on_submit_pushButton_clicked()
+{
+    QString text = ui->comment_textEdit->toPlainText().trimmed();
+    int rating = ui->rating_spinBox->value();
+
+    if(text.isEmpty()){
+        ui->error_label->setText("متن نظر نمی‌تواند خالی باشد");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+        return;
+    }
+
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+
+        if(m_editingCommentId == -1){
+            data["book_id"] = bookID;
+            data["user_id"] = userID;
+            data["text"] = text;
+            data["rating"] = rating;
+
+            ClientNetworkManager::instance().sendRequest("ADD_COMMENT", data, true);
+        }
+        else{
+            data["comment_id"] = m_editingCommentId;
+            data["text"] = text;
+            data["rating"] = rating;
+            ClientNetworkManager::instance().sendRequest("EDIT_COMMENT", data, true);
+        }
+    }
+    else{
+        ui->error_label->setText("خطا در برقراری اتصال");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+

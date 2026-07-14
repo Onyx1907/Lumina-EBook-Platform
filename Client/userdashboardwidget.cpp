@@ -28,6 +28,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     BookDetailsPage = new BookDetailsWidget(user->getId(), this);
     SearchPage = new SearchWidget(this);
     ResultPage = new ResultWidget(this);
+    CommentsPage = new CommentsWidget(user->getId(), this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
@@ -35,7 +36,9 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ui->stackedWidget->addWidget(BookDetailsPage);
     ui->stackedWidget->addWidget(SearchPage);
     ui->stackedWidget->addWidget(ResultPage);
+    ui->stackedWidget->addWidget(CommentsPage);
 
+    //مدیریت نمایش صفحه انتخاب ژانر
     if(is_first_login){
         ui->stackedWidget->setCurrentIndex(Page::GenreSelectionPageIndex);
         for(QAbstractButton *button : ui->sidebar_buttonGroup->buttons()){
@@ -58,11 +61,13 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
         ui->home_pushButton->setChecked(true);
     });
 
+    //نمایش صفحه انتخاب ژانر پس از کلیک روی ژانر های مورد علاقه در پروفایل
     connect(ProfilePage, &ProfileWidget::goToGenreSelectionPage, this, [this](){
         fadeToPage(Page::GenreSelectionPageIndex);
         GenreSelectionPage->onGeresChangeClicked();
     });
 
+    //نمایش اطلاعات کتاب در صورت کلیک روی کتاب های صفحه اصلی
     connect(UserHomePage, &UserHomeWidget::bookSelected, this, [this]( Book* book){
         previousPageIndex = UserHomePageIndex;
         BookDetailsPage->loadBook(book);
@@ -73,6 +78,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
         fadeToPage(previousPageIndex);
     });
 
+    //نمایش صفحه نتایج پس از سرچ
     connect(SearchPage, &SearchWidget::searchCompleted, this, [this]
             (const QVector<Book>& results){
         ResultPage->fillResults(results);
@@ -80,6 +86,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
         fadeToPage(Page::ResultPageIndex);
     });
 
+    //صفحه اطلاعات کتاب در صورت کلیک روی کتاب
     connect(ResultPage, &ResultWidget::bookSelected, this, [this](Book* bookptr){
         previousPageIndex = ResultPageIndex;
         BookDetailsPage->loadBook(bookptr);
@@ -88,6 +95,12 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
 
     connect(ResultPage, &ResultWidget::backPrevious, this, [this](){
         fadeToPage(Page::SearchPageIndex);
+    });
+
+    //نمایش نظرات کتاب در صورت کلیک روی نظرات در صفحه اطلاعات کتاب
+    connect(BookDetailsPage, &BookDetailsWidget::goToComments, this, [this](int bookID){
+        CommentsPage->loadComments(bookID);
+        fadeToPage(Page::CommentsPageIndex);
     });
 }
 

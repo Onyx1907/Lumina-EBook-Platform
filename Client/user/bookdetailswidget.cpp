@@ -60,10 +60,11 @@ void BookDetailsWidget::loadBook(Book *book){
     ui->addCart_pushButton->hide();
     ui->removeCart_pushButton->hide();
     ui->study_pushButton->hide();
-    ui->comments->hide();
-    ui->comments_pushButton->hide();
+    // ui->comments->hide(); //موقت
+    // ui->comments_pushButton->hide(); //موقت
     ui->saveBook_pushButton->hide();
     ui->savedBook_pushButton->hide();
+    ui->disconnected->hide(); // موقت
 
     if(ClientNetworkManager::instance().connectToServer()){
         QJsonObject data;
@@ -201,5 +202,11 @@ void BookDetailsWidget::on_removeCart_pushButton_clicked()
             ui->error_label->setText("");
         });
     }
+}
+
+
+void BookDetailsWidget::on_comments_pushButton_clicked()
+{
+    emit goToComments(cur_book->getId());
 }
 

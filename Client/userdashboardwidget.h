@@ -9,6 +9,7 @@
 #include "bookdetailswidget.h"
 #include "searchwidget.h"
 #include "resultwidget.h"
+#include "commentswidget.h"
 
 
 namespace Ui {
@@ -43,6 +44,7 @@ private:
     BookDetailsWidget* BookDetailsPage;
     SearchWidget* SearchPage;
     ResultWidget* ResultPage;
+    CommentsWidget* CommentsPage;
 
     int previousPageIndex = 0;
 
@@ -54,7 +56,8 @@ private:
         ProfilePageIndex = 2,
         BookDetailsPageIndex = 3,
         SearchPageIndex = 4,
-        ResultPageIndex = 5
+        ResultPageIndex = 5,
+        CommentsPageIndex = 6
     };
 
 

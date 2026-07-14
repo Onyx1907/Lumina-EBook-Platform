@@ -9,14 +9,13 @@ CommentItemWidget::CommentItemWidget(const Comment& comment, int currentUserId, 
 {
     ui->setupUi(this);
 
-    // ۱. لود کردن دیتای کامنت روی المان‌ها با اسامی جدیدی که گذاشتی
     ui->username_label->setText("@" + m_comment.getUsername());
     ui->text_label->setText(m_comment.getText());
     ui->date_label->setText(m_comment.formattedDate());
 
     ui->rating_label->setText(QString("⭐ %1 / 5").arg(m_comment.getRating()));
 
-    // ۲. بررسی مالکیت کامنت برای نمایش یا مخفی کردن دکمه‌ها
+
     if (m_comment.getUserID() == currentUserId) {
         ui->edit_pushButton->show();
         ui->delete_pushButton->show();
@@ -25,14 +24,14 @@ CommentItemWidget::CommentItemWidget(const Comment& comment, int currentUserId, 
         ui->delete_pushButton->hide();
     }
 
-    // ۳. اتصال دکمه‌های جدید به سیگنال‌ها برای ارسال به صفحه اصلی
+
     connect(ui->delete_pushButton, &QPushButton::clicked, this, [this]() {
         QMessageBox msgBox(this);
         msgBox.setWindowTitle("حذف نظر");
         msgBox.setText("آیا از حذف این نظر مطمئن هستید؟");
         msgBox.setIcon(QMessageBox::Question);
 
-        // اضافه کردن دکمه‌های استاندارد به زبان فارسی
+
         QPushButton *yesButton = msgBox.addButton("بله، حذف شود", QMessageBox::YesRole);
         QPushButton *noButton = msgBox.addButton("خیر", QMessageBox::NoRole);
         msgBox.setDefaultButton(noButton);
@@ -69,7 +68,6 @@ CommentItemWidget::CommentItemWidget(const Comment& comment, int currentUserId, 
 
         msgBox.exec();
 
-        // بررسی اینکه کاربر کدام دکمه را کلیک کرده است
         if (msgBox.clickedButton() == yesButton) {
             emit deleteRequested(m_comment.getId());
         }
