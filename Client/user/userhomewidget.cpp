@@ -7,8 +7,8 @@
 #include <QListWidgetItem>
 #include <QJsonArray>
 
-UserHomeWidget::UserHomeWidget(QString cur_username, QWidget *parent)
-    : QWidget(parent), username(cur_username)
+UserHomeWidget::UserHomeWidget(int ID, QWidget *parent)
+    : QWidget(parent), userID(ID)
     , ui(new Ui::UserHomeWidget)
 {
     ui->setupUi(this);
@@ -23,22 +23,22 @@ void UserHomeWidget::showEvent(QShowEvent *event) {
     QWidget::showEvent(event);
 
     QJsonObject data;
-    data["username"] = username;
-
+    data["user_id"] = userID;
+    //بخش اصلی که برای تست موقتا کامنت کردم
     QJsonObject emptyData;
 
-    if(ClientNetworkManager::instance().connectToServer()){
+    // if(ClientNetworkManager::instance().connectToServer()){
 
-        ClientNetworkManager::instance().sendRequest("GET_RECOMMENDED_BOOKS", data);
+    //     ClientNetworkManager::instance().sendRequest("GET_RECOMMENDED_BOOKS", data);
 
-        ClientNetworkManager::instance().sendRequest("GET_POPULAR_BOOKS", emptyData);
-        ClientNetworkManager::instance().sendRequest("GET_NEW_BOOKS", emptyData);
-        ClientNetworkManager::instance().sendRequest("GET_BESTSELLERS", emptyData);
-        ClientNetworkManager::instance().sendRequest("GET_FREE_BOOKS", emptyData);
-    }
-    else{
-        //نمایش صفحه نمایش خطای برقراری اتصال
-    }
+    //     ClientNetworkManager::instance().sendRequest("GET_POPULAR_BOOKS", emptyData);
+    //     ClientNetworkManager::instance().sendRequest("GET_NEW_BOOKS", emptyData);
+    //     ClientNetworkManager::instance().sendRequest("GET_BESTSELLERS", emptyData);
+    //     ClientNetworkManager::instance().sendRequest("GET_FREE_BOOKS", emptyData);
+    // }
+    // else{
+    //     //نمایش صفحه نمایش خطای برقراری اتصال
+    // }
 
     //*************تست خارج از سرور*************
     qDebug() << "--- حالت تست گرافیک با دیتای فیک ---";
@@ -78,7 +78,7 @@ void UserHomeWidget::showEvent(QShowEvent *event) {
     parseAndFillList(mockData, ui->new_listWidget);
 }
 
-void UserHomeWidget::processNetworkData(const QString& action, const QJsonObject& data){
+void UserHomeWidget::processNetworkData(const QString& action, const QJsonObject& data){    
     if (action == "GET_RECOMMENDED_BOOKS_RESPONSE") {
         parseAndFillList(data, ui->recommended_listWidget);
     }
@@ -109,8 +109,8 @@ void UserHomeWidget::parseAndFillList(const QJsonObject &data, QListWidget *targ
         QJsonObject bookObj = booksArray[i].toObject();
 
         Book book(bookObj["id"].toInt(), bookObj["title"].toString(),
-                bookObj["author"].toString(), 1,
-                stringToGenre(bookObj["genre"].toString()), bookObj["cover_base64"].toString(),
+                bookObj["author"].toString(), "",
+                stringToGenre(bookObj["genre"].toString()), bookObj["cover_image_path"].toString(),
                 bookObj["price"].toDouble(), bookObj["discount_percentage"].toDouble());
 
         // ساخت کارت و تزریق به لیست
@@ -120,6 +120,9 @@ void UserHomeWidget::parseAndFillList(const QJsonObject &data, QListWidget *targ
         item->setSizeHint(card->sizeHint());
         targetList->setItemWidget(item, card);
         //کانکت به کلیک روی کتاب
+        connect(card, &BookCard::clicked, this, [this](Book* bookptr){
+           emit bookSelected(bookptr);
+        });
     }
 //تست و عیب یابی
     // QListWidgetItem *testItem = new QListWidgetItem(targetList);

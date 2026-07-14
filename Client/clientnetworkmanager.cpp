@@ -50,6 +50,8 @@ void ClientNetworkManager::sendRequest(const QString& action,
         packet["data"] = data;
     }
 
+    qDebug() << packet;
+
     QJsonDocument doc(packet);
     QByteArray bytes = doc.toJson(QJsonDocument::Compact) + "\n";
 

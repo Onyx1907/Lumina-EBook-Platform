@@ -20,12 +20,19 @@ ProfileWidget::ProfileWidget(RegularUser *cur_user, QWidget *parent)
 }
 
 void ProfileWidget::loadProfile(){
+    ui->confirmPass_lineEdit->setText("");
+    ui->email_lineEdit->setText("");
+    ui->name_lineEdit->setText("");
+    ui->newPass_lineEdit->setText("");
+    ui->pass_lineEdit->setText("");
+    ui->username_lineEdit->setText("");
+
     ui->username_label->setText(user->getUsername());
 
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
-        data["username"] = user->getUsername();
+        data["user_id"] = user->getId();
 
         ClientNetworkManager::instance().sendRequest("GET_PROFILE", data);
     }
@@ -56,6 +63,8 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
         if (data.value("status").toString() == "SUCCESS") {
 
             QJsonObject profileObj = data.value("profile").toObject();
+
+            qDebug() << profileObj;
 
             ui->name_label->setText(profileObj.value("name").toString());
             ui->email_label->setText(profileObj.value("email").toString());
@@ -101,7 +110,9 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
         if (data.value("status").toString() == "SUCCESS") {
             ui->prof_error_label->setText("");
             ui->prof_success_label->setText(data.value("message").toString());
-            user->setUsername(new_username);
+            if(!new_username.isEmpty()){
+                user->setUsername(new_username);
+            }
             loadProfile();
             QTimer::singleShot(3000, this, [this](){
                 ui->prof_success_label->setText("");
@@ -115,6 +126,10 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
                 ui->prof_error_label->setText("");
             });
         }
+
+        ui->email_lineEdit->setText("");
+        ui->name_lineEdit->setText("");
+        ui->username_lineEdit->setText("");
     }
 
     if (action == "CHANGE_PASSWORD_RESPONSE"){
@@ -135,6 +150,10 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
                 ui->pass_error_label->setText("");
             });
         }
+
+        ui->confirmPass_lineEdit->setText("");
+        ui->newPass_lineEdit->setText("");
+        ui->pass_lineEdit->setText("");
     }
 }
 
@@ -170,7 +189,9 @@ void ProfileWidget::on_submitProfile_pushButton_clicked()
         data["name"] = name;
         data["email"] = email;
 
-        ClientNetworkManager::instance().sendRequest("UPDATE_PROFILE", data, true);
+        qDebug() << data;
+
+        ClientNetworkManager::instance().sendRequest("UPDATE_PROFILE", data);
         ui->submitProfile_pushButton->setEnabled(false);
     }
     else{
@@ -208,7 +229,7 @@ void ProfileWidget::on_submitPass_pushButton_clicked()
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
-        data["username"] = user->getUsername();
+        data["user_id"] = user->getId();
         data["old_password"] = cur_pass;
         data["new_password"] = new_pass;
 
@@ -221,5 +242,6 @@ void ProfileWidget::on_submitPass_pushButton_clicked()
             ui->pass_error_label->setText("");
         });
     }
+
 }
 

@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SearchWidget</class>
+ <widget class="QWidget" name="SearchWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QLineEdit" name="title_lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>40</y>
+     <width>521</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 6px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+   </property>
+   <property name="placeholderText">
+    <string>عنوان کتاب</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="author_lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>90</y>
+     <width>521</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 6px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+   </property>
+   <property name="placeholderText">
+    <string>نویسنده</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="publisher_lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>140</y>
+     <width>521</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 6px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+   </property>
+   <property name="placeholderText">
+    <string>ناشر</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="search_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>60</y>
+     <width>121</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">        QPushButton {
+           background-color: transparent;
+           border: 2px solid transparent;
+           border-radius: 10px;
+        }
+
+        /* ۲. حالت Hover: هاله طلایی ملایم و لوکس دور کارت */
+        QPushButton:hover {
+           background-color: rgba(218, 165, 32, 0.07); /* ۷ درصد طلایی متالیک (Goldenrod) روی عکس کتاب */
+         border: 2px solid rgba(184, 134, 11, 0.6); /* حاشیه طلایی تیره نیمه‌شفاف دور کارت */
+        }
+
+ 
+        QPushButton:pressed {
+           background-color: rgba(139, 69, 19, 0.15); /* هاله قهوه‌ای شکلاتی ملایم برای حس کلیک */
+           border: 2px solid #B8860B; /* حاشیه طلایی صلب و مشخص */
+        }</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/user/search_logo.png</normaloff>:/resources/user/search_logo.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>120</width>
+     <height>120</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="educational_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>240</y>
+     <width>241</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    background-color: #F8F3ED;
+    color: #7A3E2F;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #F1E7DB;
+    border: 2px solid #B8956A;
+    color: #6A2F22;
+}
+
+QPushButton:pressed {
+    background-color: #E6D8C8;
+    border: 2px solid #A67C52;
+    color: #552017;
+}
+
+QPushButton:disabled {
+    background-color: #EEE7DE;
+    color: #B8A89A;
+    border: 2px solid #D8C9B8;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>علمی و تحصیلی</string>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/educational_genre.svg</normaloff>:/resources/genres/educational_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>90</width>
+     <height>90</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="biography_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>240</y>
+     <width>241</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    background-color: #F8F3ED;
+    color: #7A3E2F;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #F1E7DB;
+    border: 2px solid #B8956A;
+    color: #6A2F22;
+}
+
+QPushButton:pressed {
+    background-color: #E6D8C8;
+    border: 2px solid #A67C52;
+    color: #552017;
+}
+
+QPushButton:disabled {
+    background-color: #EEE7DE;
+    color: #B8A89A;
+    border: 2px solid #D8C9B8;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>زندگینامه              </string>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/biography_genre.svg</normaloff>:/resources/genres/biography_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>90</width>
+     <height>90</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="psychology_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>340</y>
+     <width>241</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    background-color: #F8F3ED;
+    color: #7A3E2F;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #F1E7DB;
+    border: 2px solid #B8956A;
+    color: #6A2F22;
+}
+
+QPushButton:pressed {
+    background-color: #E6D8C8;
+    border: 2px solid #A67C52;
+    color: #552017;
+}
+
+QPushButton:disabled {
+    background-color: #EEE7DE;
+    color: #B8A89A;
+    border: 2px solid #D8C9B8;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>روانشناسی         </string>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/Psychology_genre.svg</normaloff>:/resources/genres/Psychology_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>86</width>
+     <height>86</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="scifi_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>340</y>
+     <width>241</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    background-color: #F8F3ED;
+    color: #7A3E2F;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #F1E7DB;
+    border: 2px solid #B8956A;
+    color: #6A2F22;
+}
+
+QPushButton:pressed {
+    background-color: #E6D8C8;
+    border: 2px solid #A67C52;
+    color: #552017;
+}
+
+QPushButton:disabled {
+    background-color: #EEE7DE;
+    color: #B8A89A;
+    border: 2px solid #D8C9B8;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>علمی تخیلی         </string>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/scifi_genre.svg</normaloff>:/resources/genres/scifi_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>92</width>
+     <height>92</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="history_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>440</y>
+     <width>241</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    background-color: #F8F3ED;
+    color: #7A3E2F;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #F1E7DB;
+    border: 2px solid #B8956A;
+    color: #6A2F22;
+}
+
+QPushButton:pressed {
+    background-color: #E6D8C8;
+    border: 2px solid #A67C52;
+    color: #552017;
+}
+
+QPushButton:disabled {
+    background-color: #EEE7DE;
+    color: #B8A89A;
+    border: 2px solid #D8C9B8;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>تاریخی                 </string>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/history_genre.svg</normaloff>:/resources/genres/history_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>92</width>
+     <height>92</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ficition_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>440</y>
+     <width>241</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    background-color: #F8F3ED;
+    color: #7A3E2F;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #F1E7DB;
+    border: 2px solid #B8956A;
+    color: #6A2F22;
+}
+
+QPushButton:pressed {
+    background-color: #E6D8C8;
+    border: 2px solid #A67C52;
+    color: #552017;
+}
+
+QPushButton:disabled {
+    background-color: #EEE7DE;
+    color: #B8A89A;
+    border: 2px solid #D8C9B8;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>ادبیات داستانی</string>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/resources/genres/ficition_genre.svg</normaloff>:/resources/genres/ficition_genre.svg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>90</width>
+     <height>90</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="error_label">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>190</y>
+     <width>641</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: #a63a3a;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

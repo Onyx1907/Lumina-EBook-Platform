@@ -18,5 +18,14 @@
         <file>resources/default_book.png</file>
         <file>resources/user/profile_logo.png</file>
         <file>resources/user/profile_edit.png</file>
+        <file>resources/user/author_logo.png</file>
+        <file>resources/user/star.svg</file>
+        <file>resources/back_icon.svg</file>
+        <file>resources/user/save_logo.png</file>
+        <file>resources/user/comments_logo.png</file>
+        <file>resources/disconnected.png</file>
+        <file>resources/user/search_logo.png</file>
+        <file>resources/edit_icon.svg</file>
+        <file>resources/delete_icon.png</file>
     </qresource>
 </RCC>

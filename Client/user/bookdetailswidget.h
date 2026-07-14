@@ -2,6 +2,7 @@
 #define BOOKDETAILSWIDGET_H
 
 #include <QWidget>
+#include "book.h"
 
 namespace Ui {
 class BookDetailsWidget;
@@ -12,11 +13,27 @@ class BookDetailsWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit BookDetailsWidget(QWidget *parent = nullptr);
+    explicit BookDetailsWidget(int ID, QWidget *parent = nullptr);
+    void loadBook(Book *book);
     ~BookDetailsWidget();
+
+    Book* cur_book = nullptr;
+
+signals:
+    void backPrevious();
+
+private slots:
+    void on_back_pushButton_clicked();
+
+    void processNetworkData(const QString& action, const QJsonObject& data);
+
+    void on_addCart_pushButton_clicked();
+
+    void on_removeCart_pushButton_clicked();
 
 private:
     Ui::BookDetailsWidget *ui;
+    int userID;
 };
 
 #endif // BOOKDETAILSWIDGET_H

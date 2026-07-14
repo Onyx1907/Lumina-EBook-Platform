@@ -6,6 +6,9 @@
 #include "genreselectionwidget.h"
 #include "userhomewidget.h"
 #include "profilewidget.h"
+#include "bookdetailswidget.h"
+#include "searchwidget.h"
+#include "resultwidget.h"
 
 
 namespace Ui {
@@ -28,6 +31,8 @@ private slots:
 
     void on_profile_pushButton_clicked();
 
+    void on_search_pushButton_clicked();
+
 private:
     Ui::UserDashboardWidget *ui;
     RegularUser *user;
@@ -35,14 +40,25 @@ private:
     GenreSelectionWidget  *GenreSelectionPage;
     UserHomeWidget *UserHomePage;
     ProfileWidget* ProfilePage;
+    BookDetailsWidget* BookDetailsPage;
+    SearchWidget* SearchPage;
+    ResultWidget* ResultPage;
+
+    int previousPageIndex = 0;
 
     void fadeToPage(int pageIndex);
 
     enum Page{
         GenreSelectionPageIndex = 0,
         UserHomePageIndex = 1,
-        ProfilePageIndex = 2
+        ProfilePageIndex = 2,
+        BookDetailsPageIndex = 3,
+        SearchPageIndex = 4,
+        ResultPageIndex = 5
     };
+
+
+    void testSearchLayout();
 
 };
 

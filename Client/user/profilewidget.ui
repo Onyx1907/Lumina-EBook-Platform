@@ -756,10 +756,10 @@ background: transparent;
      <widget class="QLabel" name="pass_success_label">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>510</y>
-        <width>251</width>
-        <height>21</height>
+        <x>0</x>
+        <y>500</y>
+        <width>331</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -773,15 +773,18 @@ background: transparent;
       </property>
       <property name="text">
        <string/>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QLabel" name="prof_success_label">
       <property name="geometry">
        <rect>
-        <x>420</x>
-        <y>510</y>
-        <width>251</width>
-        <height>21</height>
+        <x>340</x>
+        <y>500</y>
+        <width>391</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -795,6 +798,9 @@ background: transparent;
       </property>
       <property name="text">
        <string/>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>

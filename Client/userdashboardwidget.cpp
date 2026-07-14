@@ -23,12 +23,18 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     this->setLayout(finalLayout);
 
     GenreSelectionPage = new GenreSelectionWidget(user->getUsername(), this);
-    UserHomePage = new UserHomeWidget(user->getUsername(), this);
+    UserHomePage = new UserHomeWidget(user->getId(), this);
     ProfilePage = new ProfileWidget(user, this);
+    BookDetailsPage = new BookDetailsWidget(user->getId(), this);
+    SearchPage = new SearchWidget(this);
+    ResultPage = new ResultWidget(this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
     ui->stackedWidget->addWidget(ProfilePage);
+    ui->stackedWidget->addWidget(BookDetailsPage);
+    ui->stackedWidget->addWidget(SearchPage);
+    ui->stackedWidget->addWidget(ResultPage);
 
     if(is_first_login){
         ui->stackedWidget->setCurrentIndex(Page::GenreSelectionPageIndex);
@@ -55,6 +61,33 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     connect(ProfilePage, &ProfileWidget::goToGenreSelectionPage, this, [this](){
         fadeToPage(Page::GenreSelectionPageIndex);
         GenreSelectionPage->onGeresChangeClicked();
+    });
+
+    connect(UserHomePage, &UserHomeWidget::bookSelected, this, [this]( Book* book){
+        previousPageIndex = UserHomePageIndex;
+        BookDetailsPage->loadBook(book);
+        fadeToPage(BookDetailsPageIndex);
+    });
+
+    connect(BookDetailsPage, &BookDetailsWidget::backPrevious, this, [this](){
+        fadeToPage(previousPageIndex);
+    });
+
+    connect(SearchPage, &SearchWidget::searchCompleted, this, [this]
+            (const QVector<Book>& results){
+        ResultPage->fillResults(results);
+
+        fadeToPage(Page::ResultPageIndex);
+    });
+
+    connect(ResultPage, &ResultWidget::bookSelected, this, [this](Book* bookptr){
+        previousPageIndex = ResultPageIndex;
+        BookDetailsPage->loadBook(bookptr);
+        fadeToPage(BookDetailsPageIndex);
+    });
+
+    connect(ResultPage, &ResultWidget::backPrevious, this, [this](){
+        fadeToPage(Page::SearchPageIndex);
     });
 }
 
@@ -125,3 +158,84 @@ void UserDashboardWidget::on_profile_pushButton_clicked()
     fadeToPage(Page::ProfilePageIndex);
 }
 
+
+void UserDashboardWidget::on_search_pushButton_clicked()
+{
+    fadeToPage(Page::SearchPageIndex);
+
+    //تست
+    testSearchLayout();
+}
+
+
+//تست گرافیک صفحه نتایج
+
+void UserDashboardWidget::testSearchLayout() {
+    QVector<Book> fakeBooks;
+
+    // ۱. کتاب اول: ژانر تخیلی (Fiction) با ۱۰ درصد تخفیف
+    fakeBooks.append(Book(
+        10,
+        "شاهنامه فردوسی",
+        "ابوالقاسم فردوسی",
+        "انتشارات طوس",
+        BookGenre::Fiction,
+        ":/images/covers/shahnameh.jpg",
+        250000.0,
+        10.0
+        ));
+
+    // ۲. کتاب دوم: ژانر تاریخ (History) بدون تخفیف
+    fakeBooks.append(Book(
+        11,
+        "تاریخ بیهقی",
+        "ابوالفضل بیهقی",
+        "انتشارات علمی و فرهنگی",
+        BookGenre::History,
+        ":/images/covers/bayhaqi.jpg",
+        180000.0,
+        0.0
+        ));
+
+    // ۳. کتاب سوم: علمی تخیلی (SciFi) با ۳۰ درصد تخفیف
+    fakeBooks.append(Book(
+        12,
+        "رؤیای مریخ",
+        "آرتور سی کلارک",
+        "انتشارات نگاه",
+        BookGenre::SciFi,
+        ":/images/covers/marsexpress.jpg",
+        150000.0,
+        30.0
+        ));
+
+    // ۴. کتاب چهارم: روانشناسی (Psychology)
+    fakeBooks.append(Book(
+        13,
+        "انسان در جستجوی معنا",
+        "ویکتور فرانکل",
+        "انتشارات چشمه",
+        BookGenre::Psychology,
+        ":/images/covers/meaning.jpg",
+        950000.0,
+        0.0
+        ));
+
+    // ۵. کتاب پنجم: آموزشی (Educational)
+    fakeBooks.append(Book(
+        14,
+        "تفکر سریع و کند",
+        "دانیال کانمن",
+        "انتشارات امیرکبیر",
+        BookGenre::Educational,
+        ":/images/covers/thinking.jpg",
+        450000.0,
+        15.0
+        ));
+
+    // تزریق مستقیم وکتور فیک به صفحه ریزالت
+    ResultPage->fillResults(fakeBooks);
+
+    // انتقال موقت به صفحه ریزالت برای تست چشمی ظاهر نسکافه‌ای شیشه‌ای
+    fadeToPage(Page::ResultPageIndex);
+}

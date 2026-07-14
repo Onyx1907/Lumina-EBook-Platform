@@ -24,7 +24,6 @@ set(PROJECT_SOURCES
         resources.qrc
 )
 
-# ۳. نام تارگت رو از Client به LuminaClient تغییر دادم
 qt_add_executable(LuminaClient
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
@@ -37,9 +36,15 @@ qt_add_executable(LuminaClient
     userdashboardwidget.h userdashboardwidget.cpp userdashboardwidget.ui
     user/genreselectionwidget.h user/genreselectionwidget.cpp user/genreselectionwidget.ui
     user/userhomewidget.h user/userhomewidget.cpp user/userhomewidget.ui
-    bookcard.h bookcard.cpp bookcard.ui
+    user/bookcard.h user/bookcard.cpp user/bookcard.ui
     user/profilewidget.h user/profilewidget.cpp user/profilewidget.ui
     user/bookdetailswidget.h user/bookdetailswidget.cpp user/bookdetailswidget.ui
+    user/searchwidget.h user/searchwidget.cpp user/searchwidget.ui
+    bookinfocard.h bookinfocard.cpp bookinfocard.ui
+    user/resultwidget.h user/resultwidget.cpp user/resultwidget.ui
+    user/commentitemwidget.h user/commentitemwidget.cpp user/commentitemwidget.ui
+    user/commentswidget.h user/commentswidget.cpp user/commentswidget.ui
+
 
 
 

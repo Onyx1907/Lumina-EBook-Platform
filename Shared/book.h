@@ -9,7 +9,7 @@ private:
     int id;
     QString title;
     QString author;
-    int publisherId;
+    QString publisher;
     BookGenre genre;
     QString description;
     double price;
@@ -18,7 +18,7 @@ private:
     QString coverImagePath;
 
 public:
-    Book(int id, QString title, QString author, int publisherId, BookGenre genre,
+    Book(int id, QString title, QString author, QString publisher, BookGenre genre,
          QString coverImagePath, double price, double discountPercentage = 0.0);
 
     int getId() const;
@@ -26,6 +26,9 @@ public:
     QString getAuthor() const;
     BookGenre getGenre() const;
     double getFinalPrice() const;
+    QString getPublisher() const;
+    double getPrice() const;
+    double getDiscountPercentage() const;
 
     QString getCoverImagePath() const;
 };

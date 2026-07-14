@@ -18,6 +18,9 @@ public:
     explicit BookCard(Book book, QWidget *parent = nullptr);
     ~BookCard();
 
+signals:
+    void clicked(Book* bookPtr);
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
