@@ -141,7 +141,8 @@ public:
     bool addBook(const QJsonObject& bookData);
     bool updateBook(int bookId, const QJsonObject& bookData);
     bool setBookDiscount(int bookId, int publisherId, double percent);
-
+    bool setBookActiveState(int bookId, int publisherId, bool active);
+    QList<QJsonObject> getPublisherBooks(int publisherId);
 
 
 
