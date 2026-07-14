@@ -135,6 +135,13 @@ public:
     bool updatePublisherProfile(int publisherId, const QJsonObject& info);
 
 
+    //************************************************پنل ناشر ( ماژول 2 )*******************************************************
+
+
+
+
+
+
 
 
 

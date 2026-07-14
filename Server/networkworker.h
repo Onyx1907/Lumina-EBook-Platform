@@ -126,6 +126,12 @@ private:
     void handleUpdatePublisherProfile(QTcpSocket* socket, const QJsonObject& data);
 
 
+    //************************************************پنل ناشر ( ماژول 2 )*******************************************************
+
+
+
+
+
 
 
 

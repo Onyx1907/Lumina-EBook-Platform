@@ -1473,6 +1473,7 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject&
 }
 
 
+//************************************************پنل ناشر ( ماژول 2 )*******************************************************
 
 
 
