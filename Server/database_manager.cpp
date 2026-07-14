@@ -782,7 +782,7 @@ bool DatabaseManager::addComment(int bookId, int userId,
 
     if (!qCheck.exec() || !qCheck.next()) {
         qDebug() << "Comment blocked: Book is inactive/deleted OR user is blocked/deleted.";
-        return false; // اجازه ثبت نظر داده نمی‌شود
+        return false; // اجازه ثبت نظر داده نمیشود
     }
 
     const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
@@ -1475,7 +1475,93 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject&
 
 //************************************************پنل ناشر ( ماژول 2 )*******************************************************
 
+// افزودن کتاب
+bool DatabaseManager::addBook(const QJsonObject& bookData)
+{
+    QSqlQuery q(db);
+    q.prepare("INSERT INTO books (title, author, genre, description, price, discountPercent, discountAmount, coverImagePath, pdfPath, publisher_id, isActive, is_deleted) "
+              "VALUES (:title, :author, :genre, :desc, :price, :discP, :discA, :cover, :pdf, :pub_id, 1, 0)");
 
+    double price = bookData.value("price").toDouble();
+    double discP = bookData.value("discountPercent").toDouble();
+    double discA = (price * discP) / 100.0; // محاسبه خودکار مبلغ تخفیف
+
+    q.bindValue(":title", bookData.value("title").toString());
+    q.bindValue(":author", bookData.value("author").toString());
+    q.bindValue(":genre", bookData.value("genre").toString());
+    q.bindValue(":desc", bookData.value("description").toString());
+    q.bindValue(":price", price);
+    q.bindValue(":discP", discP);
+    q.bindValue(":discA", discA);
+
+    // اینجا مسیرهای جدید کپی شده روی هارد سرور (server_storage/...) ذخیره می‌شوند
+    q.bindValue(":cover", bookData.value("coverImagePath").toString());
+    q.bindValue(":pdf", bookData.value("pdfPath").toString());
+    q.bindValue(":pub_id", bookData.value("publisher_id").toInt());
+
+    if (!q.exec()) {
+        qDebug() << "Database Error (addBook failed):" << q.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+// ویرایش یک کتاب
+bool DatabaseManager::updateBook(int bookId, const QJsonObject& bookData) {
+    QSqlQuery q(db);
+
+    q.prepare("UPDATE books SET title = :title, author = :author, genre = :genre, "
+              "description = :desc, price = :price, discountPercent = :discP, "
+              "discountAmount = :discA, coverImagePath = :cover, pdfPath = :pdf "
+              "WHERE id = :id AND is_deleted = 0");
+
+    double price = bookData.value("price").toDouble();
+    double discP = bookData.value("discountPercent").toDouble();
+    double discA = (price * discP) / 100.0; // محاسبه خودکار مبلغ تخفیف جدید
+
+    q.bindValue(":title", bookData.value("title").toString());
+    q.bindValue(":author", bookData.value("author").toString());
+    q.bindValue(":genre", bookData.value("genre").toString());
+    q.bindValue(":desc", bookData.value("description").toString());
+    q.bindValue(":price", price);
+    q.bindValue(":discP", discP);
+    q.bindValue(":discA", discA);
+    q.bindValue(":cover", bookData.value("coverImagePath").toString());
+    q.bindValue(":pdf", bookData.value("pdfPath").toString());
+    q.bindValue(":id", bookId);
+
+    if (!q.exec()) {
+        qDebug() << "Database Error (updateBook failed):" << q.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+// اعمال تخفیف (با محاسبه خودکار بر اساس قیمت موجود در دیتابیس)
+bool DatabaseManager::setBookDiscount(int bookId, int publisherId, double percent) {
+    // ابتدا قیمت کتاب را بیرون می‌کشیم تا بر اساس آن تخفیف عددی را حساب کنیم
+    QSqlQuery qPrice(db);
+    qPrice.prepare("SELECT price FROM books WHERE id = :id AND publisher_id = :publisher AND is_deleted = 0");
+    qPrice.bindValue(":id", bookId);
+    qPrice.bindValue(":publisher", publisherId);
+
+    if (!qPrice.exec() || !qPrice.next())
+        return false;
+
+    double price = qPrice.value("price").toDouble();
+    double amount = (price * percent) / 100.0; // محاسبه خودکار مبلغ تخفیف
+
+    QSqlQuery q(db);
+    q.prepare("UPDATE books SET discountPercent = :p, discountAmount = :a "
+              "WHERE id = :id AND publisher_id = :publisher AND is_deleted = 0");
+
+    q.bindValue(":p", percent);
+    q.bindValue(":a", amount);
+    q.bindValue(":id", bookId);
+    q.bindValue(":publisher", publisherId);
+
+    return q.exec();
+}
 
 
 

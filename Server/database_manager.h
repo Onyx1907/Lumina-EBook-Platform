@@ -138,6 +138,9 @@ public:
     //************************************************پنل ناشر ( ماژول 2 )*******************************************************
 
 
+    bool addBook(const QJsonObject& bookData);
+    bool updateBook(int bookId, const QJsonObject& bookData);
+    bool setBookDiscount(int bookId, int publisherId, double percent);
 
 
 
