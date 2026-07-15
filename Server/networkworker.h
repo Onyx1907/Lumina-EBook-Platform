@@ -130,7 +130,9 @@ private:
 
     void handleAddBook(QTcpSocket* socket, const QJsonObject& data);
     void handleUpdateBook(QTcpSocket* socket, const QJsonObject& data);
-
+    void handleSetBookDiscount(QTcpSocket* socket, const QJsonObject& data);
+    void handleSetBookActiveState(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetPublisherBooks(QTcpSocket* socket, const QJsonObject& data);
 
 
 
