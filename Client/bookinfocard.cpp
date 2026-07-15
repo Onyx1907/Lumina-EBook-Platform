@@ -60,6 +60,9 @@ void BookInfoCard::resizeEvent(QResizeEvent *event){
     if(book_pushbutton){
         book_pushbutton->setGeometry(0, 0, this->width(), this->height());
         book_pushbutton->raise();
+
+        ui->delete_pushButton->raise();
+        ui->edit_pushButton->raise();
     }
 }
 
@@ -74,6 +77,9 @@ void BookInfoCard::setCardMode(CardMode mode){
     //     ui->edit_pushButton->show();
     //     ui->delete_pushButton->show();
     // } //موقت
+
+    ui->delete_pushButton->raise();
+    ui->edit_pushButton->raise();
 }
 
 BookInfoCard::~BookInfoCard()

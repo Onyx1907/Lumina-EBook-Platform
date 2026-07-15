@@ -109,6 +109,17 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     connect(CommentsPage, &CommentsWidget::backToBookDatailPage, this, [this](){
         fadeToPage(Page::BookDetailsPageIndex);
     });
+
+    //کلیک روی کتاب های داخل سبد خرید
+    connect(CartPage, &CartWidget::bookSelected, this, [this](Book* bookptr){
+        previousPageIndex = CartPageIndex;
+        BookDetailsPage->loadBook(bookptr);
+        fadeToPage(BookDetailsPageIndex);
+    });
+
+    connect(ResultPage, &ResultWidget::backPrevious, this, [this](){
+        fadeToPage(Page::CartPageIndex);
+    });
 }
 
 

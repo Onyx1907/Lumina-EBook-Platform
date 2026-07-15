@@ -27,6 +27,8 @@ void ResultWidget::fillResults(const QVector<Book>& booksList){
         QListWidgetItem *item = new QListWidgetItem(ui->listWidget);
         BookInfoCard *card = new BookInfoCard(book, this);
 
+        card->setCardMode();
+
         item->setSizeHint(card->sizeHint());
         ui->listWidget->setItemWidget(item, card);
 

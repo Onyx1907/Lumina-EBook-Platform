@@ -124,13 +124,13 @@ background: transparent;
     <widget class="QFrame" name="invoice_frame">
      <property name="minimumSize">
       <size>
-       <width>200</width>
-       <height>530</height>
+       <width>180</width>
+       <height>500</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>530</width>
+       <width>200</width>
        <height>16777215</height>
       </size>
      </property>
@@ -224,7 +224,7 @@ QPushButton#pay_pushButton:pressed {
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="QLabel" name="title_label">
         <property name="text">
@@ -236,18 +236,18 @@ QPushButton#pay_pushButton:pressed {
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="count_Layout">
-        <item>
-         <widget class="QLabel" name="count_label">
-          <property name="text">
-           <string>5</string>
-          </property>
-         </widget>
-        </item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
            <string>تعداد کتاب ها:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="count_label">
+          <property name="text">
+           <string>5</string>
           </property>
          </widget>
         </item>

@@ -2,6 +2,7 @@
 #define CARTWIDGET_H
 
 #include <QWidget>
+#include "book.h"
 
 namespace Ui {
 class CartWidget;
@@ -17,6 +18,9 @@ public:
 
 protected:
     void showEvent(QShowEvent *event) override;
+
+signals:
+    void bookSelected(Book* bookptr);
 
 private slots:
 
