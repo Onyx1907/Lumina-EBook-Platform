@@ -867,7 +867,149 @@
       "message": ".خطا در ویرایش اطلاعات. این نام کاربری، نام یا ایمیل قبلاً توسط شخص دیگری انتخاب شده یا ناشر یافت نشد"
     }
   }
+,
+  "42_ADD_BOOK": {
+    "client_request": {
+      "action": "ADD_BOOK",
+      "title": "شاهنامه فردوسی",
+      "author": "فردوسی",
+      "genre": "حماسی",
+      "description": "نسخه کامل شاهنامه به تصحیح مسکو",
+      "price": 250000.0,
+      "discountPercent": 10.0,
+      "publisher_id": 5,
+      "publisher_pdf_path": "C:/Users/Publisher/Documents/shahnameh.pdf",
+      "publisher_cover_path": "C:/Users/Publisher/Documents/shahnameh_cover.jpg"
+    },
+    "server_response_success": {
+      "action": "ADD_BOOK_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب با موفقیت کپی و در پایگاه داده ثبت شد"
+    },
+    "server_response_failed_validation": {
+      "action": "ADD_BOOK_RESPONSE",
+      "status": "FAILED",
+      "message": ".اطلاعات اجباری کتاب یا مسیر فایل پی دی اف ارسال نشده است"
+    },
+    "server_response_failed_pdf_copy": {
+      "action": "ADD_BOOK_RESPONSE",
+      "status": "FAILED",
+      "message": ".امکان کپی و ثبت فایل پی دی اف روی هارد دیسک سرور وجود ندارد"
+    },
+    "server_response_failed_cover_copy": {
+      "action": "ADD_BOOK_RESPONSE",
+      "status": "FAILED",
+      "message": ".امکان کپی و ثبت عکس کاور روی هارد دیسک سرور وجود ندارد"
+    },
+    "server_response_failed_db": {
+      "action": "ADD_BOOK_RESPONSE",
+      "status": "FAILED",
+      "message": ".خطا در ثبت اطلاعات کتاب در پایگاه داده"
+    }
+  },
+  "43_UPDATE_BOOK": {
+    "client_request": {
+      "action": "UPDATE_BOOK",
+      "book_id": 10,
+      "title": "شاهنامه فردوسی (ویرایش جدید)",
+      "author": "فردوسی",
+      "genre": "حماسی",
+      "description": "نسخه ویراسته جدید همراه با مقدمه",
+      "price": 300000.0,
+      "discountPercent": 15.0,
+      "pdfPath": "server_storage/1700000000000_shahnameh.pdf",
+      "coverImagePath": "server_storage/1700000000000_shahnameh_cover.jpg",
+      "publisher_pdf_path": "C:/Users/Publisher/Downloads/shahnameh_v2.pdf",
+      "publisher_cover_path": "C:/Users/Publisher/Downloads/shahnameh_v2_cover.jpg"
+    },
+    "server_response_success": {
+      "action": "UPDATE_BOOK_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب با موفقیت ویرایش و فایل های جدید جایگزین شدند"
+    },
+    "server_response_failed_invalid_id": {
+      "action": "UPDATE_BOOK_RESPONSE",
+      "status": "FAILED",
+      "message": ".شناسه کتاب نامعتبر است"
+    },
+    "server_response_failed_pdf_copy": {
+      "action": "UPDATE_BOOK_RESPONSE",
+      "status": "FAILED",
+      "message": ".امکان کپی و جایگزینی فایل پی دی اف جدید روی سرور وجود ندارد"
+    },
+    "server_response_failed_cover_copy": {
+      "action": "UPDATE_BOOK_RESPONSE",
+      "status": "FAILED",
+      "message": ".امکان کپی و جایگزینی عکس کاور جدید روی سرور وجود ندارد"
+    },
+    "server_response_failed_db": {
+      "action": "UPDATE_BOOK_RESPONSE",
+      "status": "FAILED",
+      "message": ".خطا در ثبت تغییرات کتاب در پایگاه داده سرور"
+    }
+  },
+  "44_SET_BOOK_DISCOUNT": {
+    "client_request": {
+      "action": "SET_BOOK_DISCOUNT",
+      "book_id": 10,
+      "publisher_id": 5,
+      "discountPercent": 20.0
+    },
+    "server_response_success": {
+      "action": "SET_BOOK_DISCOUNT_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".تخفیف با موفقیت اعمال و محاسبه شد"
+    },
+    "server_response_error": {
+      "action": "SET_BOOK_DISCOUNT_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در اعمال تخفیف"
+    }
+  },
+  "45_SET_BOOK_ACTIVE_STATE": {
+    "client_request": {
+      "action": "SET_BOOK_ACTIVE_STATE",
+      "book_id": 10,
+      "publisher_id": 5,
+      "active": true
+    },
+    "server_response_success": {
+      "action": "SET_BOOK_ACTIVE_STATE_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب فعال شد"  "OR"  ".کتاب غیرفعال شد"
+    },
+    "server_response_error": {
+      "action": "SET_BOOK_ACTIVE_STATE_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در تغییر وضعیت کتاب"
+    }
+  },
+  "46_GET_PUBLISHER_BOOKS": {
+    "client_request": {
+      "action": "GET_PUBLISHER_BOOKS",
+      "publisher_id": 5
+    },
+    "server_response_success": {
+      "action": "GET_PUBLISHER_BOOKS_RESPONSE",
+      "status": "SUCCESS",
+      "books": [
+        {
+          "id": 10,
+          "title": "شاهنامه فردوسی",
+          "author": "فردوسی",
+          "genre": "حماسی",
+          "description": "نسخه کامل شاهنامه به تصحیح مسکو",
+          "price": 250000.0,
+          "discountPercent": 10.0,
+          "coverImagePath": "server_storage/1700000000000_shahnameh_cover.jpg",
+          "pdfPath": "server_storage/1700000000000_shahnameh.pdf",
+          "isActive": 1
+        }
+      ]
+    }
+  }
 }
+
 
 
 
