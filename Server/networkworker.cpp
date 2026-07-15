@@ -48,15 +48,15 @@ void NetworkWorker::onReadyRead() {
 }
 
 void NetworkWorker::onDisconnected() {
-    //ابتدا به سرور خبر می‌دهیم که این سوکت دیسکانکت شد تا از مپ آنلاین‌ها حذف شود
+    //ابتدا به سرور خبر میدهیم که این سوکت دیسکانکت شد تا از مپ آنلاین ها حذف شود
     emit userDisconnected(m_socket);
 
-    //به خودِ سوکت دستور می‌دهیم که به محض پایان کارهای جاری، حافظه خودش را آزاد کند
+    //به خودِ سوکت دستور میدهیم که به محض پایان کارهای جاری، حافظه خودش را آزاد کند
     if (m_socket) {
         m_socket->deleteLater();
     }
 
-    //ترد فرعی را خاتمه می‌دهیم
+    //ترد فرعی را خاتمه میدهیم
     emit finished();
 }
 
@@ -66,7 +66,7 @@ void NetworkWorker::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
     QJsonDocument doc(obj);
     QByteArray bytes = doc.toJson(QJsonDocument::Compact);
 
-    // اضافه کردن کاراکتر \n به انتهای پیام تا کلاینت هم بتواند آن را خط‌به‌خط بخواند
+    // اضافه کردن کاراکتر \n به انتهای پیام تا کلاینت هم بتواند آن را خط به خط بخواند
     bytes.append('\n');
 
     socket->write(bytes);
@@ -151,6 +151,13 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
 
     //************************************************پنل ناشر ( ماژول 1 )*******************************************************
+
+    else if (action == "GET_PUBLISHER_PROFILE") { handleGetPublisherProfile(socket, data); return; }
+    else if (action == "UPDATE_PUBLISHER_PROFILE") { handleUpdatePublisherProfile(socket, data); return; }
+
+
+    //************************************************پنل ناشر ( ماژول 2 )*******************************************************
+
 
 
 
@@ -1115,7 +1122,48 @@ void NetworkWorker::handleUpdateLastReadPage(QTcpSocket* socket, const QJsonObje
 
 //************************************************پنل ناشر ( ماژول 1 )*******************************************************
 
+void NetworkWorker::handleGetPublisherProfile(QTcpSocket* socket, const QJsonObject& data) {
+    int publisherId = data["publisher_id"].toInt();
 
+    QJsonObject profile = m_dbManager->getPublisherProfile(publisherId);
+    QJsonObject resp;
+    resp["action"] = "GET_PUBLISHER_PROFILE_RESPONSE";
+
+    if (profile.isEmpty()) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".ناشر یافت نشد یا نقش کاربر ناشر نیست";
+    } else {
+        resp["status"] = "SUCCESS";
+        resp["profile"] = profile;
+    }
+
+    sendJson(socket, resp);
+}
+
+// مدیریت آپدیت اطلاعات ناشر
+void NetworkWorker::handleUpdatePublisherProfile(QTcpSocket* socket, const QJsonObject& data) {
+    const int publisherId = data.value("publisher_id").toInt();
+    const QJsonObject info = data.value("info").toObject();
+
+    QJsonObject resp;
+    resp["action"] = "UPDATE_PUBLISHER_PROFILE_RESPONSE";
+
+    // صدا زدن متد دیتابیس هوشمند
+    bool ok = m_dbManager->updatePublisherProfile(publisherId, info);
+
+    if (ok) {
+        resp["status"] = "SUCCESS";
+        resp["message"] = ".اطلاعات پروفایل ناشر با موفقیت به روزرسانی شد";
+    } else {
+        resp["status"] = "FAILED";
+        resp["message"] = ".خطا در ویرایش اطلاعات. این نام کاربری، نام یا ایمیل قبلاً توسط شخص دیگری انتخاب شده یا ناشر یافت نشد";
+    }
+
+    sendJson(socket, resp);
+}
+
+
+//************************************************پنل ناشر ( ماژول 2 )*******************************************************
 
 
 

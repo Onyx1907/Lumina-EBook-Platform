@@ -132,6 +132,17 @@ public:
 
 
     QJsonObject getPublisherProfile(int publisherId);
+    bool updatePublisherProfile(int publisherId, const QJsonObject& info);
+
+
+    //************************************************پنل ناشر ( ماژول 2 )*******************************************************
+
+
+    bool addBook(const QJsonObject& bookData);
+    bool updateBook(int bookId, const QJsonObject& bookData);
+    bool setBookDiscount(int bookId, int publisherId, double percent);
+    bool setBookActiveState(int bookId, int publisherId, bool active);
+    QList<QJsonObject> getPublisherBooks(int publisherId);
 
 
 

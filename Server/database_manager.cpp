@@ -49,7 +49,7 @@ bool DatabaseManager::createTables(){
     }
     // اضافه کردن ستون حذف منطقی به جدول کاربران (اگر از قبل وجود نداشته باشد)
     if (!q.exec("ALTER TABLE users ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
-        // اگر ستون از قبل وجود داشته باشد دیتابیس خطا می‌دهد که طبیعی است، پس برنامه را متوقف نمی‌کنیم
+        // اگر ستون از قبل وجود داشته باشد دیتابیس خطا می‌دهد که طبیعی است، پس برنامه را متوقف نمی کنیم
         qDebug() << "Note: is_deleted column might already exist.";
     }
 
@@ -96,7 +96,7 @@ bool DatabaseManager::createTables(){
         qDebug() << "Create books failed:" << q.lastError().text();
         return false;
     }
-    // اضافه کردن ستون حذف منطقی به جدول کتاب‌ها (اگر از قبل وجود نداشته باشد)
+    // اضافه کردن ستون حذف منطقی به جدول کتاب ها (اگر از قبل وجود نداشته باشد)
     if (!q.exec("ALTER TABLE books ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0")) {
         qDebug() << "Note: is_deleted column in books might already exist.";
     }
@@ -391,14 +391,12 @@ static QJsonObject bookFromQuery(const QSqlQuery& q) {
     obj["id"] = q.value("id").toInt();
     obj["title"] = q.value("title").toString();
     obj["author"] = q.value("author").toString();
-    obj["publisher_id"] = q.value("publisher_id").toInt();
     obj["genre"] = q.value("genre").toString();
     obj["price"] = q.value("price").toDouble();
     obj["discount_percentage"] = q.value("discountPercent").toDouble();
-    obj["discount_amount"] = q.value("discountAmount").toDouble();
     obj["cover_image_path"] = q.value("coverImagePath").toString();
-    obj["pdf_path"] = q.value("pdfPath").toString();
-    obj["averageRating"] = q.value("averageRating").toDouble();
+    obj["publisher_name"] = q.value("publisher_name").toString();
+
     return obj;
 }
 
@@ -436,16 +434,27 @@ QList<QJsonObject> DatabaseManager::getRecommendedBooks(const QStringList& genre
         list.append(bookFromQueryWithoutPdf(q));
     return list;
 }
+
 // فیلتراسیون و دریافت کتاب ها بر اساس یک ژانر مشخص شده
-QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre){
+QList<QJsonObject> DatabaseManager::getBooksByGenre(const QString& genre) {
     QList<QJsonObject> list;
+
+    QString sql = "SELECT b.*, u.name AS publisher_name "
+                  "FROM books b "
+                  "LEFT JOIN users u ON b.publisher_id = u.id "
+                  "WHERE b.genre = :g AND b.isActive = 1 "
+                  "LIMIT 20";
+
     QSqlQuery q(db);
-    q.prepare("SELECT * FROM books WHERE genre = :g AND isActive = 1 LIMIT 20");
+    q.prepare(sql);
     q.bindValue(":g", genre);
-    if(!q.exec())
+
+    if (!q.exec())
         return list;
-    while(q.next())
-        list.append(bookFromQueryWithoutPdf(q));
+
+    while (q.next()) {
+        list.append(bookFromQuery(q));
+    }
     return list;
 }
 // بازیابی لیست تمام کتاب های نشانه گذاری شده به عنوان محبوب
@@ -773,7 +782,7 @@ bool DatabaseManager::addComment(int bookId, int userId,
 
     if (!qCheck.exec() || !qCheck.next()) {
         qDebug() << "Comment blocked: Book is inactive/deleted OR user is blocked/deleted.";
-        return false; // اجازه ثبت نظر داده نمی‌شود
+        return false; // اجازه ثبت نظر داده نمیشود
     }
 
     const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
@@ -1379,6 +1388,224 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
 
     return profile;
 }
+
+// آپدیت اطلاعات ناشر
+bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject& info) {
+    //خواندن اطلاعات فعلی ناشر از دیتابیس
+    QSqlQuery currentQuery(db);
+    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = 'publisher'");
+    currentQuery.bindValue(":id", publisherId);
+
+    if (!currentQuery.exec() || !currentQuery.next()) {
+        qDebug() << "Publisher not found or invalid role!";
+        return false;
+    }
+
+    QString currentUsername = currentQuery.value("username").toString();
+    QString currentName = currentQuery.value("name").toString();
+    QString currentEmail = currentQuery.value("email").toString();
+
+    // استخراج مقادیر جدید ارسالی از کلاینت
+    QString newUsername = info.value("username").toString().trimmed();
+    QString newName = info.value("name").toString().trimmed();
+    QString newEmail = info.value("email").toString().trimmed();
+
+    // اگر فیلدی خالی بود، همان مقدار فعلی دیتابیس حفظ می‌شود
+    if (newUsername.isEmpty()) newUsername = currentUsername;
+    if (newName.isEmpty())      newName = currentName;
+    if (newEmail.isEmpty())     newEmail = currentEmail;
+
+    // بررسی خطای نهایی خالی بودن (جهت اطمینان صد در صد)
+    if (newUsername.isEmpty()) {
+        qDebug() << "Publisher username cannot be empty!";
+        return false;
+    }
+
+    //بررسی تکراری نبودن نام کاربری (فقط اگر ناشر خواسته باشد آن را تغییر دهد)
+    if (newUsername != currentUsername) {
+        QSqlQuery checkUsername(db);
+        checkUsername.prepare("SELECT 1 FROM users WHERE username = :username AND id != :id LIMIT 1");
+        checkUsername.bindValue(":username", newUsername);
+        checkUsername.bindValue(":id", publisherId);
+        if (checkUsername.exec() && checkUsername.next()) {
+            qDebug() << "Publisher username is already taken!";
+            return false;
+        }
+    }
+
+    //بررسی تکراری نبودن نام نمایش (فقط اگر تغییر کرده باشد و خالی نباشد)
+    if (!newName.isEmpty() && newName != currentName) {
+        QSqlQuery checkName(db);
+        checkName.prepare("SELECT 1 FROM users WHERE name = :name AND id != :id LIMIT 1");
+        checkName.bindValue(":name", newName);
+        checkName.bindValue(":id", publisherId);
+        if (checkName.exec() && checkName.next()) {
+            qDebug() << "Publisher name is already taken!";
+            return false;
+        }
+    }
+
+    //بررسی تکراری نبودن ایمیل (فقط اگر تغییر کرده باشد و خالی نباشد)
+    if (!newEmail.isEmpty() && newEmail != currentEmail) {
+        QSqlQuery checkEmail(db);
+        checkEmail.prepare("SELECT 1 FROM users WHERE email = :email AND id != :id LIMIT 1");
+        checkEmail.bindValue(":email", newEmail);
+        checkEmail.bindValue(":id", publisherId);
+        if (checkEmail.exec() && checkEmail.next()) {
+            qDebug() << "Publisher email is already taken!";
+            return false;
+        }
+    }
+
+    QSqlQuery q(db);
+    q.prepare("UPDATE users SET "
+              "username = :username, "
+              "name = :name, "
+              "email = :email "
+              "WHERE id = :id AND role = 'publisher'");
+
+    q.bindValue(":username", newUsername);
+    q.bindValue(":name", newName);
+    q.bindValue(":email", newEmail);
+    q.bindValue(":id", publisherId);
+
+    return q.exec();
+}
+
+
+//************************************************پنل ناشر ( ماژول 2 )*******************************************************
+
+// افزودن کتاب
+bool DatabaseManager::addBook(const QJsonObject& bookData)
+{
+    QSqlQuery q(db);
+    q.prepare("INSERT INTO books (title, author, genre, description, price, discountPercent, discountAmount, coverImagePath, pdfPath, publisher_id, isActive, is_deleted) "
+              "VALUES (:title, :author, :genre, :desc, :price, :discP, :discA, :cover, :pdf, :pub_id, 1, 0)");
+
+    double price = bookData.value("price").toDouble();
+    double discP = bookData.value("discountPercent").toDouble();
+    double discA = (price * discP) / 100.0; // محاسبه خودکار مبلغ تخفیف
+
+    q.bindValue(":title", bookData.value("title").toString());
+    q.bindValue(":author", bookData.value("author").toString());
+    q.bindValue(":genre", bookData.value("genre").toString());
+    q.bindValue(":desc", bookData.value("description").toString());
+    q.bindValue(":price", price);
+    q.bindValue(":discP", discP);
+    q.bindValue(":discA", discA);
+
+    // اینجا مسیرهای جدید کپی شده روی هارد سرور (server_storage/...) ذخیره میشوند
+    q.bindValue(":cover", bookData.value("coverImagePath").toString());
+    q.bindValue(":pdf", bookData.value("pdfPath").toString());
+    q.bindValue(":pub_id", bookData.value("publisher_id").toInt());
+
+    if (!q.exec()) {
+        qDebug() << "Database Error (addBook failed):" << q.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+// ویرایش یک کتاب
+bool DatabaseManager::updateBook(int bookId, const QJsonObject& bookData) {
+    QSqlQuery q(db);
+
+    q.prepare("UPDATE books SET title = :title, author = :author, genre = :genre, "
+              "description = :desc, price = :price, discountPercent = :discP, "
+              "discountAmount = :discA, coverImagePath = :cover, pdfPath = :pdf "
+              "WHERE id = :id AND is_deleted = 0");
+
+    double price = bookData.value("price").toDouble();
+    double discP = bookData.value("discountPercent").toDouble();
+    double discA = (price * discP) / 100.0; // محاسبه خودکار مبلغ تخفیف جدید
+
+    q.bindValue(":title", bookData.value("title").toString());
+    q.bindValue(":author", bookData.value("author").toString());
+    q.bindValue(":genre", bookData.value("genre").toString());
+    q.bindValue(":desc", bookData.value("description").toString());
+    q.bindValue(":price", price);
+    q.bindValue(":discP", discP);
+    q.bindValue(":discA", discA);
+    q.bindValue(":cover", bookData.value("coverImagePath").toString());
+    q.bindValue(":pdf", bookData.value("pdfPath").toString());
+    q.bindValue(":id", bookId);
+
+    if (!q.exec()) {
+        qDebug() << "Database Error (updateBook failed):" << q.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+// اعمال تخفیف (با محاسبه خودکار بر اساس قیمت موجود در دیتابیس)
+bool DatabaseManager::setBookDiscount(int bookId, int publisherId, double percent) {
+    // ابتدا قیمت کتاب را بیرون می‌کشیم تا بر اساس آن تخفیف عددی را حساب کنیم
+    QSqlQuery qPrice(db);
+    qPrice.prepare("SELECT price FROM books WHERE id = :id AND publisher_id = :publisher AND is_deleted = 0");
+    qPrice.bindValue(":id", bookId);
+    qPrice.bindValue(":publisher", publisherId);
+
+    if (!qPrice.exec() || !qPrice.next())
+        return false;
+
+    double price = qPrice.value("price").toDouble();
+    double amount = (price * percent) / 100.0; // محاسبه خودکار مبلغ تخفیف
+
+    QSqlQuery q(db);
+    q.prepare("UPDATE books SET discountPercent = :p, discountAmount = :a "
+              "WHERE id = :id AND publisher_id = :publisher AND is_deleted = 0");
+
+    q.bindValue(":p", percent);
+    q.bindValue(":a", amount);
+    q.bindValue(":id", bookId);
+    q.bindValue(":publisher", publisherId);
+
+    return q.exec();
+}
+
+// فعال/غیر فعال کردن کتاب
+bool DatabaseManager::setBookActiveState(int bookId, int publisherId, bool active) {
+    QSqlQuery q(db);
+    q.prepare("UPDATE books SET isActive = :active "
+              "WHERE id = :id AND publisher_id = :publisher AND is_deleted = 0");
+
+    q.bindValue(":active", active ? 1 : 0);
+    q.bindValue(":id", bookId);
+    q.bindValue(":publisher", publisherId);
+
+    return q.exec();
+}
+
+// گرفتن لیستی از کتاب های یک ناشر
+QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
+    QList<QJsonObject> list;
+    QSqlQuery q(db);
+
+    q.prepare("SELECT id, title, author, genre, description, price, "
+              "discountPercent, discountAmount, coverImagePath, pdfPath, isActive "
+              "FROM books WHERE publisher_id = :publisher AND is_deleted = 0");
+    q.bindValue(":publisher", publisherId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject b;
+        b["id"]              = q.value("id").toInt();
+        b["title"]           = q.value("title").toString();
+        b["author"]          = q.value("author").toString();
+        b["genre"]           = q.value("genre").toString();
+        b["description"]     = q.value("description").toString();
+        b["price"]           = q.value("price").toDouble();
+        b["discountPercent"] = q.value("discountPercent").toDouble();
+        b["coverImagePath"]  = q.value("coverImagePath").toString(); // مسیر نسبی
+        b["pdfPath"]         = q.value("pdfPath").toString();        // استخراج مسیر پی دی اف جهت استفاده در ویرایش
+        b["isActive"]        = q.value("isActive").toInt();
+        list.append(b);
+    }
+    return list;
+}
+
 
 
 
