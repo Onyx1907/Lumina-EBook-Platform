@@ -1390,10 +1390,51 @@ void NetworkWorker::handleUpdateBook(QTcpSocket* socket, const QJsonObject& data
     sendJson(socket, resp);
 }
 
+void NetworkWorker::handleSetBookDiscount(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId      = data["book_id"].toInt();
+    int publisherId = data["publisher_id"].toInt();
+    double percent  = data["discountPercent"].toDouble();
 
+    bool ok = m_dbManager->setBookDiscount(bookId, publisherId, percent);
 
+    QJsonObject resp;
+    resp["action"] = "SET_BOOK_DISCOUNT_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".تخفیف با موفقیت اعمال و محاسبه شد"
+                         : ".خطا در اعمال تخفیف";
 
+    sendJson(socket, resp);
+}
 
+void NetworkWorker::handleSetBookActiveState(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId      = data["book_id"].toInt();
+    int publisherId = data["publisher_id"].toInt();
+    bool active     = data["active"].toBool();
+
+    bool ok = m_dbManager->setBookActiveState(bookId, publisherId, active);
+
+    QJsonObject resp;
+    resp["action"] = "SET_BOOK_ACTIVE_STATE_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? (active ? ".کتاب فعال شد." : "کتاب غیرفعال شد")
+                         : ".خطا در تغییر وضعیت کتاب";
+
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleGetPublisherBooks(QTcpSocket* socket, const QJsonObject& data) {
+    int publisherId = data["publisher_id"].toInt();
+    QList<QJsonObject> list = m_dbManager->getPublisherBooks(publisherId);
+    QJsonArray arr;
+    for (auto &b : list)
+        arr.append(b);
+
+    QJsonObject resp;
+    resp["action"] = "GET_PUBLISHER_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+    sendJson(socket, resp);
+}
 
 
 
