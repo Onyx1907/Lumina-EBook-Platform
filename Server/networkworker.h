@@ -135,6 +135,11 @@ private:
     void handleGetPublisherBooks(QTcpSocket* socket, const QJsonObject& data);
 
 
+    //************************************************پنل ناشر ( ماژول 3 )*******************************************************
+
+
+
+
 
 
 

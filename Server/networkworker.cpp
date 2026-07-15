@@ -165,6 +165,11 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "GET_PUBLISHER_BOOKS")  { handleGetPublisherBooks(socket, data); return; }
 
 
+    //************************************************پنل ناشر ( ماژول 3 )*******************************************************
+
+
+
+
 
 
 
@@ -1416,7 +1421,8 @@ void NetworkWorker::handleSetBookActiveState(QTcpSocket* socket, const QJsonObje
     QJsonObject resp;
     resp["action"] = "SET_BOOK_ACTIVE_STATE_RESPONSE";
     resp["status"] = ok ? "SUCCESS" : "ERROR";
-    resp["message"] = ok ? (active ? ".کتاب فعال شد." : "کتاب غیرفعال شد")
+    resp["message"] = ok ? (active ? ".کتاب فعال شد"
+                                   : ".کتاب غیرفعال شد")
                          : ".خطا در تغییر وضعیت کتاب";
 
     sendJson(socket, resp);
@@ -1435,6 +1441,13 @@ void NetworkWorker::handleGetPublisherBooks(QTcpSocket* socket, const QJsonObjec
     resp["books"] = arr;
     sendJson(socket, resp);
 }
+
+
+//************************************************پنل ناشر ( ماژول 3 )*******************************************************
+
+
+
+
 
 
 
