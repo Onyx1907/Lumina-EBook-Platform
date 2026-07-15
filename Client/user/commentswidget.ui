@@ -6,13 +6,442 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>750</width>
+    <height>550</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QFrame#write_frame {
+    background-color: rgba(250, 246, 240, 0.75); /* ۷۵ درصد شفافیت نسکافه‌ای فوق‌العاده ملایم */
+    border: 1px solid rgba(194, 163, 131, 0.4);  /* کادر با ۴۰ درصد شفافیت برای محو شدن مرزها */
+    border-radius: 12px;
+    padding: 10px;
+}
+
+/* لایبل عنوان بالای فریم */
+QLabel#title_label {
+    color: #6F4E37; /* قهوه‌ای سوخته لاته */
+    font-weight: bold;
+    font-size: 13px;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+}
+
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QPushButton" name="back_pushButton">
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 0.08); /* پس‌زمینه شیشه‌ای بسیار ملو */
+    border: 1px solid rgba(193, 154, 107, 0.25); /* مرز کاراملی شفاف */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #D2B48C; /* رنگ متنی خامه ای/نسکافه‌ای روشن */
+    font-size: 14px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود) */
+QPushButton:hover {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ‌تر */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه ای */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود) */
+QPushButton:pressed {
+    background-color: rgba(111, 78, 55, 0.6); /* رنگ قهوه‌ای تیره فشرده شده */
+    border: 1px solid #8B5A2B;
+    padding-left: 16px; /* افکت کلیک کوچک ملو (متمایل شدن متن به راست) */
+}</string>
+     </property>
+     <property name="text">
+      <string>برگشت</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="write_frame">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>180</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>180</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="title_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>ثبت نظر</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="comment_textEdit">
+        <property name="styleSheet">
+         <string notr="true">QTextEdit {
+    background-color: rgba(255, 255, 255, 0.85); /* سفید استخوانی نیمه شفاف برای خوانایی عالی متن */
+    color: #4A3B32; /* اسپرسو تیره برای متن */
+    border: 1.5px solid #E0D5C1; /* مرز نسکافه‌ای کمرنگ */
+    border-radius: 8px;
+    padding: 8px;
+    font-family: &quot;Segoe UI&quot;, Tahoma, Arial;
+    font-size: 17px;
+    selection-background-color: #DAC0A3;
+    selection-color: #4A3B32;
+}
+
+QTextEdit:hover {
+    border: 1.5px solid #C2A383; /* تغییر مرز به کاراملی هنگام هاور */
+}
+
+QTextEdit:focus {
+    border: 2px solid #8B5E3C; /* اسپرسو مدیوم زمان تایپ کردن */
+    background-color: #FFFFFF; /* کاملاً سفید و شفاف در زمان فوکوس برای تمرکز بهتر کاربر */
+}
+
+/* استایل اسکرول‌بار داخل تکست‌ادیت (بسیار مهم برای زیبایی کار) */
+QTextEdit QScrollBar:vertical {
+    border: none;
+    background: #FAF6F0;
+    width: 10px;
+    margin: 0px 0px 0px 0px;
+    border-radius: 5px;
+}
+
+QTextEdit QScrollBar::handle:vertical {
+    background: #C2A383;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QTextEdit QScrollBar::handle:vertical:hover {
+    background: #8B5E3C;
+}</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QSpinBox" name="rating_spinBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>90</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>90</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QSpinBox {
+    padding-right: 25px; /* فضا برای دکمه‌های بالا و پایین */
+    padding-left: 10px;
+    border: 2px solid #C2A383; /* قهوه‌ای کاراملی روشن */
+    border-radius: 6px;
+    background-color: #FAF6F0; /* سفید خامه‌ای/کفِ شیر */
+    color: #4A3B32; /* قهوه‌ای تیره مدیوم (خوانایی بالا) */
+    font-size: 17px;
+    font-weight: bold;
+    selection-background-color: #DAC0A3; /* رنگ انتخاب متن */
+    selection-color: #4A3B32;
+}
+
+/* حالت هاور کل باکس */
+QSpinBox:hover {
+    border: 2px solid #8B5E3C; /* قهوه‌ای نسکافه‌ای گرم */
+}
+
+/* حالت فوکوس روی باکس */
+QSpinBox:focus {
+    border: 2px solid #5C4033; /* اسپرسو تیره */
+    background-color: #FFFFFF;
+}
+
+/* تنظیمات کلی دکمه‌های کنترل */
+QSpinBox::up-button, QSpinBox::down-button {
+    subcontrol-origin: border;
+    width: 20px;
+    background-color: #EADBC8; /* رنگ نسکافه‌ای روشن */
+    border-left: 2px solid #C2A383;
+}
+
+/* دکمه بالا */
+QSpinBox::up-button {
+    subcontrol-position: top right;
+    border-top-right-radius: 4px;
+    border-bottom: 1px solid #C2A383;
+}
+
+/* دکمه پایین */
+QSpinBox::down-button {
+    subcontrol-position: bottom right;
+    border-bottom-right-radius: 4px;
+    border-top: 1px solid #C2A383;
+}
+
+/* استایل دکمه‌ها در حالت Hover */
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: #DAC0A3; /* کاراملی تیره تر */
+}
+
+/* استایل دکمه‌ها در حالت کلیک (Pressed) */
+QSpinBox::up-button:pressed, QSpinBox::down-button:pressed {
+    background-color: #C2A383;
+}
+
+/* فلش‌های داخل دکمه‌ها */
+QSpinBox::up-arrow {
+    image: url(no_image.png); /* غیرفعال کردن تصویر پیش‌فرض سیستم */
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 5px solid #4A3B32; /* فلش قهوه‌ای رو به بالا */
+    width: 0;
+    height: 0;
+}
+
+QSpinBox::down-arrow {
+    image: url(no_image.png);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid #4A3B32; /* فلش قهوه‌ای رو به پایین */
+    width: 0;
+    height: 0;
+}</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="rating_stars_label">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel {
+
+    color: #D4AF37; 
+    
+    font-size: 24px;
+    font-family: 'Segoe UI', Arial;
+    background: transparent;
+    
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(94, 73, 28, 0.5);
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="submit_pushButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 0.08); /* پس‌زمینه شیشه‌ای بسیار ملو */
+    border: 1px solid rgba(193, 154, 107, 0.25); /* مرز کاراملی شفاف */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #D2B48C; /* رنگ متنی خامه ای/نسکافه‌ای روشن */
+    font-size: 14px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود) */
+QPushButton:hover {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ‌تر */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه ای */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود) */
+QPushButton:pressed {
+    background-color: rgba(111, 78, 55, 0.6); /* رنگ قهوه‌ای تیره فشرده شده */
+    border: 1px solid #8B5A2B;
+    padding-left: 16px; /* افکت کلیک کوچک ملو (متمایل شدن متن به راست) */
+}</string>
+          </property>
+          <property name="text">
+           <string>ثبت نظر</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="error_label">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #a63a3a;
+font-size: 11px;
+font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
+font-weight: bold;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+background: transparent;
+</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListWidget" name="listWidget">
+     <property name="styleSheet">
+      <string notr="true">/* کاملاً شفاف کردن پس‌زمینه و حذف مرزهای لیست اصلی */
+QListWidget {
+    background-color: transparent;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px;
+}
+
+
+QListWidget::item:selected {
+    background-color: rgba(139, 90, 43, 0.7);
+    border: 1px solid #D2B48C;
+}
+/* اسکرول‌بار شیشه‌ای و هماهنگ */
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 0px;
+}
+QScrollBar::handle:vertical {
+    background: rgba(111, 78, 55, 0.6); /* دستگیره قهوه‌ای نیمه شفاف */
+    border-radius: 4px;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+    background: rgba(139, 90, 43, 0.8);
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: none; /* حذف دکمه‌های بالا و پایین اسکرول */
+}</string>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

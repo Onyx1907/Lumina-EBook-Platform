@@ -21,6 +21,7 @@ public:
 
 signals:
     void backPrevious();
+    void goToComments(int bookID);
 
 private slots:
     void on_back_pushButton_clicked();
@@ -30,6 +31,8 @@ private slots:
     void on_addCart_pushButton_clicked();
 
     void on_removeCart_pushButton_clicked();
+
+    void on_comments_pushButton_clicked();
 
 private:
     Ui::BookDetailsWidget *ui;

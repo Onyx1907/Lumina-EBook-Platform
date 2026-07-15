@@ -1,14 +1,296 @@
 #include "commentswidget.h"
 #include "ui_commentswidget.h"
+#include "clientnetworkmanager.h"
+#include "commentitemwidget.h"
+#include <QTimer>
+#include <QJsonArray>
+#include <QScrollBar>
 
-CommentsWidget::CommentsWidget(QWidget *parent)
-    : QWidget(parent)
+CommentsWidget::CommentsWidget(int userid, QWidget *parent)
+    : QWidget(parent), userID(userid)
     , ui(new Ui::CommentsWidget)
 {
     ui->setupUi(this);
+    ui->error_label->hide();
+
+
+    ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->listWidget->verticalScrollBar()->setSingleStep(15);
+
+
+    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
+            this, &CommentsWidget::processNetworkData);
+
+    connect(ui->rating_spinBox, &QSpinBox::valueChanged, this, &CommentsWidget::updateStarsLabel);
+}
+
+void CommentsWidget::loadComments(int bookid){
+    bookID = bookid;
+
+    //غیرفعال سازی موقت جهت تست
+    // if(ClientNetworkManager::instance().connectToServer()){
+
+    //     QJsonObject data;
+    //     data["book_id"] = bookID;
+
+    //     ClientNetworkManager::instance().sendRequest("GET_COMMENTS", data, true);
+    // }
+    // else{
+    //     ui->error_label->setText("خطا در برقراری اتصال");
+    //     ui->error_label->show();
+    //     QTimer::singleShot(3000, this, [this](){
+    //         ui->error_label->setText("");
+    //         ui->error_label->hide();
+    //     });
+    // }
+
+
+    //تست گرافیک
+    QJsonObject mockResponse;
+    mockResponse["action"] = "GET_COMMENTS_RESPONSE";
+    mockResponse["status"] = "SUCCESS";
+
+    QJsonArray comments;
+
+    // کامنت اول: مال یک کاربر دیگر (باید دکمه‌های ادیت و حذفش مخفی باشد)
+    QJsonObject comment1;
+    comment1["id"] = 101;
+    comment1["user_id"] = 999; // یک آیدی غیر از آیدی خودتان (userID)
+    comment1["username"] = "ali_developer";
+    comment1["text"] = "به نظرم فصل سوم کتاب واقعا عالی نوشته شده بود. ترجمه هم روان بود.";
+    comment1["rating"] = 4;
+    comment1["created_at"] = "2026-07-11T12:08:28";
+    comments.append(comment1);
+
+    // کامنت دوم: مال خود کاربر آنلاین فعلی (باید فریم نوشتن را مخفی کند و خودش بیاید اول لیست با دکمه‌های فعال)
+    // نکته: مطمئن شوید متغیر userID در کلاس شما مقدارش با این فیلد یکی باشد (مثلاً ۴۲)
+    QJsonObject comment2;
+    comment2["id"] = 257;
+    comment2["user_id"] = userID; // فرض می‌کنیم userID شما در برنامه مثلاً 42 است
+    comment2["username"] = "MyUsername";
+    comment2["text"] = "کتاب فوق‌العاده‌ای بود، خواندنش را به همه دوستان توصیه می‌کنم.";
+    comment2["rating"] = 5;
+    comment2["created_at"] = "2026-07-14T15:30:00";
+    comments.append(comment2);
+
+    // کامنت سوم: یک کاربر دیگر
+    QJsonObject comment3;
+    comment3["id"] = 102;
+    comment3["user_id"] = 888;
+    comment3["username"] = "sara_read";
+    comment3["text"] = "کتاب بدی نبود ولی قیمت نسخه‌ی چاپی‌اش خیلی بالاست. ممنون از ایبوک شاپ بابت قرار دادن نسخه الکترونیک.";
+    comment3["rating"] = 3;
+    comment3["created_at"] = "2026-07-10T09:15:00";
+    comments.append(comment3);
+
+    mockResponse["comments"] = comments;
+
+    // ۲. پاس دادن مستقیم این جیسون تستی به تابع رندر شما به جای شبکه!
+    updateListUi(mockResponse);
 }
 
 CommentsWidget::~CommentsWidget()
 {
     delete ui;
+}
+
+
+void CommentsWidget::processNetworkData(const QString& action, const QJsonObject& data){
+    if(action == "GET_COMMENTS_RESPONSE"){
+        updateListUi(data);
+        return;
+    }
+    if(action == "COMMENT_UPDATED"){
+        if(data.contains("book_id") && data["book_id"].toInt() == bookID){
+            loadComments(bookID);
+        }
+        else if(!data.contains("book_id")){
+            loadComments(bookID);
+        }
+    }
+    else if(action == "ADD_COMMENT_RESPONSE"){
+        if(data["status"].toString() != "SUCCESS"){
+            ui->error_label->setText(data["message"].toString());
+            ui->error_label->show();
+            QTimer::singleShot(3000, this, [this](){
+                ui->error_label->setText("");
+                ui->error_label->hide();
+            });
+        }
+        else{
+            loadComments(bookID);
+        }
+    }
+    else if("EDIT_COMMENT_RESPONSE"){
+        if(data["status"].toString() != "SUCCESS"){
+            ui->error_label->setText(data["message"].toString());
+            ui->error_label->show();
+            QTimer::singleShot(3000, this, [this](){
+                ui->error_label->setText("");
+                ui->error_label->hide();
+            });
+        }
+        else{
+            loadComments(bookID);
+        }
+    }
+    else if("DELETE_COMMENT_RESPONSE"){
+        if(data["status"].toString() != "SUCCESS"){
+            ui->error_label->setText(data["message"].toString());
+            ui->error_label->show();
+            QTimer::singleShot(3000, this, [this](){
+                ui->error_label->setText("");
+                ui->error_label->hide();
+            });
+        }
+        else{
+            loadComments(bookID);
+        }
+    }
+}
+
+
+void CommentsWidget::updateListUi (const QJsonObject& response) {
+    if (response["status"].toString() != "SUCCESS") return;
+
+    // ۱. پاکسازی لیست قبلی
+    ui->listWidget->clear();
+
+    // حالت پیش‌فرض: فریم ثبت نظر جدید باز است و فیلدها خالی هستند
+    ui->write_frame->show();
+    ui->comment_textEdit->clear();
+    ui->rating_spinBox->setValue(5);
+    m_editingCommentId = -1; // پرچم ادیت را ریست می‌کنیم (اگر تعریفش کرده‌اید)
+
+    QJsonArray commentsArray = response["comments"].toArray();
+
+    // حل مشکل باگ حافظه: به جای آدرس‌دهی مستقیم به شیء روی استک،
+    // جیسونِ کامنت کاربر را ذخیره می‌کنیم تا خارج از حلقه دوباره آن را بسازیم.
+    QJsonObject userCommentJson;
+    bool hasUserComment = false;
+
+    // ۲. چرخش روی کامنت‌ها و ساخت مدل شیءگرا
+    for (const QJsonValue& value : commentsArray) {
+        QJsonObject commentObj = value.toObject();
+        commentObj["book_id"] = bookID;
+        Comment comment(commentObj); // ساخت شیء موقت
+
+        if (comment.getUserID() == userID) {
+            hasUserComment = true;
+            userCommentJson = commentObj; // کپی کردن اطلاعات کامنت کاربر
+        } else {
+            // حل باگ حافظه: ویجت‌ها حتما باید با new روی Heap ساخته شوند تا زنده بمانند
+            CommentItemWidget* itemWidget = new CommentItemWidget(comment, userID, this);
+
+            QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
+            item->setSizeHint(itemWidget->sizeHint());
+            ui->listWidget->setItemWidget(item, itemWidget);
+        }
+    }
+
+    // ۳. اگر کاربر قبلا کامنت ثبت کرده بود، آن را به عنوان اولین آیتم بالا سنجاق می‌کنیم
+    if (hasUserComment) {
+        ui->write_frame->hide(); // مخفی کردن فریم ثبت نظر شما (بر اساس اسم معماری خودتان)
+
+        Comment userComment(userCommentJson);
+        // ساخت ویجت با پوینتر (new)
+        CommentItemWidget* userItemWidget = new CommentItemWidget(userComment, userID, this);
+
+        // اتصال سیگنال‌های دکمه‌های کامنت کاربر به فیلدهای متنی این صفحه اصلی
+        connect(userItemWidget, &CommentItemWidget::editRequested, this, &CommentsWidget::onCommentEditRequested);
+        connect(userItemWidget, &CommentItemWidget::deleteRequested, this, &CommentsWidget::onCommentDeleteRequested);
+
+        QListWidgetItem* item = new QListWidgetItem();
+        ui->listWidget->insertItem(0, item); // قرار دادن در ردیف اول (ایندکس 0)
+        item->setSizeHint(userItemWidget->sizeHint());
+        ui->listWidget->setItemWidget(item, userItemWidget);
+    }
+}
+
+
+void CommentsWidget::onCommentEditRequested(const Comment& comment) {
+    // ۱. نمایش فریم نوشتن
+    ui->write_frame->show();
+
+    // ۲. استخراج اطلاعات از شیء کامنت دریافتی و ریختن در فیلدها
+    ui->comment_textEdit->setPlainText(comment.getText());
+    ui->rating_spinBox->setValue(comment.getRating());
+
+    // ۳. تنظیم پرچم ادیت با آیدی کامنت
+    m_editingCommentId = comment.getId();
+
+    ui->comment_textEdit->setFocus();
+}
+
+void CommentsWidget::onCommentDeleteRequested(int commentId) {
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+        data["comment_id"] = bookID;
+
+        ClientNetworkManager::instance().sendRequest("DELETE_COMMENT", data, true);
+    }
+    else{
+        ui->error_label->setText("خطا در برقراری اتصال");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+void CommentsWidget::on_submit_pushButton_clicked()
+{
+    QString text = ui->comment_textEdit->toPlainText().trimmed();
+    int rating = ui->rating_spinBox->value();
+
+    if(text.isEmpty()){
+        ui->error_label->setText("متن نظر نمی‌تواند خالی باشد");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+        return;
+    }
+
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+
+        if(m_editingCommentId == -1){
+            data["book_id"] = bookID;
+            data["user_id"] = userID;
+            data["text"] = text;
+            data["rating"] = rating;
+
+            ClientNetworkManager::instance().sendRequest("ADD_COMMENT", data, true);
+        }
+        else{
+            data["comment_id"] = m_editingCommentId;
+            data["text"] = text;
+            data["rating"] = rating;
+            ClientNetworkManager::instance().sendRequest("EDIT_COMMENT", data, true);
+        }
+    }
+    else{
+        ui->error_label->setText("خطا در برقراری اتصال");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+
+void CommentsWidget::on_back_pushButton_clicked()
+{
+    emit backToBookDatailPage();
+}
+
+void CommentsWidget::updateStarsLabel(int rating) {
+    QString stars = QString("★").repeated(rating) + QString("☆").repeated(5 - rating);
+    ui->rating_stars_label->setText(stars);
 }
