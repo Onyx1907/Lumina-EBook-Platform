@@ -946,9 +946,10 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
 
     QSqlQuery q(db);
 
-    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.coverImagePath, b.isActive "
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.coverImagePath, b.isActive, u.username AS publisher_name "
               "FROM cart c "
               "JOIN books b ON c.book_id = b.id "
+              "JOIN users u ON b.publisher_id = u.id "
               "WHERE c.user_id = :u AND b.is_deleted = 0");
     q.bindValue(":u", userId);
 
@@ -963,6 +964,7 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
         obj["price"] = q.value("price").toDouble();
         obj["discount"] = q.value("discountPercent").toDouble();
         obj["coverImagePath"] = q.value("coverImagePath").toString(); // مسیر نسبی عکس
+        obj["publisher_name"] = q.value("publisher_name").toString();
 
         // فرستادن وضعیت دسترسی به کلاینت (۱ یعنی موجود، ۰ یعنی مسدود/حذف شده)
         obj["isActive"] = (q.value("isActive").toInt() == 1);
