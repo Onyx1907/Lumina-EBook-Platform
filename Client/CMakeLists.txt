@@ -44,6 +44,7 @@ qt_add_executable(LuminaClient
     user/resultwidget.h user/resultwidget.cpp user/resultwidget.ui
     user/commentitemwidget.h user/commentitemwidget.cpp user/commentitemwidget.ui
     user/commentswidget.h user/commentswidget.cpp user/commentswidget.ui
+    user/cartwidget.h user/cartwidget.cpp user/cartwidget.ui
 
 
 

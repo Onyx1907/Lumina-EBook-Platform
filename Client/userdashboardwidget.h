@@ -10,6 +10,7 @@
 #include "searchwidget.h"
 #include "resultwidget.h"
 #include "commentswidget.h"
+#include "cartwidget.h"
 
 
 namespace Ui {
@@ -34,6 +35,8 @@ private slots:
 
     void on_search_pushButton_clicked();
 
+    void on_cart_pushButton_clicked();
+
 private:
     Ui::UserDashboardWidget *ui;
     RegularUser *user;
@@ -45,6 +48,7 @@ private:
     SearchWidget* SearchPage;
     ResultWidget* ResultPage;
     CommentsWidget* CommentsPage;
+    CartWidget* CartPage;
 
     int previousPageIndex = 0;
 
@@ -57,7 +61,8 @@ private:
         BookDetailsPageIndex = 3,
         SearchPageIndex = 4,
         ResultPageIndex = 5,
-        CommentsPageIndex = 6
+        CommentsPageIndex = 6,
+        CartPageIndex = 7
     };
 
 

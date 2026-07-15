@@ -188,10 +188,14 @@ void SearchWidget::processNetworkData(const QString& action, const QJsonObject& 
     for (int i = 0; i < booksArray.size(); ++i) {
         QJsonObject bookObj = booksArray[i].toObject();
 
-        Book book(bookObj["id"].toInt(), bookObj["title"].toString(),
-                  bookObj["author"].toString(), bookObj["publisher_name"].toString(),
-                  stringToGenre(bookObj["genre"].toString()), bookObj["cover_image_path"].toString(),
-                  bookObj["price"].toDouble(), bookObj["discount_percentage"].toDouble());
+        Book book(bookObj["id"].toInt(),
+                  bookObj["title"].toString(),
+                  bookObj["author"].toString(),
+                  bookObj["publisher_name"].toString(),
+                  stringToGenre(bookObj["genre"].toString()),
+                  bookObj["cover_image_path"].toString(),
+                  bookObj["price"].toDouble(),
+                  bookObj["discount_percentage"].toDouble());
 
         results.append(book);
     }

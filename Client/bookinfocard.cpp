@@ -63,7 +63,26 @@ void BookInfoCard::resizeEvent(QResizeEvent *event){
     }
 }
 
+void BookInfoCard::setCardMode(CardMode mode){
+    ui->delete_pushButton->hide();
+    ui->edit_pushButton->hide();
+
+    if(mode == CardMode::Cart){
+        ui->delete_pushButton->show();
+    }
+    // else if(mode == CardMode::Publisher){
+    //     ui->edit_pushButton->show();
+    //     ui->delete_pushButton->show();
+    // } //موقت
+}
+
 BookInfoCard::~BookInfoCard()
 {
     delete ui;
 }
+
+void BookInfoCard::on_delete_pushButton_clicked()
+{
+    emit removeRequested(book.getId());
+}
+

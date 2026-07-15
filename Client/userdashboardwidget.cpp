@@ -29,6 +29,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     SearchPage = new SearchWidget(this);
     ResultPage = new ResultWidget(this);
     CommentsPage = new CommentsWidget(user->getId(), this);
+    CartPage = new CartWidget(user->getId(), this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
@@ -37,6 +38,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ui->stackedWidget->addWidget(SearchPage);
     ui->stackedWidget->addWidget(ResultPage);
     ui->stackedWidget->addWidget(CommentsPage);
+    ui->stackedWidget->addWidget(CartPage);
 
     //مدیریت نمایش صفحه انتخاب ژانر
     if(is_first_login){
@@ -257,3 +259,9 @@ void UserDashboardWidget::testSearchLayout() {
     // انتقال موقت به صفحه ریزالت برای تست چشمی ظاهر نسکافه‌ای شیشه‌ای
     fadeToPage(Page::ResultPageIndex);
 }
+
+void UserDashboardWidget::on_cart_pushButton_clicked()
+{
+    fadeToPage(Page::CartPageIndex);
+}
+
