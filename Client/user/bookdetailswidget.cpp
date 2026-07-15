@@ -5,6 +5,7 @@
 #include <QString>
 #include <QFont>
 #include <QTimer>
+#include <QScrollBar>
 
 BookDetailsWidget::BookDetailsWidget(int ID, QWidget *parent)
     : QWidget(parent), userID(ID)
@@ -80,6 +81,12 @@ void BookDetailsWidget::loadBook(Book *book){
             ui->error_label->setText("");
         });
     }
+
+    QTimer::singleShot(0, this, [this]() {
+        if (ui->scrollArea && ui->scrollArea->verticalScrollBar()) {
+            ui->scrollArea->verticalScrollBar()->setValue(0);
+        }
+    });
 }
 
 BookDetailsWidget::~BookDetailsWidget()
