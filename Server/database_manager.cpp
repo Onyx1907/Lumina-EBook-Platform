@@ -1494,7 +1494,7 @@ bool DatabaseManager::addBook(const QJsonObject& bookData)
     q.bindValue(":discP", discP);
     q.bindValue(":discA", discA);
 
-    // اینجا مسیرهای جدید کپی شده روی هارد سرور (server_storage/...) ذخیره می‌شوند
+    // اینجا مسیرهای جدید کپی شده روی هارد سرور (server_storage/...) ذخیره میشوند
     q.bindValue(":cover", bookData.value("coverImagePath").toString());
     q.bindValue(":pdf", bookData.value("pdfPath").toString());
     q.bindValue(":pub_id", bookData.value("publisher_id").toInt());
@@ -1562,6 +1562,50 @@ bool DatabaseManager::setBookDiscount(int bookId, int publisherId, double percen
 
     return q.exec();
 }
+
+// فعال/غیر فعال کردن کتاب
+bool DatabaseManager::setBookActiveState(int bookId, int publisherId, bool active) {
+    QSqlQuery q(db);
+    q.prepare("UPDATE books SET isActive = :active "
+              "WHERE id = :id AND publisher_id = :publisher AND is_deleted = 0");
+
+    q.bindValue(":active", active ? 1 : 0);
+    q.bindValue(":id", bookId);
+    q.bindValue(":publisher", publisherId);
+
+    return q.exec();
+}
+
+// گرفتن لیستی از کتاب های یک ناشر
+QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
+    QList<QJsonObject> list;
+    QSqlQuery q(db);
+
+    q.prepare("SELECT id, title, author, genre, description, price, "
+              "discountPercent, discountAmount, coverImagePath, pdfPath, isActive "
+              "FROM books WHERE publisher_id = :publisher AND is_deleted = 0");
+    q.bindValue(":publisher", publisherId);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject b;
+        b["id"]              = q.value("id").toInt();
+        b["title"]           = q.value("title").toString();
+        b["author"]          = q.value("author").toString();
+        b["genre"]           = q.value("genre").toString();
+        b["description"]     = q.value("description").toString();
+        b["price"]           = q.value("price").toDouble();
+        b["discountPercent"] = q.value("discountPercent").toDouble();
+        b["coverImagePath"]  = q.value("coverImagePath").toString(); // مسیر نسبی
+        b["pdfPath"]         = q.value("pdfPath").toString();        // استخراج مسیر پی دی اف جهت استفاده در ویرایش
+        b["isActive"]        = q.value("isActive").toInt();
+        list.append(b);
+    }
+    return list;
+}
+
 
 
 

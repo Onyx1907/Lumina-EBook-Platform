@@ -128,7 +128,8 @@ private:
 
     //************************************************پنل ناشر ( ماژول 2 )*******************************************************
 
-
+    void handleAddBook(QTcpSocket* socket, const QJsonObject& data);
+    void handleUpdateBook(QTcpSocket* socket, const QJsonObject& data);
 
 
 
