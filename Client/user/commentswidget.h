@@ -32,6 +32,8 @@ private slots:
 
     void on_back_pushButton_clicked();
 
+    void updateStarsLabel(int reting);
+
 private:
     Ui::CommentsWidget *ui;
     int userID;

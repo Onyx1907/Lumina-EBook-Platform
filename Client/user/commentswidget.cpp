@@ -20,6 +20,8 @@ CommentsWidget::CommentsWidget(int userid, QWidget *parent)
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &CommentsWidget::processNetworkData);
+
+    connect(ui->rating_spinBox, &QSpinBox::valueChanged, this, &CommentsWidget::updateStarsLabel);
 }
 
 void CommentsWidget::loadComments(int bookid){
@@ -288,3 +290,7 @@ void CommentsWidget::on_back_pushButton_clicked()
     emit backToBookDatailPage();
 }
 
+void CommentsWidget::updateStarsLabel(int rating) {
+    QString stars = QString("★").repeated(rating) + QString("☆").repeated(5 - rating);
+    ui->rating_stars_label->setText(stars);
+}
