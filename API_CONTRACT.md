@@ -562,6 +562,7 @@
           "price": 250000.0,
           "discount": 10.0,
           "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg",
+          "publisher_name": "Tech_Books",
           "isActive": true
         }
       ],
