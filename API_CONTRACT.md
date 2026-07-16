@@ -141,7 +141,7 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
+          "cover_image_path": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
     }
@@ -164,7 +164,7 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg",
+          "cover_image_path": "/home/username/BookClub_Storage/shahnameh.jpg",
           "publisher_name": "انتشارات فردوسی"
         }
       ]
@@ -185,7 +185,7 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
+          "cover_image_path": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
     }
@@ -205,7 +205,7 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
+          "cover_image_path": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
     }
@@ -225,7 +225,7 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
+          "cover_image_path": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
     }
@@ -245,7 +245,7 @@
           "genre": "Poetry",
           "price": 0.0,
           "discount_percentage": 0.0,
-          "cover_image_path": "/var/www/uploads/covers/hafez.jpg"
+          "cover_image_path": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
     }
@@ -352,7 +352,7 @@
       "is_saved": true,
       "publisher_name": "انتشارات طوس",
       "rating": 4.8,
-      "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg"
+      "cover_image_path": "/home/username/BookClub_Storage/shahnameh.jpg"
     },
     "server_response_error_inactive": {
       "action": "CHECK_BOOK_OWNERSHIP_RESPONSE",
@@ -373,7 +373,7 @@
       "action": "GET_BOOK_PDF_PATH_RESPONSE",
       "book_id": 10,
       "status": "SUCCESS",
-      "pdf_path": "/var/www/uploads/books/shahnameh.pdf"
+      "pdf_path": "/home/username/BookClub_Storage/shahnameh.pdf"
     },
     "server_response_error_access": {
       "action": "GET_BOOK_PDF_PATH_RESPONSE",
@@ -409,7 +409,7 @@
           "genre": "Epic",
           "price": 250000.0,
           "discount_percentage": 10.0,
-          "cover_image_path": "/var/www/uploads/covers/shahnameh.jpg",
+          "cover_image_path": "/home/username/BookClub_Storage/shahnameh.jpg",
           "publisher_name": "انتشارات طوس"
         }
       ]
@@ -561,7 +561,7 @@
           "author": "فردوسی",
           "price": 250000.0,
           "discount": 10.0,
-          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg",
+          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg",
           "publisher_name": "Tech_Books",
           "isActive": true
         }
@@ -610,8 +610,8 @@
           "author": "فردوسی",
           "genre": "Epic",
           "price": 250000.0,
-          "pdfPath": "/var/www/uploads/pdfs/shahnameh.pdf",
-          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg"
+          "pdfPath": "/home/username/BookClub_Storage/shahnameh..pdf",
+          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
     },
@@ -669,7 +669,7 @@
           "title": "شاهنامه",
           "author": "فردوسی",
           "genre": "Epic",
-          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg"
+          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
     }
@@ -789,7 +789,7 @@
           "title": "شاهنامه",
           "author": "فردوسی",
           "genre": "Epic",
-          "coverImagePath": "/var/www/uploads/covers/shahnameh.jpg"
+          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
     }
@@ -1002,8 +1002,8 @@
           "description": "نسخه کامل شاهنامه به تصحیح مسکو",
           "price": 250000.0,
           "discountPercent": 10.0,
-          "coverImagePath": "server_storage/1700000000000_shahnameh_cover.jpg",
-          "pdfPath": "server_storage/1700000000000_shahnameh.pdf",
+          "coverImagePath": "/home/user/BookClub_Storage/1700000000000_shahnameh_cover.jpg",
+          "pdfPath": "/home/user/BookClub_Storage/1700000000000_shahnameh.pdf",
           "isActive": 1
         }
       ]
