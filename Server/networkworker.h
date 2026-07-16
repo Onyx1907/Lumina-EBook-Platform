@@ -8,6 +8,9 @@
 #include  <QThread>
 #include <QFile>
 #include <QDir>
+#include <QStandardPaths>
+#include <QDateTime>
+#include <QRegularExpression>
 #include <QByteArray>
 #include <QMetaObject>
 #include<QCoreApplication>

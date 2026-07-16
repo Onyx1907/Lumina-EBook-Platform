@@ -754,10 +754,10 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
     if (!q.exec()) return list;
 
     while (q.next()) {
-        // ابتدا اطلاعات پایه کتاب را از تابع مپینگ بدون دستکاری می‌گیریم
+        // ابتدا اطلاعات پایه کتاب را از تابع مپینگ بدون دستکاری میگیریم
         QJsonObject obj = bookFromQueryWithoutPdf(q);
 
-        //تزریق منطقی نام ناشر به شیء جی‌سون کتاب
+        //تزریق منطقی نام ناشر به شیء جیسون کتاب
         obj["publisher_name"] = q.value("publisher_name").toString();
 
         list.append(obj);
@@ -1496,7 +1496,6 @@ bool DatabaseManager::addBook(const QJsonObject& bookData)
     q.bindValue(":discP", discP);
     q.bindValue(":discA", discA);
 
-    // اینجا مسیرهای جدید کپی شده روی هارد سرور (server_storage/...) ذخیره میشوند
     q.bindValue(":cover", bookData.value("coverImagePath").toString());
     q.bindValue(":pdf", bookData.value("pdfPath").toString());
     q.bindValue(":pub_id", bookData.value("publisher_id").toInt());
@@ -1600,8 +1599,8 @@ QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
         b["description"]     = q.value("description").toString();
         b["price"]           = q.value("price").toDouble();
         b["discountPercent"] = q.value("discountPercent").toDouble();
-        b["coverImagePath"]  = q.value("coverImagePath").toString(); // مسیر نسبی
-        b["pdfPath"]         = q.value("pdfPath").toString();        // استخراج مسیر پی دی اف جهت استفاده در ویرایش
+        b["coverImagePath"]  = q.value("coverImagePath").toString();
+        b["pdfPath"]         = q.value("pdfPath").toString();
         b["isActive"]        = q.value("isActive").toInt();
         list.append(b);
     }
