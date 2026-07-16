@@ -792,8 +792,7 @@
           "title": "شاهنامه",
           "author": "فردوسی",
           "genre": "Epic",
-          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg",
-          "publisher_name": "نام ناشر (از فیلد name)"
+          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
     }
@@ -1011,6 +1010,57 @@
           "isActive": 1
         }
       ]
+    }
+  }
+,
+  "47_GET_PUBLISHER_STATS": {
+    "client_request": {
+      "action": "GET_PUBLISHER_STATS",
+      "publisher_id": 5
+    },
+    "server_response_success": {
+      "action": "GET_PUBLISHER_STATS_RESPONSE",
+      "status": "SUCCESS",
+      "stats": {
+        "totalBooks": 12,
+        "totalRevenue": 2450000.0,
+        "booksRatings": [
+          {
+            "book_id": 10,
+            "title": "شاهنامه فردوسی",
+            "avgRating": 4.8
+          },
+          {
+            "book_id": 11,
+            "title": "دیوان حافظ",
+            "avgRating": 4.9
+          }
+        ],
+        "bestSellers": [
+          {
+            "book_id": 11,
+            "title": "دیوان حافظ",
+            "salesCount": 150
+          },
+          {
+            "book_id": 10,
+            "title": "شاهنامه فردوسی",
+            "salesCount": 120
+          }
+        ],
+        "worstSellers": [
+          {
+            "book_id": 15,
+            "title": "کتاب نمونه آزمایشی",
+            "salesCount": 0
+          },
+          {
+            "book_id": 12,
+            "title": "گلستان سعدی",
+            "salesCount": 5
+          }
+        ]
+      }
     }
   }
 }
