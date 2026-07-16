@@ -412,43 +412,30 @@ font-size: 13px;
        </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="book_cover">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>95</horstretch>
-          <verstretch>112</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QLabel" name="book_cover">
         <property name="minimumSize">
          <size>
-          <width>95</width>
-          <height>112</height>
+          <width>80</width>
+          <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>101</width>
-          <height>121</height>
+          <width>80</width>
+          <height>16777215</height>
          </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">   background: none;
-    background-color: transparent;
-
-    border: 1px solid transparent;</string>
         </property>
         <property name="text">
          <string/>
         </property>
-        <property name="icon">
-         <iconset resource="resources.qrc">
-          <normaloff>:/resources/default_book.png</normaloff>:/resources/default_book.png</iconset>
+        <property name="pixmap">
+         <pixmap resource="resources.qrc">:/resources/default_book.png</pixmap>
         </property>
-        <property name="iconSize">
-         <size>
-          <width>100</width>
-          <height>100</height>
-         </size>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>

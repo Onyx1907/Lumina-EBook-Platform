@@ -115,35 +115,6 @@ qproperty-alignment: 'AlignRight | AlignVCenter';
 
 </string>
       </property>
-      <widget class="QPushButton" name="book_cover">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>351</width>
-         <height>421</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">    background: none;
-    background-color: transparent;
-
-    border: 1px solid transparent;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../resources.qrc">
-         <normaloff>:/resources/default_book.png</normaloff>:/resources/default_book.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>500</width>
-         <height>500</height>
-        </size>
-       </property>
-      </widget>
       <widget class="QPushButton" name="author">
        <property name="geometry">
         <rect>
@@ -505,54 +476,6 @@ QPushButton:disabled {
         <string>حذف از سبد خرید</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="savedBook_pushButton">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>10</y>
-         <width>51</width>
-         <height>141</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-    background-color: transparent;
-    border: none;
-    color #8B5E3C;
-    padding: 6px;
-    border-radius: 10px;
-}
-
-QPushButton:hover {
-    background-color: rgba(200, 169, 126, 0.18);
-    color: #B08D57;
-}
-
-QPushButton:pressed {
-    background-color: rgba(176, 141, 87, 0.28);
-    color: #6F4A2F;
-}
-
-QPushButton:disabled {
-    background-color: transparent;
-    color: #CBB8A3;
-}
-</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../resources.qrc">
-         <normaloff>:/resources/user/save_logo.png</normaloff>:/resources/user/save_logo.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>150</width>
-         <height>150</height>
-        </size>
-       </property>
-      </widget>
       <widget class="QPushButton" name="saveBook_pushButton">
        <property name="geometry">
         <rect>
@@ -771,14 +694,33 @@ QPushButton:hover {
       <widget class="QLabel" name="error_label">
        <property name="geometry">
         <rect>
-         <x>70</x>
-         <y>520</y>
-         <width>581</width>
-         <height>21</height>
+         <x>400</x>
+         <y>10</y>
+         <width>251</width>
+         <height>71</height>
         </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    color: #8A6623; 
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+
+}</string>
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
       <widget class="QPushButton" name="disconnected">
@@ -809,6 +751,91 @@ QPushButton:hover {
         <size>
          <width>400</width>
          <height>400</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QLabel" name="book_cover">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>360</width>
+         <height>440</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>360</width>
+         <height>440</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>360</width>
+         <height>440</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">   background: none;
+    background-color: transparent;
+
+    border: 1px solid transparent;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../resources.qrc">:/resources/default_book.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="savedBook_pushButton">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>10</y>
+         <width>51</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    color #8B5E3C;
+    padding: 6px;
+    border-radius: 10px;
+}
+
+QPushButton:hover {
+    background-color: rgba(200, 169, 126, 0.18);
+    color: #B08D57;
+}
+
+QPushButton:pressed {
+    background-color: rgba(176, 141, 87, 0.28);
+    color: #6F4A2F;
+}
+
+QPushButton:disabled {
+    background-color: transparent;
+    color: #CBB8A3;
+}
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources.qrc">
+         <normaloff>:/resources/user/save_logo.png</normaloff>:/resources/user/save_logo.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>150</width>
+         <height>150</height>
         </size>
        </property>
       </widget>

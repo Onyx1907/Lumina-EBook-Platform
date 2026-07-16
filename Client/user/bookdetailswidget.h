@@ -34,6 +34,10 @@ private slots:
 
     void on_comments_pushButton_clicked();
 
+    void on_saveBook_pushButton_clicked();
+
+    void on_savedBook_pushButton_clicked();
+
 private:
     Ui::BookDetailsWidget *ui;
     int userID;

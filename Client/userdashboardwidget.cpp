@@ -30,6 +30,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ResultPage = new ResultWidget(this);
     CommentsPage = new CommentsWidget(user->getId(), this);
     CartPage = new CartWidget(user->getId(), this);
+    LibraryPage =  new LibraryWidget(user->getId(), this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
@@ -39,6 +40,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ui->stackedWidget->addWidget(ResultPage);
     ui->stackedWidget->addWidget(CommentsPage);
     ui->stackedWidget->addWidget(CartPage);
+    ui->stackedWidget->addWidget(LibraryPage);
 
     //مدیریت نمایش صفحه انتخاب ژانر
     if(is_first_login){
@@ -274,5 +276,11 @@ void UserDashboardWidget::testSearchLayout() {
 void UserDashboardWidget::on_cart_pushButton_clicked()
 {
     fadeToPage(Page::CartPageIndex);
+}
+
+
+void UserDashboardWidget::on_library_pushButton_clicked()
+{
+    fadeToPage(Page::LibraryPageIndex);
 }
 

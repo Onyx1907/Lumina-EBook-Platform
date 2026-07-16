@@ -11,6 +11,7 @@
 #include "resultwidget.h"
 #include "commentswidget.h"
 #include "cartwidget.h"
+#include "librarywidget.h"
 
 
 namespace Ui {
@@ -37,6 +38,8 @@ private slots:
 
     void on_cart_pushButton_clicked();
 
+    void on_library_pushButton_clicked();
+
 private:
     Ui::UserDashboardWidget *ui;
     RegularUser *user;
@@ -49,6 +52,7 @@ private:
     ResultWidget* ResultPage;
     CommentsWidget* CommentsPage;
     CartWidget* CartPage;
+    LibraryWidget* LibraryPage;
 
     int previousPageIndex = 0;
 
@@ -62,7 +66,8 @@ private:
         SearchPageIndex = 4,
         ResultPageIndex = 5,
         CommentsPageIndex = 6,
-        CartPageIndex = 7
+        CartPageIndex = 7,
+        LibraryPageIndex = 8
     };
 
 
