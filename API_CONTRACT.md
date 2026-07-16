@@ -669,7 +669,10 @@
           "title": "شاهنامه",
           "author": "فردوسی",
           "genre": "Epic",
-          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
+          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg",
+          "price": 250000.0,
+          "discount": 10.0,
+          "publisher_name": "نام ناشر (از فیلد name)"
         }
       ]
     }
@@ -789,7 +792,8 @@
           "title": "شاهنامه",
           "author": "فردوسی",
           "genre": "Epic",
-          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
+          "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg",
+          "publisher_name": "نام ناشر (از فیلد name)"
         }
       ]
     }
