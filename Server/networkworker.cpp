@@ -167,6 +167,7 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //************************************************پنل ناشر ( ماژول 3 )*******************************************************
 
+    else if (action == "GET_PUBLISHER_STATS") { handleGetPublisherStats(socket, data); return; }
 
 
 
@@ -1459,7 +1460,18 @@ void NetworkWorker::handleGetPublisherBooks(QTcpSocket* socket, const QJsonObjec
 
 //************************************************پنل ناشر ( ماژول 3 )*******************************************************
 
+void NetworkWorker::handleGetPublisherStats(QTcpSocket* socket, const QJsonObject& data) {
+    int publisherId = data["publisher_id"].toInt();
 
+    QJsonObject stats = m_dbManager->getPublisherStats(publisherId);
+
+    QJsonObject resp;
+    resp["action"] = "GET_PUBLISHER_STATS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["stats"]  = stats;
+
+    sendJson(socket, resp);
+}
 
 
 

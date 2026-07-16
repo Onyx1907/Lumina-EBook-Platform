@@ -140,7 +140,7 @@ private:
 
     //************************************************پنل ناشر ( ماژول 3 )*******************************************************
 
-
+    void handleGetPublisherStats(QTcpSocket* socket, const QJsonObject& data);
 
 
 

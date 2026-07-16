@@ -1308,10 +1308,9 @@ QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
     QList<QJsonObject> list;
 
     QSqlQuery q(db);
-    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath, u.name AS publisher_name "
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath "
               "FROM shelf_books sb "
               "JOIN books b ON sb.book_id = b.id "
-              "JOIN users u ON b.publisher_id = u.id "
               "WHERE sb.shelf_id = :s");
     q.bindValue(":s", shelfId);
 
@@ -1325,7 +1324,6 @@ QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
         book["author"] = q.value("author").toString();
         book["genre"] = q.value("genre").toString();
         book["coverImagePath"] = q.value("coverImagePath").toString();
-        book["publisher_name"] = q.value("publisher_name").toString();
 
         list.append(book);
     }
