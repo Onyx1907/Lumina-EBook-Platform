@@ -610,7 +610,7 @@
           "author": "فردوسی",
           "genre": "Epic",
           "price": 250000.0,
-          "pdfPath": "/home/username/BookClub_Storage/shahnameh..pdf",
+          "pdfPath": "/home/username/BookClub_Storage/shahnameh.pdf",
           "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
       ]
@@ -918,8 +918,8 @@
       "description": "نسخه ویراسته جدید همراه با مقدمه",
       "price": 300000.0,
       "discountPercent": 15.0,
-      "pdfPath": "server_storage/1700000000000_shahnameh.pdf",
-      "coverImagePath": "server_storage/1700000000000_shahnameh_cover.jpg",
+      "pdfPath": "1700000000000_shahnameh.pdf",
+      "coverImagePath": "1700000000000_shahnameh_cover.jpg",
       "publisher_pdf_path": "C:/Users/Publisher/Downloads/shahnameh_v2.pdf",
       "publisher_cover_path": "C:/Users/Publisher/Downloads/shahnameh_v2_cover.jpg"
     },
