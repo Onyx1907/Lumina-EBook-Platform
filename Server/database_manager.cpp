@@ -1611,7 +1611,107 @@ QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
 
 //************************************************پنل ناشر ( ماژول 3 )*******************************************************
 
+//دیدن وضعیت ناشر
+QJsonObject DatabaseManager::getPublisherStats(int publisherId) {
+    QJsonObject stats;
 
+    //تعداد کل کتاب های منتشرشده (فقط حذف نشده)
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT COUNT(*) FROM books WHERE publisher_id = :p AND is_deleted = 0");
+        q.bindValue(":p", publisherId);
+        if (q.exec() && q.next())
+            stats["totalBooks"] = q.value(0).toInt();
+        else
+            stats["totalBooks"] = 0;
+    }
+
+    //مجموع درآمد ناشر
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT IFNULL(SUM(b.price - b.discountAmount), 0.0) "
+                  "FROM library l "
+                  "JOIN books b ON l.book_id = b.id "
+                  "WHERE b.publisher_id = :p");
+        q.bindValue(":p", publisherId);
+
+        if (q.exec() && q.next())
+            stats["totalRevenue"] = q.value(0).toDouble();
+        else
+            stats["totalRevenue"] = 0.0;
+    }
+
+    //میانگین امتیاز هر کتاب ناشر (فقط کتاب های حذف نشده)
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, title, averageRating FROM books WHERE publisher_id = :p AND is_deleted = 0");
+        q.bindValue(":p", publisherId);
+
+        QJsonArray ratingsArr;
+        if (q.exec()) {
+            while (q.next()) {
+                QJsonObject o;
+                o["book_id"]   = q.value("id").toInt();
+                o["title"]     = q.value("title").toString();
+                o["avgRating"] = q.value("averageRating").toDouble();
+                ratingsArr.append(o);
+            }
+        }
+        stats["booksRatings"] = ratingsArr;
+    }
+
+    //پرفروش ترین کتاب ها (۵ کتاب اول از بین کتاب های حذف نشده)
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT b.id, b.title, COUNT(l.id) AS salesCount "
+                  "FROM books b "
+                  "LEFT JOIN library l ON l.book_id = b.id "
+                  "WHERE b.publisher_id = :p AND b.is_deleted = 0 "
+                  "GROUP BY b.id, b.title "
+                  "ORDER BY salesCount DESC "
+                  "LIMIT 5");
+        q.bindValue(":p", publisherId);
+
+        QJsonArray bestArr;
+        if (q.exec()) {
+            while (q.next()) {
+                QJsonObject o;
+                o["book_id"]    = q.value("id").toInt();
+                o["title"]      = q.value("title").toString();
+                o["salesCount"] = q.value("salesCount").toInt();
+                bestArr.append(o);
+            }
+        }
+        stats["bestSellers"] = bestArr;
+    }
+
+    //کم فروش ترین کتاب ها (۵ کتاب آخر از بین کتاب های حذف نشده)
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT b.id, b.title, COUNT(l.id) AS salesCount "
+                  "FROM books b "
+                  "LEFT JOIN library l ON l.book_id = b.id "
+                  "WHERE b.publisher_id = :p AND b.is_deleted = 0 "
+                  "GROUP BY b.id, b.title "
+                  "ORDER BY salesCount ASC "
+                  "LIMIT 5");
+        q.bindValue(":p", publisherId);
+
+        QJsonArray worstArr;
+        if (q.exec()) {
+            while (q.next()) {
+                QJsonObject o;
+                o["book_id"]    = q.value("id").toInt();
+                o["title"]      = q.value("title").toString();
+                o["salesCount"] = q.value("salesCount").toInt();
+                worstArr.append(o);
+            }
+        }
+        stats["worstSellers"] = worstArr;
+    }
+
+    return stats;
+}
 
 
 
