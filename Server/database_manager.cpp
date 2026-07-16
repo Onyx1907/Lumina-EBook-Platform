@@ -1090,7 +1090,7 @@ QList<QJsonObject> DatabaseManager::getPurchasedBooks(int userId) {
     QSqlQuery q(db);
 
     // انتخاب دقیق فیلدهای مسیر فیزیکی کتاب از دیتابیس
-    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.price, b.pdfPath, b.coverImagePath "
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.pdfPath, b.coverImagePath "
               "FROM library l "
               "JOIN books b ON l.book_id = b.id "
               "WHERE l.user_id = :u");
@@ -1107,7 +1107,6 @@ QList<QJsonObject> DatabaseManager::getPurchasedBooks(int userId) {
         o["title"] = q.value("title").toString();
         o["author"] = q.value("author").toString();
         o["genre"] = q.value("genre").toString();
-        o["price"] = q.value("price").toDouble();
         o["pdfPath"] = q.value("pdfPath").toString();                 // فیلد فیزیکی هارد سرور
         o["coverImagePath"] = q.value("coverImagePath").toString();   // فیلد فیزیکی هارد سرور
         list.append(o);
@@ -1141,10 +1140,12 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
 
     QSqlQuery q(db);
 
-    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath "
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath, "
+              "b.price, b.discountPercent, u.name AS publisher_name "
               "FROM saved_books s "
               "JOIN books b ON s.book_id = b.id "
-              "WHERE s.user_id = :u");
+              "JOIN users u ON b.publisher_id = u.id "
+              "WHERE s.user_id = :u AND b.is_deleted = 0");
     q.bindValue(":u", userId);
 
     if (!q.exec()) {
@@ -1158,7 +1159,11 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
         o["title"] = q.value("title").toString();
         o["author"] = q.value("author").toString();
         o["genre"] = q.value("genre").toString();
-        o["coverImagePath"] = q.value("coverImagePath").toString(); // مسیر نسبی ذخیره شده (مثلا server_storage/pic.jpg)
+        o["coverImagePath"] = q.value("coverImagePath").toString();
+        o["price"] = q.value("price").toDouble();
+        o["discount"] = q.value("discountPercent").toDouble();
+        o["publisher_name"] = q.value("publisher_name").toString();
+
         list.append(o);
     }
 
@@ -1169,7 +1174,7 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
 
 //ایجاد قفسه
 bool DatabaseManager::createShelf(int userId, const QString& name) {
-    // بررسی اینکه آیا این کاربر قفسه‌ای با این نام دارد یا خیر
+    // بررسی اینکه آیا این کاربر قفسه ای با این نام دارد یا خیر
     QSqlQuery check(db);
     check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n");
     check.bindValue(":u", userId);
@@ -1303,9 +1308,10 @@ QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
     QList<QJsonObject> list;
 
     QSqlQuery q(db);
-    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath "
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath, u.name AS publisher_name "
               "FROM shelf_books sb "
               "JOIN books b ON sb.book_id = b.id "
+              "JOIN users u ON b.publisher_id = u.id "
               "WHERE sb.shelf_id = :s");
     q.bindValue(":s", shelfId);
 
@@ -1319,6 +1325,8 @@ QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
         book["author"] = q.value("author").toString();
         book["genre"] = q.value("genre").toString();
         book["coverImagePath"] = q.value("coverImagePath").toString();
+        book["publisher_name"] = q.value("publisher_name").toString();
+
         list.append(book);
     }
 
