@@ -170,6 +170,9 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "GET_PUBLISHER_STATS") { handleGetPublisherStats(socket, data); return; }
 
 
+    //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
+
+
 
 
 
@@ -1474,6 +1477,7 @@ void NetworkWorker::handleGetPublisherStats(QTcpSocket* socket, const QJsonObjec
 }
 
 
+//*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
 
 
