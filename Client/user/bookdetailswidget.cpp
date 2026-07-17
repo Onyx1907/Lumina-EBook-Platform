@@ -2,6 +2,7 @@
 #include "ui_bookdetailswidget.h"
 #include "clientnetworkmanager.h"
 #include "constants.h"
+#include "storageutils.h"
 #include <QString>
 #include <QFont>
 #include <QTimer>
@@ -26,6 +27,8 @@ void BookDetailsWidget::loadBook(Book *book){
     ui->author_label->setText(book->getAuthor());
     ui->publisher_label->setText(book->getPublisher());
     QString sv = genreToString(book->getGenre());
+
+    StorageUtils::displayBookCover(book->getCoverImagePath(), ui->book_cover);
 
     if (sv == "Biography")
         ui->genre_label->setText("زندگینامه");

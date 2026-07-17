@@ -1,5 +1,6 @@
 #include "bookinfocard.h"
 #include "ui_bookinfocard.h"
+#include "storageutils.h"
 
 BookInfoCard::BookInfoCard(Book b, QWidget *parent)
     : QWidget(parent), book(b)
@@ -9,6 +10,8 @@ BookInfoCard::BookInfoCard(Book b, QWidget *parent)
     ui->author_label->setText(book.getAuthor());
     ui->name_label->setText(book.getTitle());
     ui->publisher_label->setText(book.getPublisher());
+
+    StorageUtils::displayBookCover(book.getCoverImagePath(), ui->book_cover);
 
     if(book.getDiscountPercentage()){
         ui->discount_label->show();

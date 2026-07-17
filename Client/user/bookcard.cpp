@@ -1,5 +1,6 @@
 #include "bookcard.h"
 #include "ui_bookcard.h"
+#include "storageutils.h"
 #include <QPixmap>
 
 BookCard::BookCard(Book b, QWidget *parent)
@@ -10,6 +11,7 @@ BookCard::BookCard(Book b, QWidget *parent)
 
     ui->title_label->setText(this->book.getTitle());
 
+    StorageUtils::displayBookCover(book.getCoverImagePath(), ui->book_cover);
 
     book_pushbutton = new QPushButton(this);
 
