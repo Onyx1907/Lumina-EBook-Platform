@@ -8,6 +8,9 @@
 #include  <QThread>
 #include <QFile>
 #include <QDir>
+#include <QStandardPaths>
+#include <QDateTime>
+#include <QRegularExpression>
 #include <QByteArray>
 #include <QMetaObject>
 #include<QCoreApplication>
@@ -130,8 +133,21 @@ private:
 
     void handleAddBook(QTcpSocket* socket, const QJsonObject& data);
     void handleUpdateBook(QTcpSocket* socket, const QJsonObject& data);
+    void handleSetBookDiscount(QTcpSocket* socket, const QJsonObject& data);
+    void handleSetBookActiveState(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetPublisherBooks(QTcpSocket* socket, const QJsonObject& data);
 
 
+    //************************************************پنل ناشر ( ماژول 3 )*******************************************************
+
+    void handleGetPublisherStats(QTcpSocket* socket, const QJsonObject& data);
+
+
+    //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
+
+    void handleGetAllUsers(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetUserDetails(QTcpSocket* socket, const QJsonObject& data);
+    void handleSearchUsers(QTcpSocket* socket, const QJsonObject& data);
 
 
 

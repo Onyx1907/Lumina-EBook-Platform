@@ -158,6 +158,19 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //************************************************پنل ناشر ( ماژول 2 )*******************************************************
 
+    else if (action == "ADD_BOOK") { handleAddBook(socket, data); return; }
+    else if (action == "UPDATE_BOOK") { handleUpdateBook(socket, data); return; }
+    else if (action == "SET_BOOK_DISCOUNT") { handleSetBookDiscount(socket, data); return; }
+    else if (action == "SET_BOOK_ACTIVE_STATE") { handleSetBookActiveState(socket, data); return; }
+    else if (action == "GET_PUBLISHER_BOOKS")  { handleGetPublisherBooks(socket, data); return; }
+
+
+    //************************************************پنل ناشر ( ماژول 3 )*******************************************************
+
+    else if (action == "GET_PUBLISHER_STATS") { handleGetPublisherStats(socket, data); return; }
+
+
+    //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
 
 
@@ -305,20 +318,24 @@ void NetworkWorker::handleSetFavoriteGenres(QTcpSocket* socket, const QJsonObjec
 void NetworkWorker::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObject& data) {
     const int userId = data.value("user_id").toInt();
     QStringList genres = m_dbManager->getFavoriteGenres(userId);
-    const QList<QJsonObject> books = m_dbManager->getRecommendedBooks(genres);
+    QList<QJsonObject> books = m_dbManager->getRecommendedBooks(genres);
 
     QJsonArray arr;
-    QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (const QJsonObject& b : std::as_const(books)) {
+    // استفاده از مسیر استاندارد Home برای هماهنگی کامل با اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+    for (const auto &b : books) {
         // ایجاد یک کپی موقت و قابل تغییر برای اصلاح مسیر
         QJsonObject mutableBook = b;
 
         QString coverPath = mutableBook.value("cover_image_path").toString();
-        if (coverPath.isEmpty()) coverPath = mutableBook.value("coverImagePath").toString();
+        if (coverPath.isEmpty()) {
+            coverPath = mutableBook.value("coverImagePath").toString();
+        }
 
         if (!coverPath.isEmpty()) {
-            mutableBook["cover_image_path"] = QDir::cleanPath(baseDir + "/" + coverPath);
+            mutableBook["cover_image_path"] = storagePath + coverPath;
         } else {
             mutableBook["cover_image_path"] = "";
         }
@@ -335,19 +352,23 @@ void NetworkWorker::handleGetRecommendedBooks(QTcpSocket* socket, const QJsonObj
 
 void NetworkWorker::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject& data) {
     const QString genre = data.value("genre").toString();
-    const QList<QJsonObject> books = m_dbManager->getBooksByGenre(genre);
+    QList<QJsonObject> books = m_dbManager->getBooksByGenre(genre);
 
     QJsonArray arr;
-    QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (const QJsonObject& b : std::as_const(books)) {
+    // استفاده از مسیر استاندارد Home برای هماهنگی کامل با اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+    for (const auto &b : books) {
         QJsonObject mutableBook = b;
 
         QString coverPath = mutableBook.value("cover_image_path").toString();
-        if (coverPath.isEmpty()) coverPath = mutableBook.value("coverImagePath").toString();
+        if (coverPath.isEmpty()) {
+            coverPath = mutableBook.value("coverImagePath").toString();
+        }
 
         if (!coverPath.isEmpty()) {
-            mutableBook["cover_image_path"] = QDir::cleanPath(baseDir + "/" + coverPath);
+            mutableBook["cover_image_path"] = storagePath + coverPath;
         } else {
             mutableBook["cover_image_path"] = "";
         }
@@ -363,18 +384,22 @@ void NetworkWorker::handleGetBooksByGenre(QTcpSocket* socket, const QJsonObject&
 }
 
 void NetworkWorker::handleGetPopularBooks(QTcpSocket* socket) {
-    const QList<QJsonObject> books = m_dbManager->getPopularBooks();
+    QList<QJsonObject> books = m_dbManager->getPopularBooks();
     QJsonArray arr;
-    QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (const QJsonObject& b : std::as_const(books)) {
+    // استفاده از مسیر استاندارد Home برای هماهنگی کامل با اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+    for (const auto &b : books) {
         QJsonObject mutableBook = b;
 
         QString coverPath = mutableBook.value("cover_image_path").toString();
-        if (coverPath.isEmpty()) coverPath = mutableBook.value("coverImagePath").toString();
+        if (coverPath.isEmpty()) {
+            coverPath = mutableBook.value("coverImagePath").toString();
+        }
 
         if (!coverPath.isEmpty()) {
-            mutableBook["cover_image_path"] = QDir::cleanPath(baseDir + "/" + coverPath);
+            mutableBook["cover_image_path"] = storagePath + coverPath;
         } else {
             mutableBook["cover_image_path"] = "";
         }
@@ -390,18 +415,22 @@ void NetworkWorker::handleGetPopularBooks(QTcpSocket* socket) {
 }
 
 void NetworkWorker::handleGetNewBooks(QTcpSocket* socket) {
-    const QList<QJsonObject> books = m_dbManager->getNewBooks();
+    QList<QJsonObject> books = m_dbManager->getNewBooks();
     QJsonArray arr;
-    QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (const QJsonObject& b : std::as_const(books)) {
+    // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+    for (const auto &b : books) {
         QJsonObject mutableBook = b;
 
         QString coverPath = mutableBook.value("cover_image_path").toString();
-        if (coverPath.isEmpty()) coverPath = mutableBook.value("coverImagePath").toString();
+        if (coverPath.isEmpty()) {
+            coverPath = mutableBook.value("coverImagePath").toString();
+        }
 
         if (!coverPath.isEmpty()) {
-            mutableBook["cover_image_path"] = QDir::cleanPath(baseDir + "/" + coverPath);
+            mutableBook["cover_image_path"] = storagePath + coverPath;
         } else {
             mutableBook["cover_image_path"] = "";
         }
@@ -417,18 +446,22 @@ void NetworkWorker::handleGetNewBooks(QTcpSocket* socket) {
 }
 
 void NetworkWorker::handleGetBestsellers(QTcpSocket* socket) {
-    const QList<QJsonObject> books = m_dbManager->getBestsellers();
+    QList<QJsonObject> books = m_dbManager->getBestsellers();
     QJsonArray arr;
-    QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (const QJsonObject& b : std::as_const(books)) {
+    // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+    for (const auto &b : books) {
         QJsonObject mutableBook = b;
 
         QString coverPath = mutableBook.value("cover_image_path").toString();
-        if (coverPath.isEmpty()) coverPath = mutableBook.value("coverImagePath").toString();
+        if (coverPath.isEmpty()) {
+            coverPath = mutableBook.value("coverImagePath").toString();
+        }
 
         if (!coverPath.isEmpty()) {
-            mutableBook["cover_image_path"] = QDir::cleanPath(baseDir + "/" + coverPath);
+            mutableBook["cover_image_path"] = storagePath + coverPath;
         } else {
             mutableBook["cover_image_path"] = "";
         }
@@ -446,16 +479,20 @@ void NetworkWorker::handleGetBestsellers(QTcpSocket* socket) {
 void NetworkWorker::handleGetFreeBooks(QTcpSocket* socket) {
     const QList<QJsonObject> books = m_dbManager->getFreeBooks();
     QJsonArray arr;
-    QString baseDir = QCoreApplication::applicationDirPath();
 
-    for (const QJsonObject& b : std::as_const(books)) {
+    // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+    for (const auto &b : books) {
         QJsonObject mutableBook = b;
 
         QString coverPath = mutableBook.value("cover_image_path").toString();
-        if (coverPath.isEmpty()) coverPath = mutableBook.value("coverImagePath").toString();
+        if (coverPath.isEmpty()) {
+            coverPath = mutableBook.value("coverImagePath").toString();
+        }
 
         if (!coverPath.isEmpty()) {
-            mutableBook["cover_image_path"] = QDir::cleanPath(baseDir + "/" + coverPath);
+            mutableBook["cover_image_path"] = storagePath + coverPath;
         } else {
             mutableBook["cover_image_path"] = "";
         }
@@ -581,10 +618,10 @@ void NetworkWorker::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObje
     resp["publisher_name"] = publisher;
     resp["rating"] = rating;
 
-    // اعمال فرمول روی مسیر عکس کاور
+    // اعمال فرمول روی مسیر عکس کاور با استفاده از مسیر استاندارد Home
     if (!coverPath.isEmpty()) {
-        QString baseDir = QCoreApplication::applicationDirPath();
-        resp["cover_image_path"] = QDir::cleanPath(baseDir + "/" + coverPath); // ارسال آدرس کامل هارد
+        QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+        resp["cover_image_path"] = storagePath + coverPath; // ارسال آدرس کامل هارد طبق منطق اینستالر
     } else {
         resp["cover_image_path"] = "";
     }
@@ -610,14 +647,16 @@ void NetworkWorker::handleGetBookPdfPath(QTcpSocket* socket, const QJsonObject& 
         return;
     }
 
-    // گرفتن آدرس نسبی از دیتابیس
     QString pdfPath = m_dbManager->getBookPdfPath(bookId);
 
     if (!pdfPath.isEmpty()) {
         resp["status"] = "SUCCESS";
-        // اعمال فرمول جدید روی مسیر پی‌دی‌اف
-        QString baseDir = QCoreApplication::applicationDirPath();
-        resp["pdf_path"] = QDir::cleanPath(baseDir + "/" + pdfPath); // ارسال آدرس کامل هارد برای کپی مستقیم کلاینت
+
+        // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+        QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+        // ارسال آدرس کامل (مسیر Home + نام فایل) برای کلاینت
+        resp["pdf_path"] = storagePath + pdfPath;
     } else {
         resp["status"] = "FAILED";
         resp["message"] = ".فایل پی دی اف این کتاب یافت نشد";
@@ -635,28 +674,27 @@ void NetworkWorker::handleSearchBooks(QTcpSocket* socket, const QJsonObject& dat
     QString publisher = data.value("publisher_name").toString();
 
     // دریافت نتایج جستجو از دیتابیس
-    const QList<QJsonObject> books = m_dbManager->searchBooks(title, author, publisher);
+    QList<QJsonObject> books = m_dbManager->searchBooks(title, author, publisher);
     QJsonArray finalArray;
 
-    // پیدا کردن مسیر پوشه اجرایی سرور برای سرهم کردن آدرس کامل
-    QString baseDir = QCoreApplication::applicationDirPath();
+    // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
 
-    for (const QJsonObject& book : std::as_const(books)) {
-
+    for (const auto &book : books) {
         QJsonObject mutableBook = book;
 
-
+        // چک کردن هر دو کلید احتمالی که در دیتابیس یا سمت کلاینت استفاده شده است
         QString coverPath = mutableBook.value("cover_image_path").toString();
         if (coverPath.isEmpty()) {
             coverPath = mutableBook.value("coverImagePath").toString();
         }
 
+        // تبدیل نام فایل به مسیر کامل برای کلاینت
         if (!coverPath.isEmpty()) {
-            mutableBook["cover_image_path"] = QDir::cleanPath(baseDir + "/" + coverPath);
+            mutableBook["cover_image_path"] = storagePath + coverPath;
         } else {
             mutableBook["cover_image_path"] = "";
         }
-
 
         finalArray.append(mutableBook);
     }
@@ -799,15 +837,14 @@ void NetworkWorker::handleGetCart(QTcpSocket* socket, const QJsonObject& data) {
     int userId = data["user_id"].toInt();
 
     QList<QJsonObject> items = m_dbManager->getCartItems(userId);
-
     QJsonArray arr;
     double total = 0;
     double discountTotal = 0;
 
-    //پیدا کردن مسیر پوشه اجرایی سرور
-    QString baseDir = QCoreApplication::applicationDirPath();
+    // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
 
-    for (const QJsonObject& i : std::as_const(items)) {
+    for (const auto &i : items) {
         QJsonObject mutableItem = i;
 
         double price = mutableItem["price"].toDouble();
@@ -816,9 +853,10 @@ void NetworkWorker::handleGetCart(QTcpSocket* socket, const QJsonObject& data) {
         discountTotal += price * (discount / 100.0);
         total += price;
 
+        // تبدیل نام فایل دیتابیس به مسیر کامل برای کلاینت
         QString relativeCover = mutableItem["coverImagePath"].toString();
         if (!relativeCover.isEmpty()) {
-            mutableItem["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
+            mutableItem["coverImagePath"] = storagePath + relativeCover;
         }
 
         arr.append(mutableItem);
@@ -876,22 +914,22 @@ void NetworkWorker::handleGetPurchasedBooks(QTcpSocket* socket, const QJsonObjec
     QList<QJsonObject> purchasedList = m_dbManager->getPurchasedBooks(userId);
     QJsonArray finalArray;
 
-    //پیدا کردن مسیر پوشه اجرایی سرور
-    QString baseDir = QCoreApplication::applicationDirPath();
+    // مسیر استاندارد Home برای اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
 
-    for (const QJsonObject& book : std::as_const(purchasedList)) {
+    for (const auto &book : purchasedList) {
         QJsonObject mutableBook = book;
 
         // --- اعمال فرمول جدید روی مسیر عکس کاور ---
         QString relativeCover = mutableBook["coverImagePath"].toString();
         if (!relativeCover.isEmpty()) {
-            mutableBook["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
+            mutableBook["coverImagePath"] = storagePath + relativeCover;
         }
 
         // --- اعمال فرمول روی مسیر فایل کتاب ---
         QString relativePdf = mutableBook["pdfPath"].toString();
         if (!relativePdf.isEmpty()) {
-            mutableBook["pdfPath"] = QDir::cleanPath(baseDir + "/" + relativePdf);
+            mutableBook["pdfPath"] = storagePath + relativePdf;
         }
 
         finalArray.append(mutableBook);
@@ -939,19 +977,22 @@ void NetworkWorker::handleGetSavedBooks(QTcpSocket* socket, const QJsonObject& d
     QList<QJsonObject> list = m_dbManager->getSavedBooks(userId);
     QJsonArray arr;
 
-    //پیدا کردن مسیر پوشه اجرایی سرور
-    QString baseDir = QCoreApplication::applicationDirPath();
+    // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+    QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString storagePath = QDir::cleanPath(homeDir + "/BookClub_Storage") + "/";
 
-    for (const QJsonObject& b : std::as_const(list)) {
-        QJsonObject mutableBook = b;
+    for (const auto &item : list) {
+        // ایجاد کپی برای تغییر مسیر کاور
+        QJsonObject b = item;
 
-        QString relativeCover = mutableBook["coverImagePath"].toString();
+        // دریافت نام فایل از دیتابیس و تبدیل به مسیر کامل
+        QString coverName = b.value("coverImagePath").toString();
 
-        //فرمول جدید برای ساخت آدرس فیزیکی کامل و بدون باگ روی هارد
-        if (!relativeCover.isEmpty()) {
-            mutableBook["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
+        if (!coverName.isEmpty()) {
+            b["coverImagePath"] = storagePath + coverName;
         }
-        arr.append(mutableBook);
+
+        arr.append(b);
     }
 
     QJsonObject resp;
@@ -1062,20 +1103,23 @@ void NetworkWorker::handleGetShelfBooks(QTcpSocket* socket, const QJsonObject& d
     QList<QJsonObject> list = m_dbManager->getBooksInShelf(shelfId);
     QJsonArray arr;
 
-    // پیدا کردن مسیر کامل پوشه اجرایی سرور روی هارد
-    QString baseDir = QCoreApplication::applicationDirPath();
+    // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+    QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString storagePath = QDir::cleanPath(homeDir + "/BookClub_Storage") + "/";
 
-    for (const QJsonObject& b : std::as_const(list)) {
-        QJsonObject mutableBook = b;
+    for (const auto &item : list) {
+        // ساخت کپی قابل تغییر از آیتم
+        QJsonObject b = item;
 
-        QString relativeCover = mutableBook["coverImagePath"].toString();
+        // دریافت نام فایل از دیتابیس
+        QString coverName = b.value("coverImagePath").toString();
 
-        // اگر کتاب کاور داشت، مسیر آن را به آدرس کامل فیزیکی تبدیل کن
-        if (!relativeCover.isEmpty()) {
-            mutableBook["coverImagePath"] = QDir::cleanPath(baseDir + "/" + relativeCover);
+        // تبدیل به مسیر مطلق برای کلاینت
+        if (!coverName.isEmpty()) {
+            b["coverImagePath"] = storagePath + coverName;
         }
 
-        arr.append(mutableBook);
+        arr.append(b);
     }
 
     QJsonObject resp;
@@ -1164,6 +1208,276 @@ void NetworkWorker::handleUpdatePublisherProfile(QTcpSocket* socket, const QJson
 
 
 //************************************************پنل ناشر ( ماژول 2 )*******************************************************
+
+void NetworkWorker::handleAddBook(QTcpSocket* socket, const QJsonObject& data)
+{
+    QJsonObject resp;
+    resp["action"] = "ADD_BOOK_RESPONSE";
+
+    const QString title = data.value("title").toString();
+    const QString author = data.value("author").toString();
+    const QString genre = data.value("genre").toString();
+    const QString description = data.value("description").toString();
+    const double price = data.value("price").toDouble();
+    const double discountPercent = data.value("discountPercent").toDouble();
+    const int publisherId = data.value("publisher_id").toInt();
+
+    const QString publisherPdfPath = QDir::cleanPath(data.value("publisher_pdf_path").toString());
+    const QString publisherCoverPath = QDir::cleanPath(data.value("publisher_cover_path").toString());
+
+    if (title.isEmpty() || author.isEmpty() || publisherPdfPath.isEmpty() || publisherId <= 0) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".اطلاعات اجباری کتاب یا مسیر فایل پی دی اف ارسال نشده است";
+        sendJson(socket, resp);
+        return;
+    }
+
+    // استفاده از مسیر استاندارد سیستم (Home) برای جلوگیری از مشکلات دسترسی اینستالر
+    QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QDir dir(homeDir + "/BookClub_Storage");
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+
+    qint64 timestamp = QDateTime::currentMSecsSinceEpoch();
+    QString safeTitle = title.trimmed();
+    safeTitle.replace(QRegularExpression("[\\s\\\\/:*?\"<>|]"), "_");
+
+    // فقط نام فایل ها (برای ذخیره در دیتابیس)
+    QString pdfFileName = QString("%1_%2.pdf").arg(timestamp).arg(safeTitle);
+    QString coverFileName = publisherCoverPath.isEmpty() ? "" : QString("%1_%2_cover.jpg").arg(timestamp).arg(safeTitle);
+
+    // مسیرهای کامل برای عملیات کپی فایل
+    QString serverPdfFilePath = dir.filePath(pdfFileName);
+    QString serverCoverFilePath = publisherCoverPath.isEmpty() ? "" : dir.filePath(coverFileName);
+
+    // کپی فایل PDF
+    if (!QFile::copy(publisherPdfPath, serverPdfFilePath)) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".امکان کپی و ثبت فایل پی دی اف روی هارد دیسک سرور وجود ندارد";
+        sendJson(socket, resp);
+        return;
+    }
+
+    // کپی فایل کاور
+    if (!publisherCoverPath.isEmpty()) {
+        if (!QFile::copy(publisherCoverPath, serverCoverFilePath)) {
+            QFile::remove(serverPdfFilePath);
+            resp["status"] = "FAILED";
+            resp["message"] = ".امکان کپی و ثبت عکس کاور روی هارد دیسک سرور وجود ندارد";
+            sendJson(socket, resp);
+            return;
+        }
+    }
+
+    QJsonObject bookDbData;
+    bookDbData["title"] = title;
+    bookDbData["author"] = author;
+    bookDbData["genre"] = genre;
+    bookDbData["description"] = description;
+    bookDbData["price"] = price;
+    bookDbData["discountPercent"] = discountPercent;
+    bookDbData["pdfPath"] = pdfFileName; // ذخیره نام فایل
+    bookDbData["coverImagePath"] = coverFileName; // ذخیره نام فایل
+    bookDbData["publisher_id"] = publisherId;
+
+    bool success = m_dbManager->addBook(bookDbData);
+
+    if (success) {
+        resp["status"] = "SUCCESS";
+        resp["message"] = ".کتاب با موفقیت کپی و در پایگاه داده ثبت شد";
+    } else {
+        QFile::remove(serverPdfFilePath);
+        if (!coverFileName.isEmpty()) QFile::remove(serverCoverFilePath);
+        resp["status"] = "FAILED";
+        resp["message"] = ".خطا در ثبت اطلاعات کتاب در پایگاه داده";
+    }
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleUpdateBook(QTcpSocket* socket, const QJsonObject& data)
+{
+    const int bookId = data.value("book_id").toInt();
+    QJsonObject resp;
+    resp["action"] = "UPDATE_BOOK_RESPONSE";
+
+    if (bookId <= 0) {
+        resp["status"] = "FAILED";
+        resp["message"] = ".شناسه کتاب نامعتبر است";
+        sendJson(socket, resp);
+        return;
+    }
+
+    // استفاده از مسیر استاندارد برای هماهنگی با اینستالر
+    QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QDir dir(homeDir + "/BookClub_Storage");
+    if (!dir.exists()) { dir.mkpath("."); }
+
+    // مسیرهای ذخیره شده در دیتابیس (فقط نام فایل هستند)
+    QString currentPdfFileName = data.value("pdfPath").toString();
+    QString currentCoverFileName = data.value("coverImagePath").toString();
+
+    const QString newPublisherPdfPath = QDir::cleanPath(data.value("publisher_pdf_path").toString());
+    const QString newPublisherCoverPath = QDir::cleanPath(data.value("publisher_cover_path").toString());
+
+    qint64 timestamp = QDateTime::currentMSecsSinceEpoch();
+    QString safeTitle = data.value("title").toString().trimmed();
+    safeTitle.replace(QRegularExpression("[\\s\\\\/:*?\"<>|]"), "_");
+
+    QString pdfToDelete = "";
+    QString coverToDelete = "";
+    QString absoluteNewPdf = "";
+    QString absoluteNewCover = "";
+
+    // --- بررسی و کپی فایل PDF جدید ---
+    if (!newPublisherPdfPath.isEmpty()) {
+        QString newPdfName = QString("%1_%2.pdf").arg(timestamp).arg(safeTitle);
+        absoluteNewPdf = dir.filePath(newPdfName);
+
+        if (QFile::copy(newPublisherPdfPath, absoluteNewPdf)) {
+            if (!currentPdfFileName.isEmpty()) {
+                pdfToDelete = dir.filePath(currentPdfFileName);
+            }
+            currentPdfFileName = newPdfName; // آپدیت به نام فایل جدید
+        } else {
+            resp["status"] = "FAILED";
+            resp["message"] = ".امکان کپی و جایگزینی فایل پی دی اف جدید روی سرور وجود ندارد";
+            sendJson(socket, resp);
+            return;
+        }
+    }
+
+    // --- بررسی و کپی عکس کاور جدید ---
+    if (!newPublisherCoverPath.isEmpty()) {
+        QString newCoverName = QString("%1_%2_cover.jpg").arg(timestamp).arg(safeTitle);
+        absoluteNewCover = dir.filePath(newCoverName);
+
+        if (QFile::copy(newPublisherCoverPath, absoluteNewCover)) {
+            if (!currentCoverFileName.isEmpty()) {
+                coverToDelete = dir.filePath(currentCoverFileName);
+            }
+            currentCoverFileName = newCoverName; // آپدیت به نام فایل جدید
+        } else {
+            if (!absoluteNewPdf.isEmpty()) { QFile::remove(absoluteNewPdf); }
+            resp["status"] = "FAILED";
+            resp["message"] = ".امکان کپی و جایگزینی عکس کاور جدید روی سرور وجود ندارد";
+            sendJson(socket, resp);
+            return;
+        }
+    }
+
+    QJsonObject updatedData;
+    updatedData["title"] = data.value("title").toString();
+    updatedData["author"] = data.value("author").toString();
+    updatedData["genre"] = data.value("genre").toString();
+    updatedData["description"] = data.value("description").toString();
+    updatedData["price"] = data.value("price").toDouble();
+    updatedData["discountPercent"] = data.value("discountPercent").toDouble();
+    updatedData["pdfPath"] = currentPdfFileName; // ذخیره فقط نام فایل
+    updatedData["coverImagePath"] = currentCoverFileName; // ذخیره فقط نام فایل
+
+    if (m_dbManager->updateBook(bookId, updatedData)) {
+        if (!pdfToDelete.isEmpty() && QFile::exists(pdfToDelete)) { QFile::remove(pdfToDelete); }
+        if (!coverToDelete.isEmpty() && QFile::exists(coverToDelete)) { QFile::remove(coverToDelete); }
+
+        resp["status"] = "SUCCESS";
+        resp["message"] = ".کتاب با موفقیت ویرایش و فایل های جدید جایگزین شدند";
+    } else {
+        if (!absoluteNewPdf.isEmpty()) { QFile::remove(absoluteNewPdf); }
+        if (!absoluteNewCover.isEmpty()) { QFile::remove(absoluteNewCover); }
+        resp["status"] = "FAILED";
+        resp["message"] = ".خطا در ثبت تغییرات کتاب در پایگاه داده سرور";
+    }
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleSetBookDiscount(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId      = data["book_id"].toInt();
+    int publisherId = data["publisher_id"].toInt();
+    double percent  = data["discountPercent"].toDouble();
+
+    bool ok = m_dbManager->setBookDiscount(bookId, publisherId, percent);
+
+    QJsonObject resp;
+    resp["action"] = "SET_BOOK_DISCOUNT_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? ".تخفیف با موفقیت اعمال و محاسبه شد"
+                         : ".خطا در اعمال تخفیف";
+
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleSetBookActiveState(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId      = data["book_id"].toInt();
+    int publisherId = data["publisher_id"].toInt();
+    bool active     = data["active"].toBool();
+
+    bool ok = m_dbManager->setBookActiveState(bookId, publisherId, active);
+
+    QJsonObject resp;
+    resp["action"] = "SET_BOOK_ACTIVE_STATE_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = ok ? (active ? ".کتاب فعال شد"
+                                   : ".کتاب غیرفعال شد")
+                         : ".خطا در تغییر وضعیت کتاب";
+
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleGetPublisherBooks(QTcpSocket* socket, const QJsonObject& data) {
+    int publisherId = data["publisher_id"].toInt();
+
+    //دریافت لیست اصلی از دیتابیس (شامل نام فایل های ذخیره شده)
+    QList<QJsonObject> list = m_dbManager->getPublisherBooks(publisherId);
+
+    // آماده سازی مسیر ثابت Home برای اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+    QJsonArray arr;
+
+    //حلقه برای پردازش فقط عکس ها
+    for (const auto &item : list) {
+        // ایجاد کپی از شیء برای تغییر دادن مسیر عکس
+        QJsonObject b = item;
+
+        // فقط مسیر عکس را کامل میکنیم (نام فایل در دیتابیس باقی میماند و مسیر مطلق برای کلاینت ساخته میشود)
+        if (!b.value("coverImagePath").toString().isEmpty()) {
+            b["coverImagePath"] = storagePath + b.value("coverImagePath").toString();
+        }
+
+        if (!b.value("pdfPath").toString().isEmpty()) {
+            b["pdfPath"] = storagePath + b.value("pdfPath").toString();
+        }
+
+        arr.append(b);
+    }
+
+    //پاسخ به کلاینت
+    QJsonObject resp;
+    resp["action"] = "GET_PUBLISHER_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+    sendJson(socket, resp);
+}
+
+
+//************************************************پنل ناشر ( ماژول 3 )*******************************************************
+
+void NetworkWorker::handleGetPublisherStats(QTcpSocket* socket, const QJsonObject& data) {
+    int publisherId = data["publisher_id"].toInt();
+
+    QJsonObject stats = m_dbManager->getPublisherStats(publisherId);
+
+    QJsonObject resp;
+    resp["action"] = "GET_PUBLISHER_STATS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["stats"]  = stats;
+
+    sendJson(socket, resp);
+}
+
+
+//*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
 
 

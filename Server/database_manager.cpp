@@ -754,10 +754,10 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
     if (!q.exec()) return list;
 
     while (q.next()) {
-        // ابتدا اطلاعات پایه کتاب را از تابع مپینگ بدون دستکاری می‌گیریم
+        // ابتدا اطلاعات پایه کتاب را از تابع مپینگ بدون دستکاری میگیریم
         QJsonObject obj = bookFromQueryWithoutPdf(q);
 
-        //تزریق منطقی نام ناشر به شیء جی‌سون کتاب
+        //تزریق منطقی نام ناشر به شیء جیسون کتاب
         obj["publisher_name"] = q.value("publisher_name").toString();
 
         list.append(obj);
@@ -946,9 +946,10 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
 
     QSqlQuery q(db);
 
-    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.coverImagePath, b.isActive "
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.coverImagePath, b.isActive, u.username AS publisher_name "
               "FROM cart c "
               "JOIN books b ON c.book_id = b.id "
+              "JOIN users u ON b.publisher_id = u.id "
               "WHERE c.user_id = :u AND b.is_deleted = 0");
     q.bindValue(":u", userId);
 
@@ -963,6 +964,7 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
         obj["price"] = q.value("price").toDouble();
         obj["discount"] = q.value("discountPercent").toDouble();
         obj["coverImagePath"] = q.value("coverImagePath").toString(); // مسیر نسبی عکس
+        obj["publisher_name"] = q.value("publisher_name").toString();
 
         // فرستادن وضعیت دسترسی به کلاینت (۱ یعنی موجود، ۰ یعنی مسدود/حذف شده)
         obj["isActive"] = (q.value("isActive").toInt() == 1);
@@ -1088,7 +1090,7 @@ QList<QJsonObject> DatabaseManager::getPurchasedBooks(int userId) {
     QSqlQuery q(db);
 
     // انتخاب دقیق فیلدهای مسیر فیزیکی کتاب از دیتابیس
-    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.price, b.pdfPath, b.coverImagePath "
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.pdfPath, b.coverImagePath "
               "FROM library l "
               "JOIN books b ON l.book_id = b.id "
               "WHERE l.user_id = :u");
@@ -1105,7 +1107,6 @@ QList<QJsonObject> DatabaseManager::getPurchasedBooks(int userId) {
         o["title"] = q.value("title").toString();
         o["author"] = q.value("author").toString();
         o["genre"] = q.value("genre").toString();
-        o["price"] = q.value("price").toDouble();
         o["pdfPath"] = q.value("pdfPath").toString();                 // فیلد فیزیکی هارد سرور
         o["coverImagePath"] = q.value("coverImagePath").toString();   // فیلد فیزیکی هارد سرور
         list.append(o);
@@ -1139,10 +1140,12 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
 
     QSqlQuery q(db);
 
-    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath "
+    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath, "
+              "b.price, b.discountPercent, u.name AS publisher_name "
               "FROM saved_books s "
               "JOIN books b ON s.book_id = b.id "
-              "WHERE s.user_id = :u");
+              "JOIN users u ON b.publisher_id = u.id "
+              "WHERE s.user_id = :u AND b.is_deleted = 0");
     q.bindValue(":u", userId);
 
     if (!q.exec()) {
@@ -1156,7 +1159,11 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
         o["title"] = q.value("title").toString();
         o["author"] = q.value("author").toString();
         o["genre"] = q.value("genre").toString();
-        o["coverImagePath"] = q.value("coverImagePath").toString(); // مسیر نسبی ذخیره شده (مثلا server_storage/pic.jpg)
+        o["coverImagePath"] = q.value("coverImagePath").toString();
+        o["price"] = q.value("price").toDouble();
+        o["discount"] = q.value("discountPercent").toDouble();
+        o["publisher_name"] = q.value("publisher_name").toString();
+
         list.append(o);
     }
 
@@ -1167,7 +1174,7 @@ QList<QJsonObject> DatabaseManager::getSavedBooks(int userId) {
 
 //ایجاد قفسه
 bool DatabaseManager::createShelf(int userId, const QString& name) {
-    // بررسی اینکه آیا این کاربر قفسه‌ای با این نام دارد یا خیر
+    // بررسی اینکه آیا این کاربر قفسه ای با این نام دارد یا خیر
     QSqlQuery check(db);
     check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n");
     check.bindValue(":u", userId);
@@ -1317,6 +1324,7 @@ QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
         book["author"] = q.value("author").toString();
         book["genre"] = q.value("genre").toString();
         book["coverImagePath"] = q.value("coverImagePath").toString();
+
         list.append(book);
     }
 
@@ -1494,7 +1502,6 @@ bool DatabaseManager::addBook(const QJsonObject& bookData)
     q.bindValue(":discP", discP);
     q.bindValue(":discA", discA);
 
-    // اینجا مسیرهای جدید کپی شده روی هارد سرور (server_storage/...) ذخیره میشوند
     q.bindValue(":cover", bookData.value("coverImagePath").toString());
     q.bindValue(":pdf", bookData.value("pdfPath").toString());
     q.bindValue(":pub_id", bookData.value("publisher_id").toInt());
@@ -1598,8 +1605,8 @@ QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
         b["description"]     = q.value("description").toString();
         b["price"]           = q.value("price").toDouble();
         b["discountPercent"] = q.value("discountPercent").toDouble();
-        b["coverImagePath"]  = q.value("coverImagePath").toString(); // مسیر نسبی
-        b["pdfPath"]         = q.value("pdfPath").toString();        // استخراج مسیر پی دی اف جهت استفاده در ویرایش
+        b["coverImagePath"]  = q.value("coverImagePath").toString();
+        b["pdfPath"]         = q.value("pdfPath").toString();
         b["isActive"]        = q.value("isActive").toInt();
         list.append(b);
     }
@@ -1607,6 +1614,203 @@ QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
 }
 
 
+//************************************************پنل ناشر ( ماژول 3 )*******************************************************
+
+//دیدن وضعیت ناشر
+QJsonObject DatabaseManager::getPublisherStats(int publisherId) {
+    QJsonObject stats;
+
+    //تعداد کل کتاب های منتشرشده (فقط حذف نشده)
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT COUNT(*) FROM books WHERE publisher_id = :p AND is_deleted = 0");
+        q.bindValue(":p", publisherId);
+        if (q.exec() && q.next())
+            stats["totalBooks"] = q.value(0).toInt();
+        else
+            stats["totalBooks"] = 0;
+    }
+
+    //مجموع درآمد ناشر
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT IFNULL(SUM(b.price - b.discountAmount), 0.0) "
+                  "FROM library l "
+                  "JOIN books b ON l.book_id = b.id "
+                  "WHERE b.publisher_id = :p");
+        q.bindValue(":p", publisherId);
+
+        if (q.exec() && q.next())
+            stats["totalRevenue"] = q.value(0).toDouble();
+        else
+            stats["totalRevenue"] = 0.0;
+    }
+
+    //میانگین امتیاز هر کتاب ناشر (فقط کتاب های حذف نشده)
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, title, averageRating FROM books WHERE publisher_id = :p AND is_deleted = 0");
+        q.bindValue(":p", publisherId);
+
+        QJsonArray ratingsArr;
+        if (q.exec()) {
+            while (q.next()) {
+                QJsonObject o;
+                o["book_id"]   = q.value("id").toInt();
+                o["title"]     = q.value("title").toString();
+                o["avgRating"] = q.value("averageRating").toDouble();
+                ratingsArr.append(o);
+            }
+        }
+        stats["booksRatings"] = ratingsArr;
+    }
+
+    //پرفروش ترین کتاب ها (۵ کتاب اول از بین کتاب های حذف نشده)
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT b.id, b.title, COUNT(l.id) AS salesCount "
+                  "FROM books b "
+                  "LEFT JOIN library l ON l.book_id = b.id "
+                  "WHERE b.publisher_id = :p AND b.is_deleted = 0 "
+                  "GROUP BY b.id, b.title "
+                  "ORDER BY salesCount DESC "
+                  "LIMIT 5");
+        q.bindValue(":p", publisherId);
+
+        QJsonArray bestArr;
+        if (q.exec()) {
+            while (q.next()) {
+                QJsonObject o;
+                o["book_id"]    = q.value("id").toInt();
+                o["title"]      = q.value("title").toString();
+                o["salesCount"] = q.value("salesCount").toInt();
+                bestArr.append(o);
+            }
+        }
+        stats["bestSellers"] = bestArr;
+    }
+
+    //کم فروش ترین کتاب ها (۵ کتاب آخر از بین کتاب های حذف نشده)
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT b.id, b.title, COUNT(l.id) AS salesCount "
+                  "FROM books b "
+                  "LEFT JOIN library l ON l.book_id = b.id "
+                  "WHERE b.publisher_id = :p AND b.is_deleted = 0 "
+                  "GROUP BY b.id, b.title "
+                  "ORDER BY salesCount ASC "
+                  "LIMIT 5");
+        q.bindValue(":p", publisherId);
+
+        QJsonArray worstArr;
+        if (q.exec()) {
+            while (q.next()) {
+                QJsonObject o;
+                o["book_id"]    = q.value("id").toInt();
+                o["title"]      = q.value("title").toString();
+                o["salesCount"] = q.value("salesCount").toInt();
+                worstArr.append(o);
+            }
+        }
+        stats["worstSellers"] = worstArr;
+    }
+
+    return stats;
+}
 
 
+//*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
+//لیست همه کاربران
+QList<QJsonObject> DatabaseManager::getAllUsers() {
+    QList<QJsonObject> list;
+    QSqlQuery q(db);
+    q.prepare("SELECT id, username, role, is_blocked, registration_date FROM users WHERE is_deleted = 0");
+
+    if (!q.exec()) return list;
+
+    while (q.next()) {
+        QJsonObject u;
+        u["id"]               = q.value("id").toInt();
+        u["username"]         = q.value("username").toString();
+        u["role"]             = q.value("role").toString();
+        u["is_blocked"]       = q.value("is_blocked").toInt();
+        u["registration_date"]= q.value("registration_date").toString();
+        list.append(u);
+    }
+    return list;
+}
+
+//دیدن اطلاعات کامل یک کاربر
+QJsonObject DatabaseManager::getUserById(int userId) {
+    QJsonObject u;
+    QSqlQuery q(db);
+    q.prepare("SELECT id, username, role, is_blocked, security_question, registration_date "
+              "FROM users WHERE id = :id AND is_deleted = 0");
+    q.bindValue(":id", userId);
+
+    if (!q.exec() || !q.next()) return u;
+
+    u["id"]               = q.value("id").toInt();
+    u["username"]         = q.value("username").toString();
+    u["role"]             = q.value("role").toString();
+    u["is_blocked"]       = q.value("is_blocked").toInt();
+    u["security_question"]= q.value("security_question").toString();
+    u["registration_date"]= q.value("registration_date").toString();
+
+    return u;
+}
+
+//جست و جو و فیلتر کاربران
+QList<QJsonObject> DatabaseManager::searchUsers(const QString& keyword, const QString& roleFilter,
+                                                int blockedFilter, const QString& registerDateFilter) {
+    QList<QJsonObject> list;
+    QString queryStr =
+        "SELECT id, username, role, is_blocked, registration_date "
+        "FROM users WHERE is_deleted = 0 ";
+
+    //فیلتر کلمه کلیدی (اگر خالی نباشد)
+    if (!keyword.isEmpty())
+        queryStr += "AND username LIKE :kw ";
+
+    //فیلتر نقش (اگر خالی نباشد)
+    if (!roleFilter.isEmpty())
+        queryStr += "AND role = :role ";
+
+    //فیلتر وضعیت مسدود بودن (۰ یا ۱ فعال است، ۱- یعنی بی‌اثر)
+    if (blockedFilter == 0 || blockedFilter == 1)
+        queryStr += "AND is_blocked = :blk ";
+
+    //فیلتر تاریخ ثبت نام (مثلاً کلاینت میفرستد: "2026-17-02")
+    if (!registerDateFilter.isEmpty())
+        queryStr += "AND registration_date LIKE :regDate ";
+
+    QSqlQuery q(db);
+    q.prepare(queryStr);
+
+    // مقداردهی امن پارامترها
+    if (!keyword.isEmpty())
+        q.bindValue(":kw", "%" + keyword + "%");
+
+    if (!roleFilter.isEmpty())
+        q.bindValue(":role", roleFilter);
+
+    if (blockedFilter == 0 || blockedFilter == 1)
+        q.bindValue(":blk", blockedFilter);
+
+    if (!registerDateFilter.isEmpty())
+        q.bindValue(":regDate", registerDateFilter + "%"); // هر چیزی که با این تاریخ شروع شود
+
+    if (!q.exec()) return list;
+
+    while (q.next()) {
+        QJsonObject u;
+        u["id"]               = q.value("id").toInt();
+        u["username"]         = q.value("username").toString();
+        u["role"]             = q.value("role").toString();
+        u["is_blocked"]       = q.value("is_blocked").toInt();
+        u["registration_date"]= q.value("registration_date").toString();
+        list.append(u);
+    }
+    return list;
+}
