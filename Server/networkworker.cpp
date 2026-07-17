@@ -1006,7 +1006,7 @@ void NetworkWorker::handleGetSavedBooks(QTcpSocket* socket, const QJsonObject& d
 //+++++قفسه ها+++++
 void NetworkWorker::handleCreateShelf(QTcpSocket* socket, const QJsonObject& data) {
     int userId = data["user_id"].toInt();
-    QString name = data["name"].toString();
+    QString name = data["name"].toString().trimmed();
 
     bool ok = m_dbManager->createShelf(userId, name);
 
@@ -1021,7 +1021,7 @@ void NetworkWorker::handleCreateShelf(QTcpSocket* socket, const QJsonObject& dat
 
 void NetworkWorker::handleRenameShelf(QTcpSocket* socket, const QJsonObject& data) {
     int shelfId = data["shelf_id"].toInt();
-    QString newName = data["new_name"].toString();
+    QString newName = data["new_name"].toString().trimmed();
 
     bool ok = m_dbManager->renameShelf(shelfId, newName);
 

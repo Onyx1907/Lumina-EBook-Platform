@@ -1178,7 +1178,7 @@ bool DatabaseManager::createShelf(int userId, const QString& name) {
     QSqlQuery check(db);
     check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n");
     check.bindValue(":u", userId);
-    check.bindValue(":n", name.trimmed()); // حذف فاصله های خالی احتمالی
+    check.bindValue(":n", name);
 
     if (check.exec() && check.next()) {
         qDebug() << ".قفسه ای با این نام برای این کاربر از قبل وجود دارد";
@@ -1205,7 +1205,7 @@ bool DatabaseManager::renameShelf(int shelfId, const QString& newName) {
     QSqlQuery check(db);
     check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n AND id != :id");
     check.bindValue(":u", userId);
-    check.bindValue(":n", newName.trimmed());
+    check.bindValue(":n", newName);
     check.bindValue(":id", shelfId);
 
     if (check.exec() && check.next()) {
