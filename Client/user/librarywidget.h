@@ -36,6 +36,8 @@ private slots:
 
     void on_shelf_clicked(QListWidgetItem* item);
 
+    void on_pushButton_clicked();
+
 private:
     Ui::LibraryWidget *ui;
     int m_userID;
@@ -46,6 +48,14 @@ private:
     void requestSavedBooks();
     void requestShelves();
     void requestShelfBooks(int shelfID);
+
+    void sendRenameShelfRequest(int shelfId, QString newName);
+    void sendDeleteShelfRequest(int shelfId);
+    void sendCreateShelfRequest(QString shelfName);
+    void sendAddBookToShelfRequest(int bookId, int shelfId);
+    void sendMoveBookRequest(int bookId, int fromShelfId, int toShelfId);
+
+    void onShelfContextMenuRequested(const QPoint &pos);
 
     void handleGetPurchasedBooks(const QJsonObject& response);
     void handleGetSavedBooks(const QJsonObject& response);
