@@ -119,10 +119,6 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
         fadeToPage(BookDetailsPageIndex);
     });
 
-    connect(ResultPage, &ResultWidget::backPrevious, this, [this](){
-        fadeToPage(Page::CartPageIndex);
-    });
-
     //کلیک روی کتاب های داخل نشان شده ها
     connect(LibraryPage, &LibraryWidget::bookSelected, this, [this](Book* bookptr){
         previousPageIndex = LibraryPageIndex;

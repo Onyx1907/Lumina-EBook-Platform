@@ -234,6 +234,18 @@ void LibraryWidget::requestShelfBooks(int shelfID){
 
 
 void LibraryWidget::processNetworkData(const QString& action, const QJsonObject& data){
+    if(action != "GET_PURCHASED_BOOKS_RESPONSE" &&
+        action != "GET_SAVED_BOOKS_RESPONSE" &&
+        action != "GET_SHELVES_RESPONSE" &&
+        action != "GET_SHELF_BOOKS_RESPONSE" &&
+        action != "CREATE_SHELF_RESPONSE" &&
+        action != "RENAME_SHELF_RESPONSE" &&
+        action != "DELETE_SHELF_RESPONSE" &&
+        action != "ADD_BOOK_TO_SHELF_RESPONSE" &&
+        action != "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE"){
+        return;
+    }
+
     if(data["status"].toString() != "SUCCESS"){
         ui->error_label->show();
         if(data.contains("message")){
