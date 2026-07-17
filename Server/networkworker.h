@@ -145,6 +145,11 @@ private:
 
     //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
+    void handleGetAllUsers(QTcpSocket* socket, const QJsonObject& data);
+    void handleGetUserDetails(QTcpSocket* socket, const QJsonObject& data);
+    void handleSearchUsers(QTcpSocket* socket, const QJsonObject& data);
+
+
 
 
 

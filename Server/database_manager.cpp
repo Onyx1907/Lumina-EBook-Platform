@@ -1761,4 +1761,56 @@ QJsonObject DatabaseManager::getUserById(int userId) {
     return u;
 }
 
+//جست و جو و فیلتر کاربران
+QList<QJsonObject> DatabaseManager::searchUsers(const QString& keyword, const QString& roleFilter,
+                                                int blockedFilter, const QString& registerDateFilter) {
+    QList<QJsonObject> list;
+    QString queryStr =
+        "SELECT id, username, role, is_blocked, registration_date "
+        "FROM users WHERE is_deleted = 0 ";
 
+    //فیلتر کلمه کلیدی (اگر خالی نباشد)
+    if (!keyword.isEmpty())
+        queryStr += "AND username LIKE :kw ";
+
+    //فیلتر نقش (اگر خالی نباشد)
+    if (!roleFilter.isEmpty())
+        queryStr += "AND role = :role ";
+
+    //فیلتر وضعیت مسدود بودن (۰ یا ۱ فعال است، ۱- یعنی بی‌اثر)
+    if (blockedFilter == 0 || blockedFilter == 1)
+        queryStr += "AND is_blocked = :blk ";
+
+    //فیلتر تاریخ ثبت نام (مثلاً کلاینت میفرستد: "2026-17-02")
+    if (!registerDateFilter.isEmpty())
+        queryStr += "AND registration_date LIKE :regDate ";
+
+    QSqlQuery q(db);
+    q.prepare(queryStr);
+
+    // مقداردهی امن پارامترها
+    if (!keyword.isEmpty())
+        q.bindValue(":kw", "%" + keyword + "%");
+
+    if (!roleFilter.isEmpty())
+        q.bindValue(":role", roleFilter);
+
+    if (blockedFilter == 0 || blockedFilter == 1)
+        q.bindValue(":blk", blockedFilter);
+
+    if (!registerDateFilter.isEmpty())
+        q.bindValue(":regDate", registerDateFilter + "%"); // هر چیزی که با این تاریخ شروع شود
+
+    if (!q.exec()) return list;
+
+    while (q.next()) {
+        QJsonObject u;
+        u["id"]               = q.value("id").toInt();
+        u["username"]         = q.value("username").toString();
+        u["role"]             = q.value("role").toString();
+        u["is_blocked"]       = q.value("is_blocked").toInt();
+        u["registration_date"]= q.value("registration_date").toString();
+        list.append(u);
+    }
+    return list;
+}
