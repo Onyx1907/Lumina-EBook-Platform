@@ -1721,6 +1721,44 @@ QJsonObject DatabaseManager::getPublisherStats(int publisherId) {
 
 //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
+//لیست همه کاربران
+QList<QJsonObject> DatabaseManager::getAllUsers() {
+    QList<QJsonObject> list;
+    QSqlQuery q(db);
+    q.prepare("SELECT id, username, role, is_blocked, registration_date FROM users WHERE is_deleted = 0");
 
+    if (!q.exec()) return list;
+
+    while (q.next()) {
+        QJsonObject u;
+        u["id"]               = q.value("id").toInt();
+        u["username"]         = q.value("username").toString();
+        u["role"]             = q.value("role").toString();
+        u["is_blocked"]       = q.value("is_blocked").toInt();
+        u["registration_date"]= q.value("registration_date").toString();
+        list.append(u);
+    }
+    return list;
+}
+
+//دیدن اطلاعات کامل یک کاربر
+QJsonObject DatabaseManager::getUserById(int userId) {
+    QJsonObject u;
+    QSqlQuery q(db);
+    q.prepare("SELECT id, username, role, is_blocked, security_question, registration_date "
+              "FROM users WHERE id = :id AND is_deleted = 0");
+    q.bindValue(":id", userId);
+
+    if (!q.exec() || !q.next()) return u;
+
+    u["id"]               = q.value("id").toInt();
+    u["username"]         = q.value("username").toString();
+    u["role"]             = q.value("role").toString();
+    u["is_blocked"]       = q.value("is_blocked").toInt();
+    u["security_question"]= q.value("security_question").toString();
+    u["registration_date"]= q.value("registration_date").toString();
+
+    return u;
+}
 
 

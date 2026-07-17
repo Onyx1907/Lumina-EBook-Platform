@@ -23,6 +23,8 @@ class DatabaseManager
 {
 public:
     //**************************************************احراز هویت مرکزی********************************************************
+
+
     DatabaseManager(const QString& connectionName = QStringLiteral("main_connection"));
     bool initDatabase();
 
@@ -43,6 +45,7 @@ public:
     bool verifySecurityAnswerAndResetPassword(const QString& username,const QString& answerPlain,const QString& newPlainPassword);
 
     //*********************************************پنل کاربر عادی ( ماژول 1 )****************************************************
+
 
     bool setFirstLoginFalseByUsername(const QString& username);
     bool setFavoriteGenres(const QString& username, const QStringList& genres);
@@ -154,7 +157,10 @@ public:
     //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
 
-
+    QList<QJsonObject> getAllUsers();
+    QJsonObject getUserById(int userId);
+    QList<QJsonObject> searchUsers(const QString& keyword, const QString& roleFilter,
+                                   int blockedFilter, const QString& registerDateFilter);
 
 
 
