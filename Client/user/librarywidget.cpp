@@ -46,6 +46,7 @@ LibraryWidget::LibraryWidget(int userID, QWidget *parent)
 
     ui->shelves_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     ui->shelves_listWidget->verticalScrollBar()->setSingleStep(15);
+
 }
 
 LibraryWidget::~LibraryWidget()
@@ -56,7 +57,6 @@ LibraryWidget::~LibraryWidget()
 void LibraryWidget::showEvent(QShowEvent *event) {
     QWidget::showEvent(event);
 
-    requestShelves();
     int currentIndex = ui->tabWidget->currentIndex();
     on_tabWidget_currentChanged(currentIndex);
 
@@ -324,6 +324,10 @@ void LibraryWidget::handleGetSavedBooks(const QJsonObject& response) {
         BookInfoCard* card = new BookInfoCard(book, this);
         card->setCardMode();
 
+        connect(card, &BookInfoCard::clicked, this, [this](Book* clickedBookptr){
+            emit bookSelected(clickedBookptr);
+        });
+
         QListWidgetItem* item = new QListWidgetItem(ui->saved_listWidget);
         item->setSizeHint(card->sizeHint());
         ui->saved_listWidget->setItemWidget(item, card);
@@ -544,7 +548,7 @@ void LibraryWidget::on_pushButton_clicked()
 
     inputDialog.setStyleSheet(
         "QInputDialog { background-color: #1A1512; border: 1px solid #C19A6B; border-radius: 12px; }"
-        "QLabel { color: #E6D7C3; font-family: 'Segoe UI', 'Tahoma'; font-size: 13px; qproperty-alignment: 'AlignRight'; }"
+        "QLabel { color: #E6D7C3; font-family: 'Segoe UI', 'Tahoma'; font-size: 13px; }"
         "QLineEdit { background-color: #261F1A; border: 1px solid rgba(193, 154, 107, 0.4); border-radius: 6px; color: #FFF; padding: 6px; font-family: 'Segoe UI', 'Tahoma'; selection-background-color: #C19A6B; }"
         "QPushButton { background-color: rgba(193, 154, 107, 0.15); border: 1px solid rgba(193, 154, 107, 0.4); border-radius: 6px; color: #E6D7C3; font-family: 'Segoe UI', 'Tahoma'; font-size: 11px; min-width: 80px; padding: 6px; }"
         "QPushButton:hover { background-color: #C19A6B; color: #1E1914; font-weight: bold; }"

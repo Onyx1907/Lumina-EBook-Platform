@@ -27,6 +27,9 @@ public:
 protected:
     void showEvent(QShowEvent *event) override;
 
+signals:
+    void bookSelected(Book* bookptr);
+
 private slots:
     void on_tabWidget_currentChanged(int index);
 
