@@ -22,8 +22,18 @@
       "message": "!خوش آمدی",
       "user_role": "User",
       "first_login": 1    "OR"     "first_login": 0,
-      "user_id" : 11
+      "user_id" : 11   
     },
+
+     *****ADMIN*****
+{
+    "action": "LOGIN_RESPONSE",
+    "status": "SUCCESS",
+    "message": "!خوش آمدی مدیر",
+    "user_role": "Admin",
+    "first_login": 0,
+    "user_id": -1
+}
     "server_response_failed": {
       "action": "LOGIN_RESPONSE",
       "status": "FAILED",
