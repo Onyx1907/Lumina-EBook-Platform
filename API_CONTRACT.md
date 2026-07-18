@@ -1063,7 +1063,79 @@
       }
     }
   }
+,
+  "48_GET_ALL_USERS": {
+    "client_request": {
+      "action": "GET_ALL_USERS"
+    },
+    "server_response_success": {
+      "action": "GET_ALL_USERS_RESPONSE",
+      "status": "SUCCESS",
+      "users": [
+        {
+          "id": 1,
+          "username": "admin_user",
+          "role": "admin",
+          "is_blocked": 0,
+          "registration_date": "2026-01-15 10:30:00"
+        },
+        {
+          "id": 2,
+          "username": "publisher_test",
+          "role": "publisher",
+          "is_blocked": 1,
+          "registration_date": "2026-02-20 14:45:12"
+        }
+      ]
+    }
+  },
+  "49_GET_USER_DETAILS": {
+    "client_request": {
+      "action": "GET_USER_DETAILS",
+      "user_id": 2
+    },
+    "server_response_success": {
+      "action": "GET_USER_DETAILS_RESPONSE",
+      "status": "SUCCESS",
+      "user": {
+        "id": 2,
+        "username": "publisher_test",
+        "role": "publisher",
+        "is_blocked": 1,
+        "security_question": "نام اولین مدرسه شما چیست؟",
+        "registration_date": "2026-02-20 14:45:12"
+      }
+    },
+    "server_response_error": {
+      "action": "GET_USER_DETAILS_RESPONSE",
+      "status": "ERROR",
+      "message": ".کاربر یافت نشد"
+    }
+  },
+  "50_SEARCH_USERS": {
+    "client_request": {
+      "action": "SEARCH_USERS",
+      "keyword": "test",
+      "role": "publisher",
+      "blocked": -1,
+      "register_date": "2026-02"
+    },
+    "server_response_success": {
+      "action": "SEARCH_USERS_RESPONSE",
+      "status": "SUCCESS",
+      "users": [
+        {
+          "id": 2,
+          "username": "publisher_test",
+          "role": "publisher",
+          "is_blocked": 1,
+          "registration_date": "2026-02-20 14:45:12"
+        }
+      ]
+    }
+  }
 }
+
 
 
 
