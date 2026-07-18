@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BookReaderWidget</class>
+ <widget class="QWidget" name="BookReaderWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* کل صفحه ریدر */
+BookReaderWidget {
+    background-color: #FDFBF7; /* پس‌زمینه کرم خیلی روشن (حس کاغذ قدیمی) */
+}
+
+/* نوار ابزار بالای صفحه */
+QWidget#horizontalLayoutWidget, QHBoxLayout {
+    background-color: #F4ECE1; /* نسکافه‌ای روشن */
+    border-bottom: 2px solid #D7C4B7;
+font-size: 20px;
+}
+
+/* استایل عمومی دکمه‌های کنترلی */
+QPushButton {
+    background-color: #E6D5C3; /* نسکافه‌ای مدیوم */
+    color: #4A3525; /* قهوه‌ای سوخته برای متن */
+    border: 1px solid #C5B09E;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* افکت رفتن موس روی دکمه‌ها */
+QPushButton:hover {
+    background-color: #D7C4B7; /* کمی تیره تر */
+    border: 1px solid #A89280;
+}
+
+/* افکت کلیک شدن دکمه‌ها */
+QPushButton:pressed {
+    background-color: #BD9E87; /* قهوه‌ای مایل به نسکافه‌ای تیره */
+    color: #FFFFFF;
+}
+
+/* استایل کادر وارد کردن شماره صفحه */
+QLineEdit {
+    background-color: #FFFFFF;
+    color: #4A3525;
+    border: 2px solid #D7C4B7;
+    border-radius: 6px;
+    padding: 4px;
+    font-weight: bold;
+    alignment: center;
+}
+
+QLineEdit:focus {
+    border: 2px solid #8C6239; /* فوکوس قهوه‌ای کلاسیک */
+}
+
+/* استایل لیبل نمایش کل صفحات */
+QLabel {
+    color: #5C4033; /* قهوه‌ای تاریک */
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* ======================================================== */
+/*  تنظیمات اسکرول‌بار اختصاصی QPdfView (تم قهوه‌ای/نسکافه‌ای)  */
+/* ======================================================== */
+
+/* اسکرول‌بار عمودی */
+QScrollBar:vertical {
+    background-color: #F4ECE1;
+    width: 14px;
+    margin: 15px 3px 15px 3px;
+    border: 1px solid #D7C4B7;
+    border-radius: 4px;
+}
+
+/* دستگیره اسکرول‌بار عمودی */
+QScrollBar::handle:vertical {
+    background-color: #8C6239; /* قهوه‌ای کلاسیک */
+    min-height: 25px;
+    border-radius: 3px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #6F4E27; /* قهوه‌ای تیره تر هنگام هوور */
+}
+
+/* اسکرول‌بار افقی */
+QScrollBar:horizontal {
+    background-color: #F4ECE1;
+    height: 14px;
+    margin: 3px 15px 3px 15px;
+    border: 1px solid #D7C4B7;
+    border-radius: 4px;
+}
+
+/* دستگیره اسکرول‌بار افقی */
+QScrollBar::handle:horizontal {
+    background-color: #8C6239;
+    min-width: 25px;
+    border-radius: 3px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: #6F4E27;
+}
+
+/* حذف دکمه‌های پیکان بالا و پایین اسکرول‌بار برای خلوت شدن دیزاین */
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    border: none;
+    background: none;
+    width: 0px;
+    height: 0px;
+}
+
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,
+QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
+    background: none;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical,
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="error_label">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>730</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>730</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background-color: rgba(93, 37, 25, 0.45);  /* پس‌زمینه شیشه‌ای شرابی/شکلاتی تیره */
+    border: 1px solid rgba(217, 136, 128, 0.35); /* مرز ملو متمایل به رز-گلد شفاف */
+    border-radius: 8px;                         /* گوشه‌های نرم */
+    color: #FADBD8;                             /* رنگ متن صورتی بسیار ملایم و خوانا */
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 8px 16px;                          /* ایجاد فضای تنفس داخلی برای حالت شیشه‌ای */
+    qproperty-alignment: 'AlignCenter';         /* وسط‌چین کردن متن خطا */
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPdfView" name="widget" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>500</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>500</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="zoomOut_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>-</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="zoomIn_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>+</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="change_page_lineEdit">
+       <property name="minimumSize">
+        <size>
+         <width>60</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="page_label">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>/100</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="prev_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>&lt;&lt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="next_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>&gt;&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="back_pushButton">
+       <property name="text">
+        <string>برگشت</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QPdfView</class>
+   <extends>QWidget</extends>
+   <header location="global">qpdfview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

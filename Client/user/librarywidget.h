@@ -29,6 +29,7 @@ protected:
 
 signals:
     void bookSelected(Book* bookptr);
+    void goToPDF(int bookID);
 
 private slots:
     void on_tabWidget_currentChanged(int index);

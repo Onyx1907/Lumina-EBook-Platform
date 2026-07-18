@@ -31,6 +31,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     CommentsPage = new CommentsWidget(user->getId(), this);
     CartPage = new CartWidget(user->getId(), this);
     LibraryPage =  new LibraryWidget(user->getId(), this);
+    BookReaderPage =  new BookReaderWidget(user->getId(), this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
@@ -41,6 +42,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ui->stackedWidget->addWidget(CommentsPage);
     ui->stackedWidget->addWidget(CartPage);
     ui->stackedWidget->addWidget(LibraryPage);
+    ui->stackedWidget->addWidget(BookReaderPage);
 
     //مدیریت نمایش صفحه انتخاب ژانر
     if(is_first_login){
@@ -125,6 +127,25 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
         BookDetailsPage->loadBook(bookptr);
         fadeToPage(BookDetailsPageIndex);
     });
+
+    //رفتن به پی دی اف با کلیک روی مطالعه کتاب
+    connect(BookDetailsPage, &BookDetailsWidget::goToPDF, this, [this](int bookID){
+        prevPagePDF = Page::BookDetailsPageIndex;
+        BookReaderPage->loadBook(bookID);
+        fadeToPage(Page::BookReaderPageIndex);
+    });
+
+    //برگشت از صفحه پی دی اف
+    connect(BookReaderPage, &BookReaderWidget::back, this, [this](){
+       fadeToPage(prevPagePDF);
+    });
+
+    //رفتن به پی دی اف از طریق قفسه ها و کتاب های من
+    connect(LibraryPage, &LibraryWidget::goToPDF, this, [this](int bookID){
+        prevPagePDF = Page::LibraryPageIndex;
+        fadeToPage(Page::BookReaderPageIndex);
+    });
+
 }
 
 

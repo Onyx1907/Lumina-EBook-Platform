@@ -22,6 +22,7 @@ public:
 signals:
     void backPrevious();
     void goToComments(int bookID);
+    void goToPDF(int bookID);
 
 private slots:
     void on_back_pushButton_clicked();
@@ -37,6 +38,8 @@ private slots:
     void on_saveBook_pushButton_clicked();
 
     void on_savedBook_pushButton_clicked();
+
+    void on_study_pushButton_clicked();
 
 private:
     Ui::BookDetailsWidget *ui;

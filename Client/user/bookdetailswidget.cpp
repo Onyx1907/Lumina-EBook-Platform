@@ -62,11 +62,11 @@ void BookDetailsWidget::loadBook(Book *book){
     }
 
     ui->addCart_pushButton->hide();
-    ui->removeCart_pushButton->hide();
-    ui->study_pushButton->hide();
-    // ui->comments->hide(); //موقت
-    // ui->comments_pushButton->hide(); //موقت
-    // ui->saveBook_pushButton->hide();
+    ui->removeCart_pushButton->hide();/*
+    ui->study_pushButton->hide();*/
+    ui->comments->hide();
+    ui->comments_pushButton->hide();
+    ui->saveBook_pushButton->hide();
     ui->savedBook_pushButton->hide();
     ui->disconnected->hide(); // موقت
 
@@ -128,7 +128,6 @@ void BookDetailsWidget::processNetworkData(const QString& action, const QJsonObj
             ui->publisher_label->setText(data.value("publisher").toString());
         }
         else if(data.value("status").toString() == "FAILED"){
-            ui->disconnected->show();
             ui->error_label->setText(data.value("message").toString());
             QTimer::singleShot(3000, this, [this](){
                 ui->error_label->setText("");
@@ -285,5 +284,11 @@ void BookDetailsWidget::on_savedBook_pushButton_clicked()
             ui->error_label->setText("");
         });
     }
+}
+
+
+void BookDetailsWidget::on_study_pushButton_clicked()
+{
+    emit goToPDF(cur_book->getId());
 }
 

@@ -452,7 +452,7 @@ void LibraryWidget::on_bookCard_clicked(Book* bookPtr){
         );
 
     menu->addAction("مطالعه کتاب", [this, bookPtr](){
-        //open book
+        emit goToPDF(bookPtr->getId());
     });
 
     int currentIndex = ui->tabWidget->currentIndex();

@@ -12,6 +12,7 @@
 #include "commentswidget.h"
 #include "cartwidget.h"
 #include "librarywidget.h"
+#include "bookreaderwidget.h"
 
 
 namespace Ui {
@@ -53,8 +54,10 @@ private:
     CommentsWidget* CommentsPage;
     CartWidget* CartPage;
     LibraryWidget* LibraryPage;
+    BookReaderWidget* BookReaderPage;
 
     int previousPageIndex = 0;
+    int prevPagePDF = 0;
 
     void fadeToPage(int pageIndex);
 
@@ -67,7 +70,8 @@ private:
         ResultPageIndex = 5,
         CommentsPageIndex = 6,
         CartPageIndex = 7,
-        LibraryPageIndex = 8
+        LibraryPageIndex = 8,
+        BookReaderPageIndex = 9
     };
 
 
