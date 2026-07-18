@@ -172,6 +172,12 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
+    else if (action == "GET_ALL_USERS") { handleGetAllUsers(socket, data); return; }
+    else if (action == "GET_USER_DETAILS") { handleGetUserDetails(socket, data); return; }
+    else if (action == "SEARCH_USERS") { handleSearchUsers(socket, data); return; }
+
+
+
 
 
 
@@ -1479,6 +1485,59 @@ void NetworkWorker::handleGetPublisherStats(QTcpSocket* socket, const QJsonObjec
 
 //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
+void NetworkWorker::handleGetAllUsers(QTcpSocket* socket, const QJsonObject& data) {
+    Q_UNUSED(data);
+
+    QList<QJsonObject> list = m_dbManager->getAllUsers();
+    QJsonArray arr;
+    for (const QJsonObject& u : std::as_const(list))
+        arr.append(u);
+
+    QJsonObject resp;
+    resp["action"] = "GET_ALL_USERS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["users"]  = arr;
+
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleGetUserDetails(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+
+    QJsonObject u = m_dbManager->getUserById(userId);
+
+    QJsonObject resp;
+    resp["action"] = "GET_USER_DETAILS_RESPONSE";
+
+    if (u.isEmpty()) {
+        resp["status"]  = "ERROR";
+        resp["message"] = ".کاربر یافت نشد";
+    } else {
+        resp["status"]  = "SUCCESS";
+        resp["user"]    = u;
+    }
+
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleSearchUsers(QTcpSocket* socket, const QJsonObject& data) {
+    QString keyword      = data["keyword"].toString();
+    QString roleFilter   = data["role"].toString();
+    int blockedFilter    = data["blocked"].toInt(); // کلاینت اگر فیلتر نخواهد، باید ۱- بفرستد
+    QString registerDate = data["register_date"].toString(); // کلاینت اگر فیلتر نخواهد، رشته خالی "" میفرستد
+
+    QList<QJsonObject> list = m_dbManager->searchUsers(keyword, roleFilter, blockedFilter, registerDate);
+    QJsonArray arr;
+    for (const QJsonObject& u : std::as_const(list))
+        arr.append(u);
+
+    QJsonObject resp;
+    resp["action"] = "SEARCH_USERS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["users"]  = arr;
+
+    sendJson(socket, resp);
+}
 
 
 
