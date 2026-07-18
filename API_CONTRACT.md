@@ -362,6 +362,7 @@
       "is_saved": true,
       "publisher_name": "انتشارات طوس",
       "rating": 4.8,
+      "description": ".این متن توضیحات کتاب است که از دیتابیس خوانده شده",
       "cover_image_path": "/home/username/BookClub_Storage/shahnameh.jpg"
     },
     "server_response_error_inactive": {
