@@ -200,6 +200,22 @@ void NetworkWorker::handleLogin(QTcpSocket* socket, const QJsonObject& data) {
     QJsonObject resp;
     resp["action"] = "LOGIN_RESPONSE";
 
+    QString inputHash = CryptoHelper::hashPassword(passwordPlain);
+
+    if (username == ADMIN_USERNAME && inputHash == ADMIN_PASSWORD_HASH) {
+        QJsonObject resp;
+        resp["action"] = "LOGIN_RESPONSE";
+        resp["status"] = "SUCCESS";
+        resp["message"] = "!خوش آمدی مدیر";
+        resp["user_role"] = "Admin";
+        resp["first_login"] = 0;
+        resp["user_id"] = -1;
+
+        sendJson(socket, resp);
+        emit userLoggedIn(-1, username, socket);
+        return;
+    }
+
     if (!m_dbManager->verifyUser(username, passwordPlain, role, isBlocked, userId, firstLogin)) {
         resp["status"] = "FAILED";
         resp["message"] = ".نام کاربری یا رمز عبور اشتباه است یا حساب شما مسدود است";
@@ -601,12 +617,13 @@ void NetworkWorker::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObje
     QString publisher;
     double rating = 0.0;
     QString coverPath;
+    QString description;
 
     QJsonObject resp;
     resp["action"] = "CHECK_BOOK_OWNERSHIP_RESPONSE";
     resp["book_id"] = bookId;
 
-    if (!m_dbManager->getActiveBookDetails(bookId, publisher, rating, coverPath)) {
+    if (!m_dbManager->getActiveBookDetails(bookId, publisher, rating, coverPath, description)) {
         resp["status"] = "FAILED";
         resp["message"] = ".این کتاب در حال حاضر غیرفعال یا ناموجود است";
         sendJson(socket, resp);
@@ -623,6 +640,7 @@ void NetworkWorker::handleCheckBookOwnership(QTcpSocket* socket, const QJsonObje
     resp["is_saved"] = isSaved;
     resp["publisher_name"] = publisher;
     resp["rating"] = rating;
+    resp["description"] = description;
 
     // اعمال فرمول روی مسیر عکس کاور با استفاده از مسیر استاندارد Home
     if (!coverPath.isEmpty()) {
