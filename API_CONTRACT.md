@@ -25,7 +25,7 @@
       "user_id" : 11   
     },
 
-     *****ADMIN*****
+     "*****ADMIN*****"
 {
     "action": "LOGIN_RESPONSE",
     "status": "SUCCESS",
