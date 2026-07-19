@@ -1143,6 +1143,40 @@
       ]
     }
   }
+,
+  "51_DELETE_USER": {
+    "client_request": {
+      "action": "DELETE_USER",
+      "user_id": 3
+    },
+    "server_response_success": {
+      "action": "DELETE_USER_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".حساب کاربری حذف شد"
+    },
+    "server_response_error": {
+      "action": "DELETE_USER_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در حذف حساب"
+    }
+  },
+  "52_SET_USER_ACTIVE_STATE": {
+    "client_request": {
+      "action": "SET_USER_ACTIVE",
+      "user_id": 4,
+      "active": true
+    },
+    "server_response_success": {
+      "action": "SET_USER_ACTIVE_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کاربر فعال شد"   "OR"  ".کاربر غیرفعال شد"
+    },
+    "server_response_error": {
+      "action": "SET_USER_ACTIVE_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا! کاربر یافت نشد یا حساب کاربری او قبلاً حذف شده است و قابل تغییر نیست"
+    }
+  }
 }
 
 
