@@ -41,48 +41,21 @@ void UserHomeWidget::showEvent(QShowEvent *event) {
 
     QJsonObject data;
     data["user_id"] = userID;
-    //بخش اصلی که برای تست موقتا کامنت کردم
+
     QJsonObject emptyData;
 
-    // if(ClientNetworkManager::instance().connectToServer()){
+    if(ClientNetworkManager::instance().connectToServer()){
 
-    //     ClientNetworkManager::instance().sendRequest("GET_RECOMMENDED_BOOKS", data);
+        ClientNetworkManager::instance().sendRequest("GET_RECOMMENDED_BOOKS", data);
 
-    //     ClientNetworkManager::instance().sendRequest("GET_POPULAR_BOOKS", emptyData);
-    //     ClientNetworkManager::instance().sendRequest("GET_NEW_BOOKS", emptyData);
-    //     ClientNetworkManager::instance().sendRequest("GET_BESTSELLERS", emptyData);
-    //     ClientNetworkManager::instance().sendRequest("GET_FREE_BOOKS", emptyData);
-    // }
-    // else{
-    //     //نمایش صفحه نمایش خطای برقراری اتصال
-    // }
-
-    //*************تست خارج از سرور*************
-    qDebug() << "--- حالت تست گرافیک با دیتای فیک ---";
-
-    // ۱. ساختن یک آرایه جیسون از کتاب‌های فیک
-    QJsonArray mockBooks;
-
-    for(int i = 0; i <12; i++){
-        QJsonObject book2;
-        book2["id"] = 2;
-        book2["title"] = "دیوان حافظ";
-        book2["author"] = "شمس‌الدین حافظ";
-        book2["genre"] = "SciFi";
-        book2["price"] = 85000;
-        book2["discount_percentage"] = 0.0;
-        book2["cover_base64"] = "";
-        mockBooks.append(book2);
+        ClientNetworkManager::instance().sendRequest("GET_POPULAR_BOOKS", emptyData);
+        ClientNetworkManager::instance().sendRequest("GET_NEW_BOOKS", emptyData);
+        ClientNetworkManager::instance().sendRequest("GET_BESTSELLERS", emptyData);
+        ClientNetworkManager::instance().sendRequest("GET_FREE_BOOKS", emptyData);
     }
-
-
-    // ۲. بسته‌بندی نهایی دیتا درون آبجکت اصلی
-    QJsonObject mockData;
-    mockData["books"] = mockBooks;
-
-    // ۳. صدا زدن مستقیم تابع رندر برای لیست محبوب‌ها و جدیدها
-    parseAndFillList(mockData, ui->popular_listWidget);
-    parseAndFillList(mockData, ui->new_listWidget);
+    else{
+        //نمایش صفحه نمایش خطای برقراری اتصال
+    }
 }
 
 void UserHomeWidget::processNetworkData(const QString& action, const QJsonObject& data){    

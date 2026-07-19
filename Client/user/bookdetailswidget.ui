@@ -65,7 +65,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-372</y>
         <width>730</width>
         <height>900</height>
        </rect>
@@ -355,7 +355,7 @@ font-size : 20px;</string>
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>560</y>
+         <y>620</y>
          <width>661</width>
          <height>51</height>
         </rect>
@@ -396,7 +396,7 @@ QPushButton:disabled {
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>560</y>
+         <y>620</y>
          <width>661</width>
          <height>51</height>
         </rect>
@@ -437,7 +437,7 @@ QPushButton:disabled {
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>560</y>
+         <y>620</y>
          <width>661</width>
          <height>51</height>
         </rect>
@@ -837,6 +837,44 @@ QPushButton:disabled {
          <width>150</width>
          <height>150</height>
         </size>
+       </property>
+      </widget>
+      <widget class="QLabel" name="description_label">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>510</y>
+         <width>650</width>
+         <height>70</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>650</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>650</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">qproperty-alignment: 'AlignLeft | AlignVCenter';
+background-color: rgba(139, 90, 43, 0.35); </string>
+       </property>
+       <property name="text">
+        <string> توضیحات کتاب</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>

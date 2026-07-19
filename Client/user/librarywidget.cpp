@@ -59,88 +59,6 @@ void LibraryWidget::showEvent(QShowEvent *event) {
 
     int currentIndex = ui->tabWidget->currentIndex();
     on_tabWidget_currentChanged(currentIndex);
-
-    //تست موقت
-    QJsonObject fakeResponse;
-    fakeResponse["action"] = "GET_PURCHASED_BOOKS_RESPONSE";
-    fakeResponse["status"] = "SUCCESS";
-
-    QJsonArray fakeBooks;
-
-    for(int i = 0; i < 17; i++){
-        QJsonObject book2;
-        book2["id"] = 11;
-        book2["title"] = "دیوان حافظ";
-        book2["author"] = "حافظ شیرازی";
-        book2["genre"] = "Poetry";
-        book2["price"] = 180000.0;
-        book2["pdfPath"] = "/var/www/uploads/pdfs/hafez.pdf";
-        book2["coverImagePath"] = ":/images/hafez.jpg";     // به مسیر عکس خودت تغییر بده
-        fakeBooks.append(book2);
-    }
-
-
-    fakeResponse["books"] = fakeBooks;
-
-    handleGetPurchasedBooks(fakeResponse);
-
-    //تست موقت
-    QJsonObject fakeResponse2;
-    fakeResponse2["action"] = "GET_SAVED_BOOKS_RESPONSE";
-    fakeResponse2["status"] = "SUCCESS";
-
-    QJsonArray fakeBooks2;
-
-    for (int i = 0 ; i < 10 ; i++){
-        QJsonObject book4;
-        book4["id"] = 13;
-        book4["title"] = "مثنوی معنوی";
-        book4["author"] = "مولانا";
-        book4["genre"] = "Mysticism";
-        book4["coverImagePath"] = ":/images/masnavi.jpg";  // به مسیر عکس خودت تغییر بده
-        fakeBooks2.append(book4);
-    }
-
-
-    fakeResponse2["books"] = fakeBooks2;
-
-    handleGetSavedBooks(fakeResponse2);
-    handleGetShelfBooks(fakeResponse);
-    // ۱. ساخت آرایه جیسون فیک شبیه به خروجی سرور
-    QJsonArray fakeShelvesArray;
-
-    // قفسه اول
-    QJsonObject shelf1;
-    shelf1["id"] = 1;
-    shelf1["name"] = "کتاب‌های روانشناسی";
-    fakeShelvesArray.append(shelf1);
-
-    // قفسه دوم
-    QJsonObject shelf2;
-    shelf2["id"] = 2;
-    shelf2["name"] = "رمان‌های کلاسیک";
-    fakeShelvesArray.append(shelf2);
-
-    // قفسه سوم
-    QJsonObject shelf3;
-    shelf3["id"] = 3;
-    shelf3["name"] = "برنامه‌نویسی و لینوکس";
-    fakeShelvesArray.append(shelf3);
-
-    // قفسه چهارم
-    QJsonObject shelf4;
-    shelf4["id"] = 4;
-    shelf4["name"] = "فلسفه و هنر";
-    fakeShelvesArray.append(shelf4);
-
-
-    // ۲. حالا ساخت شیء پاسخ نهایی سرور با وضعیت موفقیت‌آمیز
-    QJsonObject fakeResponse5;
-    fakeResponse5["status"] = "SUCCESS";
-    fakeResponse5["shelves"] = fakeShelvesArray;
-
-    // ۳. فرستادن این دیتای فیک به متد هندلر خودت!
-    this->handleGetShelves(fakeResponse5);
 }
 
 void LibraryWidget::on_tabWidget_currentChanged(int index)
@@ -148,6 +66,7 @@ void LibraryWidget::on_tabWidget_currentChanged(int index)
     switch (index) {
     case 0:
         requestPurchasedBooks();
+        requestShelves();
         break;
     case 1:
         requestSavedBooks();
@@ -327,7 +246,7 @@ void LibraryWidget::handleGetSavedBooks(const QJsonObject& response) {
             bookObj["id"].toInt(),
             bookObj["title"].toString(),
             bookObj["author"].toString(),
-            "", // ناشر
+            bookObj["publisher_name"].toString(),
             stringToGenre(bookObj["genre"].toString()),
             bookObj["coverImagePath"].toString(),
             bookObj["price"].toDouble(),
