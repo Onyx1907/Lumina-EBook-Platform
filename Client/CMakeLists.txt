@@ -48,6 +48,7 @@ qt_add_executable(LuminaClient
     user/librarywidget.h user/librarywidget.cpp user/librarywidget.ui
     storageutils.h storageutils.cpp
     user/bookreaderwidget.h user/bookreaderwidget.cpp user/bookreaderwidget.ui
+    publisherdashboardwidget.h publisherdashboardwidget.cpp publisherdashboardwidget.ui
 
 
 

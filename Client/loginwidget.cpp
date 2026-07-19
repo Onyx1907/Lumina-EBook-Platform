@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include "clientnetworkmanager.h"
 #include <QTimer>
+#include "publisher.h"
 
 LoginWidget::LoginWidget(QWidget *parent) :
     QWidget(parent),
@@ -112,7 +113,9 @@ void LoginWidget::processNetworkData(const QString& action, const QJsonObject& d
         if(role == "RegularUser"){
             user = new RegularUser(id, current_username);
         }
-        //else if(role == "Publisher"){}
+        else if(role == "Publisher"){
+            user = new Publisher(id, current_username, "");
+        }
 
         QTimer::singleShot(3000, this, [this, user, is_first_login](){
             emit goToUSerDashboard(user, is_first_login);

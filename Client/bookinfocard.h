@@ -19,8 +19,7 @@ public:
 
     enum CardMode{
         Normal,
-        Cart,
-        Publisher
+        Cart
     };
 
     void setCardMode(CardMode mode = CardMode::Normal);

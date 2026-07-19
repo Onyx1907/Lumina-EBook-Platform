@@ -6,9 +6,10 @@
 #include <QStringList>
 #include <QJsonValue>
 #include <QTimer>
+#include "constants.h"
 
 
-ProfileWidget::ProfileWidget(RegularUser *cur_user, QWidget *parent)
+ProfileWidget::ProfileWidget(User *cur_user, QWidget *parent)
     : QWidget(parent), user(cur_user)
     , ui(new Ui::ProfileWidget)
 {
@@ -26,15 +27,31 @@ void ProfileWidget::loadProfile(){
     ui->newPass_lineEdit->setText("");
     ui->pass_lineEdit->setText("");
     ui->username_lineEdit->setText("");
+    ui->name_label->setText("");
+    ui->email_label->setText("");
 
     ui->username_label->setText(user->getUsername());
 
-    if(ClientNetworkManager::instance().connectToServer()){
+    if(user->getRole() == UserRole::Publisher){
+        ui->changeGenres_pushButton->hide();
+        ui->favoriteGenres_label->hide();
+        ui->name_lineEdit->setPlaceholderText("نام انتشارات");
+        is_publisher = true;
+    }
+
+    if(ClientNetworkManager::instance().connectToServer() && !is_publisher){
 
         QJsonObject data;
         data["user_id"] = user->getId();
 
         ClientNetworkManager::instance().sendRequest("GET_PROFILE", data);
+    }
+    else if(ClientNetworkManager::instance().connectToServer() && is_publisher){
+
+        QJsonObject data;
+        data["publisher_id"] = user->getId();
+
+        ClientNetworkManager::instance().sendRequest("GET_PUBLISHER_PROFILE", data, true);
     }
     else{
         ui->error_label->setText("خطا در برقراری اتصال");
@@ -53,9 +70,12 @@ void ProfileWidget::on_changeGenres_pushButton_clicked()
 
 void ProfileWidget::processNetworkData(const QString& action, const QJsonObject& data)
 {
+    qDebug() << data;
     if (action != "GET_PROFILE_RESPONSE" &&
         action != "UPDATE_PROFILE_RESPONSE" &&
-        action != "CHANGE_PASSWORD_RESPONSE") {
+        action != "CHANGE_PASSWORD_RESPONSE" &&
+        action != "GET_PUBLISHER_PROFILE_RESPONSE" &&
+        action != "UPDATE_PUBLISHER_PROFILE_RESPONSE") {
         return;
     }
 
@@ -103,8 +123,27 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
             });
         }
     }
+    if (action == "GET_PUBLISHER_PROFILE_RESPONSE") {
+        if (data.value("status").toString() == "SUCCESS") {
 
-    if (action == "UPDATE_PROFILE_RESPONSE"){
+            QJsonObject profileObj = data.value("profile").toObject();
+
+            qDebug() << profileObj;
+
+            ui->name_label->setText(profileObj.value("name").toString());
+            ui->email_label->setText(profileObj.value("email").toString());
+        }
+
+        else if(data.value("status").toString() == "FAILED"){
+            ui->error_label->setText(data.value("message").toString());
+            QTimer::singleShot(3000, this, [this](){
+                ui->error_label->setText("");
+            });
+        }
+    }
+
+    if (action == "UPDATE_PROFILE_RESPONSE" ||
+        action == "UPDATE_PUBLISHER_PROFILE_RESPONSE"){
         ui->submitProfile_pushButton->setEnabled(true);
 
         if (data.value("status").toString() == "SUCCESS") {
@@ -180,8 +219,15 @@ void ProfileWidget::on_submitProfile_pushButton_clicked()
         });
         return;
     }
+    if(new_username.isEmpty() && email.isEmpty() && name.isEmpty()){
+        ui->prof_error_label->setText("حداقل یک فیلد را پر کنید");
+        QTimer::singleShot(3000, this, [this](){
+            ui->prof_error_label->setText("");
+        });
+        return;
+    }
 
-    if(ClientNetworkManager::instance().connectToServer()){
+    if(ClientNetworkManager::instance().connectToServer() && !is_publisher){
 
         QJsonObject data;
         data["user_id"] = user->getId();
@@ -192,6 +238,19 @@ void ProfileWidget::on_submitProfile_pushButton_clicked()
         qDebug() << data;
 
         ClientNetworkManager::instance().sendRequest("UPDATE_PROFILE", data);
+        ui->submitProfile_pushButton->setEnabled(false);
+    }
+    else if(ClientNetworkManager::instance().connectToServer() && is_publisher){
+
+        QJsonObject data;
+        data["publisher_id"] = user->getId();
+        data["username"] = new_username;
+        data["name"] = name;
+        data["email"] = email;
+
+        qDebug() << data;
+
+        ClientNetworkManager::instance().sendRequest("UPDATE_PUBLISHER_PROFILE", data);
         ui->submitProfile_pushButton->setEnabled(false);
     }
     else{
