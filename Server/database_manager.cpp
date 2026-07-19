@@ -1521,6 +1521,25 @@ bool DatabaseManager::addBook(const QJsonObject& bookData)
     return true;
 }
 
+//دیدن اطلاعات یک کتاب
+QJsonObject DatabaseManager::getBookDetails(int bookId) {
+    QJsonObject book;
+    QSqlQuery q(db);
+    q.prepare("SELECT title, author, genre, description, price, discountPercent, pdfPath, coverImagePath FROM books WHERE id = :id");
+    q.bindValue(":id", bookId);
+    if (q.exec() && q.next()) {
+        book["title"] = q.value("title").toString();
+        book["author"] = q.value("author").toString();
+        book["genre"] = q.value("genre").toString();
+        book["description"] = q.value("description").toString();
+        book["price"] = q.value("price").toDouble();
+        book["discountPercent"] = q.value("discountPercent").toDouble();
+        book["pdfPath"] = q.value("pdfPath").toString();
+        book["coverImagePath"] = q.value("coverImagePath").toString();
+    }
+    return book;
+}
+
 // ویرایش یک کتاب
 bool DatabaseManager::updateBook(int bookId, const QJsonObject& bookData) {
     QSqlQuery q(db);
