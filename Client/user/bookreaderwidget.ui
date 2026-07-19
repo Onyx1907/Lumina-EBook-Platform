@@ -33,27 +33,31 @@ font-size: 20px;
 }
 
 /* استایل عمومی دکمه‌های کنترلی */
+/* حالت عادی دکمه (دقیقا همان تم هاور قبلی شماست: شیشه کاراملی غلیظ با لبه طلایی خامه‌ای) */
 QPushButton {
-    background-color: #E6D5C3; /* نسکافه‌ای مدیوم */
-    color: #4A3525; /* قهوه‌ای سوخته برای متن */
-    border: 1px solid #C5B09E;
-    border-radius: 6px;
-    padding: 6px 14px;
-    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
-    font-size: 13px;
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه‌ای */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+    font-size: 14px;
     font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
 }
 
-/* افکت رفتن موس روی دکمه‌ها */
+/* حالت Hover (وقتی موس روی دکمه می‌رود: غلیظ‌تر، تیره تر و کاملا مشخص) */
 QPushButton:hover {
-    background-color: #D7C4B7; /* کمی تیره تر */
-    border: 1px solid #A89280;
+    background-color: rgba(93, 58, 25, 0.65); /* قهوه‌ای نسکافه‌ای تیره و غلیظ */
+    border: 1px solid #8B5A2B; /* مرز قهوه‌ای سوخته */
+    color: #F7DC6F; /* تغییر رنگ متن به طلایی درخشان برای افکت جذاب‌تر */
 }
 
-/* افکت کلیک شدن دکمه‌ها */
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود: تاریک‌ترین و فشرده‌ترین حالت) */
 QPushButton:pressed {
-    background-color: #BD9E87; /* قهوه‌ای مایل به نسکافه‌ای تیره */
-    color: #FFFFFF;
+    background-color: rgba(54, 33, 13, 0.85); /* قهوه‌ای اسپرسو بسیار تیره و سنگین */
+    border: 1px solid #4A2E14;
+    padding-left: 16px; /* همان افکت کلیک ملو و قشنگ شما */
 }
 
 /* استایل کادر وارد کردن شماره صفحه */
@@ -75,7 +79,7 @@ QLineEdit:focus {
 QLabel {
     color: #5C4033; /* قهوه‌ای تاریک */
     font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
-    font-size: 14px;
+    font-size: 17px;
     font-weight: bold;
 }
 
@@ -192,7 +196,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>500</height>
+       <height>450</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -210,7 +214,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
        <property name="minimumSize">
         <size>
          <width>50</width>
-         <height>0</height>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -229,7 +233,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
        <property name="minimumSize">
         <size>
          <width>50</width>
-         <height>0</height>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -277,7 +281,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
        <property name="minimumSize">
         <size>
          <width>50</width>
-         <height>0</height>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -296,7 +300,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
        <property name="minimumSize">
         <size>
          <width>50</width>
-         <height>0</height>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -312,6 +316,12 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
      </item>
      <item>
       <widget class="QPushButton" name="back_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
+       </property>
        <property name="text">
         <string>برگشت</string>
        </property>

@@ -42,69 +42,22 @@ void CartWidget::showEvent(QShowEvent *event) {
 
 void CartWidget::loadCartFromServer(){
 
-    //موقت جهت تست
-    // QJsonObject data;
-    // data["user_id"] = m_userID;
+    QJsonObject data;
+    data["user_id"] = m_userID;
 
 
-    // if(ClientNetworkManager::instance().connectToServer()){
+    if(ClientNetworkManager::instance().connectToServer()){
 
-    //     ClientNetworkManager::instance().sendRequest("GET_CART", data);
-    // }
-    // else{
-    //     ui->error_label->setText("خطا در برقرار اتصال");
-    //     ui->error_label->show();
-    //     QTimer::singleShot(3000, this, [this](){
-    //         ui->error_label->setText("");
-    //         ui->error_label->hide();
-    //     });
-    // }
-
-    QJsonObject fakeResponse;
-    fakeResponse["status"] = "SUCCESS";
-    fakeResponse["count"] = 3;
-    fakeResponse["total_price"] = 380000.0;
-    fakeResponse["discount"] = 45000.0;
-    fakeResponse["final_price"] = 335000.0;
-
-    QJsonArray fakeItems;
-
-    // کتاب اول
-    QJsonObject book1;
-    book1["id"] = 101;
-    book1["title"] = "کتاب شاهنامه فردوسی";
-    book1["author"] = "ابوالقاسم فردوسی";
-    book1["publisher_name"] = "انتشارات امیرکبیر"; // فیلد جدید
-    book1["price"] = 150000.0;
-    book1["discount"] = 0;
-    book1["coverImagePath"] = ":/images/shahnameh.png";
-    fakeItems.append(book1);
-
-    // کتاب دوم
-    QJsonObject book2;
-    book2["id"] = 102;
-    book2["title"] = "بنویس تا اتفاق بیفتد";
-    book2["author"] = "هنریت کلاوسر";
-    book2["publisher_name"] = "کتاب نسل نواندیش"; // فیلد جدید
-    book2["price"] = 110000.0;
-    book2["discount"] = 50.5;
-    book2["coverImagePath"] = "";
-    fakeItems.append(book2);
-
-    // کتاب سوم
-    QJsonObject book3;
-    book3["id"] = 103;
-    book3["title"] = "کتاب شازده کوچولو";
-    book3["author"] = "آنتوان دو سنت‌اگزوپری";
-    book3["publisher_name"] = "انتشارات نگاه"; // فیلد جدید
-    book3["price"] = 120000.0;
-    book3["discount"] = 20;
-    book3["coverImagePath"] = "";
-    fakeItems.append(book3);
-
-    fakeResponse["items"] = fakeItems;
-
-    handleGetCartResponse(fakeResponse);
+        ClientNetworkManager::instance().sendRequest("GET_CART", data);
+    }
+    else{
+        ui->error_label->setText("خطا در برقرار اتصال");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
 }
 
 void CartWidget::processNetworkData(const QString& action, const QJsonObject& data) {

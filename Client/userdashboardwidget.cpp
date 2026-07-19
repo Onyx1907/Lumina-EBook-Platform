@@ -219,83 +219,8 @@ void UserDashboardWidget::on_profile_pushButton_clicked()
 void UserDashboardWidget::on_search_pushButton_clicked()
 {
     fadeToPage(Page::SearchPageIndex);
-
-    //تست
-    testSearchLayout();
 }
 
-
-//تست گرافیک صفحه نتایج
-
-void UserDashboardWidget::testSearchLayout() {
-    QVector<Book> fakeBooks;
-
-    // ۱. کتاب اول: ژانر تخیلی (Fiction) با ۱۰ درصد تخفیف
-    fakeBooks.append(Book(
-        10,
-        "شاهنامه فردوسی",
-        "ابوالقاسم فردوسی",
-        "انتشارات طوس",
-        BookGenre::Fiction,
-        ":/images/covers/shahnameh.jpg",
-        250000.0,
-        10.0
-        ));
-
-    // ۲. کتاب دوم: ژانر تاریخ (History) بدون تخفیف
-    fakeBooks.append(Book(
-        11,
-        "تاریخ بیهقی",
-        "ابوالفضل بیهقی",
-        "انتشارات علمی و فرهنگی",
-        BookGenre::History,
-        ":/images/covers/bayhaqi.jpg",
-        180000.0,
-        0.0
-        ));
-
-    // ۳. کتاب سوم: علمی تخیلی (SciFi) با ۳۰ درصد تخفیف
-    fakeBooks.append(Book(
-        12,
-        "رؤیای مریخ",
-        "آرتور سی کلارک",
-        "انتشارات نگاه",
-        BookGenre::SciFi,
-        ":/images/covers/marsexpress.jpg",
-        150000.0,
-        30.0
-        ));
-
-    // ۴. کتاب چهارم: روانشناسی (Psychology)
-    fakeBooks.append(Book(
-        13,
-        "انسان در جستجوی معنا",
-        "ویکتور فرانکل",
-        "انتشارات چشمه",
-        BookGenre::Psychology,
-        ":/images/covers/meaning.jpg",
-        950000.0,
-        0.0
-        ));
-
-    // ۵. کتاب پنجم: آموزشی (Educational)
-    fakeBooks.append(Book(
-        14,
-        "تفکر سریع و کند",
-        "دانیال کانمن",
-        "انتشارات امیرکبیر",
-        BookGenre::Educational,
-        ":/images/covers/thinking.jpg",
-        450000.0,
-        15.0
-        ));
-
-    // تزریق مستقیم وکتور فیک به صفحه ریزالت
-    ResultPage->fillResults(fakeBooks);
-
-    // انتقال موقت به صفحه ریزالت برای تست چشمی ظاهر نسکافه‌ای شیشه‌ای
-    fadeToPage(Page::ResultPageIndex);
-}
 
 void UserDashboardWidget::on_cart_pushButton_clicked()
 {

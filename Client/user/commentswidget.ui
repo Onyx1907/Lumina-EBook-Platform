@@ -321,7 +321,7 @@ QSpinBox::down-arrow {
           <property name="minimumSize">
            <size>
             <width>110</width>
-            <height>30</height>
+            <height>38</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -331,11 +331,12 @@ QSpinBox::down-arrow {
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">QPushButton {
-    background-color: rgba(255, 255, 255, 0.08); /* پس‌زمینه شیشه‌ای بسیار ملو */
-    border: 1px solid rgba(193, 154, 107, 0.25); /* مرز کاراملی شفاف */
+           <string notr="true">/* حالت عادی دکمه (دقیقا همان تم هاور قبلی شماست: شیشه کاراملی غلیظ با لبه طلایی خامه‌ای) */
+QPushButton {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه‌ای */
     border-radius: 8px; /* گوشه‌های نرم کلاسیک */
-    color: #D2B48C; /* رنگ متنی خامه ای/نسکافه‌ای روشن */
+    color: #FFF; /* متن کاملا سفید و درخشان */
     font-size: 14px;
     font-weight: bold;
     font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
@@ -343,18 +344,18 @@ QSpinBox::down-arrow {
     min-height: 24px;
 }
 
-/* حالت Hover (وقتی موس روی دکمه می‌رود) */
+/* حالت Hover (وقتی موس روی دکمه می‌رود: غلیظ‌تر، تیره تر و کاملا مشخص) */
 QPushButton:hover {
-    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ‌تر */
-    border: 1px solid #C19A6B; /* لبه طلایی خامه ای */
-    color: #FFF; /* متن کاملا سفید و درخشان */
+    background-color: rgba(93, 58, 25, 0.65); /* قهوه‌ای نسکافه‌ای تیره و غلیظ */
+    border: 1px solid #8B5A2B; /* مرز قهوه‌ای سوخته */
+    color: #F7DC6F; /* تغییر رنگ متن به طلایی درخشان برای افکت جذاب‌تر */
 }
 
-/* حالت Pressed (وقتی روی دکمه کلیک می‌شود) */
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود: تاریک‌ترین و فشرده‌ترین حالت) */
 QPushButton:pressed {
-    background-color: rgba(111, 78, 55, 0.6); /* رنگ قهوه‌ای تیره فشرده شده */
-    border: 1px solid #8B5A2B;
-    padding-left: 16px; /* افکت کلیک کوچک ملو (متمایل شدن متن به راست) */
+    background-color: rgba(54, 33, 13, 0.85); /* قهوه‌ای اسپرسو بسیار تیره و سنگین */
+    border: 1px solid #4A2E14;
+    padding-left: 16px; /* همان افکت کلیک ملو و قشنگ شما */
 }</string>
           </property>
           <property name="text">

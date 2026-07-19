@@ -62,13 +62,14 @@ void BookDetailsWidget::loadBook(Book *book){
     }
 
     ui->addCart_pushButton->hide();
-    ui->removeCart_pushButton->hide();/*
-    ui->study_pushButton->hide();*/
+    ui->removeCart_pushButton->hide();
+    ui->study_pushButton->hide();
     ui->comments->hide();
     ui->comments_pushButton->hide();
     ui->saveBook_pushButton->hide();
     ui->savedBook_pushButton->hide();
-    ui->disconnected->hide(); // موقت
+    ui->disconnected->hide();
+    ui->description_label->hide();
 
     if(ClientNetworkManager::instance().connectToServer()){
         QJsonObject data;
@@ -104,6 +105,7 @@ void BookDetailsWidget::processNetworkData(const QString& action, const QJsonObj
     if(action == "CHECK_BOOK_OWNERSHIP_RESPONSE"){
         if(data.value("status").toString() == "SUCCESS"){
             ui->disconnected->hide();
+            ui->description_label->show();
 
             ui->comments->show();
             ui->comments_pushButton->show();
@@ -125,7 +127,10 @@ void BookDetailsWidget::processNetworkData(const QString& action, const QJsonObj
             }
 
             ui->rating_label->setText(QString::number(data.value("rating").toDouble(), 'f', 1));
-            ui->publisher_label->setText(data.value("publisher").toString());
+            ui->publisher_label->setText(data.value("publisher_name").toString());
+            ui->description_label->setText(data.value("description").toString());
+
+            StorageUtils::displayBookCover(data["cover_image_path"].toString(), ui->book_cover);
         }
         else if(data.value("status").toString() == "FAILED"){
             ui->error_label->setText(data.value("message").toString());
