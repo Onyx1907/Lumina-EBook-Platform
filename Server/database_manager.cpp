@@ -1610,6 +1610,25 @@ bool DatabaseManager::setBookActiveState(int bookId, int publisherId, bool activ
     return q.exec();
 }
 
+//حذف کتاب
+bool DatabaseManager::publisherDeleteBook(int bookId, int publisherId) {
+    QSqlQuery q(db);
+    // شرطِ اصلی: هم آیدی کتاب درست باشد، هم ناشرش همین کسی باشد که درخواست داده
+    q.prepare("UPDATE books SET isActive = 0, is_deleted = 1 "
+              "WHERE id = :id AND publisher_id = :pubId");
+
+    q.bindValue(":id", bookId);
+    q.bindValue(":pubId", publisherId);
+
+    if (!q.exec()) {
+        qDebug() << "Database Error (publisherDeleteBook failed):" << q.lastError().text();
+        return false;
+    }
+
+    // بررسی اینکه آیا واقعاً تغییری اعمال شده (یعنی کتاب متعلق به این ناشر بوده)
+    return q.numRowsAffected() > 0;
+}
+
 // گرفتن لیستی از کتاب های یک ناشر
 QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
     QList<QJsonObject> list;

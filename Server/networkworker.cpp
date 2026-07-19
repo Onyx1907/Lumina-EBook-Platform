@@ -162,6 +162,7 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "UPDATE_BOOK") { handleUpdateBook(socket, data); return; }
     else if (action == "SET_BOOK_DISCOUNT") { handleSetBookDiscount(socket, data); return; }
     else if (action == "SET_BOOK_ACTIVE_STATE") { handleSetBookActiveState(socket, data); return; }
+    else if (action == "PUBLISHER_DELETE_BOOK") { handlePublisherDeleteBook(socket, data); return; }
     else if (action == "GET_PUBLISHER_BOOKS")  { handleGetPublisherBooks(socket, data); return; }
 
 
@@ -1447,6 +1448,27 @@ void NetworkWorker::handleSetBookActiveState(QTcpSocket* socket, const QJsonObje
     resp["message"] = ok ? (active ? ".کتاب فعال شد"
                                    : ".کتاب غیرفعال شد")
                          : ".خطا در تغییر وضعیت کتاب";
+
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handlePublisherDeleteBook(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId = data.value("book_id").toInt();
+    int publisherId = data.value("publisher_id").toInt(); // این آیدی باید از سمت کلاینت (لاگین شده) بیاید
+
+    QJsonObject resp;
+    resp["action"] = "PUBLISHER_DELETE_BOOK_RESPONSE";
+
+    // فراخوانی متد جدید
+    bool ok = m_dbManager->publisherDeleteBook(bookId, publisherId);
+
+    if (ok) {
+        resp["status"] = "SUCCESS";
+        resp["message"] = ".کتاب با موفقیت از سیستم حذف شد";
+    } else {
+        resp["status"] = "ERROR";
+        resp["message"] = ".خطا در حذف کتاب؛ یا کتاب موجود نیست یا متعلق به شما نمی باشد";
+    }
 
     sendJson(socket, resp);
 }
