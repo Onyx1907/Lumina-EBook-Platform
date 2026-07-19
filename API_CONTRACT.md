@@ -1001,6 +1001,25 @@
       "message": ".خطا در تغییر وضعیت کتاب"
     }
   },
+"-----------------------------------------"
+"PUBLISHER_DELETE_BOOK": {
+    "client_request": {
+      "action": "PUBLISHER_DELETE_BOOK",
+      "book_id": 123,
+      "publisher_id": 45
+    },
+    "server_response_success": {
+      "action": "PUBLISHER_DELETE_BOOK_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب با موفقیت از سیستم حذف شد"
+    },
+    "server_response_error": {
+      "action": "PUBLISHER_DELETE_BOOK_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در حذف کتاب؛ یا کتاب موجود نیست یا متعلق به شما نمی باشد"
+    }
+  }
+,
   "46_GET_PUBLISHER_BOOKS": {
     "client_request": {
       "action": "GET_PUBLISHER_BOOKS",
