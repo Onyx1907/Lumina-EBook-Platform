@@ -865,11 +865,9 @@
     "client_request": {
       "action": "UPDATE_PUBLISHER_PROFILE",
       "publisher_id": 5,
-      "info": {
-        "username": "ghoqnoos_press",
-        "name": "نشر ققنوس جدید",
-        "email": "new_info@ghoqnoos.com"
-      }
+      "username": "ghoqnoos_press",
+      "name": "نشر ققنوس جدید",
+      "email": "new_info@ghoqnoos.com"
     },
     "server_response_success": {
       "action": "UPDATE_PUBLISHER_PROFILE_RESPONSE",
