@@ -70,7 +70,7 @@ public:
     bool isBookPurchased(int userId, int bookId);
     bool isBookInCart(int userId, int bookId);
     bool isBookSaved(int userId, int bookId);
-    bool getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath);
+    bool getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath, QString &description);
     QString getBookPdfPath(int bookId);
 
     //*********************************************پنل کاربر عادی ( ماژول 2 )****************************************************
@@ -161,6 +161,10 @@ public:
     QJsonObject getUserById(int userId);
     QList<QJsonObject> searchUsers(const QString& keyword, const QString& roleFilter,
                                    int blockedFilter, const QString& registerDateFilter);
+
+
+    //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
+
 
 
 

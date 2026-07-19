@@ -694,11 +694,11 @@ bool DatabaseManager::isBookSaved(int userId, int bookId)
 }
 
 //بررسی اکتیو بودن کتاب و گرفتن اطلاعات ناشر و ریتینگ از جدول
-bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath)
+bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, double &rating, QString &coverPath, QString &description)
 {
     QSqlQuery q(db);
     // اضافه کردن ستون آدرس عکس کتاب به کوئری
-    q.prepare("SELECT u.name, b.averageRating, b.coverImagePath "
+    q.prepare("SELECT u.name, b.averageRating, b.coverImagePath, b.description "
               "FROM books b "
               "JOIN users u ON b.publisher_id = u.id "
               "WHERE b.id = :bookId AND b.isActive = 1 AND b.is_deleted = 0 LIMIT 1");
@@ -708,6 +708,7 @@ bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, d
         publisherName = q.value("name").toString();
         rating = q.value("averageRating").toDouble();
         coverPath = q.value("coverImagePath").toString(); // استخراج آدرس عکس از دیتابیس
+        description = q.value("description").toString();
         return true;
     }
     return false;
@@ -1178,7 +1179,7 @@ bool DatabaseManager::createShelf(int userId, const QString& name) {
     QSqlQuery check(db);
     check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n");
     check.bindValue(":u", userId);
-    check.bindValue(":n", name.trimmed()); // حذف فاصله های خالی احتمالی
+    check.bindValue(":n", name);
 
     if (check.exec() && check.next()) {
         qDebug() << ".قفسه ای با این نام برای این کاربر از قبل وجود دارد";
@@ -1205,7 +1206,7 @@ bool DatabaseManager::renameShelf(int shelfId, const QString& newName) {
     QSqlQuery check(db);
     check.prepare("SELECT 1 FROM shelves WHERE user_id = :u AND name = :n AND id != :id");
     check.bindValue(":u", userId);
-    check.bindValue(":n", newName.trimmed());
+    check.bindValue(":n", newName);
     check.bindValue(":id", shelfId);
 
     if (check.exec() && check.next()) {
@@ -1814,3 +1815,11 @@ QList<QJsonObject> DatabaseManager::searchUsers(const QString& keyword, const QS
     }
     return list;
 }
+
+
+//*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
+
+
+
+
+
