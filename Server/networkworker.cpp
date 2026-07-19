@@ -177,6 +177,8 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "SEARCH_USERS") { handleSearchUsers(socket, data); return; }
 
 
+    //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
+
 
 
 
@@ -1556,6 +1558,11 @@ void NetworkWorker::handleSearchUsers(QTcpSocket* socket, const QJsonObject& dat
 
     sendJson(socket, resp);
 }
+
+
+//*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
+
+
 
 
 

@@ -163,6 +163,10 @@ public:
                                    int blockedFilter, const QString& registerDateFilter);
 
 
+    //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
+
+
+
 
 private:
     QSqlDatabase db;

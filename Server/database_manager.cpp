@@ -1815,3 +1815,11 @@ QList<QJsonObject> DatabaseManager::searchUsers(const QString& keyword, const QS
     }
     return list;
 }
+
+
+//*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
+
+
+
+
+

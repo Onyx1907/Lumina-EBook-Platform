@@ -56,4 +56,9 @@ inline BookGenre stringToGenre(const QString& genreStr) {
 // inline برای جلوگیری از خطای ناشی از تکرار تابع بر اثر تعدد include
 // و همچنین سرعت
 
+
+const QString ADMIN_USERNAME = "AdminSystem";
+const QString ADMIN_PASSWORD_HASH = "b594b953d611f7c32766324b910e53a992a54b38d3131c9a9226f30a9e701962"; //SystemAdmin@2026
+
+
 #endif // CONSTANTS_H
