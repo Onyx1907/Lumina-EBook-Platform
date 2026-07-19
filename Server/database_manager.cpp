@@ -1404,7 +1404,7 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
 bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject &data) {
     //خواندن اطلاعات فعلی ناشر از دیتابیس
     QSqlQuery currentQuery(db);
-    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = 'publisher'");
+    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = 'Publisher'");
     currentQuery.bindValue(":id", publisherId);
 
     if (!currentQuery.exec() || !currentQuery.next()) {
@@ -1473,7 +1473,7 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject 
               "username = :username, "
               "name = :name, "
               "email = :email "
-              "WHERE id = :id AND role = 'publisher'");
+              "WHERE id = :id AND role = 'Publisher'");
 
     q.bindValue(":username", newUsername);
     q.bindValue(":name", newName);
