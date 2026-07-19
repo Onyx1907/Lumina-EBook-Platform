@@ -1,5 +1,6 @@
 #include "bookcard.h"
 #include "ui_bookcard.h"
+#include "storageutils.h"
 #include <QPixmap>
 
 BookCard::BookCard(Book b, QWidget *parent)
@@ -10,33 +11,7 @@ BookCard::BookCard(Book b, QWidget *parent)
 
     ui->title_label->setText(this->book.getTitle());
 
-    QPixmap pix;
-
-    if(!(this->book.getCoverImagePath().isEmpty())){
-        QByteArray byteArray =
-            QByteArray::fromBase64(this->book.getCoverImagePath().toUtf8());
-
-        pix.loadFromData(byteArray);
-
-        // qDebug() << "شرط اولی";
-    }
-
-
-    if(!pix.isNull()){
-        QSize targetSize(110, 130);
-
-        QPixmap scaledPix = pix.scaled(
-            targetSize,
-            Qt::KeepAspectRatio,
-            Qt::SmoothTransformation
-            );
-        QIcon icon(scaledPix);
-        ui->book_cover->setIcon(icon);
-        ui->book_cover->setIconSize(targetSize);
-
-        // qDebug() << "شرط دومی";
-    }
-
+    StorageUtils::displayBookCover(book.getCoverImagePath(), ui->book_cover);
 
     book_pushbutton = new QPushButton(this);
 

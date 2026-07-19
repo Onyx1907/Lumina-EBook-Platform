@@ -6,6 +6,7 @@
 #include "constants.h"
 #include <QListWidgetItem>
 #include <QJsonArray>
+#include <QScrollBar>
 
 UserHomeWidget::UserHomeWidget(int ID, QWidget *parent)
     : QWidget(parent), userID(ID)
@@ -16,6 +17,22 @@ UserHomeWidget::UserHomeWidget(int ID, QWidget *parent)
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &UserHomeWidget::processNetworkData);
+
+
+    ui->recommended_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->recommended_listWidget->verticalScrollBar()->setSingleStep(15);
+
+    ui->popular_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->popular_listWidget->verticalScrollBar()->setSingleStep(15);
+
+    ui->new_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->new_listWidget->verticalScrollBar()->setSingleStep(15);
+
+    ui->bestSellers_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->bestSellers_listWidget->verticalScrollBar()->setSingleStep(15);
+
+    ui->free_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->free_listWidget->verticalScrollBar()->setSingleStep(15);
 }
 
 
@@ -46,28 +63,18 @@ void UserHomeWidget::showEvent(QShowEvent *event) {
     // ۱. ساختن یک آرایه جیسون از کتاب‌های فیک
     QJsonArray mockBooks;
 
-    // کتاب اول
-    QJsonObject book1;
-    book1["id"] = 1;
-    book1["title"] = "شاهنامه فردوسی";
-    book1["author"] = "ابوالقاسم فردوسی";
-    book1["genre"] = "Biography"; // مطمئن شو تابع stringToGenre این را می‌شناسد
-    book1["price"] = 120000;
-    book1["discount_percentage"] = 10.0;
-    // یک متن بیس۶۴ فیک و بسیار کوتاه برای تست (پیکسل سفید یا خالی)
-    book1["cover_base64"] = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-    mockBooks.append(book1);
+    for(int i = 0; i <12; i++){
+        QJsonObject book2;
+        book2["id"] = 2;
+        book2["title"] = "دیوان حافظ";
+        book2["author"] = "شمس‌الدین حافظ";
+        book2["genre"] = "SciFi";
+        book2["price"] = 85000;
+        book2["discount_percentage"] = 0.0;
+        book2["cover_base64"] = "";
+        mockBooks.append(book2);
+    }
 
-    // کتاب دوم
-    QJsonObject book2;
-    book2["id"] = 2;
-    book2["title"] = "دیوان حافظ";
-    book2["author"] = "شمس‌الدین حافظ";
-    book2["genre"] = "SciFi";
-    book2["price"] = 85000;
-    book2["discount_percentage"] = 0.0;
-    book2["cover_base64"] = "";
-    mockBooks.append(book2);
 
     // ۲. بسته‌بندی نهایی دیتا درون آبجکت اصلی
     QJsonObject mockData;

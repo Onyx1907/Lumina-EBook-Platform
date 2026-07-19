@@ -27,5 +27,8 @@
         <file>resources/user/search_logo.png</file>
         <file>resources/edit_icon.svg</file>
         <file>resources/delete_icon.png</file>
+        <file>resources/user/emptyCart.png</file>
+        <file>resources/user/close_shelf.png</file>
+        <file>resources/user/open_shelf.png</file>
     </qresource>
 </RCC>

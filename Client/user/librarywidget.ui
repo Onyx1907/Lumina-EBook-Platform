@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LibraryWidget</class>
+ <widget class="QWidget" name="LibraryWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QLabel" name="error_label">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>730</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>730</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background-color: rgba(93, 37, 25, 0.45);  /* پس‌زمینه شیشه‌ای شرابی/شکلاتی تیره */
+    border: 1px solid rgba(217, 136, 128, 0.35); /* مرز ملو متمایل به رز-گلد شفاف */
+    border-radius: 8px;                         /* گوشه‌های نرم */
+    color: #FADBD8;                             /* رنگ متن صورتی بسیار ملایم و خوانا */
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 8px 16px;                          /* ایجاد فضای تنفس داخلی برای حالت شیشه‌ای */
+    qproperty-alignment: 'AlignCenter';         /* وسط‌چین کردن متن خطا */
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="styleSheet">
+      <string notr="true">/* استایل کلی خودِ ویجت تب */
+QTabWidget::pane {
+    border: 1px solid rgba(184, 134, 11, 0.2); /* حاشیه طلایی بسیار ملایم دور پنل اصلی */
+    background: rgba(255, 255, 255, 0.03);     /* پس‌زمینه بسیار شفاف شیشه‌ای */
+    border-radius: 12px;
+    top: -1px; /* برای اینکه پنل به دکمه‌های تب بچسبد */
+}
+
+/* نوار نگهدارنده تب‌ها (Tab Bar) */
+QTabBar {
+    qproperty-drawBase: 0; /* حذف خط پیش‌فرض زیر تب‌ها */
+    border-radius: 8px;
+}
+
+/* استایل عمومی هر کدام از دکمه‌های تب */
+QTabBar::tab {
+    background: rgba(40, 30, 20, 0.4);       /* قهوه‌ای تیره نیمه‌شفاف */
+    color: #E0D0C0;                          /* رنگ متن استخوانی/نسکافه‌ای ملایم */
+    border: 1px solid rgba(184, 134, 11, 0.15);
+    padding: 8px 20px;
+    margin-right: 4px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    min-width: 100px;
+}
+
+/* حالت Hover: وقتی ماوس روی تبی می‌رود */
+QTabBar::tab:hover {
+    background: rgba(218, 165, 32, 0.1);     /* هاله طلایی ملایم */
+    color: #FFD700;                          /* متن طلایی روشن */
+    border-color: rgba(184, 134, 11, 0.4);
+}
+
+/* حالت Selected: تب فعال و انتخاب‌شده */
+QTabBar::tab:selected {
+    background: rgba(184, 134, 11, 0.25);    /* نسکافه‌ای/طلایی مشخص‌تر */
+    color: #FFFFFF;                          /* متن کاملاً سفید */
+    border: 2px solid rgba(184, 134, 11, 0.8);
+    border-bottom-color: transparent;        /* حذف مرز پایین تب فعال برای ادغام با بدنه */
+    padding-bottom: 9px;                     /* کمی بلندتر شدن تب فعال برای حس پویایی */
+}
+
+/* جابه‌جایی تب‌های غیرفعال برای ایجاد عمق بصری */
+QTabBar::tab:!selected {
+    margin-top: 3px; 
+}</string>
+     </property>
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="purchased_tab">
+      <attribute name="title">
+       <string>کتاب های من</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QListWidget" name="purchased_listWidget">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">/* کاملاً شفاف کردن پس‌زمینه و حذف مرزهای لیست اصلی */
+QListWidget {
+    background-color: transparent;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px;
+}
+
+
+QListWidget::item:selected {
+    background-color: rgba(139, 90, 43, 0.7);
+    border: 1px solid #D2B48C;
+}
+/* اسکرول‌بار شیشه‌ای و هماهنگ */
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 0px;
+}
+QScrollBar::handle:vertical {
+    background: rgba(111, 78, 55, 0.6); /* دستگیره قهوه‌ای نیمه شفاف */
+    border-radius: 4px;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+    background: rgba(139, 90, 43, 0.8);
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: none; /* حذف دکمه‌های بالا و پایین اسکرول */
+}</string>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOn</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="movement">
+          <enum>QListView::Static</enum>
+         </property>
+         <property name="resizeMode">
+          <enum>QListView::Adjust</enum>
+         </property>
+         <property name="spacing">
+          <number>15</number>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::IconMode</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="saved_tab">
+      <attribute name="title">
+       <string>ذخیره شده ها</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QListWidget" name="saved_listWidget">
+         <property name="styleSheet">
+          <string notr="true">/* کاملاً شفاف کردن پس‌زمینه و حذف مرزهای لیست اصلی */
+QListWidget {
+    background-color: transparent;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px;
+}
+
+
+QListWidget::item:selected {
+    background-color: rgba(139, 90, 43, 0.7);
+    border: 1px solid #D2B48C;
+}
+/* اسکرول‌بار شیشه‌ای و هماهنگ */
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 0px;
+}
+QScrollBar::handle:vertical {
+    background: rgba(111, 78, 55, 0.6); /* دستگیره قهوه‌ای نیمه شفاف */
+    border-radius: 4px;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+    background: rgba(139, 90, 43, 0.8);
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: none; /* حذف دکمه‌های بالا و پایین اسکرول */
+}</string>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOn</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="shelves_tab">
+      <attribute name="title">
+       <string>قفسه های  من</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QListWidget" name="shelfBooks_listWidget">
+         <property name="minimumSize">
+          <size>
+           <width>530</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>530</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">/* کاملاً شفاف کردن پس‌زمینه و حذف مرزهای لیست اصلی */
+QListWidget {
+    background-color: transparent;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px;
+}
+
+
+QListWidget::item:selected {
+    background-color: rgba(139, 90, 43, 0.7);
+    border: 1px solid #D2B48C;
+}
+/* اسکرول‌بار شیشه‌ای و هماهنگ */
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 0px;
+}
+QScrollBar::handle:vertical {
+    background: rgba(111, 78, 55, 0.6); /* دستگیره قهوه‌ای نیمه شفاف */
+    border-radius: 4px;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+    background: rgba(139, 90, 43, 0.8);
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: none; /* حذف دکمه‌های بالا و پایین اسکرول */
+}</string>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOn</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="movement">
+          <enum>QListView::Static</enum>
+         </property>
+         <property name="resizeMode">
+          <enum>QListView::Adjust</enum>
+         </property>
+         <property name="spacing">
+          <number>15</number>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::IconMode</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QListWidget" name="shelves_listWidget">
+           <property name="minimumSize">
+            <size>
+             <width>190</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>190</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QListWidget#shelves_listWidget {
+    background-color: rgba(30, 25, 20, 0.3); /* پس‌زمینه تیره و بسیار شفاف */
+    border: 1px solid rgba(184, 134, 11, 0.15);
+    border-radius: 10px;
+    padding: 5px;
+    outline: 0;
+}
+
+/* استایل هر آیتم قفسه */
+QListWidget#shelves_listWidget::item {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: #E0D0C0;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* حالت هاور (نگه داشتن ماوس) */
+QListWidget#shelves_listWidget::item:hover {
+    background-color: rgba(184, 134, 11, 0.1);
+    color: #FFD700;
+    border: 1px solid rgba(184, 134, 11, 0.3);
+}
+
+/* حالت انتخاب شده (قفسه فعال) */
+QListWidget#shelves_listWidget::item:selected {
+    background-color: rgba(184, 134, 11, 0.2);
+    color: #FFFFFF;
+    border: 1px solid rgba(184, 134, 11, 0.8);
+}
+
+/* تنظیمات کلی اسکرول‌بار عمودی */
+QListWidget#shelves_listWidget QScrollBar:vertical {
+    border: none;
+    background: rgba(30, 25, 20, 0.2); /* پس‌زمینه شیشه‌ای بسیار تیره */
+    width: 8px;                         /* بسیار باریک و مینی‌مال */
+    margin: 0px 0px 0px 0px;
+    border-radius: 4px;
+}
+
+/* دستگیره اسکرول‌بار (همان بخشی که حرکت می‌کند) */
+QListWidget#shelves_listWidget QScrollBar::handle:vertical {
+    background: rgba(184, 134, 11, 0.4); /* طلایی تیره نیمه‌شفاف */
+    min-height: 20px;
+    border-radius: 4px;
+}
+
+/* حالت هاور روی دستگیره (وقتی ماوس روی آن می‌رود پررنگ‌تر می‌شود) */
+QListWidget#shelves_listWidget QScrollBar::handle:vertical:hover {
+    background: rgba(184, 134, 11, 0.8); /* طلایی تیره کاملاً واضح */
+}
+
+/* دکمه‌های بالا و پایین اسکرول‌بار (حذفشان می‌کنیم تا مدرن‌تر شود) */
+QListWidget#shelves_listWidget QScrollBar::add-line:vertical,
+QListWidget#shelves_listWidget QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+    height: 0px;
+}
+
+/* بخش‌های خالی بالا و پایین دستگیره */
+QListWidget#shelves_listWidget QScrollBar::add-page:vertical, 
+QListWidget#shelves_listWidget QScrollBar::sub-page:vertical {
+    background: none;
+}</string>
+           </property>
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOn</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="minimumSize">
+            <size>
+             <width>190</width>
+             <height>38</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>190</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* حالت عادی دکمه (دقیقا همان تم هاور قبلی شماست: شیشه کاراملی غلیظ با لبه طلایی خامه‌ای) */
+QPushButton {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه‌ای */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+    font-size: 14px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود: غلیظ‌تر، تیره تر و کاملا مشخص) */
+QPushButton:hover {
+    background-color: rgba(93, 58, 25, 0.65); /* قهوه‌ای نسکافه‌ای تیره و غلیظ */
+    border: 1px solid #8B5A2B; /* مرز قهوه‌ای سوخته */
+    color: #F7DC6F; /* تغییر رنگ متن به طلایی درخشان برای افکت جذاب‌تر */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود: تاریک‌ترین و فشرده‌ترین حالت) */
+QPushButton:pressed {
+    background-color: rgba(54, 33, 13, 0.85); /* قهوه‌ای اسپرسو بسیار تیره و سنگین */
+    border: 1px solid #4A2E14;
+    padding-left: 16px; /* همان افکت کلیک ملو و قشنگ شما */
+}</string>
+           </property>
+           <property name="text">
+            <string>افزودن قفسه</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

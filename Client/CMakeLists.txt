@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ۲. پکیج Network رو هم اینجا اضافه کن برای سوکت‌ها
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network Multimedia MultimediaWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Multimedia MultimediaWidgets Pdf PdfWidgets)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -44,6 +44,10 @@ qt_add_executable(LuminaClient
     user/resultwidget.h user/resultwidget.cpp user/resultwidget.ui
     user/commentitemwidget.h user/commentitemwidget.cpp user/commentitemwidget.ui
     user/commentswidget.h user/commentswidget.cpp user/commentswidget.ui
+    user/cartwidget.h user/cartwidget.cpp user/cartwidget.ui
+    user/librarywidget.h user/librarywidget.cpp user/librarywidget.ui
+    storageutils.h storageutils.cpp
+    user/bookreaderwidget.h user/bookreaderwidget.cpp user/bookreaderwidget.ui
 
 
 
@@ -57,6 +61,8 @@ target_link_libraries(LuminaClient PRIVATE
     Qt6::Network
     Qt6::Multimedia
     Qt6::MultimediaWidgets
+    Qt6::Pdf
+    Qt6::PdfWidgets
 )
 
 set_target_properties(LuminaClient PROPERTIES

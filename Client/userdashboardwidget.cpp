@@ -29,6 +29,9 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     SearchPage = new SearchWidget(this);
     ResultPage = new ResultWidget(this);
     CommentsPage = new CommentsWidget(user->getId(), this);
+    CartPage = new CartWidget(user->getId(), this);
+    LibraryPage =  new LibraryWidget(user->getId(), this);
+    BookReaderPage =  new BookReaderWidget(user->getId(), this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
@@ -37,6 +40,9 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ui->stackedWidget->addWidget(SearchPage);
     ui->stackedWidget->addWidget(ResultPage);
     ui->stackedWidget->addWidget(CommentsPage);
+    ui->stackedWidget->addWidget(CartPage);
+    ui->stackedWidget->addWidget(LibraryPage);
+    ui->stackedWidget->addWidget(BookReaderPage);
 
     //مدیریت نمایش صفحه انتخاب ژانر
     if(is_first_login){
@@ -107,6 +113,39 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     connect(CommentsPage, &CommentsWidget::backToBookDatailPage, this, [this](){
         fadeToPage(Page::BookDetailsPageIndex);
     });
+
+    //کلیک روی کتاب های داخل سبد خرید
+    connect(CartPage, &CartWidget::bookSelected, this, [this](Book* bookptr){
+        previousPageIndex = CartPageIndex;
+        BookDetailsPage->loadBook(bookptr);
+        fadeToPage(BookDetailsPageIndex);
+    });
+
+    //کلیک روی کتاب های داخل نشان شده ها
+    connect(LibraryPage, &LibraryWidget::bookSelected, this, [this](Book* bookptr){
+        previousPageIndex = LibraryPageIndex;
+        BookDetailsPage->loadBook(bookptr);
+        fadeToPage(BookDetailsPageIndex);
+    });
+
+    //رفتن به پی دی اف با کلیک روی مطالعه کتاب
+    connect(BookDetailsPage, &BookDetailsWidget::goToPDF, this, [this](int bookID){
+        prevPagePDF = Page::BookDetailsPageIndex;
+        BookReaderPage->loadBook(bookID);
+        fadeToPage(Page::BookReaderPageIndex);
+    });
+
+    //برگشت از صفحه پی دی اف
+    connect(BookReaderPage, &BookReaderWidget::back, this, [this](){
+       fadeToPage(prevPagePDF);
+    });
+
+    //رفتن به پی دی اف از طریق قفسه ها و کتاب های من
+    connect(LibraryPage, &LibraryWidget::goToPDF, this, [this](int bookID){
+        prevPagePDF = Page::LibraryPageIndex;
+        fadeToPage(Page::BookReaderPageIndex);
+    });
+
 }
 
 
@@ -257,3 +296,15 @@ void UserDashboardWidget::testSearchLayout() {
     // انتقال موقت به صفحه ریزالت برای تست چشمی ظاهر نسکافه‌ای شیشه‌ای
     fadeToPage(Page::ResultPageIndex);
 }
+
+void UserDashboardWidget::on_cart_pushButton_clicked()
+{
+    fadeToPage(Page::CartPageIndex);
+}
+
+
+void UserDashboardWidget::on_library_pushButton_clicked()
+{
+    fadeToPage(Page::LibraryPageIndex);
+}
+

@@ -1,5 +1,6 @@
 #include "bookinfocard.h"
 #include "ui_bookinfocard.h"
+#include "storageutils.h"
 
 BookInfoCard::BookInfoCard(Book b, QWidget *parent)
     : QWidget(parent), book(b)
@@ -9,6 +10,8 @@ BookInfoCard::BookInfoCard(Book b, QWidget *parent)
     ui->author_label->setText(book.getAuthor());
     ui->name_label->setText(book.getTitle());
     ui->publisher_label->setText(book.getPublisher());
+
+    StorageUtils::displayBookCover(book.getCoverImagePath(), ui->book_cover);
 
     if(book.getDiscountPercentage()){
         ui->discount_label->show();
@@ -60,10 +63,35 @@ void BookInfoCard::resizeEvent(QResizeEvent *event){
     if(book_pushbutton){
         book_pushbutton->setGeometry(0, 0, this->width(), this->height());
         book_pushbutton->raise();
+
+        ui->delete_pushButton->raise();
+        ui->edit_pushButton->raise();
     }
+}
+
+void BookInfoCard::setCardMode(CardMode mode){
+    ui->delete_pushButton->hide();
+    ui->edit_pushButton->hide();
+
+    if(mode == CardMode::Cart){
+        ui->delete_pushButton->show();
+    }
+    // else if(mode == CardMode::Publisher){
+    //     ui->edit_pushButton->show();
+    //     ui->delete_pushButton->show();
+    // } //موقت
+
+    ui->delete_pushButton->raise();
+    ui->edit_pushButton->raise();
 }
 
 BookInfoCard::~BookInfoCard()
 {
     delete ui;
 }
+
+void BookInfoCard::on_delete_pushButton_clicked()
+{
+    emit removeRequested(book.getId());
+}
+

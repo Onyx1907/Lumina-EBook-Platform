@@ -17,11 +17,23 @@ public:
     explicit BookInfoCard(Book b, QWidget *parent = nullptr);
     ~BookInfoCard();
 
+    enum CardMode{
+        Normal,
+        Cart,
+        Publisher
+    };
+
+    void setCardMode(CardMode mode = CardMode::Normal);
+
 signals:
     void clicked(Book* bookPtr);
+    void removeRequested(int bookID);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+
+private slots:
+    void on_delete_pushButton_clicked();
 
 private:
     Ui::BookInfoCard *ui;

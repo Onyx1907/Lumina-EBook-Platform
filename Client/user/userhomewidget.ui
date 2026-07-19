@@ -105,7 +105,35 @@ QListWidget {
     padding: 5px;
 }
 
+/* استایل کلی اسکرول‌بار افقی */
+QScrollBar:horizontal {
+    background: transparent;
+    height: 8px; /* ارتفاع ظریف و باریک */
+    margin: 0px;
+}
 
+/* دستگیره (کشویی) اسکرول‌بار */
+QScrollBar::handle:horizontal {
+    background: rgba(111, 78, 55, 0.6); /* دستگیره قهوه‌ای نیمه شفاف */
+    border-radius: 4px;
+    min-width: 20px; /* حداقل طول دستگیره موقع اسکرول */
+}
+
+/* حالت هاور (وقتی ماوس روی اسکرول‌بار افقی می‌رود) */
+QScrollBar::handle:horizontal:hover {
+    background: rgba(139, 90, 43, 0.8); /* قهوه‌ای نسکافه‌ای پررنگ‌تر */
+}
+
+/* حذف دکمه‌های چپ و راستِ انتهای اسکرول‌بار برای حفظ ظاهر مدرن */
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    background: none;
+    width: 0px; /* پهنای دکمه‌ها را صفر می‌کنیم */
+}
+
+/* حذف فضای خالی پس‌زمینه پشت دکمه‌ها (در صورت وجود) */
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
 
 </string>
       </property>
