@@ -135,7 +135,7 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "GET_SAVED_BOOKS") { handleGetSavedBooks(socket, data); return; }
 
     //+++++قفسه ها+++++
-    else if (action == "CREATE_SHELF") { handleCreateShelf(socket, data); return; }
+    else if (action == "CREATE_SHELF") { handleCreateShelf(socket, obj); return; }
     else if (action == "RENAME_SHELF") { handleRenameShelf(socket, data); return; }
     else if (action == "DELETE_SHELF") { handleDeleteShelf(socket, data); return; }
     else if (action == "ADD_BOOK_TO_SHELF") { handleAddBookToShelf(socket, data); return; }

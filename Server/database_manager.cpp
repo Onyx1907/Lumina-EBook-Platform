@@ -11,12 +11,14 @@ DatabaseManager::DatabaseManager(const QString& connectionName)
 }
 
 bool DatabaseManager::initDatabase() {
-    db.exec("PRAGMA journal_mode=WAL;");
-    db.exec("PRAGMA synchronous=NORMAL;");
     if (!db.open()) {
         qDebug() << "db open failed:" << db.lastError().text();
         return false;
     }
+
+    db.exec("PRAGMA journal_mode=WAL;");
+    db.exec("PRAGMA synchronous=NORMAL;");
+
     db.setConnectOptions("QSQLITE_BUSY_TIMEOUT=5000");
     return createTables();
 }
@@ -1819,7 +1821,23 @@ QList<QJsonObject> DatabaseManager::searchUsers(const QString& keyword, const QS
 
 //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
 
+//حذف منطقی حساب کاربری
+bool DatabaseManager::deleteUser(int userId) {
+    QSqlQuery q(db);
+    // هم پرچم حذف فعال می‌شود و هم برای امنیت دوبل کاربر مسدود می‌شود
+    q.prepare("UPDATE users SET is_deleted = 1, is_blocked = 1 WHERE id = :id");
+    q.bindValue(":id", userId);
+    return q.exec();
+}
 
+//فعال/غیر فعال کردن کاربر
+bool DatabaseManager::setUserActiveState(int userId, bool active) {
+    QSqlQuery q(db);
+    q.prepare("UPDATE users SET is_blocked = :b WHERE id = :id  AND is_deleted = 0");
+    q.bindValue(":b", active ? 0 : 1);
+    q.bindValue(":id", userId);
+    return q.exec();
+}
 
 
 
