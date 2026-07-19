@@ -135,9 +135,9 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "GET_SAVED_BOOKS") { handleGetSavedBooks(socket, data); return; }
 
     //+++++قفسه ها+++++
-    else if (action == "CREATE_SHELF") { handleCreateShelf(socket, data); return; }
-    else if (action == "RENAME_SHELF") { handleRenameShelf(socket, data); return; }
-    else if (action == "DELETE_SHELF") { handleDeleteShelf(socket, data); return; }
+    else if (action == "CREATE_SHELF") { handleCreateShelf(socket, obj); return; }
+    else if (action == "RENAME_SHELF") { handleRenameShelf(socket, obj); return; }
+    else if (action == "DELETE_SHELF") { handleDeleteShelf(socket, obj); return; }
     else if (action == "ADD_BOOK_TO_SHELF") { handleAddBookToShelf(socket, data); return; }
     else if (action == "MOVE_BOOK_BETWEEN_SHELVES") { handleMoveBookBetweenShelves(socket, data); return; }
     else if (action == "GET_SHELVES") { handleGetShelves(socket, data); return; }
@@ -1213,15 +1213,11 @@ void NetworkWorker::handleGetPublisherProfile(QTcpSocket* socket, const QJsonObj
 // مدیریت آپدیت اطلاعات ناشر
 void NetworkWorker::handleUpdatePublisherProfile(QTcpSocket* socket, const QJsonObject& data) {
     const int publisherId = data.value("publisher_id").toInt();
-    const QJsonObject info = data.value("info").toObject();
 
     QJsonObject resp;
     resp["action"] = "UPDATE_PUBLISHER_PROFILE_RESPONSE";
 
-    // صدا زدن متد دیتابیس هوشمند
-    bool ok = m_dbManager->updatePublisherProfile(publisherId, info);
-
-    if (ok) {
+    if (m_dbManager->updatePublisherProfile(publisherId, data)) {
         resp["status"] = "SUCCESS";
         resp["message"] = ".اطلاعات پروفایل ناشر با موفقیت به روزرسانی شد";
     } else {

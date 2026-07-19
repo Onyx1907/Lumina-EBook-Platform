@@ -166,6 +166,15 @@ public:
     //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
 
 
+    bool deleteUser(int userId);
+    bool setUserActiveState(int userId, bool active);
+
+
+
+
+
+
+
 
 
 private:

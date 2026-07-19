@@ -11,12 +11,14 @@ DatabaseManager::DatabaseManager(const QString& connectionName)
 }
 
 bool DatabaseManager::initDatabase() {
-    db.exec("PRAGMA journal_mode=WAL;");
-    db.exec("PRAGMA synchronous=NORMAL;");
     if (!db.open()) {
         qDebug() << "db open failed:" << db.lastError().text();
         return false;
     }
+
+    db.exec("PRAGMA journal_mode=WAL;");
+    db.exec("PRAGMA synchronous=NORMAL;");
+
     db.setConnectOptions("QSQLITE_BUSY_TIMEOUT=5000");
     return createTables();
 }
@@ -1384,7 +1386,7 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
     QSqlQuery q(db);
 
     // انتخاب دقیق فیلدهای موجود و بررسی متنی نقش
-    q.prepare("SELECT id, username, name, email FROM users WHERE id = :id AND role = 'publisher'");
+    q.prepare("SELECT id, username, name, email FROM users WHERE id = :id AND role = 'Publisher'");
     q.bindValue(":id", publisherId);
 
     if (!q.exec() || !q.next())
@@ -1399,10 +1401,10 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
 }
 
 // آپدیت اطلاعات ناشر
-bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject& info) {
+bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject &data) {
     //خواندن اطلاعات فعلی ناشر از دیتابیس
     QSqlQuery currentQuery(db);
-    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = 'publisher'");
+    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = 'Publisher'");
     currentQuery.bindValue(":id", publisherId);
 
     if (!currentQuery.exec() || !currentQuery.next()) {
@@ -1414,23 +1416,22 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject&
     QString currentName = currentQuery.value("name").toString();
     QString currentEmail = currentQuery.value("email").toString();
 
-    // استخراج مقادیر جدید ارسالی از کلاینت
-    QString newUsername = info.value("username").toString().trimmed();
-    QString newName = info.value("name").toString().trimmed();
-    QString newEmail = info.value("email").toString().trimmed();
+    QString newUsername = data.value("username").toString().trimmed();
+    QString newName = data.value("name").toString().trimmed();
+    QString newEmail = data.value("email").toString().trimmed();
 
-    // اگر فیلدی خالی بود، همان مقدار فعلی دیتابیس حفظ می‌شود
+    //اگر فیلدی خالی بود، همان مقدار فعلی دیتابیس حفظ میشود
     if (newUsername.isEmpty()) newUsername = currentUsername;
-    if (newName.isEmpty())      newName = currentName;
-    if (newEmail.isEmpty())     newEmail = currentEmail;
+    if (newName.isEmpty())     newName = currentName;
+    if (newEmail.isEmpty())    newEmail = currentEmail;
 
-    // بررسی خطای نهایی خالی بودن (جهت اطمینان صد در صد)
+    //بررسی خطای نهایی خالی بودن
     if (newUsername.isEmpty()) {
         qDebug() << "Publisher username cannot be empty!";
         return false;
     }
 
-    //بررسی تکراری نبودن نام کاربری (فقط اگر ناشر خواسته باشد آن را تغییر دهد)
+    //بررسی تکراری نبودن نام کاربری
     if (newUsername != currentUsername) {
         QSqlQuery checkUsername(db);
         checkUsername.prepare("SELECT 1 FROM users WHERE username = :username AND id != :id LIMIT 1");
@@ -1442,7 +1443,7 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject&
         }
     }
 
-    //بررسی تکراری نبودن نام نمایش (فقط اگر تغییر کرده باشد و خالی نباشد)
+    // بررسی تکراری نبودن نام نمایش
     if (!newName.isEmpty() && newName != currentName) {
         QSqlQuery checkName(db);
         checkName.prepare("SELECT 1 FROM users WHERE name = :name AND id != :id LIMIT 1");
@@ -1454,7 +1455,7 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject&
         }
     }
 
-    //بررسی تکراری نبودن ایمیل (فقط اگر تغییر کرده باشد و خالی نباشد)
+    //بررسی تکراری نبودن ایمیل
     if (!newEmail.isEmpty() && newEmail != currentEmail) {
         QSqlQuery checkEmail(db);
         checkEmail.prepare("SELECT 1 FROM users WHERE email = :email AND id != :id LIMIT 1");
@@ -1466,12 +1467,13 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject&
         }
     }
 
+    //انجام عملیات بروزرسانی در دیتابیس
     QSqlQuery q(db);
     q.prepare("UPDATE users SET "
               "username = :username, "
               "name = :name, "
               "email = :email "
-              "WHERE id = :id AND role = 'publisher'");
+              "WHERE id = :id AND role = 'Publisher'");
 
     q.bindValue(":username", newUsername);
     q.bindValue(":name", newName);
@@ -1819,7 +1821,23 @@ QList<QJsonObject> DatabaseManager::searchUsers(const QString& keyword, const QS
 
 //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
 
+//حذف منطقی حساب کاربری
+bool DatabaseManager::deleteUser(int userId) {
+    QSqlQuery q(db);
+    // هم پرچم حذف فعال می‌شود و هم برای امنیت دوبل کاربر مسدود میشود
+    q.prepare("UPDATE users SET is_deleted = 1, is_blocked = 1 WHERE id = :id");
+    q.bindValue(":id", userId);
+    return q.exec();
+}
 
+//فعال/غیر فعال کردن کاربر
+bool DatabaseManager::setUserActiveState(int userId, bool active) {
+    QSqlQuery q(db);
+    q.prepare("UPDATE users SET is_blocked = :b WHERE id = :id  AND is_deleted = 0");
+    q.bindValue(":b", active ? 0 : 1);
+    q.bindValue(":id", userId);
+    return q.exec();
+}
 
 
 
