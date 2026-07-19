@@ -920,7 +920,7 @@
       "message": ".خطا در ثبت اطلاعات کتاب در پایگاه داده"
     }
   },
-  "43_UPDATE_BOOK": {
+"43_UPDATE_BOOK": {
     "client_request": {
       "action": "UPDATE_BOOK",
       "book_id": 10,
@@ -930,8 +930,6 @@
       "description": "نسخه ویراسته جدید همراه با مقدمه",
       "price": 300000.0,
       "discountPercent": 15.0,
-      "pdfPath": "1700000000000_shahnameh.pdf",
-      "coverImagePath": "1700000000000_shahnameh_cover.jpg",
       "publisher_pdf_path": "C:/Users/Publisher/Downloads/shahnameh_v2.pdf",
       "publisher_cover_path": "C:/Users/Publisher/Downloads/shahnameh_v2_cover.jpg"
     },
@@ -944,6 +942,11 @@
       "action": "UPDATE_BOOK_RESPONSE",
       "status": "FAILED",
       "message": ".شناسه کتاب نامعتبر است"
+    },
+    "server_response_failed_book_not_found": {
+      "action": "UPDATE_BOOK_RESPONSE",
+      "status": "FAILED",
+      "message": ".کتاب یافت نشد"
     },
     "server_response_failed_pdf_copy": {
       "action": "UPDATE_BOOK_RESPONSE",
@@ -960,7 +963,8 @@
       "status": "FAILED",
       "message": ".خطا در ثبت تغییرات کتاب در پایگاه داده سرور"
     }
-  },
+  }
+  ,
   "44_SET_BOOK_DISCOUNT": {
     "client_request": {
       "action": "SET_BOOK_DISCOUNT",
