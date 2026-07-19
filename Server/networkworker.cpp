@@ -179,7 +179,8 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
 
-
+    else if (action == "DELETE_USER") { handleDeleteUser(socket, data); return; }
+    else if (action == "SET_USER_ACTIVE_STATE") { handleSetUserActiveState(socket, data); return; }
 
 
 
@@ -1558,7 +1559,33 @@ void NetworkWorker::handleSearchUsers(QTcpSocket* socket, const QJsonObject& dat
 
 //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
 
+void NetworkWorker::handleDeleteUser(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    bool ok = m_dbManager->deleteUser(userId);
 
+    QJsonObject resp;
+    resp["action"] = "DELETE_USER_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? ".حساب کاربری حذف شد"
+                         : ".خطا در حذف حساب";
 
+    sendJson(socket, resp);
+}
 
+void NetworkWorker::handleSetUserActiveState(QTcpSocket* socket, const QJsonObject& data) {
+    int userId = data["user_id"].toInt();
+    bool active = data["active"].toBool();
+
+    bool ok = m_dbManager->setUserActiveState(userId, active);
+
+    QJsonObject resp;
+    resp["action"] = "SET_USER_ACTIVE_RESPONSE";
+    resp["status"] = ok ? "SUCCESS"
+                        : "ERROR";
+    resp["message"] = ok ? (active ? ".کاربر فعال شد." : "کاربر غیرفعال شد")
+                         : ".خطا! کاربر یافت نشد یا حساب کاربری او قبلاً حذف شده است و قابل تغییر نیست";
+    sendJson(socket, resp);
+
+}
 
