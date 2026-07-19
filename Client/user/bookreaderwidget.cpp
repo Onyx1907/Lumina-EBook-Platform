@@ -45,40 +45,22 @@ void BookReaderWidget::loadBook(int bookID){
 
 void BookReaderWidget::requestPdfPath()
 {
-    // if(ClientNetworkManager::instance().connectToServer()){
+    if(ClientNetworkManager::instance().connectToServer()){
 
-    //     QJsonObject data;
-    //     data["book_id"] = m_bookId;
-    //     data["user_id"] = m_userId;
+        QJsonObject data;
+        data["book_id"] = m_bookId;
+        data["user_id"] = m_userId;
 
-    //     ClientNetworkManager::instance().sendRequest("GET_BOOK_PDF_PATH", data);
-    // }
-    // else{
-    //     ui->error_label->setText("خطا در برقراری اتصال");
-    //     ui->error_label->show();
-    //     QTimer::singleShot(3000, this, [this](){
-    //         ui->error_label->setText("");
-    //         ui->error_label->hide();
-    //     });
-    // }
-    QTimer::singleShot(500, this, [this]() {
-        QJsonObject mockResponse;
-
-        // سناریو ۱: موفقیت آمیز (مسیر یک PDF واقعی روی سیستم خودت را بگذار)
-        mockResponse["status"] = "SUCCESS";
-        mockResponse["pdf_path"] = "/home/onyx/Downloads/سوال۲.pdf";
-
-        // سناریو ۲: شبیه‌سازی خطای عدم دسترسی سرور (برای تست این حالت، خط زیر را فعال و خطوط بالا را کامنت کن)
-        // mockResponse["status"] = "FAILED";
-        // mockResponse["message"] = ".شما دسترسی به این کتاب ندارید. ابتدا باید آن را خریداری کنید";
-
-        // سناریو ۳: شبیه‌سازی خطای نبود فایل در سرور
-        // mockResponse["status"] = "FAILED";
-        // mockResponse["message"] = ".فایل پی‌دی‌اف این کتاب یافت نشد";
-
-        // صدا زدن مستقیم پردازشگر داده با پکت فرضی
-        processNetworkData("GET_BOOK_PDF_PATH_RESPONSE", mockResponse);
-    });
+        ClientNetworkManager::instance().sendRequest("GET_BOOK_PDF_PATH", data);
+    }
+    else{
+        ui->error_label->setText("خطا در برقراری اتصال");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
 }
 
 void BookReaderWidget::updateLastReadPage(int page){

@@ -27,66 +27,22 @@ CommentsWidget::CommentsWidget(int userid, QWidget *parent)
 void CommentsWidget::loadComments(int bookid){
     bookID = bookid;
 
-    //غیرفعال سازی موقت جهت تست
-    // if(ClientNetworkManager::instance().connectToServer()){
+    if(ClientNetworkManager::instance().connectToServer()){
 
-    //     QJsonObject data;
-    //     data["book_id"] = bookID;
+        QJsonObject data;
+        data["book_id"] = bookID;
 
-    //     ClientNetworkManager::instance().sendRequest("GET_COMMENTS", data, true);
-    // }
-    // else{
-    //     ui->error_label->setText("خطا در برقراری اتصال");
-    //     ui->error_label->show();
-    //     QTimer::singleShot(3000, this, [this](){
-    //         ui->error_label->setText("");
-    //         ui->error_label->hide();
-    //     });
-    // }
+        ClientNetworkManager::instance().sendRequest("GET_COMMENTS", data, true);
+    }
+    else{
+        ui->error_label->setText("خطا در برقراری اتصال");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
 
-
-    //تست گرافیک
-    QJsonObject mockResponse;
-    mockResponse["action"] = "GET_COMMENTS_RESPONSE";
-    mockResponse["status"] = "SUCCESS";
-
-    QJsonArray comments;
-
-    // کامنت اول: مال یک کاربر دیگر (باید دکمه‌های ادیت و حذفش مخفی باشد)
-    QJsonObject comment1;
-    comment1["id"] = 101;
-    comment1["user_id"] = 999; // یک آیدی غیر از آیدی خودتان (userID)
-    comment1["username"] = "ali_developer";
-    comment1["text"] = "به نظرم فصل سوم کتاب واقعا عالی نوشته شده بود. ترجمه هم روان بود.";
-    comment1["rating"] = 4;
-    comment1["created_at"] = "2026-07-11T12:08:28";
-    comments.append(comment1);
-
-    // کامنت دوم: مال خود کاربر آنلاین فعلی (باید فریم نوشتن را مخفی کند و خودش بیاید اول لیست با دکمه‌های فعال)
-    // نکته: مطمئن شوید متغیر userID در کلاس شما مقدارش با این فیلد یکی باشد (مثلاً ۴۲)
-    QJsonObject comment2;
-    comment2["id"] = 257;
-    comment2["user_id"] = userID; // فرض می‌کنیم userID شما در برنامه مثلاً 42 است
-    comment2["username"] = "MyUsername";
-    comment2["text"] = "کتاب فوق‌العاده‌ای بود، خواندنش را به همه دوستان توصیه می‌کنم.";
-    comment2["rating"] = 5;
-    comment2["created_at"] = "2026-07-14T15:30:00";
-    comments.append(comment2);
-
-    // کامنت سوم: یک کاربر دیگر
-    QJsonObject comment3;
-    comment3["id"] = 102;
-    comment3["user_id"] = 888;
-    comment3["username"] = "sara_read";
-    comment3["text"] = "کتاب بدی نبود ولی قیمت نسخه‌ی چاپی‌اش خیلی بالاست. ممنون از ایبوک شاپ بابت قرار دادن نسخه الکترونیک.";
-    comment3["rating"] = 3;
-    comment3["created_at"] = "2026-07-10T09:15:00";
-    comments.append(comment3);
-
-    mockResponse["comments"] = comments;
-
-    // ۲. پاس دادن مستقیم این جیسون تستی به تابع رندر شما به جای شبکه!
-    updateListUi(mockResponse);
 }
 
 CommentsWidget::~CommentsWidget()

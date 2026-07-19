@@ -181,27 +181,26 @@ void LibraryWidget::processNetworkData(const QString& action, const QJsonObject&
         return;
     }
 
-    // if (action == "GET_PURCHASED_BOOKS_RESPONSE"){
-    //     handleGetPurchasedBooks(data);
-    // }
-    // else if(action == "GET_SAVED_BOOKS_RESPONSE"){
-    //     handleGetSavedBooks(data);
-    // }
-    // else if(action == "GET_SHELVES_RESPONSE"){
-    //     handleGetShelves(data);
-    // }
-    // else if(action == "GET_SHELF_BOOKS_RESPONSE"){
-    //     handleGetShelfBooks(data);
-    // }
-    // else if(action == "CREATE_SHELF_RESPONSE" ||
-    //            action == "RENAME_SHELF_RESPONSE" ||
-    //            action == "DELETE_SHELF_RESPONSE" ||
-    //            action == "ADD_BOOK_TO_SHELF_RESPONSE" ||
-    //            action == "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE"){
-    //     requestShelves();
-    //     ui->shelfBooks_listWidget->clear();
-    // }
-    //موقت
+    if (action == "GET_PURCHASED_BOOKS_RESPONSE"){
+        handleGetPurchasedBooks(data);
+    }
+    else if(action == "GET_SAVED_BOOKS_RESPONSE"){
+        handleGetSavedBooks(data);
+    }
+    else if(action == "GET_SHELVES_RESPONSE"){
+        handleGetShelves(data);
+    }
+    else if(action == "GET_SHELF_BOOKS_RESPONSE"){
+        handleGetShelfBooks(data);
+    }
+    else if(action == "CREATE_SHELF_RESPONSE" ||
+               action == "RENAME_SHELF_RESPONSE" ||
+               action == "DELETE_SHELF_RESPONSE" ||
+               action == "ADD_BOOK_TO_SHELF_RESPONSE" ||
+               action == "MOVE_BOOK_BETWEEN_SHELVES_RESPONSE"){
+        requestShelves();
+        ui->shelfBooks_listWidget->clear();
+    }
 }
 
 void LibraryWidget::handleGetPurchasedBooks(const QJsonObject& response) {
