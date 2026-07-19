@@ -250,7 +250,7 @@ void ProfileWidget::on_submitProfile_pushButton_clicked()
 
         qDebug() << data;
 
-        ClientNetworkManager::instance().sendRequest("UPDATE_PUBLISHER_PROFILE", data);
+        ClientNetworkManager::instance().sendRequest("UPDATE_PUBLISHER_PROFILE", data, true);
         ui->submitProfile_pushButton->setEnabled(false);
     }
     else{

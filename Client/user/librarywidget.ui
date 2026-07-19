@@ -354,6 +354,7 @@ QListWidget#shelves_listWidget::item {
     margin-bottom: 5px;
     font-size: 13px;
     font-weight: bold;
+qproperty-alignment: 'AlignHCenter| AlignVCenter';
 }
 
 /* حالت هاور (نگه داشتن ماوس) */
