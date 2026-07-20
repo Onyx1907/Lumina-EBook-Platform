@@ -152,8 +152,8 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //************************************************پنل ناشر ( ماژول 1 )*******************************************************
 
-    else if (action == "GET_PUBLISHER_PROFILE") { handleGetPublisherProfile(socket, data); return; }
-    else if (action == "UPDATE_PUBLISHER_PROFILE") { handleUpdatePublisherProfile(socket, data); return; }
+    else if (action == "GET_PUBLISHER_PROFILE") { handleGetPublisherProfile(socket, obj); return; }
+    else if (action == "UPDATE_PUBLISHER_PROFILE") { handleUpdatePublisherProfile(socket, obj); return; }
 
 
     //************************************************پنل ناشر ( ماژول 2 )*******************************************************

@@ -1386,9 +1386,8 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
     QSqlQuery q(db);
 
     // انتخاب دقیق فیلدهای موجود و بررسی متنی نقش
-    q.prepare("SELECT id, username, name, email FROM users WHERE id = :id AND role = :role");
+    q.prepare("SELECT id, username, name, email FROM users WHERE id = :id");
     q.bindValue(":id", publisherId);
-    q.bindValue(":role", static_cast<int>(UserRole::Publisher));
 
     if (!q.exec() || !q.next())
         return profile; // در صورت عدم یافتن، جیسون خالی برمیگردد
@@ -1403,13 +1402,10 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
 
 // آپدیت اطلاعات ناشر
 bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject &data) {
-    const int publisherRole = static_cast<int>(UserRole::Publisher);
-
     //خواندن اطلاعات فعلی ناشر از دیتابیس
     QSqlQuery currentQuery(db);
-    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = :role");
+    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id");
     currentQuery.bindValue(":id", publisherId);
-    currentQuery.bindValue(":role", publisherRole);
 
     if (!currentQuery.exec() || !currentQuery.next()) {
         qDebug() << "Publisher not found or invalid role!";
@@ -1477,13 +1473,12 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject 
               "username = :username, "
               "name = :name, "
               "email = :email "
-              "WHERE id = :id AND role = :role");
+              "WHERE id = :id");
 
     q.bindValue(":username", newUsername);
     q.bindValue(":name", newName);
     q.bindValue(":email", newEmail);
     q.bindValue(":id", publisherId);
-    q.bindValue(":role", publisherRole);
 
     return q.exec();
 }
