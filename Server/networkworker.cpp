@@ -110,10 +110,10 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //*********************************************پنل کاربر عادی ( ماژول 3 )***************************************************
 
-    else if (action == "ADD_COMMENT") { handleAddComment(socket, data); return; }
-    else if (action == "EDIT_COMMENT") { handleEditComment(socket, data); return; }
-    else if (action == "DELETE_COMMENT") { handleDeleteComment(socket, data); return; }
-    else if (action == "GET_COMMENTS") { handleGetComments(socket, data); return; }
+    else if (action == "ADD_COMMENT") { handleAddComment(socket, obj); return; }
+    else if (action == "EDIT_COMMENT") { handleEditComment(socket, obj); return; }
+    else if (action == "DELETE_COMMENT") { handleDeleteComment(socket, obj); return; }
+    else if (action == "GET_COMMENTS") { handleGetComments(socket, obj); return; }
 
 
     //*********************************************پنل کاربر عادی ( ماژول 4 )***************************************************
@@ -130,24 +130,24 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "GET_PURCHASED_BOOKS") { handleGetPurchasedBooks(socket, data); return; }
 
     //+++++کتاب های ذخیره شده+++++
-    else if (action == "SAVE_BOOK") { handleSaveBook(socket, data); return; }
-    else if (action == "REMOVE_SAVED_BOOK") { handleRemoveSavedBook(socket, data); return; }
+    else if (action == "SAVE_BOOK") { handleSaveBook(socket, obj); return; }
+    else if (action == "REMOVE_SAVED_BOOK") { handleRemoveSavedBook(socket, obj); return; }
     else if (action == "GET_SAVED_BOOKS") { handleGetSavedBooks(socket, data); return; }
 
     //+++++قفسه ها+++++
     else if (action == "CREATE_SHELF") { handleCreateShelf(socket, obj); return; }
     else if (action == "RENAME_SHELF") { handleRenameShelf(socket, obj); return; }
     else if (action == "DELETE_SHELF") { handleDeleteShelf(socket, obj); return; }
-    else if (action == "ADD_BOOK_TO_SHELF") { handleAddBookToShelf(socket, data); return; }
-    else if (action == "MOVE_BOOK_BETWEEN_SHELVES") { handleMoveBookBetweenShelves(socket, data); return; }
+    else if (action == "ADD_BOOK_TO_SHELF") { handleAddBookToShelf(socket, obj); return; }
+    else if (action == "MOVE_BOOK_BETWEEN_SHELVES") { handleMoveBookBetweenShelves(socket, obj); return; }
     else if (action == "GET_SHELVES") { handleGetShelves(socket, data); return; }
-    else if (action == "GET_SHELF_BOOKS") { handleGetShelfBooks(socket, data); return; }
+    else if (action == "GET_SHELF_BOOKS") { handleGetShelfBooks(socket, obj); return; }
 
 
     //*********************************************پنل کاربر عادی ( ماژول 6 )****************************************************
 
-    else if (action == "GET_LAST_READ_PAGE") { handleGetLastReadPage(socket, data); return; }
-    else if (action == "UPDATE_LAST_READ_PAGE") { handleUpdateLastReadPage(socket, data); return; }
+    else if (action == "GET_LAST_READ_PAGE") { handleGetLastReadPage(socket, obj); return; }
+    else if (action == "UPDATE_LAST_READ_PAGE") { handleUpdateLastReadPage(socket, obj); return; }
 
 
     //************************************************پنل ناشر ( ماژول 1 )*******************************************************
@@ -158,17 +158,17 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //************************************************پنل ناشر ( ماژول 2 )*******************************************************
 
-    else if (action == "ADD_BOOK") { handleAddBook(socket, data); return; }
-    else if (action == "UPDATE_BOOK") { handleUpdateBook(socket, data); return; }
-    else if (action == "SET_BOOK_DISCOUNT") { handleSetBookDiscount(socket, data); return; }
-    else if (action == "SET_BOOK_ACTIVE_STATE") { handleSetBookActiveState(socket, data); return; }
-    else if (action == "PUBLISHER_DELETE_BOOK") { handlePublisherDeleteBook(socket, data); return; }
-    else if (action == "GET_PUBLISHER_BOOKS")  { handleGetPublisherBooks(socket, data); return; }
+    else if (action == "ADD_BOOK") { handleAddBook(socket, obj); return; }
+    else if (action == "UPDATE_BOOK") { handleUpdateBook(socket, obj); return; }
+    else if (action == "SET_BOOK_DISCOUNT") { handleSetBookDiscount(socket, obj); return; }
+    else if (action == "SET_BOOK_ACTIVE_STATE") { handleSetBookActiveState(socket, obj); return; }
+    else if (action == "PUBLISHER_DELETE_BOOK") { handlePublisherDeleteBook(socket, obj); return; }
+    else if (action == "GET_PUBLISHER_BOOKS")  { handleGetPublisherBooks(socket, obj); return; }
 
 
     //************************************************پنل ناشر ( ماژول 3 )*******************************************************
 
-    else if (action == "GET_PUBLISHER_STATS") { handleGetPublisherStats(socket, data); return; }
+    else if (action == "GET_PUBLISHER_STATS") { handleGetPublisherStats(socket, obj); return; }
 
 
     //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
@@ -188,7 +188,7 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     else if (action == "GET_ALL_BOOKS") { handleGetAllBooks(socket, data); return; }
     else if (action == "GET_BOOK_DETAILS") { handleGetBookDetails(socket, data); return; }
-    else if (action == "ADMIN_UPDATE_BOOK") { handleAdminUpdateBook(socket, data); return; }
+    else if (action == "ADMIN_UPDATE_BOOK") { handleAdminUpdateBook(socket, obj); return; }
     else if (action == "ADMIN_DELETE_BOOK") { handleAdminDeleteBook(socket, data); return; }
 
 
