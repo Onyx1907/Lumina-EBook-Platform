@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QJsonObject>
+#include "book.h"
 
 namespace Ui {
 class SharedBookCard;
@@ -34,7 +35,9 @@ private slots:
 
 private:
     Ui::SharedBookCard *ui;
-    QJsonObject bookObj;
+    Book book;
+    bool isActive;
+    QString PDFpath;
 };
 
 #endif // SHAREDBOOKCARD_H

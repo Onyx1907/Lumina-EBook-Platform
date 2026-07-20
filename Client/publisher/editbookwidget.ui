@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditBookWidget</class>
+ <widget class="QWidget" name="EditBookWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QLabel {
+    background: transparent;      /* حذف کامل پس‌زمینه */
+    background-color: transparent; /* اطمینان از نبود هیچ رنگی */
+    border: none;                 /* اطمینان از نبود کادر */
+    color: #4A3728;               /* رنگ متن رو اینجا تنظیم کن */
+    margin: 0px;                  /* اطمینان از نبود فاصله اضافه */
+    padding: 0px;                 /* اطمینان از نبود پدینگ اضافه */
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="cover_pix">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>160</width>
+         <height>210</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>210</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="title_label">
+         <property name="text">
+          <string>عنوان کتاب</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="title_lineEdit">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 6px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+         </property>
+         <property name="placeholderText">
+          <string>بوستان</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="author_label">
+         <property name="text">
+          <string>نویسنده</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="author_lineEdit">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 6px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+         </property>
+         <property name="placeholderText">
+          <string>حافظ</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="price_label">
+         <property name="text">
+          <string>قیمت کتاب</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="price_lineEdit">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 6px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+         </property>
+         <property name="placeholderText">
+          <string>قیمت را با اعداد انگلیسی وارد کنید</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="discount_label">
+         <property name="text">
+          <string>اعمال تخفیف</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLineEdit" name="percent_lineEdit">
+           <property name="styleSheet">
+            <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
+    color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
+    border: 1px solid #b3a394;
+    border-radius: 6px; /* لبه‌های کمی تیزتر برای حس قدیمی بودن */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* وقتی کاربر روی فیلد کلیک می‌کند (فوکوس) */
+QLineEdit:focus {
+    border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
+    background-color: #ffffff;
+}</string>
+           </property>
+           <property name="placeholderText">
+            <string>درصد تخفیف</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="discount_label_2">
+         <property name="text">
+          <string>انتخاب ژانر</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="genre_comboBox">
+         <property name="minimumSize">
+          <size>
+           <width>300</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>300</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QComboBox {
+    background-color: #F4E7D3;
+    color: #4A3425;
+    border: 2px solid #8B6B4A;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 11pt;
+}
+
+QComboBox:hover {
+    border: 2px solid #A67C52;
+}
+
+QComboBox:focus {
+    border: 2px solid #6B4F3A;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 30px;
+}
+
+QComboBox::down-arrow {
+    image: none;
+}
+
+QComboBox QAbstractItemView {
+    background: #F8F1E7;
+    color: #4A3425;
+    border: 1px solid #8B6B4A;
+    selection-background-color: #B08968;
+    selection-color: white;
+    outline: 0;
+}</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>ادبیات داستانی</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>علمی تخیلی</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>روانشناسی</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>تاریخی</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>علمی و تحصیلی</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>زندگینامه</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>دیگر...</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="description_textEdit">
+     <property name="styleSheet">
+      <string notr="true">QTextEdit {
+    background-color: rgba(255, 255, 255, 0.8); /* سفید استخوانی نیمه شفاف برای خوانایی عالی متن */
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+    color: #4A3B32; /* اسپرسو تیره برای متن */
+    border: 1.5px solid #E0D5C1; /* مرز نسکافه‌ای کمرنگ */
+    border-radius: 8px;
+    padding: 8px;
+    font-family: &quot;Segoe UI&quot;, Tahoma, Arial;
+    font-size: 17px;
+    selection-background-color: #DAC0A3;
+    selection-color: #4A3B32;
+}
+
+QTextEdit:hover {
+    border: 1.5px solid #C2A383; /* تغییر مرز به کاراملی هنگام هاور */
+}
+
+QTextEdit:focus {
+    border: 2px solid #8B5E3C; /* اسپرسو مدیوم زمان تایپ کردن */
+    background-color: #FFFFFF; /* کاملاً سفید و شفاف در زمان فوکوس برای تمرکز بهتر کاربر */
+}
+
+/* استایل اسکرول‌بار داخل تکست‌ادیت (بسیار مهم برای زیبایی کار) */
+QTextEdit QScrollBar:vertical {
+    border: none;
+    background: #FAF6F0;
+    width: 10px;
+    margin: 0px 0px 0px 0px;
+    border-radius: 5px;
+}
+
+QTextEdit QScrollBar::handle:vertical {
+    background: #C2A383;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QTextEdit QScrollBar::handle:vertical:hover {
+    background: #8B5E3C;
+}</string>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI','Tahoma','Arial'; font-size:17px; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu Sans'; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="placeholderText">
+      <string>درباره این کتاب ....</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="chooseCover_pushButton">
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* حالت عادی دکمه (دقیقا همان تم هاور قبلی شماست: شیشه کاراملی غلیظ با لبه طلایی خامه‌ای) */
+QPushButton {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه‌ای */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+    font-size: 10px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود: غلیظ‌تر، تیره تر و کاملا مشخص) */
+QPushButton:hover {
+    background-color: rgba(93, 58, 25, 0.65); /* قهوه‌ای نسکافه‌ای تیره و غلیظ */
+    border: 1px solid #8B5A2B; /* مرز قهوه‌ای سوخته */
+    color: #F7DC6F; /* تغییر رنگ متن به طلایی درخشان برای افکت جذاب‌تر */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود: تاریک‌ترین و فشرده‌ترین حالت) */
+QPushButton:pressed {
+    background-color: rgba(54, 33, 13, 0.85); /* قهوه‌ای اسپرسو بسیار تیره و سنگین */
+    border: 1px solid #4A2E14;
+    padding-left: 16px; /* همان افکت کلیک ملو و قشنگ شما */
+}</string>
+       </property>
+       <property name="text">
+        <string>انتخاب عکس...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="cover_label">
+       <property name="text">
+        <string>تصویر جلد کتاب</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="choosePDF_pushButton">
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* حالت عادی دکمه (دقیقا همان تم هاور قبلی شماست: شیشه کاراملی غلیظ با لبه طلایی خامه‌ای) */
+QPushButton {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه‌ای */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+    font-size: 10px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود: غلیظ‌تر، تیره تر و کاملا مشخص) */
+QPushButton:hover {
+    background-color: rgba(93, 58, 25, 0.65); /* قهوه‌ای نسکافه‌ای تیره و غلیظ */
+    border: 1px solid #8B5A2B; /* مرز قهوه‌ای سوخته */
+    color: #F7DC6F; /* تغییر رنگ متن به طلایی درخشان برای افکت جذاب‌تر */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود: تاریک‌ترین و فشرده‌ترین حالت) */
+QPushButton:pressed {
+    background-color: rgba(54, 33, 13, 0.85); /* قهوه‌ای اسپرسو بسیار تیره و سنگین */
+    border: 1px solid #4A2E14;
+    padding-left: 16px; /* همان افکت کلیک ملو و قشنگ شما */
+}</string>
+       </property>
+       <property name="text">
+        <string>انتخاب فایل...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="pdf_label">
+       <property name="text">
+        <string>فایل کتاب</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="error_label">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>730</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>730</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background-color: rgba(93, 37, 25, 0.45);  /* پس‌زمینه شیشه‌ای شرابی/شکلاتی تیره */
+    border: 1px solid rgba(217, 136, 128, 0.35); /* مرز ملو متمایل به رز-گلد شفاف */
+    border-radius: 8px;                         /* گوشه‌های نرم */
+    color: #FADBD8;                             /* رنگ متن صورتی بسیار ملایم و خوانا */
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 8px 16px;                          /* ایجاد فضای تنفس داخلی برای حالت شیشه‌ای */
+    qproperty-alignment: 'AlignCenter';         /* وسط‌چین کردن متن خطا */
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="submit_pushButton">
+     <property name="styleSheet">
+      <string notr="true">/* حالت عادی دکمه (دقیقا همان تم هاور قبلی شماست: شیشه کاراملی غلیظ با لبه طلایی خامه‌ای) */
+QPushButton {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه‌ای */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+    font-size: 15px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود: غلیظ‌تر، تیره تر و کاملا مشخص) */
+QPushButton:hover {
+    background-color: rgba(93, 58, 25, 0.65); /* قهوه‌ای نسکافه‌ای تیره و غلیظ */
+    border: 1px solid #8B5A2B; /* مرز قهوه‌ای سوخته */
+    color: #F7DC6F; /* تغییر رنگ متن به طلایی درخشان برای افکت جذاب‌تر */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود: تاریک‌ترین و فشرده‌ترین حالت) */
+QPushButton:pressed {
+    background-color: rgba(54, 33, 13, 0.85); /* قهوه‌ای اسپرسو بسیار تیره و سنگین */
+    border: 1px solid #4A2E14;
+    padding-left: 16px; /* همان افکت کلیک ملو و قشنگ شما */
+}</string>
+     </property>
+     <property name="text">
+      <string>ثبت کتاب</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

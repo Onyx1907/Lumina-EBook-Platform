@@ -22,8 +22,17 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     this->setLayout(finalLayout);
 
     ProfilePage = new ProfileWidget(publisher, this);
+    PublisherBookPage = new PublisherBookWidget(publisher->getId(), this);
+    EditBookPage = new EditBookWidget(this, publisher->getId());
 
     ui->stackedWidget->addWidget(ProfilePage);
+    ui->stackedWidget->addWidget(PublisherBookPage);
+    ui->stackedWidget->addWidget(EditBookPage);
+
+    connect(PublisherBookPage, &PublisherBookWidget::addBook, this, [this](){
+        EditBookPage->loadEditBook();
+        fadeToPage(EditBookPageIndex);
+    });
 }
 
 PublisherDashboardWidget::~PublisherDashboardWidget()
@@ -83,5 +92,11 @@ void PublisherDashboardWidget::on_profile_pushButton_clicked()
 {
     ProfilePage->loadProfile();
     fadeToPage(Page::ProfilePageIndex);
+}
+
+
+void PublisherDashboardWidget::on_books_pushButton_clicked()
+{
+    fadeToPage(Page::PublisherBookPageIndex);
 }
 

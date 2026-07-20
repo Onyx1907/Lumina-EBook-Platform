@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "publisher.h"
 #include "profilewidget.h"
+#include "publisherbookwidget.h"
+#include "editbookwidget.h"
 
 namespace Ui {
 class PublisherDashboardWidget;
@@ -20,6 +22,8 @@ public:
 private slots:
     void on_profile_pushButton_clicked();
 
+    void on_books_pushButton_clicked();
+
 private:
     Ui::PublisherDashboardWidget *ui;
 
@@ -28,9 +32,13 @@ private:
     Publisher *publisher;
 
     ProfileWidget *ProfilePage;
+    PublisherBookWidget* PublisherBookPage;
+    EditBookWidget *EditBookPage;
 
     enum Page{
-        ProfilePageIndex = 0
+        ProfilePageIndex = 0,
+        PublisherBookPageIndex = 1,
+        EditBookPageIndex = 2
     };
 };
 
