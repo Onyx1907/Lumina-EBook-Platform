@@ -18,6 +18,7 @@ public:
 
 signals:
     void addBook();
+    void editBook(int bookID);
 
 protected:
     void showEvent(QShowEvent *event) override;

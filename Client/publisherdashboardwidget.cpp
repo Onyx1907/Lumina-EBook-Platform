@@ -29,8 +29,19 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     ui->stackedWidget->addWidget(PublisherBookPage);
     ui->stackedWidget->addWidget(EditBookPage);
 
+    //ایجاد کتاب جدید
     connect(PublisherBookPage, &PublisherBookWidget::addBook, this, [this](){
         EditBookPage->loadEditBook();
+        fadeToPage(EditBookPageIndex);
+    });
+
+    connect(EditBookPage , &EditBookWidget::back, this, [this](){
+       fadeToPage(PublisherBookPageIndex);
+    });
+
+    //ویرایش کتاب
+    connect(PublisherBookPage, &PublisherBookWidget::editBook, this, [this](int bookID){
+        EditBookPage->loadEditBook(bookID);
         fadeToPage(EditBookPageIndex);
     });
 }

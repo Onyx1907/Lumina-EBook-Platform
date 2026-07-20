@@ -22,6 +22,10 @@ EditBookWidget::EditBookWidget(QWidget *parent, int publisherID)
     ui->percent_lineEdit->setValidator(validator);
 
     ui->error_label->hide();
+
+    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
+            this, &EditBookWidget::processNetworkData);
+
 }
 
 EditBookWidget::~EditBookWidget()
@@ -46,6 +50,18 @@ void EditBookWidget::loadEditBook(int bookID){
 
     filePath = "";
     coverPath = "";
+
+    if(bookID != -1){
+        ui->error_label->show();
+        ui->error_label->setText("تنها فیلد هایی که قصد تغییر دارید را پر کنید");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("توجه کنید که فیلد ژانر نمی‌تواند خالی باشد و تغییر خواهد کرد");
+            QTimer::singleShot(3000, this, [this](){
+                ui->error_label->setText("");
+                ui->error_label->hide();
+            });
+        });
+    }
 }
 
 void EditBookWidget::on_chooseCover_pushButton_clicked()
@@ -150,7 +166,36 @@ void EditBookWidget::on_submit_pushButton_clicked()
             data["genre"] = genreToString(genre);
 
             ClientNetworkManager::instance().sendRequest("ADD_BOOK", data, true);
+        }
 
+        else{
+            QJsonObject data;
+            data["book_id"] = m_bookID;
+            data["publisher_id"] = m_publisherID;
+            if(!title.isEmpty()){
+                data["title"] = title;
+            }
+            if(!author.isEmpty()){
+                data["author"] = author;
+            }
+            if(!description.isEmpty()){
+                data["description"] = description;
+            }
+            if(price != -1){
+                data["price"] = price;
+            }
+            if(discount != -1){
+                data["discountPercent"] = discount;
+            }
+            if(!filePath.isEmpty()){
+                data["publisher_pdf_path"] = filePath;
+            }
+            if(!coverPath.isEmpty()){
+                data["publisher_cover_path"] = coverPath;
+            }
+            data["genre"] = genreToString(genre);
+
+            ClientNetworkManager::instance().sendRequest("UPDATE_BOOK", data, true);
         }
     }
     else{
@@ -163,3 +208,23 @@ void EditBookWidget::on_submit_pushButton_clicked()
     }
 }
 
+
+void EditBookWidget::processNetworkData(const QString& action, const QJsonObject& data){
+    if(action != "ADD_BOOK_RESPONSE" &&
+        action != "UPDATE_BOOK_RESPONSE"){
+        return;
+    }
+
+    if(data.value("status").toString() == "SUCCESS"){
+        emit back();
+        return;
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText(data.value("message").toString());
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}

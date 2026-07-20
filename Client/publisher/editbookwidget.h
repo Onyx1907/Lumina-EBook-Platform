@@ -17,7 +17,12 @@ public:
 
     void loadEditBook(int bookID = -1);
 
+signals:
+    void back();
+
 private slots:
+    void processNetworkData(const QString& action, const QJsonObject& data);
+
     void on_chooseCover_pushButton_clicked();
 
     void on_choosePDF_pushButton_clicked();

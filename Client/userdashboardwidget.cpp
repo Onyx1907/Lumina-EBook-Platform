@@ -143,6 +143,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     //رفتن به پی دی اف از طریق قفسه ها و کتاب های من
     connect(LibraryPage, &LibraryWidget::goToPDF, this, [this](int bookID){
         prevPagePDF = Page::LibraryPageIndex;
+        BookReaderPage->loadBook(bookID);
         fadeToPage(Page::BookReaderPageIndex);
     });
 

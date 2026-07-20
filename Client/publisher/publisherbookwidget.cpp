@@ -82,6 +82,10 @@ void PublisherBookWidget::handleGetBooks(const QJsonObject& data){
         QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
         item->setSizeHint(itemWidget->sizeHint());
         ui->listWidget->setItemWidget(item, itemWidget);
+
+        connect(itemWidget, &SharedBookCard::editRequested, this, [this](int bookID){
+            emit editBook(bookID);
+        });
     }
 }
 
