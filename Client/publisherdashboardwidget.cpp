@@ -23,10 +23,16 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
 
     ProfilePage = new ProfileWidget(publisher, this);
     PublisherBookPage = new PublisherBookWidget(publisher->getId(), this);
+    EditBookPage = new EditBookWidget(this, publisher->getId());
 
     ui->stackedWidget->addWidget(ProfilePage);
     ui->stackedWidget->addWidget(PublisherBookPage);
+    ui->stackedWidget->addWidget(EditBookPage);
 
+    connect(PublisherBookPage, &PublisherBookWidget::addBook, this, [this](){
+        EditBookPage->loadEditBook();
+        fadeToPage(EditBookPageIndex);
+    });
 }
 
 PublisherDashboardWidget::~PublisherDashboardWidget()
