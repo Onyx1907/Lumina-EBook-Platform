@@ -2,6 +2,7 @@
 #define PUBLISHERBOOKWIDGET_H
 
 #include <QWidget>
+#include "sharedbookcard.h"
 
 namespace Ui {
 class PublisherBookWidget;
@@ -12,11 +13,26 @@ class PublisherBookWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit PublisherBookWidget(QWidget *parent = nullptr);
+    explicit PublisherBookWidget(int publisherID ,QWidget *parent = nullptr);
     ~PublisherBookWidget();
 
-private:
+signals:
+    void addBook();
+
+protected:
+    void showEvent(QShowEvent *event) override;
+
+private slots:
+        void processNetworkData(const QString& action, const QJsonObject& data);
+
+
+        void on_back_pushButton_clicked();
+
+    private:
     Ui::PublisherBookWidget *ui;
+    int m_publisherID;
+
+    void handleGetBooks(const QJsonObject& data);
 };
 
 #endif // PUBLISHERBOOKWIDGET_H

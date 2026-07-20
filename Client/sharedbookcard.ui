@@ -560,6 +560,54 @@ QCheckBox::indicator:checked {
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="study_pushButton">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    /* پس‌زمینه نسکافه‌ای روشن و نیمه‌شفاف */
+    background-color: rgba(230, 213, 196, 0.25); 
+    /* مرز باریک کاراملی-شکلاتی ملایم */
+    border: 1px solid rgba(111, 78, 55, 0.3);
+    border-radius: 8px;
+    /* رنگ متن قهوه‌ای شکلاتی تیره */
+    color: #5C3A21;
+    font-family: &quot;Vazirmatn&quot;, &quot;Segoe UI&quot;;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 6px 14px;
+}
+
+/* حالت هاور - شیشه کاراملی‌تر و غلیظ‌تر می‌شود */
+QPushButton:hover {
+    background-color: rgba(197, 160, 126, 0.4);
+    border: 1px solid rgba(111, 78, 55, 0.5);
+    color: #4A2E1B;
+}
+
+/* حالت کلیک شدن */
+QPushButton:pressed {
+    background-color: rgba(111, 78, 55, 0.2);
+    padding-top: 7px;
+    padding-bottom: 5px;
+}</string>
+          </property>
+          <property name="text">
+           <string>مطالعه کتاب</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
