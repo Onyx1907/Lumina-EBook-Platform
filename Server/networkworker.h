@@ -157,6 +157,11 @@ private:
     void handleSetUserActiveState(QTcpSocket* socket, const QJsonObject& data);
 
 
+    //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
+
+
+
+
 
 
 

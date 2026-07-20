@@ -184,6 +184,12 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "SET_USER_ACTIVE_STATE") { handleSetUserActiveState(socket, data); return; }
 
 
+    //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
+
+
+
+
+
 
 
 
@@ -1616,4 +1622,14 @@ void NetworkWorker::handleSetUserActiveState(QTcpSocket* socket, const QJsonObje
     sendJson(socket, resp);
 
 }
+
+
+//*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
+
+
+
+
+
+
+
 
