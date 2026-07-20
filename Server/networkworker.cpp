@@ -186,7 +186,10 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
 
-
+    else if (action == "GET_ALL_BOOKS") { handleGetAllBooks(socket, data); return; }
+    else if (action == "GET_BOOK_DETAILS") { handleGetBookDetails(socket, data); return; }
+    else if (action == "ADMIN_UPDATE_BOOK") { handleAdminUpdateBook(socket, data); return; }
+    else if (action == "ADMIN_DELETE_BOOK") { handleAdminDeleteBook(socket, data); return; }
 
 
 
@@ -1626,7 +1629,186 @@ void NetworkWorker::handleSetUserActiveState(QTcpSocket* socket, const QJsonObje
 
 //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
 
+void NetworkWorker::handleGetAllBooks(QTcpSocket* socket, const QJsonObject& data) {
+    Q_UNUSED(data);
+    QList<QJsonObject> list = m_dbManager->getAllBooks();
+    QJsonArray arr;
 
+    // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+    for (const auto &b : list) {
+        QJsonObject mutableBook = b;
+
+        QString relativeCover = mutableBook["coverImagePath"].toString();
+        if (!relativeCover.isEmpty()) {
+            mutableBook["coverImagePath"] = storagePath + relativeCover; // ساخت آدرس کامل برای لود عکس در ویترین
+        }
+        arr.append(mutableBook);
+    }
+
+    QJsonObject resp;
+    resp["action"] = "GET_ALL_BOOKS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["books"] = arr;
+
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleGetBookDetails(QTcpSocket* socket, const QJsonObject& data)
+{
+    int bookId = data.value("book_id").toInt();
+    QJsonObject resp;
+    resp["action"] = "GET_BOOK_DETAILS_RESPONSE";
+
+    QJsonObject book = m_dbManager->getadminBookDetails(bookId);
+
+    if (!book.isEmpty()) {
+        resp["status"] = "SUCCESS";
+
+        // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
+        QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+
+        // تبدیل مسیر نسبی عکس به آدرس کامل فیزیکی
+        QString relativeCover = book["coverImagePath"].toString();
+        if (!relativeCover.isEmpty()) {
+            book["coverImagePath"] = storagePath + relativeCover;
+        }
+
+        // تبدیل مسیر نسبی پی دی اف به آدرس کامل فیزیکی
+        QString relativePdf = book["pdfPath"].toString();
+        if (!relativePdf.isEmpty()) {
+            book["pdfPath"] = storagePath + relativePdf;
+        }
+
+        resp["book_data"] = book;
+    } else {
+        resp["status"] = "FAILED";
+        resp["message"] = ".کتاب یافت نشد یا حذف شده است";
+    }
+
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleAdminUpdateBook(QTcpSocket* socket, const QJsonObject& data) {
+    const int bookId = data.value("book_id").toInt();
+    QJsonObject resp;
+    resp["action"] = "ADMIN_UPDATE_BOOK_RESPONSE";
+
+    if (bookId <= 0) {
+        resp["status"] = "ERROR";
+        resp["message"] = ".شناسه کتاب نامعتبر است";
+        sendJson(socket, resp);
+        return;
+    }
+
+    // دریافت اطلاعات فعلی از دیتابیس (بسیار مهم برای حفظ مقادیر ارسالیِ خالی)
+    QJsonObject currentBook = m_dbManager->getBookDetails(bookId);
+    if (currentBook.isEmpty()) {
+        resp["status"] = "ERROR";
+        resp["message"] = ".کتاب یافت نشد";
+        sendJson(socket, resp);
+        return;
+    }
+
+    // تابع کمکی برای ادغام داده‌های جدید با قدیمی
+    auto getVal = [&](const QString &key) {
+        return (data.contains(key) && !data.value(key).toString().isEmpty()) ? data.value(key) : currentBook.value(key);
+    };
+
+    QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
+    QDir dir(storagePath);
+    if (!dir.exists()) { dir.mkpath("."); }
+
+    const QString newAdminPdfPath = QDir::cleanPath(data.value("publisher_pdf_path").toString());
+    const QString newAdminCoverPath = QDir::cleanPath(data.value("publisher_cover_path").toString());
+
+    // استفاده از مقادیر فعلی دیتابیس برای مسیرهای فایل
+    QString currentPdfName = currentBook.value("pdfPath").toString();
+    QString currentCoverName = currentBook.value("coverImagePath").toString();
+
+    QString pdfToDelete = "";
+    QString coverToDelete = "";
+    QString absoluteNewPdf = "";
+    QString absoluteNewCover = "";
+
+    qint64 timestamp = QDateTime::currentMSecsSinceEpoch();
+    QString safeTitle = getVal("title").toString().trimmed();
+    safeTitle.replace(QRegularExpression("[\\s\\\\/:*?\"<>|]"), "_");
+
+    // --- جایگزینی فیزیکی فایل PDF ---
+    if (!newAdminPdfPath.isEmpty()) {
+        QString newFileName = QString("%1_%2.pdf").arg(timestamp).arg(safeTitle);
+        absoluteNewPdf = storagePath + newFileName;
+
+        if (QFile::copy(newAdminPdfPath, absoluteNewPdf)) {
+            if (!currentPdfName.isEmpty()) { pdfToDelete = storagePath + currentPdfName; }
+            currentPdfName = newFileName;
+        } else {
+            resp["status"] = "ERROR";
+            resp["message"] = ".امکان کپی و جایگزینی فایل پی دی اف جدید روی سرور وجود ندارد";
+            sendJson(socket, resp); return;
+        }
+    }
+
+    // --- جایگزینی فیزیکی عکس کاور ---
+    if (!newAdminCoverPath.isEmpty()) {
+        QString newCoverName = QString("%1_%2_cover.jpg").arg(timestamp).arg(safeTitle);
+        absoluteNewCover = storagePath + newCoverName;
+
+        if (QFile::copy(newAdminCoverPath, absoluteNewCover)) {
+            if (!currentCoverName.isEmpty()) { coverToDelete = storagePath + currentCoverName; }
+            currentCoverName = newCoverName;
+        } else {
+            if (!absoluteNewPdf.isEmpty()) QFile::remove(absoluteNewPdf);
+            resp["status"] = "ERROR";
+            resp["message"] = ".امکان کپی و جایگزینی عکس کاور جدید روی سرور وجود ندارد";
+            sendJson(socket, resp); return;
+        }
+    }
+
+    // آماده سازی داده های نهایی برای دیتابیس
+    QJsonObject updatedData;
+    updatedData["title"] = getVal("title");
+    updatedData["author"] = getVal("author");
+    updatedData["genre"] = getVal("genre");
+    updatedData["description"] = getVal("description");
+    updatedData["price"] = data.contains("price") ? data.value("price").toDouble() : currentBook.value("price").toDouble();
+    updatedData["discountPercent"] = data.contains("discountPercent") ? data.value("discountPercent").toDouble() : currentBook.value("discountPercent").toDouble();
+    updatedData["pdfPath"] = currentPdfName;
+    updatedData["coverImagePath"] = currentCoverName;
+
+    if (m_dbManager->adminUpdateBook(bookId, updatedData)) {
+        if (!pdfToDelete.isEmpty() && QFile::exists(pdfToDelete)) QFile::remove(pdfToDelete);
+        if (!coverToDelete.isEmpty() && QFile::exists(coverToDelete)) QFile::remove(coverToDelete);
+
+        resp["status"] = "SUCCESS";
+        resp["message"] = ".اطلاعات و فایل های کتاب با موفقیت توسط ادمین ویرایش شد";
+    } else {
+        if (!absoluteNewPdf.isEmpty()) QFile::remove(absoluteNewPdf);
+        if (!absoluteNewCover.isEmpty()) QFile::remove(absoluteNewCover);
+        resp["status"] = "ERROR";
+        resp["message"] = ".خطا در ویرایش کتاب در دیتابیس";
+    }
+
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleAdminDeleteBook(QTcpSocket* socket, const QJsonObject& data) {
+    int bookId = data["book_id"].toInt();
+
+    // این متد اکنون در دیتابیس هم کتاب را غیرفعال میکند و هم پرچم حذف را ۱ میزند
+    bool ok = m_dbManager->adminDeleteBook(bookId);
+
+    QJsonObject resp;
+    resp["action"] = "ADMIN_DELETE_BOOK_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+
+    resp["message"] = ok ? ".کتاب با موفقیت از چرخه سیستم حذف منطقی و غیرفعال شد"
+                         : ".خطا در حذف منطقی کتاب از پایگاه داده";
+
+    sendJson(socket, resp);
+}
 
 
 
