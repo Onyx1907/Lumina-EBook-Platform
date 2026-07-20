@@ -40,7 +40,7 @@ qt_add_executable(LuminaClient
     user/profilewidget.h user/profilewidget.cpp user/profilewidget.ui
     user/bookdetailswidget.h user/bookdetailswidget.cpp user/bookdetailswidget.ui
     user/searchwidget.h user/searchwidget.cpp user/searchwidget.ui
-    bookinfocard.h bookinfocard.cpp bookinfocard.ui
+    user/bookinfocard.h user/bookinfocard.cpp user/bookinfocard.ui
     user/resultwidget.h user/resultwidget.cpp user/resultwidget.ui
     user/commentitemwidget.h user/commentitemwidget.cpp user/commentitemwidget.ui
     user/commentswidget.h user/commentswidget.cpp user/commentswidget.ui
@@ -48,6 +48,11 @@ qt_add_executable(LuminaClient
     user/librarywidget.h user/librarywidget.cpp user/librarywidget.ui
     storageutils.h storageutils.cpp
     user/bookreaderwidget.h user/bookreaderwidget.cpp user/bookreaderwidget.ui
+    publisherdashboardwidget.h publisherdashboardwidget.cpp publisherdashboardwidget.ui
+    publisher/publisherstatswidget.h publisher/publisherstatswidget.cpp publisher/publisherstatswidget.ui
+    sharedbookcard.h sharedbookcard.cpp sharedbookcard.ui
+    publisher/publisherbookwidget.h publisher/publisherbookwidget.cpp publisher/publisherbookwidget.ui
+
 
 
 
@@ -74,7 +79,8 @@ set_target_properties(LuminaClient PROPERTIES
 
 target_include_directories(LuminaClient PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/user)
+    ${CMAKE_CURRENT_SOURCE_DIR}/user
+    ${CMAKE_CURRENT_SOURCE_DIR}/publisher)
 
 include(GNUInstallDirs)
 install(TARGETS LuminaClient

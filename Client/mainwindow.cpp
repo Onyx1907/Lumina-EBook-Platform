@@ -6,6 +6,7 @@
 #include <QPropertyAnimation>
 #include <QSequentialAnimationGroup>
 #include "clientnetworkmanager.h"
+#include "publisher.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -72,7 +73,13 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(LoginPage, &LoginWidget::goToUSerDashboard, this, [this](User *user, bool is_first_login){
+
+        mediaPlayer->stop();
+        mediaPlayer->setSource(QUrl("qrc:/resources/dashboard.mp4"));
+        mediaPlayer->play();
+
         RegularUser *cur_user = dynamic_cast<RegularUser*>(user);
+        Publisher *cur_user2 = dynamic_cast<Publisher*>(user);
 
         if(cur_user != nullptr) {
             UserDashboardPage = new UserDashboardWidget(cur_user, is_first_login, this);
@@ -81,10 +88,14 @@ MainWindow::MainWindow(QWidget *parent)
 
             fadeToPage(Page::UserDashboardPageIndex);
         }
+        else if(cur_user2 != nullptr){
+            PublisherDashboardPage = new PublisherDashboardWidget(cur_user2, this);
 
-            mediaPlayer->stop();
-            mediaPlayer->setSource(QUrl("qrc:/resources/dashboard.mp4"));
-            mediaPlayer->play();
+            ui->stackedWidget->addWidget(PublisherDashboardPage);
+
+            fadeToPage(Page::UserDashboardPageIndex);
+        }
+
     });
 }
 

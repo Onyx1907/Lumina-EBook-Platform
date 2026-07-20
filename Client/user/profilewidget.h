@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <regularuser.h>
+#include <publisher.h>
 
 namespace Ui {
 class ProfileWidget;
@@ -13,7 +14,7 @@ class ProfileWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit ProfileWidget(RegularUser *cur_user, QWidget *parent = nullptr);
+    explicit ProfileWidget(User *cur_user, QWidget *parent = nullptr);
     ~ProfileWidget();
 
     void loadProfile();
@@ -33,8 +34,10 @@ private slots:
 private:
     Ui::ProfileWidget *ui;
 
-    RegularUser *user;
+    User *user;
     QString new_username = "";
+
+    bool is_publisher = false;
 
 };
 

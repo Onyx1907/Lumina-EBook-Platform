@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PublisherBookWidget</class>
+ <widget class="QWidget" name="PublisherBookWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QPushButton" name="back_pushButton">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1000</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 0.08); /* پس‌زمینه شیشه‌ای بسیار ملو */
+    border: 1px solid rgba(193, 154, 107, 0.25); /* مرز کاراملی شفاف */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #D2B48C; /* رنگ متنی خامه ای/نسکافه‌ای روشن */
+    font-size: 14px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود) */
+QPushButton:hover {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ‌تر */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه ای */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود) */
+QPushButton:pressed {
+    background-color: rgba(111, 78, 55, 0.6); /* رنگ قهوه‌ای تیره فشرده شده */
+    border: 1px solid #8B5A2B;
+    padding-left: 16px; /* افکت کلیک کوچک ملو (متمایل شدن متن به راست) */
+}</string>
+     </property>
+     <property name="text">
+      <string>انتشار کتاب جدید</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListWidget" name="listWidget">
+     <property name="styleSheet">
+      <string notr="true">/* کاملاً شفاف کردن پس‌زمینه و حذف مرزهای لیست اصلی */
+QListWidget {
+    background-color: transparent;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px;
+}
+
+
+QListWidget::item:selected {
+    background-color: rgba(139, 90, 43, 0.7);
+    border: 1px solid #D2B48C;
+}
+/* اسکرول‌بار شیشه‌ای و هماهنگ */
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 0px;
+}
+QScrollBar::handle:vertical {
+    background: rgba(111, 78, 55, 0.6); /* دستگیره قهوه‌ای نیمه شفاف */
+    border-radius: 4px;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+    background: rgba(139, 90, 43, 0.8);
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: none; /* حذف دکمه‌های بالا و پایین اسکرول */
+}</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

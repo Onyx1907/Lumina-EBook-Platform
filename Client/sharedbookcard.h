@@ -1,0 +1,40 @@
+#ifndef SHAREDBOOKCARD_H
+#define SHAREDBOOKCARD_H
+
+#include <QWidget>
+#include <QJsonObject>
+
+namespace Ui {
+class SharedBookCard;
+}
+
+class SharedBookCard : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit SharedBookCard(const QJsonObject& obj, QWidget *parent = nullptr);
+    ~SharedBookCard();
+
+signals:
+    void editRequested(int bookID);
+    void deleteRequested(int bookID);
+    void discountRequested(int bookID);
+    void changeActiveRequested(int bookID, bool isActive);
+
+private slots:
+    void on_delete_pushButton_clicked();
+
+    void on_edit_pushButton_clicked();
+
+    void on_discount_pushButton_clicked();
+
+
+    void on_active_checkBox_toggled(bool checked);
+
+private:
+    Ui::SharedBookCard *ui;
+    QJsonObject bookObj;
+};
+
+#endif // SHAREDBOOKCARD_H

@@ -12,6 +12,7 @@
 #include "registerwidget.h"
 #include "forgotpasswordwidget.h"
 #include "userdashboardwidget.h"
+#include "publisherdashboardwidget.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -44,6 +45,7 @@ private:
     RegisterWidget *RegisterPage;
     ForgotPasswordWidget *ForgotPasswordPage;
     UserDashboardWidget *UserDashboardPage;
+    PublisherDashboardWidget *PublisherDashboardPage;
 
     void fadeToPage(int pageIndex);
 
