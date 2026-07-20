@@ -175,6 +175,10 @@ public:
     //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
 
 
+    QList<QJsonObject> getAllBooks();
+    QJsonObject getadminBookDetails(int bookId);
+    bool adminUpdateBook(int bookId, const QJsonObject& bookData);
+    bool adminDeleteBook(int bookId);
 
 
 

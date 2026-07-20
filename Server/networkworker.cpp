@@ -1337,7 +1337,7 @@ void NetworkWorker::handleUpdateBook(QTcpSocket* socket, const QJsonObject& data
         return;
     }
 
-    // ۱. دریافت اطلاعات فعلی از دیتابیس (برای جایگزینی مقادیر خالی)
+    //دریافت اطلاعات فعلی از دیتابیس (برای جایگزینی مقادیر خالی)
     QJsonObject currentBook = m_dbManager->getBookDetails(bookId);
     if (currentBook.isEmpty()) {
         resp["status"] = "FAILED";
