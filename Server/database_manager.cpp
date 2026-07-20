@@ -1386,9 +1386,8 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
     QSqlQuery q(db);
 
     // انتخاب دقیق فیلدهای موجود و بررسی متنی نقش
-    q.prepare("SELECT id, username, name, email FROM users WHERE id = :id AND role = :role");
+    q.prepare("SELECT id, username, name, email FROM users WHERE id = :id");
     q.bindValue(":id", publisherId);
-    q.bindValue(":role", static_cast<int>(UserRole::Publisher));
 
     if (!q.exec() || !q.next())
         return profile; // در صورت عدم یافتن، جیسون خالی برمیگردد
@@ -1403,13 +1402,10 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
 
 // آپدیت اطلاعات ناشر
 bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject &data) {
-    const int publisherRole = static_cast<int>(UserRole::Publisher);
-
     //خواندن اطلاعات فعلی ناشر از دیتابیس
     QSqlQuery currentQuery(db);
-    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = :role");
+    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id");
     currentQuery.bindValue(":id", publisherId);
-    currentQuery.bindValue(":role", publisherRole);
 
     if (!currentQuery.exec() || !currentQuery.next()) {
         qDebug() << "Publisher not found or invalid role!";
@@ -1477,13 +1473,12 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject 
               "username = :username, "
               "name = :name, "
               "email = :email "
-              "WHERE id = :id AND role = :role");
+              "WHERE id = :id");
 
     q.bindValue(":username", newUsername);
     q.bindValue(":name", newName);
     q.bindValue(":email", newEmail);
     q.bindValue(":id", publisherId);
-    q.bindValue(":role", publisherRole);
 
     return q.exec();
 }
@@ -1885,7 +1880,102 @@ bool DatabaseManager::setUserActiveState(int userId, bool active) {
 
 //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
 
+//مشاهده تمامی کتاب های فعال
+QList<QJsonObject> DatabaseManager::getAllBooks() {
+    QList<QJsonObject> list;
 
+    QSqlQuery q("SELECT id, title, author, genre, description, price, discountPercent, discountAmount, coverImagePath, publisher_id, isActive "
+                "FROM books WHERE is_deleted = 0", db);
+
+    if (!q.exec()) {
+        qDebug() << "getAllBooks failed:" << q.lastError().text();
+        return list;
+    }
+
+    while (q.next()) {
+        QJsonObject book;
+        book["id"]              = q.value("id").toInt();
+        book["title"]           = q.value("title").toString();
+        book["author"]          = q.value("author").toString();
+        book["genre"]           = q.value("genre").toString();
+        book["description"]     = q.value("description").toString();
+        book["price"]           = q.value("price").toDouble();
+        book["discountPercent"] = q.value("discountPercent").toDouble();
+        book["discountAmount"]  = q.value("discountAmount").toDouble();
+        book["coverImagePath"]  = q.value("coverImagePath").toString(); // مسیر نسبی عکس
+        book["publisher_id"]    = q.value("publisher_id").toInt();
+        book["isActive"]        = q.value("isActive").toInt();
+        list.append(book);
+    }
+    return list;
+}
+
+// مشاهده اطلاعات کامل یک کتاب
+QJsonObject DatabaseManager::getadminBookDetails(int bookId) {
+    QJsonObject book;
+    QSqlQuery q(db);
+
+    q.prepare("SELECT id, title, author, genre, description, price, discountPercent, discountAmount, "
+              "coverImagePath, pdfPath, publisher_id, isActive "
+              "FROM books WHERE id = :id AND is_deleted = 0");
+    q.bindValue(":id", bookId);
+
+    if (!q.exec() || !q.next()) return book;
+
+    book["id"]              = q.value("id").toInt();
+    book["title"]           = q.value("title").toString();
+    book["author"]          = q.value("author").toString();
+    book["genre"]           = q.value("genre").toString();
+    book["description"]     = q.value("description").toString();
+    book["price"]           = q.value("price").toDouble();
+    book["discountPercent"] = q.value("discountPercent").toDouble();
+    book["discountAmount"]  = q.value("discountAmount").toDouble();
+
+    // استخراج مسیرها از دیتابیس
+    book["coverImagePath"]  = q.value("coverImagePath").toString();
+    book["pdfPath"]         = q.value("pdfPath").toString();
+
+    book["publisher_id"]    = q.value("publisher_id").toInt();
+    book["isActive"]        = q.value("isActive").toInt();
+
+    return book;
+}
+
+//ویرایش اطلاعات کتاب توسط مدیر
+bool DatabaseManager::adminUpdateBook(int bookId, const QJsonObject& bookData) {
+    QSqlQuery q(db);
+    q.prepare("UPDATE books SET "
+              "title = :title, author = :author, genre = :genre, description = :description, "
+              "price = :price, discountPercent = :dp, discountAmount = :da, "
+              "coverImagePath = :cover, pdfPath = :pdf "
+              "WHERE id = :id AND is_deleted = 0");
+
+    double price = bookData["price"].toDouble();
+    double discP = bookData["discountPercent"].toDouble();
+    double discA = (price * discP) / 100.0; // محاسبه خودکار مبلغ تخفیف
+
+    q.bindValue(":title", bookData["title"].toString());
+    q.bindValue(":author", bookData["author"].toString());
+    q.bindValue(":genre", bookData["genre"].toString());
+    q.bindValue(":description", bookData["description"].toString());
+    q.bindValue(":price", price);
+    q.bindValue(":dp", discP);
+    q.bindValue(":da", discA);
+    q.bindValue(":cover", bookData["coverImagePath"].toString());
+    q.bindValue(":pdf", bookData["pdfPath"].toString());
+    q.bindValue(":id", bookId);
+
+    return q.exec();
+}
+
+//حذف کتاب نامعتبر
+bool DatabaseManager::adminDeleteBook(int bookId) {
+    QSqlQuery q(db);
+    // همزمان کتاب را غیرفعال (0) و حذف منطقی (1) می‌کنیم
+    q.prepare("UPDATE books SET isActive = 0, is_deleted = 1 WHERE id = :id");
+    q.bindValue(":id", bookId);
+    return q.exec();
+}
 
 
 
