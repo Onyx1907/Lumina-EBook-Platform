@@ -135,16 +135,18 @@ public:
 
 
     QJsonObject getPublisherProfile(int publisherId);
-    bool updatePublisherProfile(int publisherId, const QJsonObject& info);
+    bool updatePublisherProfile(int publisherId, const QJsonObject &data);
 
 
     //************************************************پنل ناشر ( ماژول 2 )*******************************************************
 
 
     bool addBook(const QJsonObject& bookData);
+    QJsonObject getBookDetails(int bookId);
     bool updateBook(int bookId, const QJsonObject& bookData);
     bool setBookDiscount(int bookId, int publisherId, double percent);
     bool setBookActiveState(int bookId, int publisherId, bool active);
+    bool publisherDeleteBook(int bookId, int publisherId);
     QList<QJsonObject> getPublisherBooks(int publisherId);
 
 
@@ -169,6 +171,8 @@ public:
     bool deleteUser(int userId);
     bool setUserActiveState(int userId, bool active);
 
+
+    //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
 
 
 

@@ -1386,8 +1386,9 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
     QSqlQuery q(db);
 
     // انتخاب دقیق فیلدهای موجود و بررسی متنی نقش
-    q.prepare("SELECT id, username, name, email FROM users WHERE id = :id AND role = 'Publisher'");
+    q.prepare("SELECT id, username, name, email FROM users WHERE id = :id AND role = :role");
     q.bindValue(":id", publisherId);
+    q.bindValue(":role", static_cast<int>(UserRole::Publisher));
 
     if (!q.exec() || !q.next())
         return profile; // در صورت عدم یافتن، جیسون خالی برمیگردد
@@ -1402,10 +1403,13 @@ QJsonObject DatabaseManager::getPublisherProfile(int publisherId) {
 
 // آپدیت اطلاعات ناشر
 bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject &data) {
+    const int publisherRole = static_cast<int>(UserRole::Publisher);
+
     //خواندن اطلاعات فعلی ناشر از دیتابیس
     QSqlQuery currentQuery(db);
-    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = 'Publisher'");
+    currentQuery.prepare("SELECT username, name, email FROM users WHERE id = :id AND role = :role");
     currentQuery.bindValue(":id", publisherId);
+    currentQuery.bindValue(":role", publisherRole);
 
     if (!currentQuery.exec() || !currentQuery.next()) {
         qDebug() << "Publisher not found or invalid role!";
@@ -1473,12 +1477,13 @@ bool DatabaseManager::updatePublisherProfile(int publisherId, const QJsonObject 
               "username = :username, "
               "name = :name, "
               "email = :email "
-              "WHERE id = :id AND role = 'Publisher'");
+              "WHERE id = :id AND role = :role");
 
     q.bindValue(":username", newUsername);
     q.bindValue(":name", newName);
     q.bindValue(":email", newEmail);
     q.bindValue(":id", publisherId);
+    q.bindValue(":role", publisherRole);
 
     return q.exec();
 }
@@ -1514,6 +1519,25 @@ bool DatabaseManager::addBook(const QJsonObject& bookData)
         return false;
     }
     return true;
+}
+
+//دیدن اطلاعات یک کتاب
+QJsonObject DatabaseManager::getBookDetails(int bookId) {
+    QJsonObject book;
+    QSqlQuery q(db);
+    q.prepare("SELECT title, author, genre, description, price, discountPercent, pdfPath, coverImagePath FROM books WHERE id = :id");
+    q.bindValue(":id", bookId);
+    if (q.exec() && q.next()) {
+        book["title"] = q.value("title").toString();
+        book["author"] = q.value("author").toString();
+        book["genre"] = q.value("genre").toString();
+        book["description"] = q.value("description").toString();
+        book["price"] = q.value("price").toDouble();
+        book["discountPercent"] = q.value("discountPercent").toDouble();
+        book["pdfPath"] = q.value("pdfPath").toString();
+        book["coverImagePath"] = q.value("coverImagePath").toString();
+    }
+    return book;
 }
 
 // ویرایش یک کتاب
@@ -1584,6 +1608,25 @@ bool DatabaseManager::setBookActiveState(int bookId, int publisherId, bool activ
     q.bindValue(":publisher", publisherId);
 
     return q.exec();
+}
+
+//حذف کتاب
+bool DatabaseManager::publisherDeleteBook(int bookId, int publisherId) {
+    QSqlQuery q(db);
+    // شرطِ اصلی: هم آیدی کتاب درست باشد، هم ناشرش همین کسی باشد که درخواست داده
+    q.prepare("UPDATE books SET isActive = 0, is_deleted = 1 "
+              "WHERE id = :id AND publisher_id = :pubId");
+
+    q.bindValue(":id", bookId);
+    q.bindValue(":pubId", publisherId);
+
+    if (!q.exec()) {
+        qDebug() << "Database Error (publisherDeleteBook failed):" << q.lastError().text();
+        return false;
+    }
+
+    // بررسی اینکه آیا واقعاً تغییری اعمال شده (یعنی کتاب متعلق به این ناشر بوده)
+    return q.numRowsAffected() > 0;
 }
 
 // گرفتن لیستی از کتاب های یک ناشر
@@ -1838,6 +1881,15 @@ bool DatabaseManager::setUserActiveState(int userId, bool active) {
     q.bindValue(":id", userId);
     return q.exec();
 }
+
+
+//*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
+
+
+
+
+
+
 
 
 
