@@ -3,6 +3,7 @@
 #include "clientnetworkmanager.h"
 #include <QJsonArray>
 #include <QTimer>
+#include <QScrollBar>
 
 PublisherBookWidget::PublisherBookWidget(int publisherID, QWidget *parent)
     : QWidget(parent), m_publisherID(publisherID)
@@ -12,6 +13,8 @@ PublisherBookWidget::PublisherBookWidget(int publisherID, QWidget *parent)
 
     ui->error_label->hide();
 
+    ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->listWidget->verticalScrollBar()->setSingleStep(15);
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &PublisherBookWidget::processNetworkData);
@@ -44,6 +47,10 @@ PublisherBookWidget::~PublisherBookWidget()
 
 
 void PublisherBookWidget::processNetworkData(const QString& action, const QJsonObject& data){
+    if(action != "GET_PUBLISHER_BOOKS_RESPONSE"){
+        return;
+    }
+
     if(data.value("status").toString() != "SUCCESS"){
         ui->error_label->show();
         ui->error_label->setText(data["message"].toString());

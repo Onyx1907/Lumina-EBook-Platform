@@ -3,6 +3,7 @@
 #include <QTimer>
 #include "constants.h"
 #include "storageutils.h"
+#include <QFont>
 
 SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     : QWidget(parent), book(obj["id"].toInt(),
@@ -11,7 +12,7 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
                         "", stringToGenre(obj["genre"].toString()),
                         obj["coverImagePath"].toString(),
                         obj["price"].toDouble(),
-                        obj["discountPercentage"].toDouble()),
+                        obj["discountPercent"].toDouble()),
     isActive((obj["isActive"].toInt()) == 1),
     PDFpath(obj.value("pdfPath").toString())
     , ui(new Ui::SharedBookCard)

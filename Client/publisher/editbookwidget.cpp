@@ -33,6 +33,14 @@ EditBookWidget::~EditBookWidget()
 void EditBookWidget::loadEditBook(int bookID){
     m_bookID = bookID;
 
+    ui->author_lineEdit->setText("");
+    ui->description_textEdit->setText("");
+    ui->percent_lineEdit->setText("");
+    ui->price_lineEdit->setText("");
+    ui->title_lineEdit->setText("");
+
+    ui->cover_pix->clear();
+
     ui->chooseCover_pushButton->setText("انتخاب عکس...");
     ui->choosePDF_pushButton->setText("انتخاب فایل...");
 
