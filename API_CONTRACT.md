@@ -1200,6 +1200,120 @@
       "message": ".خطا! کاربر یافت نشد یا حساب کاربری او قبلاً حذف شده است و قابل تغییر نیست"
     }
   }
+,
+  "53_GET_ALL_BOOKS": {
+    "client_request": {
+      "action": "GET_ALL_BOOKS"
+    },
+    "server_response_success": {
+      "action": "GET_ALL_BOOKS_RESPONSE",
+      "status": "SUCCESS",
+      "books": [
+        {
+          "id": 10,
+          "title": "شاهنامه فردوسی",
+          "author": "ابوالقاسم فردوسی",
+          "genre": "حماسی",
+          "description": "شاهکار حماسی زبان فارسی",
+          "price": 250000.0,
+          "discountPercent": 10.0,
+          "discountAmount": 25000.0,
+          "coverImagePath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh_cover.jpg",
+          "publisher_id": 5,
+          "isActive": 1
+        }
+      ]
+    }
+  },
+  "54_GET_BOOK_DETAILS": {
+    "client_request": {
+      "action": "GET_BOOK_DETAILS",
+      "book_id": 10
+    },
+    "server_response_success": {
+      "action": "GET_BOOK_DETAILS_RESPONSE",
+      "status": "SUCCESS",
+      "book_data": {
+        "id": 10,
+        "title": "شاهنامه فردوسی",
+        "author": "ابوالقاسم فردوسی",
+        "genre": "حماسی",
+        "description": "شاهکار حماسی زبان فارسی",
+        "price": 250000.0,
+        "discountPercent": 10.0,
+        "discountAmount": 25000.0,
+        "coverImagePath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh_cover.jpg",
+        "pdfPath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh.pdf",
+        "publisher_id": 5,
+        "isActive": 1
+      }
+    },
+    "server_response_error": {
+      "action": "GET_BOOK_DETAILS_RESPONSE",
+      "status": "FAILED",
+      "message": ".کتاب یافت نشد یا حذف شده است"
+    }
+  },
+  "55_ADMIN_UPDATE_BOOK": {
+    "client_request": {
+      "action": "ADMIN_UPDATE_BOOK",
+      "book_id": 10,
+      "title": "شاهنامه فردوسی (ویرایش جدید)",
+      "author": "ابوالقاسم فردوسی",
+      "genre": "حماسی/ادبیات",
+      "description": "توضیحات به‌روزرسانی شده",
+      "price": 300000.0,
+      "discountPercent": 15.0,
+      "publisher_pdf_path": "C:/temp/new_shahnameh.pdf",
+      "publisher_cover_path": "C:/temp/new_cover.jpg"
+    },
+    "server_response_success": {
+      "action": "ADMIN_UPDATE_BOOK_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".اطلاعات و فایل های کتاب با موفقیت توسط ادمین ویرایش شد"
+    },
+    "server_response_error_invalid_id": {
+      "action": "ADMIN_UPDATE_BOOK_RESPONSE",
+      "status": "ERROR",
+      "message": ".شناسه کتاب نامعتبر است"
+    },
+    "server_response_error_not_found": {
+      "action": "ADMIN_UPDATE_BOOK_RESPONSE",
+      "status": "ERROR",
+      "message": ".کتاب یافت نشد"
+    },
+    "server_response_error_pdf_copy": {
+      "action": "ADMIN_UPDATE_BOOK_RESPONSE",
+      "status": "ERROR",
+      "message": ".امکان کپی و جایگزینی فایل پی دی اف جدید روی سرور وجود ندارد"
+    },
+    "server_response_error_cover_copy": {
+      "action": "ADMIN_UPDATE_BOOK_RESPONSE",
+      "status": "ERROR",
+      "message": ".امکان کپی و جایگزینی عکس کاور جدید روی سرور وجود ندارد"
+    },
+    "server_response_error_db": {
+      "action": "ADMIN_UPDATE_BOOK_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در ویرایش کتاب در دیتابیس"
+    }
+  },
+  "56_ADMIN_DELETE_BOOK": {
+    "client_request": {
+      "action": "ADMIN_DELETE_BOOK",
+      "book_id": 10
+    },
+    "server_response_success": {
+      "action": "ADMIN_DELETE_BOOK_RESPONSE",
+      "status": "SUCCESS",
+      "message": ".کتاب با موفقیت از چرخه سیستم حذف منطقی و غیرفعال شد"
+    },
+    "server_response_error": {
+      "action": "ADMIN_DELETE_BOOK_RESPONSE",
+      "status": "ERROR",
+      "message": ".خطا در حذف منطقی کتاب از پایگاه داده"
+    }
+  }
 }
 
 
