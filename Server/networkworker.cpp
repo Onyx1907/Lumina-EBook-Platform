@@ -611,6 +611,7 @@ void NetworkWorker::handleChangePassword(QTcpSocket* socket, const QJsonObject& 
 void NetworkWorker::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& data) {
     const int userId = data.value("user_id").toInt();
     QList<QJsonObject> history = m_dbManager->getPurchaseHistory(userId);
+    int totalCount = m_dbManager->getTotalPurchases(userId);
 
     QJsonArray arr;
     for (const QJsonObject& h : std::as_const(history))
@@ -619,6 +620,7 @@ void NetworkWorker::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObje
     QJsonObject resp;
     resp["action"] = "GET_PURCHASE_HISTORY_RESPONSE";
     resp["status"] = "SUCCESS";
+    resp["total_purchases"] = totalCount;
     resp["history"] = arr;
     sendJson(socket, resp);
 }
