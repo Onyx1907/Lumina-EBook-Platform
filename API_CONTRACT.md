@@ -334,6 +334,7 @@
     "server_response_success": {
       "action": "GET_PURCHASE_HISTORY_RESPONSE",
       "status": "SUCCESS",
+      "total_purchases": 15,
       "history": [
         {
           "book_id": 10,
