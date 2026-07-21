@@ -953,7 +953,7 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
               "FROM cart c "
               "JOIN books b ON c.book_id = b.id "
               "JOIN users u ON b.publisher_id = u.id "
-              "WHERE c.user_id = :u AND b.is_deleted = 0");
+              "WHERE c.user_id = :u AND b.is_deleted = 0 AND b.isActive = 1");
     q.bindValue(":u", userId);
 
     if (!q.exec())

@@ -5,7 +5,7 @@
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include  <QThread>
+#include <QThread>
 #include <QFile>
 #include <QDir>
 #include <QStandardPaths>
@@ -15,7 +15,7 @@
 #include <QMetaObject>
 #include<QCoreApplication>
 
-#include <utility>
+//#include <utility>
 
 
 #include "database_manager.h"
