@@ -192,6 +192,8 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "ADMIN_DELETE_BOOK") { handleAdminDeleteBook(socket, data); return; }
 
 
+    //*********************************************سیستم اعلان ها****************************************************
+
 
 
 
@@ -1810,6 +1812,8 @@ void NetworkWorker::handleAdminDeleteBook(QTcpSocket* socket, const QJsonObject&
     sendJson(socket, resp);
 }
 
+
+//*********************************************سیستم اعلان ها****************************************************
 
 
 
