@@ -17,6 +17,7 @@ public:
     ~BookReaderWidget();
 
     void loadBook(int bookID);
+    void loadBook(QString path);
 
     void handleLastReadPageResponse(int page);
 

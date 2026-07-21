@@ -6,6 +6,7 @@
 #include "profilewidget.h"
 #include "publisherbookwidget.h"
 #include "editbookwidget.h"
+#include "bookreaderwidget.h"
 
 namespace Ui {
 class PublisherDashboardWidget;
@@ -34,11 +35,13 @@ private:
     ProfileWidget *ProfilePage;
     PublisherBookWidget* PublisherBookPage;
     EditBookWidget *EditBookPage;
+    BookReaderWidget *BookReaderPage;
 
     enum Page{
         ProfilePageIndex = 0,
         PublisherBookPageIndex = 1,
-        EditBookPageIndex = 2
+        EditBookPageIndex = 2,
+        BookReaderPageIndex = 3
     };
 };
 

@@ -22,6 +22,7 @@ signals:
     void deleteRequested(int bookID);
     void discountRequested(int bookID);
     void changeActiveRequested(int bookID, bool isActive);
+    void goToPDF(QString path);
 
 private slots:
     void on_delete_pushButton_clicked();
@@ -33,6 +34,8 @@ private slots:
     void on_active_checkBox_toggled(bool checked);
 
     void handleCheckIsActive(const QString& action, const QJsonObject& data);
+
+    void on_study_pushButton_clicked();
 
 private:
     Ui::SharedBookCard *ui;

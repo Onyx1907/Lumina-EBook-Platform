@@ -29,6 +29,29 @@ BookReaderWidget::~BookReaderWidget()
     delete ui;
 }
 
+
+void BookReaderWidget::loadBook(QString path){
+
+    m_document->close();
+
+    m_currentPage = 0;
+    ui->change_page_lineEdit->setText("1");
+    ui->page_label->setText("/0");
+
+    if (m_document->load(path) == QPdfDocument::Error::None) {
+
+        ui->page_label->setText(QString("/ %1").arg(m_document->pageCount()));
+    }
+    else{
+        ui->error_label->setText("خطای ناشناخته");
+        ui->error_label->show();
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
 // ------------------ بخش شبکه و هماهنگی با API ------------------
 
 void BookReaderWidget::loadBook(int bookID){
@@ -186,7 +209,10 @@ void BookReaderWidget::on_next_pushButton_clicked()
         ui->widget->pageNavigator()->jump(m_currentPage, QPointF(), ui->widget->zoomFactor());
 
         ui->change_page_lineEdit->setText(QString::number(m_currentPage + 1));
-        updateLastReadPage(m_currentPage + 1);
+
+        if(m_userId != -1){
+            updateLastReadPage(m_currentPage + 1);
+        }
     }
 }
 
@@ -200,7 +226,10 @@ void BookReaderWidget::on_prev_pushButton_clicked()
         ui->widget->pageNavigator()->jump(m_currentPage, QPointF(), ui->widget->zoomFactor());
 
         ui->change_page_lineEdit->setText(QString::number(m_currentPage + 1));
-        updateLastReadPage(m_currentPage + 1);
+
+        if(m_userId != -1){
+            updateLastReadPage(m_currentPage + 1);
+        }
     }
 }
 
@@ -215,7 +244,9 @@ void BookReaderWidget::on_change_page_lineEdit_returnPressed()
 
         ui->widget->pageNavigator()->jump(m_currentPage, QPointF(), ui->widget->zoomFactor());
 
-        updateLastReadPage(targetPage);
+        if(m_userId != -1){
+            updateLastReadPage(targetPage);
+        }
     } else {
         ui->change_page_lineEdit->setText(QString::number(m_currentPage + 1));
     }

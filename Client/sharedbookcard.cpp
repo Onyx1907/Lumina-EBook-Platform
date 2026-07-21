@@ -122,3 +122,9 @@ void SharedBookCard::handleCheckIsActive(const QString& action, const QJsonObjec
         old_active_state = ui->active_checkBox->isChecked();
     }
 }
+
+void SharedBookCard::on_study_pushButton_clicked()
+{
+    emit goToPDF(PDFpath);
+}
+

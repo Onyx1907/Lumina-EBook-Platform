@@ -106,6 +106,10 @@ void PublisherBookWidget::handleGetBooks(const QJsonObject& data){
         });
         connect(itemWidget, &SharedBookCard::changeActiveRequested, this,
                 &PublisherBookWidget::checkIsActiveRequested);
+
+        connect(itemWidget, &SharedBookCard::goToPDF, this, [this](QString path){
+            emit PDFreader(path);
+        });
     }
 }
 

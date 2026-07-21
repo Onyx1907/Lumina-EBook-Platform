@@ -19,6 +19,7 @@ public:
 signals:
     void addBook();
     void editBook(int bookID);
+    void PDFreader(QString path);
 
 protected:
     void showEvent(QShowEvent *event) override;
