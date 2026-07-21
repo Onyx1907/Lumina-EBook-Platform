@@ -251,7 +251,7 @@ QPushButton#pay_pushButton:pressed {
         <item>
          <widget class="QLabel" name="count_label">
           <property name="text">
-           <string>5</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -269,7 +269,7 @@ QPushButton#pay_pushButton:pressed {
         <item>
          <widget class="QLabel" name="total_price_label">
           <property name="text">
-           <string>100000</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -287,7 +287,7 @@ QPushButton#pay_pushButton:pressed {
         <item>
          <widget class="QLabel" name="discount_label">
           <property name="text">
-           <string>20000</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -312,7 +312,7 @@ QPushButton#pay_pushButton:pressed {
         <item>
          <widget class="QLabel" name="final_price_label">
           <property name="text">
-           <string>80000</string>
+           <string/>
           </property>
          </widget>
         </item>

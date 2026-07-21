@@ -452,7 +452,7 @@ QLineEdit:focus {
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;زندگینامه، علمی تخیلی&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>

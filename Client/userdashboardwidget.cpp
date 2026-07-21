@@ -111,6 +111,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
 
     //برگشت به صفحه اطلاعات کتاب از بخش نظرات
     connect(CommentsPage, &CommentsWidget::backToBookDatailPage, this, [this](){
+        BookDetailsPage->loadBook();
         fadeToPage(Page::BookDetailsPageIndex);
     });
 
