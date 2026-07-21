@@ -26,6 +26,8 @@ void BookDetailsWidget::loadBook(Book *book){
     }
     if(cur_book == nullptr) return;
 
+    ui->tooman_label->show();
+
     ui->name_label->setText(cur_book->getTitle());
     ui->author_label->setText(cur_book->getAuthor());
     ui->publisher_label->setText(cur_book->getPublisher());
@@ -48,7 +50,7 @@ void BookDetailsWidget::loadBook(Book *book){
     else
         ui->genre_label->setText("");
 
-    if(cur_book->getDiscountPercentage()){
+    if(cur_book->getDiscountPercentage() && cur_book->getPrice()){
         ui->discount_label->show();
         ui->oldPrice_label->show();
         ui->discount_label->setText(QString::number(cur_book->getDiscountPercentage(), 'f', 1) + "%");
@@ -62,6 +64,10 @@ void BookDetailsWidget::loadBook(Book *book){
         ui->discount_label->hide();
         ui->oldPrice_label->hide();
         ui->finalPrice_label->setText(QString::number(cur_book->getFinalPrice(), 'f', 0));
+    }
+    if(cur_book->getPrice() == 0){
+        ui->finalPrice_label->setText("رایگان");
+        ui->tooman_label->hide();
     }
 
     ui->addCart_pushButton->hide();

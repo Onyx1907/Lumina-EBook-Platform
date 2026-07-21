@@ -137,7 +137,7 @@ void CartWidget::handleGetCartResponse(const QJsonObject& response) {
                   bookObj["author"].toString(),
                   bookObj["publisher_name"].toString(),
                   BookGenre::Unknown,
-                  bookObj["cover_image_path"].toString(),
+                  bookObj["coverImagePath"].toString(),
                   bookObj["price"].toDouble(),
                   bookObj["discount"].toDouble());
 

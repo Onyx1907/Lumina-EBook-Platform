@@ -19,16 +19,34 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->tooman_label->show();
 
     ui->name_label->setText(book.getTitle());
     ui->author_label->setText(book.getAuthor());
-    ui->genre_label->setText(genreToString(book.getGenre()));
     ui->description_label->setText(obj["description"].toString());
     StorageUtils::displayBookCover(book.getCoverImagePath(),
                                    ui->book_cover);
 
 
-    if(book.getDiscountPercentage()){
+    QString sv = genreToString(book.getGenre());
+
+    if (sv == "Biography")
+        ui->genre_label->setText("زندگینامه");
+    else if (sv == "Educational")
+        ui->genre_label->setText("علمی و تحصیلی");
+    else if (sv == "Psychology")
+        ui->genre_label->setText("روانشناسی");
+    else if (sv == "Fiction")
+        ui->genre_label->setText("ادبیات داستانی");
+    else if (sv == "History")
+        ui->genre_label->setText("تاریخی");
+    else if (sv == "SciFi")
+        ui->genre_label->setText("علمی تخیلی");
+    else
+        ui->genre_label->setText("");
+
+
+    if(book.getDiscountPercentage() && book.getPrice()){
         ui->discount_label->show();
         ui->oldPrice_label->show();
         ui->discount_label->setText(QString::number(book.getDiscountPercentage(), 'f', 1) + "%");
@@ -42,6 +60,10 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
         ui->discount_label->hide();
         ui->oldPrice_label->hide();
         ui->finalPrice_label->setText(QString::number(book.getFinalPrice(), 'f', 0));
+    }
+    if(book.getPrice() == 0){
+        ui->finalPrice_label->setText("رایگان");
+        ui->tooman_label->hide();
     }
 
     ui->active_checkBox->setChecked(isActive);

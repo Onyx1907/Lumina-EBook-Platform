@@ -65,7 +65,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-392</y>
+        <y>0</y>
         <width>730</width>
         <height>1000</height>
        </rect>
@@ -699,13 +699,13 @@ qproperty-alignment: 'AlignHCenter | AlignVCenter';
        </property>
        <property name="minimumSize">
         <size>
-         <width>360</width>
+         <width>340</width>
          <height>440</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>360</width>
+         <width>340</width>
          <height>440</height>
         </size>
        </property>
@@ -838,7 +838,7 @@ QScrollBar::sub-page:vertical {
         <set>Qt::NoTextInteraction</set>
        </property>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>490</x>

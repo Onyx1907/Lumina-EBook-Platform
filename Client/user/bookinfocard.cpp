@@ -11,9 +11,11 @@ BookInfoCard::BookInfoCard(Book b, QWidget *parent)
     ui->name_label->setText(book.getTitle());
     ui->publisher_label->setText(book.getPublisher());
 
+    ui->tooman_label->show();
+
     StorageUtils::displayBookCover(book.getCoverImagePath(), ui->book_cover);
 
-    if(book.getDiscountPercentage()){
+    if(book.getDiscountPercentage() && book.getPrice()){
         ui->discount_label->show();
         ui->oldPrice_label->show();
         ui->discount_label->setText(QString::number(book.getDiscountPercentage(), 'f', 1) + "%");
@@ -27,6 +29,10 @@ BookInfoCard::BookInfoCard(Book b, QWidget *parent)
         ui->discount_label->hide();
         ui->oldPrice_label->hide();
         ui->finalPrice_label->setText(QString::number(book.getFinalPrice(), 'f', 0));
+    }
+    if(book.getPrice() == 0){
+        ui->finalPrice_label->setText("رایگان");
+        ui->tooman_label->hide();
     }
 
     book_pushbutton = new QPushButton(this);

@@ -320,13 +320,13 @@ font-size: 13px;
           <property name="minimumSize">
            <size>
             <width>80</width>
-            <height>100</height>
+            <height>110</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>80</width>
-            <height>100</height>
+            <height>110</height>
            </size>
           </property>
           <property name="text">
