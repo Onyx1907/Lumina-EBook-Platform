@@ -30,14 +30,17 @@ private slots:
 
     void on_discount_pushButton_clicked();
 
-
     void on_active_checkBox_toggled(bool checked);
+
+    void handleCheckIsActive(const QString& action, const QJsonObject& data);
 
 private:
     Ui::SharedBookCard *ui;
     Book book;
     bool isActive;
     QString PDFpath;
+
+    bool old_active_state;
 };
 
 #endif // SHAREDBOOKCARD_H

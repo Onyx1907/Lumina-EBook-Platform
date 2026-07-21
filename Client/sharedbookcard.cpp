@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "storageutils.h"
 #include <QFont>
+#include "clientnetworkmanager.h"
 
 SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     : QWidget(parent), book(obj["id"].toInt(),
@@ -67,6 +68,10 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     }
 
     ui->active_checkBox->setChecked(isActive);
+
+
+    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
+            this, &SharedBookCard::handleCheckIsActive);
 }
 
 SharedBookCard::~SharedBookCard()
@@ -94,6 +99,8 @@ void SharedBookCard::on_discount_pushButton_clicked()
 
 void SharedBookCard::on_active_checkBox_toggled(bool checked)
 {
+    old_active_state = !checked;
+
     emit changeActiveRequested(book.getId(), checked);
     ui->active_checkBox->setEnabled(false);
 
@@ -102,3 +109,16 @@ void SharedBookCard::on_active_checkBox_toggled(bool checked)
     });
 }
 
+
+void SharedBookCard::handleCheckIsActive(const QString& action, const QJsonObject& data){
+    if(action != "SET_BOOK_ACTIVE_STATE_RESPONSE"){
+        return;
+    }
+
+    if(data.value("status").toString() != "SUCCESS"){
+        ui->active_checkBox->setChecked(old_active_state);
+    }
+    else{
+        old_active_state = ui->active_checkBox->isChecked();
+    }
+}

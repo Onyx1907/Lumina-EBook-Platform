@@ -526,33 +526,41 @@ QPushButton:pressed {
           </property>
           <property name="styleSheet">
            <string notr="true">QCheckBox {
-    color: #4A2E1B; /* متن قهوه‌ای تیره */
+    color: #4A2E1B;
     font-family: &quot;Vazirmatn&quot;, &quot;Segoe UI&quot;;
     font-size: 12px;
     spacing: 8px;
 }
 
-/* مربع چک‌باکس در حالت غیرفعال (کرمی شیشه‌ای ملایم) */
 QCheckBox::indicator {
-    width: 18px;
-    height: 18px;
-    background-color: rgba(245, 239, 233, 0.4);
-    border: 1px solid rgba(111, 78, 55, 0.25);
+    width: 20px;
+    height: 20px;
     border-radius: 6px;
+    border: 2px solid #B08968;
+    background: rgba(255,255,255,0.55);
 }
 
-/* هاور روی مربع */
 QCheckBox::indicator:hover {
-    background-color: rgba(197, 160, 126, 0.3);
-    border: 1px solid rgba(111, 78, 55, 0.4);
+    border: 2px solid #8B5E3C;
+    background: rgba(222,184,135,0.35);
 }
 
-/* وقتی کتاب فعال است (تیک خورده) -&gt; تبدیل به قهوه‌ای شکلاتی گرم شیشه‌ای */
+QCheckBox::indicator:pressed {
+    background: rgba(210,170,130,0.6);
+}
+
 QCheckBox::indicator:checked {
-    background-color: rgba(111, 78, 55, 0.8);
-    border: 1px solid #4A2E1B;
-    /* اگر آیکون تیک سفید داری آدرس بده، در غیر این صورت رنگ پر شده کفایت میکند */
-    image: url(:/icons/checkmark_white.png); 
+    background: #8B5E3C;
+    border: 2px solid #5E3A22;
+}
+
+QCheckBox::indicator:checked:hover {
+    background: #A66B42;
+    border: 2px solid #3E2617;
+}
+
+QCheckBox::indicator:checked:pressed {
+    background: #74462B;
 }</string>
           </property>
           <property name="text">
