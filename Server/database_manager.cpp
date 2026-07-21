@@ -949,7 +949,7 @@ QList<QJsonObject> DatabaseManager::getCartItems(int userId) {
 
     QSqlQuery q(db);
 
-    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.coverImagePath, b.isActive, u.username AS publisher_name "
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.coverImagePath, b.isActive, u.name AS publisher_name "
               "FROM cart c "
               "JOIN books b ON c.book_id = b.id "
               "JOIN users u ON b.publisher_id = u.id "
