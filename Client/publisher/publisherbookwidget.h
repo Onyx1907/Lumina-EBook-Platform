@@ -18,6 +18,8 @@ public:
 
 signals:
     void addBook();
+    void editBook(int bookID);
+    void PDFreader(QString path);
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -25,13 +27,15 @@ protected:
 private slots:
         void processNetworkData(const QString& action, const QJsonObject& data);
 
-
         void on_back_pushButton_clicked();
+
+        void checkIsActiveRequested(int bookID, bool isActive);
 
     private:
     Ui::PublisherBookWidget *ui;
     int m_publisherID;
 
+    void loadBooks();
     void handleGetBooks(const QJsonObject& data);
 };
 

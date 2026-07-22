@@ -24,14 +24,37 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     ProfilePage = new ProfileWidget(publisher, this);
     PublisherBookPage = new PublisherBookWidget(publisher->getId(), this);
     EditBookPage = new EditBookWidget(this, publisher->getId());
+    BookReaderPage = new BookReaderWidget(-1, this);
 
     ui->stackedWidget->addWidget(ProfilePage);
     ui->stackedWidget->addWidget(PublisherBookPage);
     ui->stackedWidget->addWidget(EditBookPage);
+    ui->stackedWidget->addWidget(BookReaderPage);
 
+    //ایجاد کتاب جدید
     connect(PublisherBookPage, &PublisherBookWidget::addBook, this, [this](){
         EditBookPage->loadEditBook();
         fadeToPage(EditBookPageIndex);
+    });
+
+    connect(EditBookPage , &EditBookWidget::back, this, [this](){
+       fadeToPage(PublisherBookPageIndex);
+    });
+
+    //ویرایش کتاب
+    connect(PublisherBookPage, &PublisherBookWidget::editBook, this, [this](int bookID){
+        EditBookPage->loadEditBook(bookID);
+        fadeToPage(EditBookPageIndex);
+    });
+
+    //رفتن به پی دی اف کتاب
+    connect(PublisherBookPage, &PublisherBookWidget::PDFreader, this, [this](QString path){
+        BookReaderPage->loadBook(path);
+        fadeToPage(BookReaderPageIndex);
+    });
+
+    connect(BookReaderPage, &BookReaderWidget::back, this, [this](){
+       fadeToPage(PublisherBookPageIndex);
     });
 }
 

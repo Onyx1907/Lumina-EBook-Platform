@@ -14,10 +14,8 @@ class BookDetailsWidget : public QWidget
 
 public:
     explicit BookDetailsWidget(int ID, QWidget *parent = nullptr);
-    void loadBook(Book *book);
+    void loadBook(Book *book = nullptr);
     ~BookDetailsWidget();
-
-    Book* cur_book = nullptr;
 
 signals:
     void backPrevious();
@@ -44,6 +42,7 @@ private slots:
 private:
     Ui::BookDetailsWidget *ui;
     int userID;
+    Book* cur_book = nullptr;
 };
 
 #endif // BOOKDETAILSWIDGET_H

@@ -304,7 +304,6 @@ QComboBox QAbstractItemView {
      <property name="styleSheet">
       <string notr="true">QTextEdit {
     background-color: rgba(255, 255, 255, 0.8); /* سفید استخوانی نیمه شفاف برای خوانایی عالی متن */
-qproperty-alignment: 'AlignHCenter | AlignVCenter';
     color: #4A3B32; /* اسپرسو تیره برای متن */
     border: 1.5px solid #E0D5C1; /* مرز نسکافه‌ای کمرنگ */
     border-radius: 8px;

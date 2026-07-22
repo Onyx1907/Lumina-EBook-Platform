@@ -3,6 +3,7 @@
 #include "clientnetworkmanager.h"
 #include <QJsonArray>
 #include <QTimer>
+#include <QScrollBar>
 
 PublisherBookWidget::PublisherBookWidget(int publisherID, QWidget *parent)
     : QWidget(parent), m_publisherID(publisherID)
@@ -12,14 +13,14 @@ PublisherBookWidget::PublisherBookWidget(int publisherID, QWidget *parent)
 
     ui->error_label->hide();
 
+    ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->listWidget->verticalScrollBar()->setSingleStep(15);
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &PublisherBookWidget::processNetworkData);
 }
 
-void PublisherBookWidget::showEvent(QShowEvent *event) {
-    QWidget::showEvent(event);
-
+void PublisherBookWidget::loadBooks(){
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
@@ -37,6 +38,12 @@ void PublisherBookWidget::showEvent(QShowEvent *event) {
     }
 }
 
+void PublisherBookWidget::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+
+    loadBooks();
+}
+
 PublisherBookWidget::~PublisherBookWidget()
 {
     delete ui;
@@ -44,6 +51,16 @@ PublisherBookWidget::~PublisherBookWidget()
 
 
 void PublisherBookWidget::processNetworkData(const QString& action, const QJsonObject& data){
+    if(action != "GET_PUBLISHER_BOOKS_RESPONSE" &&
+        action != "SET_BOOK_ACTIVE_STATE_RESPONSE"){
+        return;
+    }
+
+    if (action == "SET_BOOK_ACTIVE_STATE_RESPONSE" &&
+        data.value("status").toString() != "SUCCESS"){
+        loadBooks();
+    }
+
     if(data.value("status").toString() != "SUCCESS"){
         ui->error_label->show();
         ui->error_label->setText(data["message"].toString());
@@ -57,7 +74,15 @@ void PublisherBookWidget::processNetworkData(const QString& action, const QJsonO
     if(action == "GET_PUBLISHER_BOOKS_RESPONSE"){
         handleGetBooks(data);
     }
-
+    else if (action == "SET_BOOK_ACTIVE_STATE_RESPONSE"){
+        ui->error_label->show();
+        ui->error_label->setText(data["message"].toString());
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+            loadBooks();
+        });
+    }
 
 }
 
@@ -75,6 +100,16 @@ void PublisherBookWidget::handleGetBooks(const QJsonObject& data){
         QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
         item->setSizeHint(itemWidget->sizeHint());
         ui->listWidget->setItemWidget(item, itemWidget);
+
+        connect(itemWidget, &SharedBookCard::editRequested, this, [this](int bookID){
+            emit editBook(bookID);
+        });
+        connect(itemWidget, &SharedBookCard::changeActiveRequested, this,
+                &PublisherBookWidget::checkIsActiveRequested);
+
+        connect(itemWidget, &SharedBookCard::goToPDF, this, [this](QString path){
+            emit PDFreader(path);
+        });
     }
 }
 
@@ -83,3 +118,24 @@ void PublisherBookWidget::on_back_pushButton_clicked()
     emit addBook();
 }
 
+
+
+void PublisherBookWidget::checkIsActiveRequested(int bookID, bool isActive){
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+        data["publisher_id"] = m_publisherID;
+        data["book_id"] = bookID;
+        data["active"] = isActive;
+
+        ClientNetworkManager::instance().sendRequest("SET_BOOK_ACTIVE_STATE", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}

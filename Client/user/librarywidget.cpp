@@ -170,6 +170,7 @@ void LibraryWidget::processNetworkData(const QString& action, const QJsonObject&
         if(data.contains("message")){
             QString message = data["message"].toString();
             ui->error_label->setText(message);
+            requestShelfBooks(m_active_shelfID);
         }
         else{
             ui->error_label->setText("خطای ناشناخته");

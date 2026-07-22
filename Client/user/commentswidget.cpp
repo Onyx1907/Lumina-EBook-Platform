@@ -52,6 +52,14 @@ CommentsWidget::~CommentsWidget()
 
 
 void CommentsWidget::processNetworkData(const QString& action, const QJsonObject& data){
+    if(action != "GET_COMMENTS_RESPONSE" &&
+        action != "COMMENT_UPDATED" &&
+        action != "ADD_COMMENT_RESPONSE" &&
+        action != "EDIT_COMMENT_RESPONSE" &&
+        action != "DELETE_COMMENT_RESPONSE"){
+        return;
+    }
+
     if(action == "GET_COMMENTS_RESPONSE"){
         updateListUi(data);
         return;
