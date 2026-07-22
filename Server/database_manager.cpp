@@ -1641,7 +1641,7 @@ QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
     QSqlQuery q(db);
 
     q.prepare("SELECT id, title, author, genre, description, price, "
-              "discountPercent, discountAmount, coverImagePath, pdfPath, isActive "
+              "discountPercent, discountAmount, coverImagePath, pdfPath, isActive, averageRating "
               "FROM books WHERE publisher_id = :publisher AND is_deleted = 0");
     q.bindValue(":publisher", publisherId);
 
@@ -1660,6 +1660,8 @@ QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
         b["coverImagePath"]  = q.value("coverImagePath").toString();
         b["pdfPath"]         = q.value("pdfPath").toString();
         b["isActive"]        = q.value("isActive").toInt();
+        b["avgRating"]       = q.value("averageRating").toDouble();
+
         list.append(b);
     }
     return list;
@@ -1696,25 +1698,6 @@ QJsonObject DatabaseManager::getPublisherStats(int publisherId) {
             stats["totalRevenue"] = q.value(0).toDouble();
         else
             stats["totalRevenue"] = 0.0;
-    }
-
-    //میانگین امتیاز هر کتاب ناشر (فقط کتاب های حذف نشده)
-    {
-        QSqlQuery q(db);
-        q.prepare("SELECT id, title, averageRating FROM books WHERE publisher_id = :p AND is_deleted = 0");
-        q.bindValue(":p", publisherId);
-
-        QJsonArray ratingsArr;
-        if (q.exec()) {
-            while (q.next()) {
-                QJsonObject o;
-                o["book_id"]   = q.value("id").toInt();
-                o["title"]     = q.value("title").toString();
-                o["avgRating"] = q.value("averageRating").toDouble();
-                ratingsArr.append(o);
-            }
-        }
-        stats["booksRatings"] = ratingsArr;
     }
 
     //پرفروش ترین کتاب ها (۵ کتاب اول از بین کتاب های حذف نشده)
