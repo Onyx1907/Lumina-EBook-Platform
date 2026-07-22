@@ -7,7 +7,7 @@ Server::Server(QObject* parent)
     : QTcpServer(parent),
     dbManager("main_connection")
 {
-    // دیتابیس اصلی سرور (فقط برای ساخت جدول‌ها و کارهای عمومی)
+    // دیتابیس اصلی سرور (فقط برای ساخت جدول ها و کارهای عمومی)
     if (!dbManager.initDatabase()) {
         qDebug() << "Main DB init failed";
     }
