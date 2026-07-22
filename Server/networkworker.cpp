@@ -192,6 +192,8 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     else if (action == "ADMIN_DELETE_BOOK") { handleAdminDeleteBook(socket, data); return; }
 
 
+    //*********************************************سیستم اعلان ها****************************************************
+
 
 
 
@@ -609,6 +611,7 @@ void NetworkWorker::handleChangePassword(QTcpSocket* socket, const QJsonObject& 
 void NetworkWorker::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObject& data) {
     const int userId = data.value("user_id").toInt();
     QList<QJsonObject> history = m_dbManager->getPurchaseHistory(userId);
+    int totalCount = m_dbManager->getTotalPurchases(userId);
 
     QJsonArray arr;
     for (const QJsonObject& h : std::as_const(history))
@@ -617,6 +620,7 @@ void NetworkWorker::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObje
     QJsonObject resp;
     resp["action"] = "GET_PURCHASE_HISTORY_RESPONSE";
     resp["status"] = "SUCCESS";
+    resp["total_purchases"] = totalCount;
     resp["history"] = arr;
     sendJson(socket, resp);
 }
@@ -1442,6 +1446,24 @@ void NetworkWorker::handleSetBookDiscount(QTcpSocket* socket, const QJsonObject&
                          : ".خطا در اعمال تخفیف";
 
     sendJson(socket, resp);
+
+    if (ok) {
+        // استفاده از تابع جدید برای گرفتن اطلاعات مالی و قیمت های محاسبه شده
+        QJsonObject financials = m_dbManager->getBookFinancialDetails(bookId);
+
+        if (!financials.isEmpty()) {
+            QJsonObject b;
+            b["action"] = "BOOK_DISCOUNT_UPDATED";
+            b["book_id"] = bookId;
+            b["price"] = financials.value("price");                  // قیمت اصلی
+            b["discountPercent"] = financials.value("discountPercent"); // درصد تخفیف
+            b["discountAmount"] = financials.value("discountAmount");   // مبلغ تخفیف
+            b["final_price"] = financials.value("final_price");       // قیمت نهایی قابل پرداخت
+
+            emit broadcastRequested(b);
+        }
+    }
+
 }
 
 void NetworkWorker::handleSetBookActiveState(QTcpSocket* socket, const QJsonObject& data) {
@@ -1810,6 +1832,8 @@ void NetworkWorker::handleAdminDeleteBook(QTcpSocket* socket, const QJsonObject&
     sendJson(socket, resp);
 }
 
+
+//*********************************************سیستم اعلان ها****************************************************
 
 
 

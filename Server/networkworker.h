@@ -5,7 +5,7 @@
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include  <QThread>
+#include <QThread>
 #include <QFile>
 #include <QDir>
 #include <QStandardPaths>
@@ -15,7 +15,7 @@
 #include <QMetaObject>
 #include<QCoreApplication>
 
-#include <utility>
+//#include <utility>
 
 
 #include "database_manager.h"
@@ -163,6 +163,9 @@ private:
     void handleGetBookDetails(QTcpSocket* socket, const QJsonObject& data);
     void handleAdminUpdateBook(QTcpSocket* socket, const QJsonObject& data);
     void handleAdminDeleteBook(QTcpSocket* socket, const QJsonObject& data);
+
+
+    //*********************************************سیستم اعلان ها****************************************************
 
 
 

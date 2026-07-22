@@ -145,6 +145,7 @@ public:
     QJsonObject getBookDetails(int bookId);
     bool updateBook(int bookId, const QJsonObject& bookData);
     bool setBookDiscount(int bookId, int publisherId, double percent);
+    QJsonObject getBookFinancialDetails(int bookId);
     bool setBookActiveState(int bookId, int publisherId, bool active);
     bool publisherDeleteBook(int bookId, int publisherId);
     QList<QJsonObject> getPublisherBooks(int publisherId);
@@ -179,6 +180,14 @@ public:
     QJsonObject getadminBookDetails(int bookId);
     bool adminUpdateBook(int bookId, const QJsonObject& bookData);
     bool adminDeleteBook(int bookId);
+
+
+    //*********************************************سیستم اعلان ها****************************************************
+
+
+    QList<QJsonObject> getNotifications(int userId, const QString& role);
+    bool markNotificationRead(int notificationId);
+
 
 
 
