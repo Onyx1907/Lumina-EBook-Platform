@@ -3,13 +3,14 @@
 #include "storageutils.h"
 #include <QPixmap>
 
-BookCard::BookCard(Book b, QWidget *parent)
+BookCard::BookCard(Book b, QWidget *parent, int sales)
     : QWidget(parent)
     , ui(new Ui::BookCard), book(b)
 {
     ui->setupUi(this);
 
     ui->title_label->setText(this->book.getTitle());
+    ui->total_revenue_label->hide();
 
     StorageUtils::displayBookCover(book.getCoverImagePath(), ui->book_cover);
 

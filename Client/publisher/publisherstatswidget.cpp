@@ -12,3 +12,9 @@ PublisherStatsWidget::~PublisherStatsWidget()
 {
     delete ui;
 }
+
+void PublisherStatsWidget::on_pushButton_clicked()
+{
+    emit goToBooks();
+}
+

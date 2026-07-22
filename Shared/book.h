@@ -16,10 +16,11 @@ private:
     double discountPercentage;
     QString pdfPath;
     QString coverImagePath;
+    double rating;
 
 public:
     Book(int id, QString title, QString author, QString publisher, BookGenre genre,
-         QString coverImagePath, double price, double discountPercentage = 0.0);
+         QString coverImagePath, double price, double discountPercentage = 0.0, double rating = -1);
 
     int getId() const;
     QString getTitle() const;
@@ -31,6 +32,8 @@ public:
     double getDiscountPercentage() const;
 
     QString getCoverImagePath() const;
+
+    double getRating();
 };
 
 #endif // BOOK_H

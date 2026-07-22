@@ -16,7 +16,8 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
                         "", stringToGenre(obj["genre"].toString()),
                         obj["coverImagePath"].toString(),
                         obj["price"].toDouble(),
-                        obj["discountPercent"].toDouble()),
+                        obj["discountPercent"].toDouble(),
+                        obj["avgRating"].toDouble()),
     isActive((obj["isActive"].toInt()) == 1),
     PDFpath(obj.value("pdfPath").toString())
     , ui(new Ui::SharedBookCard)
@@ -28,6 +29,7 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     ui->name_label->setText(book.getTitle());
     ui->author_label->setText(book.getAuthor());
     ui->description_label->setText(obj["description"].toString());
+    ui->rating_label->setText(QString::number(book.getRating(), 'f', 1));
     StorageUtils::displayBookCover(book.getCoverImagePath(),
                                    ui->book_cover);
 

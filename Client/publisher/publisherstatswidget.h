@@ -15,6 +15,12 @@ public:
     explicit PublisherStatsWidget(QWidget *parent = nullptr);
     ~PublisherStatsWidget();
 
+signals:
+    void goToBooks();
+
+private slots:
+    void on_pushButton_clicked();
+
 private:
     Ui::PublisherStatsWidget *ui;
 };
