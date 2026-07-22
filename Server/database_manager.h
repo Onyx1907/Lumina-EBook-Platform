@@ -185,6 +185,8 @@ public:
     //*********************************************سیستم اعلان ها****************************************************
 
 
+    QList<QJsonObject> getNotifications(int userId, const QString& role);
+    bool markNotificationRead(int notificationId);
 
 
 

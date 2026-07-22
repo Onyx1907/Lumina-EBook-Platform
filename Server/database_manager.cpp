@@ -1982,7 +1982,7 @@ bool DatabaseManager::adminUpdateBook(int bookId, const QJsonObject& bookData) {
 //حذف کتاب نامعتبر
 bool DatabaseManager::adminDeleteBook(int bookId) {
     QSqlQuery q(db);
-    // همزمان کتاب را غیرفعال (0) و حذف منطقی (1) می‌کنیم
+    // همزمان کتاب را غیرفعال (0) و حذف منطقی (1) میکنیم
     q.prepare("UPDATE books SET isActive = 0, is_deleted = 1 WHERE id = :id");
     q.bindValue(":id", bookId);
     return q.exec();
@@ -1991,6 +1991,52 @@ bool DatabaseManager::adminDeleteBook(int bookId) {
 
 //*********************************************سیستم اعلان ها****************************************************
 
+QList<QJsonObject> DatabaseManager::getNotifications(int userId, const QString& role)
+{
+    QList<QJsonObject> list;
+    QSqlQuery q(db);
+
+    // اصلاح شد: اضافه شدن LIMIT 50 برای تضمین سرعت بالای سرور در طولانی مدت
+    q.prepare("SELECT id, user_id, username, role, type, message, related_id, is_read, created_at "
+              "FROM notifications "
+              "WHERE user_id = :userId OR (role = :role AND (user_id IS NULL OR user_id = 0)) "
+              "ORDER BY created_at DESC LIMIT 50");
+
+    q.bindValue(":userId", userId);
+    q.bindValue(":role", role);
+
+    if (!q.exec())
+        return list;
+
+    while (q.next()) {
+        QJsonObject n;
+        n["id"]         = q.value("id").toInt();
+        n["user_id"]    = q.value("user_id").toInt();
+        n["username"]   = q.value("username").toString();
+        n["role"]       = q.value("role").toString();
+        n["type"]       = q.value("type").toString();
+        n["message"]    = q.value("message").toString();
+        n["related_id"] = q.value("related_id").toInt();
+        n["is_read"]    = q.value("is_read").toInt();
+        n["created_at"] = q.value("created_at").toString();
+        list.append(n);
+    }
+
+    return list;
+}
+
+bool DatabaseManager::markNotificationRead(int notificationId)
+{
+    QSqlQuery q(db);
+    // اصلاح شد: شرط is_read = 0 برای اطمینان از اینکه فقط اعلان های خوانده نشده آپدیت شوند
+    q.prepare("UPDATE notifications SET is_read = 1 WHERE id = :id AND is_read = 0");
+    q.bindValue(":id", notificationId);
+
+    if (q.exec()) {
+        return q.numRowsAffected() > 0; // بررسی واقعی اعمال تغییرات روی سطر دیتابیس
+    }
+    return false;
+}
 
 
 
