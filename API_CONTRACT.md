@@ -983,6 +983,14 @@
       "status": "ERROR",
       "message": ".خطا در اعمال تخفیف"
     }
+     "server_broadcast_on_success": {
+    "action": "BOOK_DISCOUNT_UPDATED",
+    "book_id": 12,
+    "price": 150000,
+    "discountPercent": 20,
+    "discountAmount": 30000,
+    "final_price": 120000
+  }
   },
   "45_SET_BOOK_ACTIVE_STATE": {
     "client_request": {
