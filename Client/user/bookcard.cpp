@@ -12,6 +12,11 @@ BookCard::BookCard(Book b, QWidget *parent, int sales)
     ui->title_label->setText(this->book.getTitle());
     ui->total_revenue_label->hide();
 
+    if(sales != -1){
+        ui->total_revenue_label->show();
+        ui->total_revenue_label->setText("تعداد فروش: " + QString::number(sales));
+    }
+
     StorageUtils::displayBookCover(book.getCoverImagePath(), ui->book_cover);
 
     book_pushbutton = new QPushButton(this);

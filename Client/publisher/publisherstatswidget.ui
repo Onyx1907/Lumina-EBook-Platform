@@ -82,9 +82,9 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>716</width>
-        <height>616</height>
+        <y>-122</y>
+        <width>748</width>
+        <height>718</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -140,6 +140,50 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
 </string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="error_label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>730</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>730</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel {
+    background-color: rgba(93, 37, 25, 0.45);  /* پس‌زمینه شیشه‌ای شرابی/شکلاتی تیره */
+    border: 1px solid rgba(217, 136, 128, 0.35); /* مرز ملو متمایل به رز-گلد شفاف */
+    border-radius: 8px;                         /* گوشه‌های نرم */
+    color: #FADBD8;                             /* رنگ متن صورتی بسیار ملایم و خوانا */
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 8px 16px;                          /* ایجاد فضای تنفس داخلی برای حالت شیشه‌ای */
+    qproperty-alignment: 'AlignCenter';         /* وسط‌چین کردن متن خطا */
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
@@ -251,7 +295,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="books_pushButton">
          <property name="styleSheet">
           <string notr="true">
 QPushButton {
@@ -286,7 +330,7 @@ QPushButton:pressed {
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="bestSellers_label">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -306,7 +350,7 @@ QPushButton:pressed {
     background: transparent;</string>
          </property>
          <property name="text">
-          <string>پرفروش ترین های شما</string>
+          <string>پرفروش ترین های شما (از چپ به راست)</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -314,11 +358,11 @@ QPushButton:pressed {
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="listWidget">
+        <widget class="QListWidget" name="bestSellers_listWidget">
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>200</height>
+           <height>230</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -330,10 +374,19 @@ QPushButton:pressed {
          <property name="styleSheet">
           <string notr="true"/>
          </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::IconMode</enum>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="worstSellers_label">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -353,7 +406,7 @@ QPushButton:pressed {
     background: transparent;</string>
          </property>
          <property name="text">
-          <string>کمترین فروخته شده ها</string>
+          <string>کمترین فروخته شده ها (از چپ به راست)</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -361,11 +414,11 @@ QPushButton:pressed {
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="listWidget_2">
+        <widget class="QListWidget" name="worstSellers_listWidget">
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>200</height>
+           <height>230</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -376,6 +429,15 @@ QPushButton:pressed {
          </property>
          <property name="styleSheet">
           <string notr="true"/>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::IconMode</enum>
          </property>
         </widget>
        </item>

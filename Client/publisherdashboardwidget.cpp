@@ -21,7 +21,7 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     finalLayout->addWidget(ui->containerWidget, 0, 0, Qt::AlignCenter);
     this->setLayout(finalLayout);
 
-    PublisherStatsPage = new PublisherStatsWidget(this);
+    PublisherStatsPage = new PublisherStatsWidget(publisher->getId(), this);
     ProfilePage = new ProfileWidget(publisher, this);
     PublisherBookPage = new PublisherBookWidget(publisher->getId(), this);
     EditBookPage = new EditBookWidget(this, publisher->getId());
