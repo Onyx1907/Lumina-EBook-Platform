@@ -1048,7 +1048,8 @@
           "discountPercent": 10.0,
           "coverImagePath": "/home/user/BookClub_Storage/1700000000000_shahnameh_cover.jpg",
           "pdfPath": "/home/user/BookClub_Storage/1700000000000_shahnameh.pdf",
-          "isActive": 1
+          "isActive": 1,
+          "avgRating": 4.5
         }
       ]
     }
@@ -1065,18 +1066,6 @@
       "stats": {
         "totalBooks": 12,
         "totalRevenue": 2450000.0,
-        "booksRatings": [
-          {
-            "book_id": 10,
-            "title": "شاهنامه فردوسی",
-            "avgRating": 4.8
-          },
-          {
-            "book_id": 11,
-            "title": "دیوان حافظ",
-            "avgRating": 4.9
-          }
-        ],
         "bestSellers": [
           {
             "book_id": 11,
