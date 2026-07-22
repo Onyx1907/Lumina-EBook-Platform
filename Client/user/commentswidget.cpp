@@ -190,7 +190,7 @@ void CommentsWidget::onCommentDeleteRequested(int commentId) {
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
-        data["comment_id"] = bookID;
+        data["comment_id"] = commentId;
 
         ClientNetworkManager::instance().sendRequest("DELETE_COMMENT", data, true);
     }
