@@ -1641,7 +1641,7 @@ QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
     QSqlQuery q(db);
 
     q.prepare("SELECT id, title, author, genre, description, price, "
-              "discountPercent, discountAmount, coverImagePath, pdfPath, isActive "
+              "discountPercent, discountAmount, coverImagePath, pdfPath, isActive, averageRating "
               "FROM books WHERE publisher_id = :publisher AND is_deleted = 0");
     q.bindValue(":publisher", publisherId);
 
@@ -1660,6 +1660,8 @@ QList<QJsonObject> DatabaseManager::getPublisherBooks(int publisherId) {
         b["coverImagePath"]  = q.value("coverImagePath").toString();
         b["pdfPath"]         = q.value("pdfPath").toString();
         b["isActive"]        = q.value("isActive").toInt();
+        b["avgRating"]       = q.value("averageRating").toDouble();
+
         list.append(b);
     }
     return list;
@@ -1696,25 +1698,6 @@ QJsonObject DatabaseManager::getPublisherStats(int publisherId) {
             stats["totalRevenue"] = q.value(0).toDouble();
         else
             stats["totalRevenue"] = 0.0;
-    }
-
-    //میانگین امتیاز هر کتاب ناشر (فقط کتاب های حذف نشده)
-    {
-        QSqlQuery q(db);
-        q.prepare("SELECT id, title, averageRating FROM books WHERE publisher_id = :p AND is_deleted = 0");
-        q.bindValue(":p", publisherId);
-
-        QJsonArray ratingsArr;
-        if (q.exec()) {
-            while (q.next()) {
-                QJsonObject o;
-                o["book_id"]   = q.value("id").toInt();
-                o["title"]     = q.value("title").toString();
-                o["avgRating"] = q.value("averageRating").toDouble();
-                ratingsArr.append(o);
-            }
-        }
-        stats["booksRatings"] = ratingsArr;
     }
 
     //پرفروش ترین کتاب ها (۵ کتاب اول از بین کتاب های حذف نشده)
@@ -1873,7 +1856,7 @@ QList<QJsonObject> DatabaseManager::searchUsers(const QString& keyword, const QS
 //حذف منطقی حساب کاربری
 bool DatabaseManager::deleteUser(int userId) {
     QSqlQuery q(db);
-    // هم پرچم حذف فعال می‌شود و هم برای امنیت دوبل کاربر مسدود میشود
+    // هم پرچم حذف فعال می شود و هم برای امنیت دوبل کاربر مسدود میشود
     q.prepare("UPDATE users SET is_deleted = 1, is_blocked = 1 WHERE id = :id");
     q.bindValue(":id", userId);
     return q.exec();
@@ -1989,7 +1972,7 @@ bool DatabaseManager::adminDeleteBook(int bookId) {
 }
 
 
-//*********************************************سیستم اعلان ها****************************************************
+//****************************************************سیستم اعلان ها**********************************************************
 
 QList<QJsonObject> DatabaseManager::getNotifications(int userId, const QString& role)
 {
@@ -2038,7 +2021,49 @@ bool DatabaseManager::markNotificationRead(int notificationId)
     return false;
 }
 
+//  تغییر خروجی جهت بازگرداندن آیدی سطر جدید
+int DatabaseManager::createNotification(int userId, const QString& role, const QString& type, const QString& message, int relatedId)
+{
+    QSqlQuery q(db);
 
+    q.prepare("INSERT INTO notifications "
+              "(user_id, username, role, type, message, related_id, is_read, created_at) "
+              "VALUES ("
+              "  CASE "
+              "    WHEN :userId > 0 THEN :userId "
+              "    ELSE 0 "
+              "  END, "
+              "  CASE "
+              "    WHEN :userId > 0 THEN (SELECT username FROM users WHERE id = :userId) "
+              "    ELSE '' "
+              "  END, "
+              "  CASE "
+              "    WHEN :r != '' THEN :r "
+              "    WHEN :userId > 0 THEN (SELECT role FROM users WHERE id = :userId) "
+              "    ELSE '' "
+              "  END, "
+              "  :t, :m, :rid, 0, datetime('now'))");
 
+    q.bindValue(":userId", userId);
+    q.bindValue(":r",      role);
+    q.bindValue(":t",      type);
+    q.bindValue(":m",      message);
+    q.bindValue(":rid",    relatedId);
+
+    if (q.exec()) {
+        return q.lastInsertId().toInt(); // برگرداندن آیدیِ اتوماتیکِ ثبت شده
+    }
+    return 0;
+}
+
+QString DatabaseManager::getUsernameById(int userId) {
+    QSqlQuery q(db);
+    q.prepare("SELECT username FROM users WHERE id = :id");
+    q.bindValue(":id", userId);
+    if (q.exec() && q.next()) {
+        return q.value("username").toString();
+    }
+    return "";
+}
 
 

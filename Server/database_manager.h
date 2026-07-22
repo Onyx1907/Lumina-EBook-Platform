@@ -182,13 +182,13 @@ public:
     bool adminDeleteBook(int bookId);
 
 
-    //*********************************************سیستم اعلان ها****************************************************
+    //****************************************************سیستم اعلان ها**********************************************************
 
 
     QList<QJsonObject> getNotifications(int userId, const QString& role);
     bool markNotificationRead(int notificationId);
-
-
+    int createNotification(int userId, const QString& role, const QString& type, const QString& message, int relatedId);
+    QString getUsernameById(int userId);
 
 
 
