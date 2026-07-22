@@ -1446,6 +1446,24 @@ void NetworkWorker::handleSetBookDiscount(QTcpSocket* socket, const QJsonObject&
                          : ".خطا در اعمال تخفیف";
 
     sendJson(socket, resp);
+
+    if (ok) {
+        // استفاده از تابع جدید برای گرفتن اطلاعات مالی و قیمت های محاسبه شده
+        QJsonObject financials = m_dbManager->getBookFinancialDetails(bookId);
+
+        if (!financials.isEmpty()) {
+            QJsonObject b;
+            b["action"] = "BOOK_DISCOUNT_UPDATED";
+            b["book_id"] = bookId;
+            b["price"] = financials.value("price");                  // قیمت اصلی
+            b["discountPercent"] = financials.value("discountPercent"); // درصد تخفیف
+            b["discountAmount"] = financials.value("discountAmount");   // مبلغ تخفیف
+            b["final_price"] = financials.value("final_price");       // قیمت نهایی قابل پرداخت
+
+            emit broadcastRequested(b);
+        }
+    }
+
 }
 
 void NetworkWorker::handleSetBookActiveState(QTcpSocket* socket, const QJsonObject& data) {

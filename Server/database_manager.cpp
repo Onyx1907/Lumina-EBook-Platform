@@ -740,7 +740,7 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
 
     QString queryStr = "SELECT b.id, b.title, b.author, b.genre, b.description, b.price, "
                        "b.discountPercent, b.discountAmount, b.coverImagePath, b.pdfPath, b.publisher_id, b.isActive, "
-                       "IFNULL(NULLIF(u.name, ''), u.username) AS publisher_name "
+                       "IFNULL(NULLIF(u.name, ''), u.name) AS publisher_name "
                        "FROM books b "
                        "JOIN users u ON b.publisher_id = u.id "
                        "WHERE b.isActive = 1";
@@ -988,33 +988,15 @@ bool DatabaseManager::clearCart(int userId) {
 
 //نهایی کردن خرید
 bool DatabaseManager::finalizePurchase(int userId, double clientFinalPrice) {
-    // به دیتابیس میگوییم: یک تراکنش امن باز کن
+    // باز کردن تراکنش امن
     if (!db.transaction()) return false;
 
-    //بررسی وجود کتاب مسدود یا حذف منطقی شده در سبد کاربر
-    QSqlQuery qCheck(db);
-    qCheck.prepare("SELECT COUNT(*) FROM cart c "
-                   "JOIN books b ON c.book_id = b.id "
-                   "WHERE c.user_id = :u AND (b.isActive = 0 OR b.is_deleted = 1)");
-    qCheck.bindValue(":u", userId);
-
-    if (!qCheck.exec() || !qCheck.next()) {
-        db.rollback();
-        return false;
-    }
-
-    if (qCheck.value(0).toInt() > 0) {
-        qDebug() << "Purchase failed: Inactive or deleted books detected.";
-        db.rollback();
-        return false;
-    }
-
-    //محاسبه مجموع قیمت زنده دیتابیس برای این سبد خرید
+    //محاسبه مجموع قیمت زنده فـقـط برای کتاب های فعال و معتبر در سبد خرید
     QSqlQuery qPrice(db);
     qPrice.prepare("SELECT SUM(b.price - (b.price * (b.discountPercent / 100.0))) "
                    "FROM cart c "
                    "JOIN books b ON c.book_id = b.id "
-                   "WHERE c.user_id = :u");
+                   "WHERE c.user_id = :u AND b.isActive = 1 AND b.is_deleted = 0");
     qPrice.bindValue(":u", userId);
 
     if (!qPrice.exec() || !qPrice.next()) {
@@ -1024,16 +1006,18 @@ bool DatabaseManager::finalizePurchase(int userId, double clientFinalPrice) {
 
     double dbFinalPrice = qPrice.value(0).toDouble();
 
-    // مقایسه قیمت کلاینت با قیمت واقعی دیتابیس (با احتساب خطای اعشار در دابل)
+    // مقایسه قیمت کلاینت با قیمت واقعیِ کتاب های معتبر دیتابیس
     if (qAbs(clientFinalPrice - dbFinalPrice) > 0.01) {
         qDebug() << "Purchase failed: Prices do not match. DB:" << dbFinalPrice << "Client:" << clientFinalPrice;
-        db.rollback(); // لغو تراکنش به دلیل تغییر قیمت توسط ناشر
+        db.rollback();
         return false;
     }
 
-    // خواندن کتاب های داخل سبد خرید
+    //خواندنِ فـقـط کتاب های فعال و معتبرِ داخل سبد خرید (کتاب های مسدود خودکار رد می شوند)
     QSqlQuery q(db);
-    q.prepare("SELECT book_id FROM cart WHERE user_id = :u");
+    q.prepare("SELECT c.book_id FROM cart c "
+              "JOIN books b ON c.book_id = b.id "
+              "WHERE c.user_id = :u AND b.isActive = 1 AND b.is_deleted = 0");
     q.bindValue(":u", userId);
 
     if (!q.exec()) {
@@ -1043,7 +1027,7 @@ bool DatabaseManager::finalizePurchase(int userId, double clientFinalPrice) {
 
     const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
 
-    // شروع حلقه روی کتاب های سبد خرید
+    // شروع حلقه روی کتاب های معتبرِ سبد خرید
     while (q.next()) {
         int bookId = q.value(0).toInt();
 
@@ -1054,7 +1038,7 @@ bool DatabaseManager::finalizePurchase(int userId, double clientFinalPrice) {
         check.bindValue(":b", bookId);
 
         if (check.exec() && check.next()) {
-            continue;
+            continue; // اگر قبلا خریده رد شو
         }
 
         // درج کتاب در کتابخانه کاربر
@@ -1071,16 +1055,15 @@ bool DatabaseManager::finalizePurchase(int userId, double clientFinalPrice) {
         }
     }
 
-    // پاک کردن سبد خرید بعد از اتمام حلقه
+    //پاک کردن کل سبد خرید بعد از اتمام خریدِ اقلام معتبر
     if (!clearCart(userId)) {
         db.rollback();
         return false;
     }
 
-    // همه چیز عالی بود! حالا تغییرات را ماندگار کن
+    // تایید نهایی تراکنش
     return db.commit();
 }
-
 
 //*********************************************پنل کاربر عادی ( ماژول 5 )****************************************************
 
@@ -1568,7 +1551,7 @@ bool DatabaseManager::updateBook(int bookId, const QJsonObject& bookData) {
 
 // اعمال تخفیف (با محاسبه خودکار بر اساس قیمت موجود در دیتابیس)
 bool DatabaseManager::setBookDiscount(int bookId, int publisherId, double percent) {
-    // ابتدا قیمت کتاب را بیرون می‌کشیم تا بر اساس آن تخفیف عددی را حساب کنیم
+    // ابتدا قیمت کتاب را بیرون میکشیم تا بر اساس آن تخفیف عددی را حساب کنیم
     QSqlQuery qPrice(db);
     qPrice.prepare("SELECT price FROM books WHERE id = :id AND publisher_id = :publisher AND is_deleted = 0");
     qPrice.bindValue(":id", bookId);
@@ -1590,6 +1573,34 @@ bool DatabaseManager::setBookDiscount(int bookId, int publisherId, double percen
     q.bindValue(":publisher", publisherId);
 
     return q.exec();
+}
+
+QJsonObject DatabaseManager::getBookFinancialDetails(int bookId) {
+    QJsonObject financialData;
+    QSqlQuery q(db);
+
+    q.prepare("SELECT price, discountPercent, discountAmount "
+              "FROM books WHERE id = :id AND isActive = 1 AND is_deleted = 0");
+    q.bindValue(":id", bookId);
+
+    if (!q.exec() || !q.next()) {
+        return financialData; // اگر کتاب پیدا نشد، غیرفعال بود یا حذف شده بود، جیسون خالی برمیگرداند
+    }
+
+    double price = q.value("price").toDouble();
+    double discountPercent = q.value("discountPercent").toDouble();
+    double discountAmount = q.value("discountAmount").toDouble();
+
+    // محاسبه قیمت نهایی (قیمت اصلی منهای مبلغ تخفیف)
+    double finalPrice = price - discountAmount;
+
+    financialData["book_id"] = bookId;
+    financialData["price"] = price;
+    financialData["discountPercent"] = discountPercent;
+    financialData["discountAmount"] = discountAmount;
+    financialData["final_price"] = finalPrice;
+
+    return financialData;
 }
 
 // فعال/غیر فعال کردن کتاب
