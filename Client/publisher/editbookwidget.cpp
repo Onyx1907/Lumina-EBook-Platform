@@ -228,3 +228,9 @@ void EditBookWidget::processNetworkData(const QString& action, const QJsonObject
         });
     }
 }
+
+void EditBookWidget::on_back_pushButton_clicked()
+{
+    emit back();
+}
+

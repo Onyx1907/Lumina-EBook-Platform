@@ -4,7 +4,10 @@
 #include "constants.h"
 #include "storageutils.h"
 #include <QFont>
+#include <QMessageBox>
 #include "clientnetworkmanager.h"
+#include <QInputDialog>
+
 
 SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     : QWidget(parent), book(obj["id"].toInt(),
@@ -72,16 +75,59 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &SharedBookCard::handleCheckIsActive);
+
+    connect(ui->delete_pushButton, &QPushButton::clicked, this, [this]() {
+        QMessageBox msgBox(this);
+        msgBox.setWindowTitle("حذف کتاب");
+        msgBox.setText("آیا از حذف این کتاب مطمئن هستید؟");
+        msgBox.setIcon(QMessageBox::Question);
+
+
+        QPushButton *yesButton = msgBox.addButton("بله، حذف شود", QMessageBox::YesRole);
+        QPushButton *noButton = msgBox.addButton("خیر", QMessageBox::NoRole);
+        msgBox.setDefaultButton(noButton);
+
+        // 🎨 جادوی QSS برای شیک کردن کل بدنه و دکمه‌های QMessageBox
+        msgBox.setStyleSheet(
+            "QMessageBox {"
+            "   background-color: #1A1512;" // پس‌زمینه تیره نسکافه‌ای
+            "   border: 1px solid #C19A6B;" // مرز طلایی/نسکافه‌ای ملایم
+            "   border-radius: 12px;"
+            "}"
+            "QLabel {"
+            "   color: #E6D7C3;" // رنگ متن کرم روشن
+            "   font-family: 'Segoe UI', 'Tahoma';"
+            "   font-size: 13px;"
+            "   padding: 10px;"
+            "}"
+            "QPushButton {"
+            "   background-color: rgba(193, 154, 107, 0.15);"
+            "   border: 1px solid rgba(193, 154, 107, 0.4);"
+            "   border-radius: 6px;"
+            "   color: #E6D7C3;"
+            "   font-family: 'Segoe UI', 'Tahoma';"
+            "   font-size: 11px;"
+            "   min-width: 80px;"
+            "   padding: 6px;"
+            "}"
+            "QPushButton:hover {"
+            "   background-color: #C19A6B;"
+            "   color: #1E1914;" // متن تیره موقع هاور برای خوانایی
+            "   font-weight: bold;"
+            "}"
+            );
+
+        msgBox.exec();
+
+        if (msgBox.clickedButton() == yesButton) {
+            emit deleteRequested(book.getId());
+        }
+    });
 }
 
 SharedBookCard::~SharedBookCard()
 {
     delete ui;
-}
-
-void SharedBookCard::on_delete_pushButton_clicked()
-{
-    emit deleteRequested(book.getId());
 }
 
 
@@ -93,7 +139,34 @@ void SharedBookCard::on_edit_pushButton_clicked()
 
 void SharedBookCard::on_discount_pushButton_clicked()
 {
-    emit discountRequested(book.getId());
+    QInputDialog inputDialog(this);
+    inputDialog.setWindowTitle("اعمال تخفیف");
+    inputDialog.setLabelText("اعداد بیشتر از ۱۰۰ به عنوان مبلغ و"
+                             " کمتر از ۱۰۰ به عنوان درصد تخفیف محاسیه میشود");
+
+    inputDialog.setInputMode(QInputDialog::IntInput);
+    inputDialog.setIntRange(0, book.getPrice());
+
+    inputDialog.setStyleSheet(
+        "QInputDialog { background-color: #1A1512; border: 1px solid #C19A6B; border-radius: 12px; }"
+        "QLabel { color: #E6D7C3; font-family: 'Segoe UI', 'Tahoma'; font-size: 13px;  }"
+        "QLineEdit { background-color: #261F1A; border: 1px solid rgba(193, 154, 107, 0.4); border-radius: 6px; color: #FFF; padding: 6px; font-family: 'Segoe UI', 'Tahoma'; selection-background-color: #C19A6B; }"
+        "QPushButton { background-color: rgba(193, 154, 107, 0.15); border: 1px solid rgba(193, 154, 107, 0.4); border-radius: 6px; color: #E6D7C3; font-family: 'Segoe UI', 'Tahoma'; font-size: 11px; min-width: 80px; padding: 6px; }"
+        "QPushButton:hover { background-color: #C19A6B; color: #1E1914; font-weight: bold; }"
+        );
+
+    inputDialog.setOkButtonText("اعمال تخفیف");
+    inputDialog.setCancelButtonText("انصراف");
+
+    if (inputDialog.exec() == QDialog::Accepted) {
+        int value = inputDialog.intValue();
+        if(value > 100){
+            emit discountRequested(book.getId(), (value/book.getPrice()) * 100.0);
+        }
+        else{
+            emit discountRequested(book.getId(), value);
+        }
+    }
 }
 
 
@@ -101,12 +174,13 @@ void SharedBookCard::on_active_checkBox_toggled(bool checked)
 {
     old_active_state = !checked;
 
-    emit changeActiveRequested(book.getId(), checked);
     ui->active_checkBox->setEnabled(false);
 
     QTimer::singleShot(10000, this, [this](){
         ui->active_checkBox->setEnabled(true);
     });
+
+    emit changeActiveRequested(book.getId(), checked);
 }
 
 

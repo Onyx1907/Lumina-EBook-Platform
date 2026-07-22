@@ -35,33 +35,79 @@
     padding: 0px;                 /* اطمینان از نبود پدینگ اضافه */
 }</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QLabel" name="cover_pix">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>160</width>
-         <height>210</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>210</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QPushButton" name="back_pushButton">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>38</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">
+QPushButton {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه‌ای */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+    font-size: 14px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود: غلیظ‌تر، تیره تر و کاملا مشخص) */
+QPushButton:hover {
+    background-color: rgba(93, 58, 25, 0.65); /* قهوه‌ای نسکافه‌ای تیره و غلیظ */
+    border: 1px solid #8B5A2B; /* مرز قهوه‌ای سوخته */
+    color: #F7DC6F; /* تغییر رنگ متن به طلایی درخشان برای افکت جذاب‌تر */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود: تاریک‌ترین و فشرده‌ترین حالت) */
+QPushButton:pressed {
+    background-color: rgba(54, 33, 13, 0.85); /* قهوه‌ای اسپرسو بسیار تیره و سنگین */
+    border: 1px solid #4A2E14;
+    padding-left: 16px; /* همان افکت کلیک ملو و قشنگ شما */
+}
+</string>
+         </property>
+         <property name="text">
+          <string>برگشت</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="cover_pix">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>190</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>150</width>
+           <height>210</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -91,7 +137,7 @@ QLineEdit:focus {
 }</string>
          </property>
          <property name="placeholderText">
-          <string>بوستان</string>
+          <string>عنوان کتاب</string>
          </property>
         </widget>
        </item>
@@ -121,7 +167,7 @@ QLineEdit:focus {
 }</string>
          </property>
          <property name="placeholderText">
-          <string>حافظ</string>
+          <string>پدیدآورنده</string>
          </property>
         </widget>
        </item>

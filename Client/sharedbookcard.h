@@ -20,13 +20,11 @@ public:
 signals:
     void editRequested(int bookID);
     void deleteRequested(int bookID);
-    void discountRequested(int bookID);
+    void discountRequested(int bookID, double discount);
     void changeActiveRequested(int bookID, bool isActive);
     void goToPDF(QString path);
 
 private slots:
-    void on_delete_pushButton_clicked();
-
     void on_edit_pushButton_clicked();
 
     void on_discount_pushButton_clicked();

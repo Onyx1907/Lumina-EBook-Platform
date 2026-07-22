@@ -29,6 +29,8 @@ private slots:
 
     void on_submit_pushButton_clicked();
 
+    void on_back_pushButton_clicked();
+
 private:
     Ui::EditBookWidget *ui;
     int m_bookID = -1;
