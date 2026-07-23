@@ -1867,7 +1867,78 @@ void NetworkWorker::handleAdminDeleteBook(QTcpSocket* socket, const QJsonObject&
 
 //****************************************************سیستم اعلان ها**********************************************************
 
+void NetworkWorker::handleGetNotifications(QTcpSocket* socket, const QJsonObject& data) {
+    // استخراج مقادیر متناسب با ورودی های تابع دیتابیس
+    const int userId = data.value("user_id").toInt();
+    const QString role = data.value("role").toString();
 
+    QList<QJsonObject> list = m_dbManager->getNotifications(userId, role);
 
+    QJsonArray arr;
+    for (const QJsonObject& n : std::as_const(list))
+        arr.append(n);
+
+    QJsonObject resp;
+    resp["action"] = "GET_NOTIFICATIONS_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["notifications"] = arr;
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleMarkNotificationRead(QTcpSocket* socket, const QJsonObject& data) {
+    const int id = data.value("notification_id").toInt();
+    const bool ok = m_dbManager->markNotificationRead(id);
+
+    QJsonObject resp;
+    resp["action"] = "MARK_NOTIFICATION_READ_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    sendJson(socket, resp);
+}
+
+void NetworkWorker::handleCreateNotification(QTcpSocket* socket, const QJsonObject& data) {
+    const int userId = data.value("user_id").toInt();
+    const QString role = data.value("role").toString();
+    const QString type = data.value("type").toString();
+    const QString messageText = data.value("message").toString();
+    const int relatedId = data.value("related_id").toInt();
+
+    //صدا زدن تابع دیتابیس بدون یوزرنیم (امضای جدید)
+    int newNotifId = m_dbManager->createNotification(userId, role, type, messageText, relatedId);
+    bool ok = (newNotifId > 0);
+
+    QString statusMessage = "خطا در فرآیند ایجاد اعلان.";
+
+    if (ok) {
+        QJsonObject notifObj;
+        notifObj["action"] = "NEW_NOTIFICATION_RECEIVED";
+        notifObj["id"] = newNotifId;
+        notifObj["role"] = role;
+        notifObj["type"] = type;
+        notifObj["message"] = messageText;
+        notifObj["related_id"] = relatedId;
+        notifObj["is_read"] = 0;
+        notifObj["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+
+        if (userId > 0) {
+            statusMessage = ".اعلان شخصی با موفقیت ثبت و به صورت آنی ارسال شد";
+
+            // کشف نام کاربری فقط برای اینکه سیگنال شبکه بدانید پکت را به کدام کلاینت آنلاین بفرستد
+            QString targetUser = m_dbManager->getUsernameById(userId);
+
+            emit notificationTriggered(targetUser, notifObj);
+        }
+        else if (!role.isEmpty()) {
+            statusMessage = ".اعلان عمومی با موفقیت ثبت و برای دارندگان این نقش پخش همگانی شد";
+            emit roleBroadcastRequested(notifObj);
+        }
+    }
+
+    QJsonObject resp;
+    resp["action"] = "CREATE_NOTIFICATION_RESPONSE";
+    resp["status"] = ok ? "SUCCESS" : "ERROR";
+    resp["message"] = statusMessage;
+
+    sendJson(socket, resp);
+}
 
 

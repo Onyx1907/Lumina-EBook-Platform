@@ -167,7 +167,9 @@ private:
 
     //****************************************************سیستم اعلان ها**********************************************************
 
-
+    void handleGetNotifications(QTcpSocket* socket, const QJsonObject& data);
+    void handleMarkNotificationRead(QTcpSocket* socket, const QJsonObject& data);
+    void handleCreateNotification(QTcpSocket* socket, const QJsonObject& data);
 
 
 
