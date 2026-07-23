@@ -450,6 +450,15 @@
       "action": "COMMENT_UPDATED",
       "book_id": 10,
       "type": "ADD"
+    },
+    "server_notification_on_success": {
+      "action": "NEW_NOTIFICATION_RECEIVED",
+      "id": 45,
+      "type": "NEW_COMMENT",
+      "message": ".برای کتاب شما (نام کتاب) نظر یا امتیاز جدیدی ثبت شد",
+      "related_id": 10,
+      "is_read": 0,
+      "created_at": "2026-06-06 14:30:00"
     }
   },
   "20_EDIT_COMMENT": {
@@ -601,7 +610,16 @@
     "action": "FINALIZE_PURCHASE_RESPONSE",
     "status": "ERROR",
     "message": ".قیمت یا موجودی کتاب‌ها تغییر یافته است. سبد خرید شما به‌روزرسانی می‌شود"
-  }
+  },
+  "server_notification_on_success": {
+      "action": "NEW_NOTIFICATION_RECEIVED",
+      "id": 50,
+      "type": "BOOK_SOLD",
+      "message": ".کتاب شما (نام کتاب) با موفقیت فروخته شد",
+      "related_id": 0,
+      "is_read": 0,
+      "created_at": "2026-06-06 14:35:00"
+    }
 }
   
 ,
@@ -919,6 +937,15 @@
       "action": "ADD_BOOK_RESPONSE",
       "status": "FAILED",
       "message": ".خطا در ثبت اطلاعات کتاب در پایگاه داده"
+    },
+    "server_notification_on_success": {
+      "action": "NEW_NOTIFICATION_RECEIVED",
+      "id": 60,
+      "type": "NEW_BOOK_GENRE",
+      "message": ".کتاب جدیدی در ژانر مورد علاقه شما (حماسی) با نام «شاهنامه فردوسی» اضافه شد",
+      "related_id": 1,
+      "is_read": 0,
+      "created_at": "2026-06-06 14:40:00"
     }
   },
 "43_UPDATE_BOOK": {
@@ -982,7 +1009,7 @@
       "action": "SET_BOOK_DISCOUNT_RESPONSE",
       "status": "ERROR",
       "message": ".خطا در اعمال تخفیف"
-    }
+    },
      "server_broadcast_on_success": {
     "action": "BOOK_DISCOUNT_UPDATED",
     "book_id": 12,
@@ -990,7 +1017,16 @@
     "discountPercent": 20,
     "discountAmount": 30000,
     "final_price": 120000
-  }
+  },
+   "server_notification_on_success": {
+      "action": "NEW_NOTIFICATION_RECEIVED",
+      "id": 70,
+      "type": "BOOK_DISCOUNT",
+      "message": "!کتاب «نام کتاب» که آن را ذخیره کرده بودید، تخفیف خورد",
+      "related_id": 10,
+      "is_read": 0,
+      "created_at": "2026-06-06 14:45:00"
+    }
   },
   "45_SET_BOOK_ACTIVE_STATE": {
     "client_request": {
