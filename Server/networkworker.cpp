@@ -1543,10 +1543,10 @@ void NetworkWorker::handleSetBookDiscount(QTcpSocket* socket, const QJsonObject&
         }
 
         //گرفتن عنوان کتاب برای متن اعلان
-        QString bookTitle = m_dbManager->getBookTitleById(bookId);
+        QString bookTitle = m_dbManager->getBookTitle(bookId);
 
         // پیدا کردن کاربرانی که این کتاب را در جدول saved_books ذخیره کرده اند
-        QList<InterestedUser> savedUsers = m_dbManager->getBookTitle(bookId);
+        QList<InterestedUser> savedUsers = m_dbManager->getUsersWhoSavedBook(bookId);
         QString messageText = QString("!کتاب «%1» که آن را ذخیره کرده بودید، تخفیف خورد").arg(bookTitle);
 
         for (const auto& user : savedUsers) {
