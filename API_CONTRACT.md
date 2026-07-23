@@ -1070,11 +1070,13 @@
           {
             "book_id": 11,
             "title": "دیوان حافظ",
+            "coverImagePath": "/home/username/BookClub_Storage/hafez_cover.jpg",
             "salesCount": 150
           },
           {
             "book_id": 10,
             "title": "شاهنامه فردوسی",
+            "coverImagePath": "/home/username/BookClub_Storage/shahnameh_cover.jpg",
             "salesCount": 120
           }
         ],
@@ -1082,11 +1084,13 @@
           {
             "book_id": 15,
             "title": "کتاب نمونه آزمایشی",
+            "coverImagePath": "/home/username/BookClub_Storage/sample_cover.jpg",
             "salesCount": 0
           },
           {
             "book_id": 12,
             "title": "گلستان سعدی",
+            "coverImagePath": "/home/username/BookClub_Storage/golestan_cover.jpg",
             "salesCount": 5
           }
         ]
