@@ -25,58 +25,427 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>40</y>
-     <width>121</width>
-     <height>91</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>TextLabel</string>
+  <property name="styleSheet">
+   <string notr="true">
+QListWidget {
+    background-color: rgba(245, 230, 211, 0.65); /* ۶۵ درصد کدر، بقیه شفاف برای دیدن بک‌گراند */
+    border: 2px solid rgba(111, 78, 55, 0.8); /* حاشیه قهوه‌ای با کمی شفافیت */
+    border-radius: 10px;
+    padding: 5px;
+}
+
+/* استایل کلی اسکرول‌بار افقی */
+QScrollBar:horizontal {
+    background: transparent;
+    height: 8px; /* ارتفاع ظریف و باریک */
+    margin: 0px;
+}
+
+/* دستگیره (کشویی) اسکرول‌بار */
+QScrollBar::handle:horizontal {
+    background: rgba(111, 78, 55, 0.6); /* دستگیره قهوه‌ای نیمه شفاف */
+    border-radius: 4px;
+    min-width: 20px; /* حداقل طول دستگیره موقع اسکرول */
+}
+
+/* حالت هاور (وقتی ماوس روی اسکرول‌بار افقی می‌رود) */
+QScrollBar::handle:horizontal:hover {
+    background: rgba(139, 90, 43, 0.8); /* قهوه‌ای نسکافه‌ای پررنگ‌تر */
+}
+
+/* حذف دکمه‌های چپ و راستِ انتهای اسکرول‌بار برای حفظ ظاهر مدرن */
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    background: none;
+    width: 0px; /* پهنای دکمه‌ها را صفر می‌کنیم */
+}
+
+/* حذف فضای خالی پس‌زمینه پشت دکمه‌ها (در صورت وجود) */
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>-122</y>
+        <width>748</width>
+        <height>718</height>
+       </rect>
       </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>TextLabel</string>
+      <property name="styleSheet">
+       <string notr="true">/* ۱. بوم اصلی صفحه (پشت ویجت‌ها) که ویدیو زیر آن پخش می‌شود */
+QWidget#scrollAreaWidgetContents {
+    /* یک لایه شفاف نسکافه‌ای روشن روی ویدیو می‌کشد */
+    background-color: rgba(235, 220, 203, 0.45); 
+}
+
+/* ۲. حذف کامل کادر و پس‌زمینه اسکرول‌اریا برای دیده شدن ویدیو */
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+QListWidget {
+    background-color: rgba(245, 230, 211, 0.65); /* ۶۵ درصد کدر، بقیه شفاف برای دیدن بک‌گراند */
+    border: 2px solid rgba(111, 78, 55, 0.8); /* حاشیه قهوه‌ای با کمی شفافیت */
+    border-radius: 10px;
+    padding: 5px;
+}
+
+/* استایل کلی اسکرول‌بار افقی */
+QScrollBar:horizontal {
+    background: transparent;
+    height: 8px; /* ارتفاع ظریف و باریک */
+    margin: 0px;
+}
+
+/* دستگیره (کشویی) اسکرول‌بار */
+QScrollBar::handle:horizontal {
+    background: rgba(111, 78, 55, 0.6); /* دستگیره قهوه‌ای نیمه شفاف */
+    border-radius: 4px;
+    min-width: 20px; /* حداقل طول دستگیره موقع اسکرول */
+}
+
+/* حالت هاور (وقتی ماوس روی اسکرول‌بار افقی می‌رود) */
+QScrollBar::handle:horizontal:hover {
+    background: rgba(139, 90, 43, 0.8); /* قهوه‌ای نسکافه‌ای پررنگ‌تر */
+}
+
+/* حذف دکمه‌های چپ و راستِ انتهای اسکرول‌بار برای حفظ ظاهر مدرن */
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    background: none;
+    width: 0px; /* پهنای دکمه‌ها را صفر می‌کنیم */
+}
+
+/* حذف فضای خالی پس‌زمینه پشت دکمه‌ها (در صورت وجود) */
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+</string>
       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="error_label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>730</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>730</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel {
+    background-color: rgba(93, 37, 25, 0.45);  /* پس‌زمینه شیشه‌ای شرابی/شکلاتی تیره */
+    border: 1px solid rgba(217, 136, 128, 0.35); /* مرز ملو متمایل به رز-گلد شفاف */
+    border-radius: 8px;                         /* گوشه‌های نرم */
+    color: #FADBD8;                             /* رنگ متن صورتی بسیار ملایم و خوانا */
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 8px 16px;                          /* ایجاد فضای تنفس داخلی برای حالت شیشه‌ای */
+    qproperty-alignment: 'AlignCenter';         /* وسط‌چین کردن متن خطا */
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QLabel" name="total_books">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">    font-size: 14px;
+    font-weight: bold;
+    color: #3E2723; /* تیره کردن رنگ برای خوانایی عالی روی پس‌زمینه متحرک */
+    background: transparent;</string>
+             </property>
+             <property name="text">
+              <string>کل کتاب های منتشر شده شما:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="total_books_label">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">    font-size: 16px;
+    font-weight: bold;
+    color: #5D4037; /* قهوه‌ای کلاسیک پررنگ */</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QLabel" name="total_revenue">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">    font-size: 14px;
+    font-weight: bold;
+    color: #3E2723; /* تیره کردن رنگ برای خوانایی عالی روی پس‌زمینه متحرک */
+    background: transparent;</string>
+             </property>
+             <property name="text">
+              <string>کل مبلغ فروش شما:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="total_revenue_label">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">    font-size: 16px;
+    font-weight: bold;
+    color: #5D4037; /* قهوه‌ای کلاسیک پررنگ */</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="books_pushButton">
+         <property name="styleSheet">
+          <string notr="true">
+QPushButton {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه‌ای */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+    font-size: 14px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود: غلیظ‌تر، تیره تر و کاملا مشخص) */
+QPushButton:hover {
+    background-color: rgba(93, 58, 25, 0.65); /* قهوه‌ای نسکافه‌ای تیره و غلیظ */
+    border: 1px solid #8B5A2B; /* مرز قهوه‌ای سوخته */
+    color: #F7DC6F; /* تغییر رنگ متن به طلایی درخشان برای افکت جذاب‌تر */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود: تاریک‌ترین و فشرده‌ترین حالت) */
+QPushButton:pressed {
+    background-color: rgba(54, 33, 13, 0.85); /* قهوه‌ای اسپرسو بسیار تیره و سنگین */
+    border: 1px solid #4A2E14;
+    padding-left: 16px; /* همان افکت کلیک ملو و قشنگ شما */
+}</string>
+         </property>
+         <property name="text">
+          <string>مشاهده همه کتاب ها و میانگین امتیازات</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="bestSellers_label">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">    font-size: 14px;
+    font-weight: bold;
+    color: #3E2723; /* تیره کردن رنگ برای خوانایی عالی روی پس‌زمینه متحرک */
+    background: transparent;</string>
+         </property>
+         <property name="text">
+          <string>پرفروش ترین های شما (از چپ به راست)</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="bestSellers_listWidget">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>230</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>400</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::IconMode</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="worstSellers_label">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">    font-size: 14px;
+    font-weight: bold;
+    color: #3E2723; /* تیره کردن رنگ برای خوانایی عالی روی پس‌زمینه متحرک */
+    background: transparent;</string>
+         </property>
+         <property name="text">
+          <string>کمترین فروخته شده ها (از چپ به راست)</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="worstSellers_listWidget">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>230</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>400</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::IconMode</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="">
-   <property name="geometry">
-    <rect>
-     <x>560</x>
-     <y>30</y>
-     <width>111</width>
-     <height>91</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

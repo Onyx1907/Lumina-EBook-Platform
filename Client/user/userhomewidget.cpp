@@ -17,22 +17,6 @@ UserHomeWidget::UserHomeWidget(int ID, QWidget *parent)
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &UserHomeWidget::processNetworkData);
-
-
-    ui->recommended_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    ui->recommended_listWidget->verticalScrollBar()->setSingleStep(15);
-
-    ui->popular_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    ui->popular_listWidget->verticalScrollBar()->setSingleStep(15);
-
-    ui->new_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    ui->new_listWidget->verticalScrollBar()->setSingleStep(15);
-
-    ui->bestSellers_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    ui->bestSellers_listWidget->verticalScrollBar()->setSingleStep(15);
-
-    ui->free_listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    ui->free_listWidget->verticalScrollBar()->setSingleStep(15);
 }
 
 

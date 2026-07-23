@@ -18,6 +18,7 @@ PublisherBookWidget::PublisherBookWidget(int publisherID, QWidget *parent)
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &PublisherBookWidget::processNetworkData);
+
 }
 
 void PublisherBookWidget::loadBooks(){
@@ -52,12 +53,14 @@ PublisherBookWidget::~PublisherBookWidget()
 
 void PublisherBookWidget::processNetworkData(const QString& action, const QJsonObject& data){
     if(action != "GET_PUBLISHER_BOOKS_RESPONSE" &&
-        action != "SET_BOOK_ACTIVE_STATE_RESPONSE"){
+        action != "SET_BOOK_ACTIVE_STATE_RESPONSE" &&
+        action != "PUBLISHER_DELETE_BOOK_RESPONSE" &&
+        action != "SET_BOOK_DISCOUNT_RESPONSE"){
         return;
     }
 
-    if (action == "SET_BOOK_ACTIVE_STATE_RESPONSE" &&
-        data.value("status").toString() != "SUCCESS"){
+    if (action == "SET_BOOK_ACTIVE_STATE_RESPONSE" ||
+         action == "PUBLISHER_DELETE_BOOK_RESPONSE"){
         loadBooks();
     }
 
@@ -74,14 +77,8 @@ void PublisherBookWidget::processNetworkData(const QString& action, const QJsonO
     if(action == "GET_PUBLISHER_BOOKS_RESPONSE"){
         handleGetBooks(data);
     }
-    else if (action == "SET_BOOK_ACTIVE_STATE_RESPONSE"){
-        ui->error_label->show();
-        ui->error_label->setText(data["message"].toString());
-        QTimer::singleShot(3000, this, [this](){
-            ui->error_label->setText("");
-            ui->error_label->hide();
-            loadBooks();
-        });
+    else if(action == "SET_BOOK_DISCOUNT_RESPONSE"){
+        loadBooks();
     }
 
 }
@@ -110,6 +107,12 @@ void PublisherBookWidget::handleGetBooks(const QJsonObject& data){
         connect(itemWidget, &SharedBookCard::goToPDF, this, [this](QString path){
             emit PDFreader(path);
         });
+
+        connect(itemWidget, &SharedBookCard::deleteRequested, this,
+                &PublisherBookWidget::deleteBookRequested);
+
+        connect(itemWidget, &SharedBookCard::discountRequested, this,
+                &PublisherBookWidget::setDiscountRequested);
     }
 }
 
@@ -129,6 +132,47 @@ void PublisherBookWidget::checkIsActiveRequested(int bookID, bool isActive){
         data["active"] = isActive;
 
         ClientNetworkManager::instance().sendRequest("SET_BOOK_ACTIVE_STATE", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+
+void PublisherBookWidget::deleteBookRequested(int bookID){
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+        data["publisher_id"] = m_publisherID;
+        data["book_id"] = bookID;
+
+        ClientNetworkManager::instance().sendRequest("PUBLISHER_DELETE_BOOK", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+
+void PublisherBookWidget::setDiscountRequested(int bookID, double percent){
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+        data["publisher_id"] = m_publisherID;
+        data["book_id"] = bookID;
+        data["discountPercent"] = percent;
+
+        ClientNetworkManager::instance().sendRequest("SET_BOOK_DISCOUNT", data, true);
     }
     else{
         ui->error_label->show();

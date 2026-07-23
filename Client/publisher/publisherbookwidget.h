@@ -31,6 +31,10 @@ private slots:
 
         void checkIsActiveRequested(int bookID, bool isActive);
 
+        void deleteBookRequested(int bookID);
+
+        void setDiscountRequested(int bookID, double percent);
+
     private:
     Ui::PublisherBookWidget *ui;
     int m_publisherID;

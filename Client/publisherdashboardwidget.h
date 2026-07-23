@@ -7,6 +7,7 @@
 #include "publisherbookwidget.h"
 #include "editbookwidget.h"
 #include "bookreaderwidget.h"
+#include "publisherstatswidget.h"
 
 namespace Ui {
 class PublisherDashboardWidget;
@@ -25,6 +26,8 @@ private slots:
 
     void on_books_pushButton_clicked();
 
+    void on_home_pushButton_clicked();
+
 private:
     Ui::PublisherDashboardWidget *ui;
 
@@ -32,16 +35,18 @@ private:
 
     Publisher *publisher;
 
+    PublisherStatsWidget *PublisherStatsPage;
     ProfileWidget *ProfilePage;
     PublisherBookWidget* PublisherBookPage;
     EditBookWidget *EditBookPage;
     BookReaderWidget *BookReaderPage;
 
     enum Page{
-        ProfilePageIndex = 0,
-        PublisherBookPageIndex = 1,
-        EditBookPageIndex = 2,
-        BookReaderPageIndex = 3
+        PublisherStatsPageIndex = 0,
+        ProfilePageIndex = 1,
+        PublisherBookPageIndex = 2,
+        EditBookPageIndex = 3,
+        BookReaderPageIndex = 4
     };
 };
 

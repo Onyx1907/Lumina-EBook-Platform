@@ -15,7 +15,7 @@ class BookCard : public QWidget
     Q_OBJECT
 
 public:
-    explicit BookCard(Book book, QWidget *parent = nullptr);
+    explicit BookCard(Book book, QWidget *parent = nullptr, int sales = -1);
     ~BookCard();
 
 signals:

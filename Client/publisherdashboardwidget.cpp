@@ -21,15 +21,20 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     finalLayout->addWidget(ui->containerWidget, 0, 0, Qt::AlignCenter);
     this->setLayout(finalLayout);
 
+    PublisherStatsPage = new PublisherStatsWidget(publisher->getId(), this);
     ProfilePage = new ProfileWidget(publisher, this);
     PublisherBookPage = new PublisherBookWidget(publisher->getId(), this);
     EditBookPage = new EditBookWidget(this, publisher->getId());
     BookReaderPage = new BookReaderWidget(-1, this);
 
+    ui->stackedWidget->addWidget(PublisherStatsPage);
     ui->stackedWidget->addWidget(ProfilePage);
     ui->stackedWidget->addWidget(PublisherBookPage);
     ui->stackedWidget->addWidget(EditBookPage);
     ui->stackedWidget->addWidget(BookReaderPage);
+
+    ui->home_pushButton->setChecked(true);
+    ui->stackedWidget->setCurrentIndex(Page::PublisherStatsPageIndex);
 
     //ایجاد کتاب جدید
     connect(PublisherBookPage, &PublisherBookWidget::addBook, this, [this](){
@@ -54,6 +59,11 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     });
 
     connect(BookReaderPage, &BookReaderWidget::back, this, [this](){
+       fadeToPage(PublisherBookPageIndex);
+    });
+
+    //رفتن به همه کتاب ها از طریق صفحه داشبورد
+    connect(PublisherStatsPage, &PublisherStatsWidget::goToBooks, this, [this](){
        fadeToPage(PublisherBookPageIndex);
     });
 }
@@ -121,5 +131,11 @@ void PublisherDashboardWidget::on_profile_pushButton_clicked()
 void PublisherDashboardWidget::on_books_pushButton_clicked()
 {
     fadeToPage(Page::PublisherBookPageIndex);
+}
+
+
+void PublisherDashboardWidget::on_home_pushButton_clicked()
+{
+    fadeToPage(Page::PublisherStatsPageIndex);
 }
 
