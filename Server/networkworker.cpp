@@ -1548,6 +1548,38 @@ void NetworkWorker::handleGetPublisherStats(QTcpSocket* socket, const QJsonObjec
 
     QJsonObject stats = m_dbManager->getPublisherStats(publisherId);
 
+    // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر و سازگار با همه سیستم عامل ها
+    QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString storagePath = QDir::cleanPath(homeDir + "/BookClub_Storage") + "/";
+
+    if (stats.contains("bestSellers") && stats["bestSellers"].isArray()) {
+        QJsonArray oldArr = stats["bestSellers"].toArray();
+        QJsonArray newArr;
+        for (const auto &val : oldArr) {
+            QJsonObject obj = val.toObject();
+            QString coverName = obj.value("coverImagePath").toString();
+            if (!coverName.isEmpty()) {
+                obj["coverImagePath"] = storagePath + coverName;
+            }
+            newArr.append(obj);
+        }
+        stats["bestSellers"] = newArr;
+    }
+
+    if (stats.contains("worstSellers") && stats["worstSellers"].isArray()) {
+        QJsonArray oldArr = stats["worstSellers"].toArray();
+        QJsonArray newArr;
+        for (const auto &val : oldArr) {
+            QJsonObject obj = val.toObject();
+            QString coverName = obj.value("coverImagePath").toString();
+            if (!coverName.isEmpty()) {
+                obj["coverImagePath"] = storagePath + coverName;
+            }
+            newArr.append(obj);
+        }
+        stats["worstSellers"] = newArr;
+    }
+
     QJsonObject resp;
     resp["action"] = "GET_PUBLISHER_STATS_RESPONSE";
     resp["status"] = "SUCCESS";

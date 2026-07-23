@@ -1703,7 +1703,7 @@ QJsonObject DatabaseManager::getPublisherStats(int publisherId) {
     //پرفروش ترین کتاب ها (۵ کتاب اول از بین کتاب های حذف نشده)
     {
         QSqlQuery q(db);
-        q.prepare("SELECT b.id, b.title, COUNT(l.id) AS salesCount "
+        q.prepare("SELECT b.id, b.title, b.coverImagePath, COUNT(l.id) AS salesCount "
                   "FROM books b "
                   "LEFT JOIN library l ON l.book_id = b.id "
                   "WHERE b.publisher_id = :p AND b.is_deleted = 0 "
@@ -1718,6 +1718,7 @@ QJsonObject DatabaseManager::getPublisherStats(int publisherId) {
                 QJsonObject o;
                 o["book_id"]    = q.value("id").toInt();
                 o["title"]      = q.value("title").toString();
+                o["coverImagePath"] = q.value("coverImagePath").toString();
                 o["salesCount"] = q.value("salesCount").toInt();
                 bestArr.append(o);
             }
@@ -1728,7 +1729,7 @@ QJsonObject DatabaseManager::getPublisherStats(int publisherId) {
     //کم فروش ترین کتاب ها (۵ کتاب آخر از بین کتاب های حذف نشده)
     {
         QSqlQuery q(db);
-        q.prepare("SELECT b.id, b.title, COUNT(l.id) AS salesCount "
+        q.prepare("SELECT b.id, b.title, b.coverImagePath, COUNT(l.id) AS salesCount "
                   "FROM books b "
                   "LEFT JOIN library l ON l.book_id = b.id "
                   "WHERE b.publisher_id = :p AND b.is_deleted = 0 "
@@ -1743,6 +1744,7 @@ QJsonObject DatabaseManager::getPublisherStats(int publisherId) {
                 QJsonObject o;
                 o["book_id"]    = q.value("id").toInt();
                 o["title"]      = q.value("title").toString();
+                o["coverImagePath"] = q.value("coverImagePath").toString();
                 o["salesCount"] = q.value("salesCount").toInt();
                 worstArr.append(o);
             }
