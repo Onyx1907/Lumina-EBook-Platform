@@ -1352,6 +1352,56 @@
       "message": ".خطا در حذف منطقی کتاب از پایگاه داده"
     }
   }
+,
+  "57_GET_NOTIFICATIONS": {
+    "client_request": {
+      "action": "GET_NOTIFICATIONS",
+      "user_id": 5,
+      "role": "publisher"
+    },
+    "server_response_success": {
+      "action": "GET_NOTIFICATIONS_RESPONSE",
+      "status": "SUCCESS",
+      "notifications": [
+        {
+          "id": 101,
+          "user_id": 5,
+          "username": "publisher_test",
+          "role": "publisher",
+          "type": "BOOK_APPROVED",
+          "message": "کتاب شما با موفقیت تایید شد.",
+          "related_id": 10,
+          "is_read": 0,
+          "created_at": "2026-07-23 14:20:00"
+        },
+        {
+          "id": 102,
+          "user_id": 0,
+          "username": "",
+          "role": "publisher",
+          "type": "SYSTEM_ANNOUNCEMENT",
+          "message": "به‌روزرسانی جدید سیستم منتشر شد.",
+          "related_id": 0,
+          "is_read": 1,
+          "created_at": "2026-07-20 09:00:00"
+        }
+      ]
+    }
+  },
+  "58_MARK_NOTIFICATION_READ": {
+    "client_request": {
+      "action": "MARK_NOTIFICATION_READ",
+      "notification_id": 101
+    },
+    "server_response_success": {
+      "action": "MARK_NOTIFICATION_READ_RESPONSE",
+      "status": "SUCCESS"
+    },
+    "server_response_error": {
+      "action": "MARK_NOTIFICATION_READ_RESPONSE",
+      "status": "ERROR"
+    }
+  }
 }
 
 
