@@ -81,7 +81,7 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     connect(ui->delete_pushButton, &QPushButton::clicked, this, [this]() {
         QMessageBox msgBox(this);
         msgBox.setWindowTitle("حذف کتاب");
-        msgBox.setText("آیا از حذف این کتاب مطمئن هستید؟");
+        msgBox.setText("آیا از حذف این کتاب مطمئن هستید؟ امکان بازگردانی وجود ندارد");
         msgBox.setIcon(QMessageBox::Question);
 
 
