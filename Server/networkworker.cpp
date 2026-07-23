@@ -194,6 +194,8 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //****************************************************سیستم اعلان ها**********************************************************
 
+    else if (action == "GET_NOTIFICATIONS") { handleGetNotifications(socket, data); return; }
+    else if (action == "MARK_NOTIFICATION_READ") { handleMarkNotificationRead(socket, data); return; }
 
 
 
