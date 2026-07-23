@@ -83,7 +83,7 @@ void PublisherStatsWidget::processNetworkData(const QString& action, const QJson
             "",
             "",
             BookGenre::Unknown,
-            "",
+            bookObj["coverImagePath"].toString(),
             0.0
             );
 
@@ -109,7 +109,7 @@ void PublisherStatsWidget::processNetworkData(const QString& action, const QJson
             "",
             "",
             BookGenre::Unknown,
-            "",
+            bookObj["coverImagePath"].toString(),
             0.0
             );
 
