@@ -2068,4 +2068,91 @@ QString DatabaseManager::getUsernameById(int userId) {
     return "";
 }
 
+//****************************************************************************************************************************
 
+int DatabaseManager::getPublisherIdForBook(int bookId) {
+    QSqlQuery q(db);
+    q.prepare("SELECT publisher_id FROM books WHERE id = :bookId");
+    q.bindValue(":bookId", bookId);
+    if (q.exec() && q.next()) {
+        return q.value("publisher_id").toInt();
+    }
+    return -1;
+}
+
+QString DatabaseManager::getBookTitle(int bookId) {
+    QSqlQuery q(db);
+    q.prepare("SELECT title FROM books WHERE id = :bookId");
+    q.bindValue(":bookId", bookId);
+    if (q.exec() && q.next()) {
+        return q.value("title").toString();
+    }
+    return QString();
+}
+
+
+QList<QPair<int, QString>> DatabaseManager::getPublisherAndBooksForCart(int userId) {
+    QList<QPair<int, QString>> result;
+    QSqlQuery q(db);
+    q.prepare("SELECT b.publisher_id, b.title "
+              "FROM cart c "
+              "JOIN books b ON c.book_id = b.id "
+              "WHERE c.user_id = :userId AND b.is_deleted = 0 AND b.isActive = 1");
+    q.bindValue(":userId", userId);
+
+    if (q.exec()) {
+        while (q.next()) {
+            int publisherId = q.value("publisher_id").toInt();
+            QString bookTitle = q.value("title").toString();
+            result.append({publisherId, bookTitle});
+        }
+    }
+    return result;
+}
+
+int DatabaseManager::getLastInsertedBookId() {
+    QSqlQuery q(db);
+    if (q.exec("SELECT last_insert_rowid()") && q.next()) {
+        return q.value(0).toInt();
+    }
+    return -1;
+}
+
+QList<InterestedUser> DatabaseManager::getUsersInterestedInGenre(const QString& genre) {
+    QList<InterestedUser> list;
+    if (genre.isEmpty()) return list;
+
+    QSqlQuery q(db);
+    q.prepare("SELECT id, username FROM users WHERE favorite_genres LIKE :genre AND is_deleted = 0 AND is_blocked = 0");
+    q.bindValue(":genre", "%" + genre + "%");
+
+    if (q.exec()) {
+        while (q.next()) {
+            InterestedUser user;
+            user.id = q.value("id").toInt();
+            user.username = q.value("username").toString();
+            list.append(user);
+        }
+    }
+    return list;
+}
+
+QList<InterestedUser> DatabaseManager::getUsersWhoSavedBook(int bookId) {
+    QList<InterestedUser> list;
+    QSqlQuery q(db);
+    q.prepare("SELECT u.id, u.username "
+              "FROM saved_books sb "
+              "JOIN users u ON sb.user_id = u.id "
+              "WHERE sb.book_id = :bookId AND u.is_deleted = 0 AND u.is_blocked = 0");
+    q.bindValue(":bookId", bookId);
+
+    if (q.exec()) {
+        while (q.next()) {
+            InterestedUser user;
+            user.id = q.value("id").toInt();
+            user.username = q.value("username").toString();
+            list.append(user);
+        }
+    }
+    return list;
+}
