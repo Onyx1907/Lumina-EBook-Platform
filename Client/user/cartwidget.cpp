@@ -63,7 +63,8 @@ void CartWidget::loadCartFromServer(){
 void CartWidget::processNetworkData(const QString& action, const QJsonObject& data) {
     if (action != "GET_CART_RESPONSE" &&
         action != "REMOVE_FROM_CART_RESPONSE" &&
-        action != "FINALIZE_PURCHASE_RESPONSE") {
+        action != "FINALIZE_PURCHASE_RESPONSE" &&
+        action != "BOOK_DISCOUNT_UPDATED") {
         return;
     }
 
@@ -97,6 +98,22 @@ void CartWidget::processNetworkData(const QString& action, const QJsonObject& da
 
             loadCartFromServer();
 
+    }
+
+    else if(action == "BOOK_DISCOUNT_UPDATED"){
+        int id = data.value("book_id").toInt();
+
+        for (int i = 0; i < ui->listWidget->count(); i++){
+            BookInfoCard *card =
+                qobject_cast<BookInfoCard*>(
+                ui->listWidget->itemWidget(ui->listWidget->item(i)));
+            if(!card) continue;
+
+            if(card->getBookID() == id){
+                card->updatePrice(data.value("price").toDouble(),
+                                  data.value("discountPercent").toDouble());
+            }
+        }
     }
 }
 
