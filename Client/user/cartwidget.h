@@ -21,6 +21,7 @@ protected:
 
 signals:
     void bookSelected(Book* bookptr);
+    void goToHistory();
 
 private slots:
 
@@ -29,6 +30,8 @@ private slots:
     void onBookRemoveRequested(int bookId);
 
     void on_pay_pushButton_clicked();
+
+    void on_back_pushButton_clicked();
 
 private:
     Ui::CartWidget *ui;

@@ -125,21 +125,63 @@ QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     </layout>
    </item>
    <item>
-    <widget class="QFrame" name="invoice_frame">
-     <property name="minimumSize">
-      <size>
-       <width>180</width>
-       <height>500</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">/* استایل کلی فریم فاکتور (شیشه‌ای و نیمه‌شفاف برای دیدن ویدیو) */
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <widget class="QPushButton" name="back_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>90</width>
+         <height>38</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 0.08); /* پس‌زمینه شیشه‌ای بسیار ملو */
+    border: 1px solid rgba(193, 154, 107, 0.25); /* مرز کاراملی شفاف */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #D2B48C; /* رنگ متنی خامه ای/نسکافه‌ای روشن */
+    font-size: 14px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود) */
+QPushButton:hover {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ‌تر */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه ای */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود) */
+QPushButton:pressed {
+    background-color: rgba(111, 78, 55, 0.6); /* رنگ قهوه‌ای تیره فشرده شده */
+    border: 1px solid #8B5A2B;
+    padding-left: 16px; /* افکت کلیک کوچک ملو (متمایل شدن متن به راست) */
+}</string>
+       </property>
+       <property name="text">
+        <string>تاریخچه خرید</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="invoice_frame">
+       <property name="minimumSize">
+        <size>
+         <width>180</width>
+         <height>300</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* استایل کلی فریم فاکتور (شیشه‌ای و نیمه‌شفاف برای دیدن ویدیو) */
 QFrame#invoice_frame {
     /* رنگ کرم-نسکافه‌ای با شفافیت ۴۰ درصد */
     background-color: rgba(252, 250, 247, 0.4); 
@@ -221,112 +263,120 @@ QPushButton#pay_pushButton:hover {
 QPushButton#pay_pushButton:pressed {
     background-color: #5D4037;
 }</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QLabel" name="title_label">
-        <property name="text">
-         <string>فاکتور خرید</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="title_label">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>50</height>
+           </size>
+          </property>
           <property name="text">
-           <string>تعداد کتاب ها:</string>
+           <string>فاکتور خرید</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="count_label">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>تعداد کتاب ها:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="count_label">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="total_price_Layout">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>قیمت کل:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="total_price_label">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="discount_Layout">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>تخفیف دریافتی:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="discount_label">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="final_price_Layout">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>مبلغ قابل پرداخت:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="final_price_label">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pay_pushButton">
           <property name="text">
-           <string/>
+           <string>پرداخت</string>
           </property>
          </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="total_price_Layout">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>قیمت کل:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="total_price_label">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="discount_Layout">
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>تخفیف دریافتی:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="discount_label">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="final_price_Layout">
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>مبلغ قابل پرداخت:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="final_price_label">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pay_pushButton">
-        <property name="text">
-         <string>پرداخت</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

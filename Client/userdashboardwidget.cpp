@@ -32,6 +32,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     CartPage = new CartWidget(user->getId(), this);
     LibraryPage =  new LibraryWidget(user->getId(), this);
     BookReaderPage =  new BookReaderWidget(user->getId(), this);
+    PurchaseHistoryPage = new PurchaseHistoryWidget(user->getId(), this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
@@ -43,6 +44,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ui->stackedWidget->addWidget(CartPage);
     ui->stackedWidget->addWidget(LibraryPage);
     ui->stackedWidget->addWidget(BookReaderPage);
+    ui->stackedWidget->addWidget(PurchaseHistoryPage);
 
     //مدیریت نمایش صفحه انتخاب ژانر
     if(is_first_login){
@@ -148,6 +150,15 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
         fadeToPage(Page::BookReaderPageIndex);
     });
 
+    //رفتن به تاریخچه خرید
+    connect(CartPage, &CartWidget::goToHistory, this, [this](){
+        fadeToPage(Page::PurchaseHistoryPageIndex);
+    });
+
+    //برگشت به سبد خرید
+    connect(PurchaseHistoryPage, &PurchaseHistoryWidget::back, this, [this](){
+        fadeToPage(Page::CartPageIndex);
+    });
 }
 
 

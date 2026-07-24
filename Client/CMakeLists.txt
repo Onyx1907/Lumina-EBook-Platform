@@ -53,6 +53,8 @@ qt_add_executable(LuminaClient
     sharedbookcard.h sharedbookcard.cpp sharedbookcard.ui
     publisher/publisherbookwidget.h publisher/publisherbookwidget.cpp publisher/publisherbookwidget.ui
     publisher/editbookwidget.h publisher/editbookwidget.cpp publisher/editbookwidget.ui
+    user/purchasehistorywidget.h user/purchasehistorywidget.cpp user/purchasehistorywidget.ui
+    user/inovicecard.h user/inovicecard.cpp user/inovicecard.ui
 
 
 

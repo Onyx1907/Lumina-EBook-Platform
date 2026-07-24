@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>InoviceCard</class>
+ <widget class="QWidget" name="InoviceCard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>268</width>
+    <height>177</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="minimumSize">
+      <size>
+       <width>250</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>250</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QFrame#frame {
+    background-color: rgba(75, 50, 35, 180);
+    border: 1px solid rgba(205, 170, 120, 170);
+    border-radius: 18px;
+}
+
+QFrame#frame:hover {
+    background-color: rgba(88, 60, 42, 210);
+    border: 1px solid rgb(235, 200, 140);
+}
+
+/* عنوان کتاب */
+QLabel#title_label {
+    color: rgb(255, 245, 220);
+    font: 700 18px &quot;Vazirmatn&quot;;
+    border: none;
+    background: transparent;
+}
+
+/* نویسنده */
+QLabel#author_label {
+    color: rgb(214, 195, 170);
+    font: 12pt &quot;Vazirmatn&quot;;
+    border: none;
+    background: transparent;
+}
+
+/* تاریخ خرید */
+QLabel#date_label {
+    color: rgb(185, 170, 150);
+    font: 10pt &quot;Vazirmatn&quot;;
+    border: none;
+    background: transparent;
+}
+
+/* شماره فاکتور */
+QLabel#invoice_label {
+    color: rgb(210, 185, 140);
+    font: bold 10pt &quot;Consolas&quot;;
+    border: none;
+    background: transparent;
+}
+
+/* قیمت */
+QLabel#price_label {
+    color: rgb(255, 215, 120);
+    font: bold 16pt &quot;Vazirmatn&quot;;
+    border: none;
+    background: transparent;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="inovice_label">
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>فاکتور خرید</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="date_label">
+        <property name="maximumSize">
+         <size>
+          <width>300</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>2026.02.112</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="title_label">
+        <property name="text">
+         <string>شاهنامه</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="author_label">
+        <property name="text">
+         <string>فردوسی</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="price_label">
+        <property name="text">
+         <string>25000</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
