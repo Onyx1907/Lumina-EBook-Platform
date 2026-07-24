@@ -628,7 +628,7 @@ QList<QJsonObject> DatabaseManager::getPurchaseHistory(int userId){
     QList<QJsonObject> list;
     QSqlQuery q(db);
     q.prepare("SELECT p.book_id, p.purchase_date, b.title, b.author, b.price "
-              "FROM purchases p "
+              "FROM library p "
               "JOIN books b ON p.book_id = b.id "
               "WHERE p.user_id = :userId "
               "ORDER BY p.purchase_date DESC");
@@ -652,7 +652,7 @@ QList<QJsonObject> DatabaseManager::getPurchaseHistory(int userId){
 int DatabaseManager::getTotalPurchases(int userId) {
     QSqlQuery q(db);
 
-    q.prepare("SELECT COUNT(*) FROM purchases WHERE user_id = :userId");
+    q.prepare("SELECT COUNT(*) FROM library WHERE user_id = :userId");
     q.bindValue(":userId", userId);
 
     if (!q.exec() || !q.next())
@@ -720,7 +720,7 @@ bool DatabaseManager::getActiveBookDetails(int bookId, QString &publisherName, d
 QString DatabaseManager::getBookPdfPath(int bookId)
 {
     QSqlQuery q(db);
-    q.prepare("SELECT pdfPath FROM books WHERE id = :bookId AND b.isActive = 1 AND is_deleted = 0 LIMIT 1");
+    q.prepare("SELECT pdfPath FROM books WHERE id = :bookId LIMIT 1");
     q.bindValue(":bookId", bookId);
 
     if (q.exec() && q.next()) {
@@ -1025,8 +1025,8 @@ bool DatabaseManager::finalizePurchase(int userId, double clientFinalPrice) {
         return false;
     }
 
-    const QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
-
+    const QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+    qDebug() << "DEBUG CURRENT TIME:" << now;
     // شروع حلقه روی کتاب های معتبرِ سبد خرید
     while (q.next()) {
         int bookId = q.value(0).toInt();
@@ -2068,7 +2068,7 @@ QString DatabaseManager::getUsernameById(int userId) {
     return "";
 }
 
-//****************************************************************************************************************************
+//***************************************************توابع کمکی برای اعلان*****************************************************
 
 int DatabaseManager::getPublisherIdForBook(int bookId) {
     QSqlQuery q(db);
