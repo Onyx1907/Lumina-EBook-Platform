@@ -194,6 +194,8 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //****************************************************سیستم اعلان ها**********************************************************
 
+    else if (action == "GET_NOTIFICATIONS") { handleGetNotifications(socket, data); return; }
+    else if (action == "MARK_NOTIFICATION_READ") { handleMarkNotificationRead(socket, data); return; }
 
 
 
@@ -773,6 +775,31 @@ void NetworkWorker::handleAddComment(QTcpSocket* socket, const QJsonObject& data
         b["book_id"] = bookId;
         b["type"] = "ADD";
         emit broadcastRequested(b);
+
+        //پیدا کردن ناشر و ایجاد اعلان با استفاده از متدهای DatabaseManager (امن برای چندتردی)
+        int publisherId = m_dbManager->getPublisherIdForBook(bookId);
+        if (publisherId != -1) {
+            QString bookTitle = m_dbManager->getBookTitle(bookId);
+            QString messageText = QString(".برای کتاب شما (%1) نظر یا امتیاز جدیدی ثبت شد").arg(bookTitle);
+
+            // استفاده از تابع createNotification که از قبل در DatabaseManager داشتید
+            int notifId = m_dbManager->createNotification(publisherId, "", "NEW_COMMENT", messageText, bookId);
+
+            if (notifId > 0) {
+                //ارسال آنی اعلان به ناشر در صورت آنلاین بودن
+                QJsonObject notifObj;
+                notifObj["action"] = "NEW_NOTIFICATION_RECEIVED";
+                notifObj["id"] = notifId;
+                notifObj["type"] = "NEW_COMMENT";
+                notifObj["message"] = messageText;
+                notifObj["related_id"] = bookId;
+                notifObj["is_read"] = 0;
+                notifObj["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+
+                QString targetUsername = m_dbManager->getUsernameById(publisherId);
+                emit notificationTriggered(targetUsername, notifObj);
+            }
+        }
     }
 }
 
@@ -923,6 +950,9 @@ void NetworkWorker::handleFinalizePurchase(QTcpSocket* socket, const QJsonObject
     // دریافت قیمتی که کلاینت در ظاهر اپلیکیشن خود دیده است
     double clientFinalPrice = data["client_final_price"].toDouble();
 
+    //استخراج ناشران و عنوان کتاب ها مستقیماً از دیتابیس (قبل از نهایی شدن خرید و خالی شدن سبد)
+    QList<QPair<int, QString>> soldItems = m_dbManager->getPublisherAndBooksForCart(userId);
+
     // پاس دادن قیمت به دیتابیس جهت صحت سنجی
     bool ok = m_dbManager->finalizePurchase(userId, clientFinalPrice);
 
@@ -933,6 +963,32 @@ void NetworkWorker::handleFinalizePurchase(QTcpSocket* socket, const QJsonObject
                          : ".قیمت یا موجودی کتاب‌ها تغییر یافته است. سبد خرید شما به‌روزرسانی می‌شود";
 
     sendJson(socket, resp);
+
+    //ارسال اعلان به ناشران
+    if (ok) {
+        for (const auto& item : soldItems) {
+            int publisherId = item.first;
+            QString bookTitle = item.second;
+
+            QString messageText = QString(".کتاب شما (%1) با موفقیت فروخته شد").arg(bookTitle);
+
+
+            int notifId = m_dbManager->createNotification(publisherId, "", "BOOK_SOLD", messageText, 0);
+
+            if (notifId > 0) {
+                QJsonObject notifObj;
+                notifObj["action"] = "NEW_NOTIFICATION_RECEIVED";
+                notifObj["id"] = notifId;
+                notifObj["type"] = "BOOK_SOLD";
+                notifObj["message"] = messageText;
+                notifObj["is_read"] = 0;
+                notifObj["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+
+                QString targetUsername = m_dbManager->getUsernameById(publisherId);
+                emit notificationTriggered(targetUsername, notifObj);
+            }
+        }
+    }
 }
 
 //*********************************************پنل کاربر عادی ( ماژول 5 ) *************************************************
@@ -1323,6 +1379,31 @@ void NetworkWorker::handleAddBook(QTcpSocket* socket, const QJsonObject& data)
     if (success) {
         resp["status"] = "SUCCESS";
         resp["message"] = ".کتاب با موفقیت کپی و در پایگاه داده ثبت شد";
+
+        int newBookId = m_dbManager->getLastInsertedBookId();
+
+        if (newBookId > 0 && !genre.isEmpty()) {
+            QList<InterestedUser> interestedUsers = m_dbManager->getUsersInterestedInGenre(genre);
+            QString messageText = QString(".کتاب جدیدی در ژانر مورد علاقه شما (%1) با نام «%2» اضافه شد").arg(genre, title);
+
+            for (const auto& user : interestedUsers) {
+                int notifId = m_dbManager->createNotification(user.id, "", "NEW_BOOK_GENRE", messageText, newBookId);
+
+                if (notifId > 0) {
+                    QJsonObject notifObj;
+                    notifObj["action"] = "NEW_NOTIFICATION_RECEIVED";
+                    notifObj["id"] = notifId;
+                    notifObj["type"] = "NEW_BOOK_GENRE";
+                    notifObj["message"] = messageText;
+                    notifObj["related_id"] = newBookId;
+                    notifObj["is_read"] = 0;
+                    notifObj["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+
+                    emit notificationTriggered(user.username, notifObj);
+                }
+            }
+        }
+
     } else {
         QFile::remove(serverPdfFilePath);
         if (!coverFileName.isEmpty()) QFile::remove(serverCoverFilePath);
@@ -1445,25 +1526,51 @@ void NetworkWorker::handleSetBookDiscount(QTcpSocket* socket, const QJsonObject&
     resp["message"] = ok ? ".تخفیف با موفقیت اعمال و محاسبه شد"
                          : ".خطا در اعمال تخفیف";
 
-    sendJson(socket, resp);
-
     if (ok) {
-        // استفاده از تابع جدید برای گرفتن اطلاعات مالی و قیمت های محاسبه شده
+        // گرفتن اطلاعات مالی و قیمت های محاسبه شده برای برودکست
         QJsonObject financials = m_dbManager->getBookFinancialDetails(bookId);
 
         if (!financials.isEmpty()) {
             QJsonObject b;
             b["action"] = "BOOK_DISCOUNT_UPDATED";
             b["book_id"] = bookId;
-            b["price"] = financials.value("price");                  // قیمت اصلی
-            b["discountPercent"] = financials.value("discountPercent"); // درصد تخفیف
-            b["discountAmount"] = financials.value("discountAmount");   // مبلغ تخفیف
-            b["final_price"] = financials.value("final_price");       // قیمت نهایی قابل پرداخت
+            b["price"] = financials.value("price");
+            b["discountPercent"] = financials.value("discountPercent");
+            b["discountAmount"] = financials.value("discountAmount");
+            b["final_price"] = financials.value("final_price");
 
             emit broadcastRequested(b);
         }
+
+        //گرفتن عنوان کتاب برای متن اعلان
+        QString bookTitle = m_dbManager->getBookTitle(bookId);
+
+        // پیدا کردن کاربرانی که این کتاب را در جدول saved_books ذخیره کرده اند
+        QList<InterestedUser> savedUsers = m_dbManager->getUsersWhoSavedBook(bookId);
+        QString messageText = QString("!کتاب «%1» که آن را ذخیره کرده بودید، تخفیف خورد").arg(bookTitle);
+
+        for (const auto& user : savedUsers) {
+            // ثبت در جدول notifications شما
+            int notifId = m_dbManager->createNotification(user.id, "", "BOOK_DISCOUNT", messageText, bookId);
+
+            if (notifId > 0) {
+                QJsonObject notifObj;
+                notifObj["action"] = "NEW_NOTIFICATION_RECEIVED";
+                notifObj["id"] = notifId;
+                notifObj["type"] = "BOOK_DISCOUNT";
+                notifObj["message"] = messageText;
+                notifObj["related_id"] = bookId;
+                notifObj["is_read"] = 0;
+                notifObj["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+
+                // ارسال ریل تایم به کاربر
+                emit notificationTriggered(user.username, notifObj);
+            }
+        }
     }
 
+    //در نهایت پاسخ نهایی به ناشر ارسال می شود
+    sendJson(socket, resp);
 }
 
 void NetworkWorker::handleSetBookActiveState(QTcpSocket* socket, const QJsonObject& data) {
@@ -1895,50 +2002,5 @@ void NetworkWorker::handleMarkNotificationRead(QTcpSocket* socket, const QJsonOb
     sendJson(socket, resp);
 }
 
-void NetworkWorker::handleCreateNotification(QTcpSocket* socket, const QJsonObject& data) {
-    const int userId = data.value("user_id").toInt();
-    const QString role = data.value("role").toString();
-    const QString type = data.value("type").toString();
-    const QString messageText = data.value("message").toString();
-    const int relatedId = data.value("related_id").toInt();
-
-    //صدا زدن تابع دیتابیس بدون یوزرنیم (امضای جدید)
-    int newNotifId = m_dbManager->createNotification(userId, role, type, messageText, relatedId);
-    bool ok = (newNotifId > 0);
-
-    QString statusMessage = "خطا در فرآیند ایجاد اعلان.";
-
-    if (ok) {
-        QJsonObject notifObj;
-        notifObj["action"] = "NEW_NOTIFICATION_RECEIVED";
-        notifObj["id"] = newNotifId;
-        notifObj["role"] = role;
-        notifObj["type"] = type;
-        notifObj["message"] = messageText;
-        notifObj["related_id"] = relatedId;
-        notifObj["is_read"] = 0;
-        notifObj["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-
-        if (userId > 0) {
-            statusMessage = ".اعلان شخصی با موفقیت ثبت و به صورت آنی ارسال شد";
-
-            // کشف نام کاربری فقط برای اینکه سیگنال شبکه بدانید پکت را به کدام کلاینت آنلاین بفرستد
-            QString targetUser = m_dbManager->getUsernameById(userId);
-
-            emit notificationTriggered(targetUser, notifObj);
-        }
-        else if (!role.isEmpty()) {
-            statusMessage = ".اعلان عمومی با موفقیت ثبت و برای دارندگان این نقش پخش همگانی شد";
-            emit roleBroadcastRequested(notifObj);
-        }
-    }
-
-    QJsonObject resp;
-    resp["action"] = "CREATE_NOTIFICATION_RESPONSE";
-    resp["status"] = ok ? "SUCCESS" : "ERROR";
-    resp["message"] = statusMessage;
-
-    sendJson(socket, resp);
-}
 
 

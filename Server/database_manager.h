@@ -19,6 +19,12 @@
 #include "cryptohelper.h"
 #include "user.h"
 
+
+struct InterestedUser {
+    int id;
+    QString username;
+};
+
 class DatabaseManager
 {
 public:
@@ -190,6 +196,18 @@ public:
     int createNotification(int userId, const QString& role, const QString& type, const QString& message, int relatedId);
     QString getUsernameById(int userId);
 
+
+    //****************************************************************************************************************************
+
+
+    int getPublisherIdForBook(int bookId);
+    QString getBookTitle(int bookId);
+    QList<QPair<int, QString>> getPublisherAndBooksForCart(int userId);
+
+    int getLastInsertedBookId();
+    QList<InterestedUser> getUsersInterestedInGenre(const QString& genre);
+
+    QList<InterestedUser> getUsersWhoSavedBook(int bookId);
 
 
 

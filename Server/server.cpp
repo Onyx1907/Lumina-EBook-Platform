@@ -182,7 +182,6 @@ void Server::pushNotification(int userId, const QJsonObject& notif)
         return;
 
     QJsonObject obj = notif;
-    obj["action"] = "NOTIFICATION_PUSH";
 
     QMetaObject::invokeMethod(userSocket, [userSocket, obj]() {
         QJsonDocument doc(obj);
