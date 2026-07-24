@@ -480,7 +480,7 @@
     },
     "server_broadcast_on_success": {
       "action": "COMMENT_UPDATED",
-      "comment_id": 257,
+      "book_id": 10,
       "type": "EDIT"
     }
   },
@@ -501,7 +501,7 @@
     },
     "server_broadcast_on_success": {
       "action": "COMMENT_UPDATED",
-      "comment_id": 257,
+      "book_id": 10,
       "type": "DELETE"
     }
   },
