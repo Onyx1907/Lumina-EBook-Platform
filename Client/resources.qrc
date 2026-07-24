@@ -30,5 +30,6 @@
         <file>resources/user/emptyCart.png</file>
         <file>resources/user/close_shelf.png</file>
         <file>resources/user/open_shelf.png</file>
+        <file>resources/check.svg</file>
     </qresource>
 </RCC>

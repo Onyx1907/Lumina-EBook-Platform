@@ -59,8 +59,7 @@ void PublisherBookWidget::processNetworkData(const QString& action, const QJsonO
         return;
     }
 
-    if (action == "SET_BOOK_ACTIVE_STATE_RESPONSE" ||
-         action == "PUBLISHER_DELETE_BOOK_RESPONSE"){
+    if (action == "PUBLISHER_DELETE_BOOK_RESPONSE"){
         loadBooks();
     }
 
@@ -113,6 +112,10 @@ void PublisherBookWidget::handleGetBooks(const QJsonObject& data){
 
         connect(itemWidget, &SharedBookCard::discountRequested, this,
                 &PublisherBookWidget::setDiscountRequested);
+
+        connect(itemWidget, &SharedBookCard::goToComments, this, [this](int bookID){
+            emit goToCommentsPage(bookID);
+        });
     }
 }
 

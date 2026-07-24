@@ -531,36 +531,37 @@ QPushButton:pressed {
     font-size: 12px;
     spacing: 8px;
 }
-
 QCheckBox::indicator {
     width: 20px;
     height: 20px;
-    border-radius: 6px;
-    border: 2px solid #B08968;
-    background: rgba(255,255,255,0.55);
+    border: 2px solid #7A5C45;
+    border-radius: 5px;
+    background: #FFF8EE;
 }
 
 QCheckBox::indicator:hover {
-    border: 2px solid #8B5E3C;
-    background: rgba(222,184,135,0.35);
-}
-
-QCheckBox::indicator:pressed {
-    background: rgba(210,170,130,0.6);
+    border-color: #9A775B;
 }
 
 QCheckBox::indicator:checked {
-    background: #8B5E3C;
-    border: 2px solid #5E3A22;
+    background: #6F4E37;
+    border: 2px solid #5A3F2C;
+    image: url(://resources/check.svg);
+}
+
+QCheckBox::indicator:pressed {
+    background: #5A3F2C;
+}
+
+QCheckBox::indicator:unchecked:hover {
+    background-color: #E8D7BF;
+    border: 2px solid #8A6548;
 }
 
 QCheckBox::indicator:checked:hover {
-    background: #A66B42;
-    border: 2px solid #3E2617;
-}
-
-QCheckBox::indicator:checked:pressed {
-    background: #74462B;
+    background-color: #7B5740;
+    border: 2px solid #A57C5A;
+    image: url(://resources/check.svg);
 }</string>
           </property>
           <property name="text">
@@ -650,21 +651,34 @@ font-size : 20px;</string>
          <widget class="QPushButton" name="star">
           <property name="minimumSize">
            <size>
-            <width>0</width>
-            <height>30</height>
+            <width>40</width>
+            <height>40</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>30</width>
-            <height>16777215</height>
+            <width>40</width>
+            <height>40</height>
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">    background: none;
-    background-color: transparent;
+           <string notr="true">        QPushButton {
+           background-color: transparent;
+           border: 2px solid transparent;
+           border-radius: 10px;
+        }
 
-    border: 1px solid transparent;</string>
+        /* ۲. حالت Hover: هاله طلایی ملایم و لوکس دور کارت */
+        QPushButton:hover {
+           background-color: rgba(218, 165, 32, 0.07); /* ۷ درصد طلایی متالیک (Goldenrod) روی عکس کتاب */
+         border: 2px solid rgba(184, 134, 11, 0.6); /* حاشیه طلایی تیره نیمه‌شفاف دور کارت */
+        }
+
+ 
+        QPushButton:pressed {
+           background-color: rgba(139, 69, 19, 0.15); /* هاله قهوه‌ای شکلاتی ملایم برای حس کلیک */
+           border: 2px solid #B8860B; /* حاشیه طلایی صلب و مشخص */
+        }</string>
           </property>
           <property name="text">
            <string/>

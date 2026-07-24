@@ -20,6 +20,7 @@ signals:
     void addBook();
     void editBook(int bookID);
     void PDFreader(QString path);
+    void goToCommentsPage(int bookID);
 
 protected:
     void showEvent(QShowEvent *event) override;

@@ -14,7 +14,7 @@ class CommentsWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit CommentsWidget(int userid, QWidget *parent = nullptr);
+    explicit CommentsWidget(int userid, QWidget *parent = nullptr, bool isPublisher = false);
     ~CommentsWidget();
 
     void loadComments(int bookid);
@@ -39,6 +39,7 @@ private:
     int userID;
     int bookID = 0;
     int m_editingCommentId = -1;
+    bool m_isPublisher = false;
 
     void updateListUi(const QJsonObject& response);
 };
