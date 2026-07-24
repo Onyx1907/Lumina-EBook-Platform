@@ -616,7 +616,7 @@ void NetworkWorker::handleGetPurchaseHistory(QTcpSocket* socket, const QJsonObje
     int totalCount = m_dbManager->getTotalPurchases(userId);
 
     QJsonArray arr;
-    for (const QJsonObject& h : std::as_const(history))
+    for (const QJsonObject& h : history)
         arr.append(h);
 
     QJsonObject resp;
