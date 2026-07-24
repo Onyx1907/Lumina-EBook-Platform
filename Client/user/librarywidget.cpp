@@ -374,6 +374,10 @@ void LibraryWidget::on_bookCard_clicked(Book* bookPtr){
         emit goToPDF(bookPtr->getId());
     });
 
+    menu->addAction("مشاهده جزییات کتاب", [this, bookPtr](){
+        bookSelected(bookPtr);
+    });
+
     int currentIndex = ui->tabWidget->currentIndex();
 
     bool isMyBooksTab = (currentIndex == 0);
@@ -399,6 +403,7 @@ void LibraryWidget::on_bookCard_clicked(Book* bookPtr){
             });
         }
     }
+
     menu->exec(QCursor::pos());
 
     menu->deleteLater();

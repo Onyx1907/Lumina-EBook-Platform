@@ -146,6 +146,7 @@ void BookDetailsWidget::processNetworkData(const QString& action, const QJsonObj
             QTimer::singleShot(3000, this, [this](){
                 ui->error_label->setText("");
             });
+            ui->disconnected->show();
         }
     }
 
