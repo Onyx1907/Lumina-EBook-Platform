@@ -52,7 +52,7 @@ void PurchaseHistoryWidget::processNetworkData(const QString& action, const QJso
         return;
     }
 
-    ui->total_parchases_label->setText(QString::number(data.value("total_purchases").toInt()));
+    ui->total_parchases_label->setText(QString::number(data.value("total_purchases").toInt()) + " عدد");
 
     ui->listWidget->clear();
 
