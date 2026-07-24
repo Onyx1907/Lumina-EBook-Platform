@@ -13,6 +13,7 @@
 #include "cartwidget.h"
 #include "librarywidget.h"
 #include "bookreaderwidget.h"
+#include "purchasehistorywidget.h"
 
 
 namespace Ui {
@@ -55,6 +56,7 @@ private:
     CartWidget* CartPage;
     LibraryWidget* LibraryPage;
     BookReaderWidget* BookReaderPage;
+    PurchaseHistoryWidget * PurchaseHistoryPage;
 
     int previousPageIndex = 0;
     int prevPagePDF = 0;
@@ -71,7 +73,8 @@ private:
         CommentsPageIndex = 6,
         CartPageIndex = 7,
         LibraryPageIndex = 8,
-        BookReaderPageIndex = 9
+        BookReaderPageIndex = 9,
+        PurchaseHistoryPageIndex = 10
     };
 
 

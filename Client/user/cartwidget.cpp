@@ -247,3 +247,9 @@ void CartWidget::on_pay_pushButton_clicked()
     }
 }
 
+
+void CartWidget::on_back_pushButton_clicked()
+{
+    emit goToHistory();
+}
+
