@@ -73,35 +73,64 @@ QPushButton:pressed {
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QFrame" name="frame">
      <property name="styleSheet">
-      <string notr="true">    font-size: 14px;
+      <string notr="true">QFrame#frame{
+    background-color: rgba(252, 250, 247, 0.4); 
+    
+    /* مرز نسکافه‌ای ظریف با شفافیت ۶۰ درصد */
+    border: 1px solid rgba(217, 205, 184, 0.6); 
+    
+    border-radius: 12px;
+    padding: 15px;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="styleSheet">
+         <string notr="true">    font-size: 14px;
     font-weight: bold;
     color: #3E2723; /* تیره کردن رنگ برای خوانایی عالی روی پس‌زمینه متحرک */
     background: transparent;</string>
-     </property>
-     <property name="text">
-      <string>تعداد کل کتاب های خریده شده:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="total_parchases_label">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
+        </property>
+        <property name="text">
+         <string>تعداد کل کتاب های خریده شده:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="total_parchases_label">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
     font-size: 16px;
     font-weight: bold;
     color: #5D4037; </string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
