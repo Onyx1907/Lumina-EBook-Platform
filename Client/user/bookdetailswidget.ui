@@ -65,7 +65,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-156</y>
+        <y>0</y>
         <width>730</width>
         <height>1000</height>
        </rect>
@@ -351,135 +351,10 @@ font-size : 20px;</string>
         </size>
        </property>
       </widget>
-      <widget class="QPushButton" name="addCart_pushButton">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>530</y>
-         <width>661</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-    background-color: #8B5E3C;
-    color: #FFF8F0;
-    border: 2px solid #C8A97E;
-    border-radius: 14px;
-    padding: 10px 18px;
-    font-size: 15px;
-    font-weight: 700;
-}
-
-QPushButton:hover {
-    background-color: #9C6B46;
-    border: 2px solid #D4B183;
-}
-
-QPushButton:pressed {
-    background-color: #6F4A2F;
-    border: 2px solid #B8956A;
-}
-
-QPushButton:disabled {
-    background-color: #C7B299;
-    color: #F5EBDD;
-    border: 2px solid #D8C3A5;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>افزودن به سبد خرید</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="study_pushButton">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>530</y>
-         <width>661</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-    background-color: #B08D57;
-    color: #FFFAF3;
-    border: 2px solid #D6B97B;
-    border-radius: 14px;
-    padding: 10px 18px;
-    font-size: 15px;
-    font-weight: 700;
-}
-
-QPushButton:hover {
-    background-color: #C29B5F;
-    border: 2px solid #E0C68A;
-}
-
-QPushButton:pressed {
-    background-color: #967646;
-    border: 2px solid #C9AA6B;
-}
-
-QPushButton:disabled {
-    background-color: #D3C1A1;
-    color: #FFF8EE;
-    border: 2px solid #E2D2B4;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>مطالعه کتاب</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="removeCart_pushButton">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>530</y>
-         <width>661</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-    background-color: #F8F3ED;
-    color: #7A3E2F;
-    border: 2px solid #C8A97E;
-    border-radius: 14px;
-    padding: 10px 18px;
-    font-size: 15px;
-    font-weight: 700;
-}
-
-QPushButton:hover {
-    background-color: #F1E7DB;
-    border: 2px solid #B8956A;
-    color: #6A2F22;
-}
-
-QPushButton:pressed {
-    background-color: #E6D8C8;
-    border: 2px solid #A67C52;
-    color: #552017;
-}
-
-QPushButton:disabled {
-    background-color: #EEE7DE;
-    color: #B8A89A;
-    border: 2px solid #D8C9B8;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>حذف از سبد خرید</string>
-       </property>
-      </widget>
       <widget class="QPushButton" name="saveBook_pushButton">
        <property name="geometry">
         <rect>
-         <x>150</x>
+         <x>140</x>
          <y>30</y>
          <width>88</width>
          <height>26</height>
@@ -529,62 +404,6 @@ qproperty-alignment: 'AlignHCenter | AlignVCenter';
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="comments">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>770</y>
-         <width>201</width>
-         <height>171</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">    background: none;
-    background-color: transparent;
-
-    border: 1px solid transparent;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../resources.qrc">
-         <normaloff>:/resources/user/comments_logo.png</normaloff>:/resources/user/comments_logo.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>200</width>
-         <height>200</height>
-        </size>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="comments_pushButton">
-       <property name="geometry">
-        <rect>
-         <x>320</x>
-         <y>850</y>
-         <width>191</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-    background-color: transparent;
-    border: none;
-    color: #8c4f2b; /* قهوه‌ای مایل به قرمز/آجری */
-    text-decoration: underline;
-    font-size: 15px;
-    font-weight: bold;
-}
-
-QPushButton:hover {
-    color: #b86b3d; /* روشن‌تر شدن در حالت هاور */
-}</string>
-       </property>
-       <property name="text">
-        <string>مشاهده نظرات و ثبت نظر</string>
        </property>
       </widget>
       <widget class="QLabel" name="genre_label">
@@ -655,37 +474,6 @@ qproperty-alignment: 'AlignHCenter | AlignVCenter';
        </property>
        <property name="wordWrap">
         <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="disconnected">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>590</y>
-         <width>561</width>
-         <height>311</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">    background: none;
-    background-color: transparent;
-    color: #7A3E2F;
-    border: 1px solid transparent;
-    font-size: 15px;
-    font-weight: 700;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../resources.qrc">
-         <normaloff>:/resources/disconnected.png</normaloff>:/resources/disconnected.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>400</width>
-         <height>400</height>
-        </size>
        </property>
       </widget>
       <widget class="QLabel" name="book_cover">
@@ -773,71 +561,6 @@ QPushButton:disabled {
         </size>
        </property>
       </widget>
-      <widget class="QTextEdit" name="description_label">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>600</y>
-         <width>681</width>
-         <height>141</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QTextEdit {
-    background: rgba(78, 56, 42, 170);
-    color: #F5EBDD;
-    border: 1px solid rgba(255, 240, 220, 70);
-    border-radius: 16px;
-    padding: 12px;
-    selection-background-color: rgba(201, 156, 99, 170);
-    selection-color: white;
-    font-size: 11pt;
-}
-
-QTextEdit:focus {
-    border: 2px solid rgba(214, 176, 122, 180);
-}
-
-QScrollBar:vertical {
-    background: transparent;
-    width: 12px;
-    margin: 4px;
-}
-
-QScrollBar::handle:vertical {
-    background: rgba(194, 148, 98, 180);
-    border-radius: 6px;
-    min-height: 35px;
-}
-
-QScrollBar::handle:vertical:hover {
-    background: rgba(222, 178, 124, 220);
-}
-
-QScrollBar::add-line:vertical,
-QScrollBar::sub-line:vertical {
-    height: 0px;
-}
-
-QScrollBar::add-page:vertical,
-QScrollBar::sub-page:vertical {
-    background: transparent;
-}
-</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOn</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::NoTextInteraction</set>
-       </property>
-      </widget>
       <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
@@ -900,6 +623,265 @@ qproperty-alignment: 'AlignHCenter | AlignVCenter';</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="widget" native="true">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>530</y>
+         <width>710</width>
+         <height>470</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>710</width>
+         <height>470</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>710</width>
+         <height>470</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QPushButton" name="removeCart_pushButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #F8F3ED;
+    color: #7A3E2F;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #F1E7DB;
+    border: 2px solid #B8956A;
+    color: #6A2F22;
+}
+
+QPushButton:pressed {
+    background-color: #E6D8C8;
+    border: 2px solid #A67C52;
+    color: #552017;
+}
+
+QPushButton:disabled {
+    background-color: #EEE7DE;
+    color: #B8A89A;
+    border: 2px solid #D8C9B8;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>حذف از سبد خرید</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="study_pushButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #B08D57;
+    color: #FFFAF3;
+    border: 2px solid #D6B97B;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #C29B5F;
+    border: 2px solid #E0C68A;
+}
+
+QPushButton:pressed {
+    background-color: #967646;
+    border: 2px solid #C9AA6B;
+}
+
+QPushButton:disabled {
+    background-color: #D3C1A1;
+    color: #FFF8EE;
+    border: 2px solid #E2D2B4;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>مطالعه کتاب</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="addCart_pushButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #8B5E3C;
+    color: #FFF8F0;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #9C6B46;
+    border: 2px solid #D4B183;
+}
+
+QPushButton:pressed {
+    background-color: #6F4A2F;
+    border: 2px solid #B8956A;
+}
+
+QPushButton:disabled {
+    background-color: #C7B299;
+    color: #F5EBDD;
+    border: 2px solid #D8C3A5;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>افزودن به سبد خرید</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="disconnected">
+          <property name="styleSheet">
+           <string notr="true">    background: none;
+    background-color: transparent;
+    color: #7A3E2F;
+    border: 1px solid transparent;
+    font-size: 15px;
+    font-weight: 700;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/resources/disconnected.png</normaloff>:/resources/disconnected.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>400</width>
+            <height>400</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="description_label">
+          <property name="styleSheet">
+           <string notr="true">QTextEdit {
+    background: rgba(78, 56, 42, 170);
+    color: #F5EBDD;
+    border: 1px solid rgba(255, 240, 220, 70);
+    border-radius: 16px;
+    padding: 12px;
+    selection-background-color: rgba(201, 156, 99, 170);
+    selection-color: white;
+    font-size: 11pt;
+}
+
+QTextEdit:focus {
+    border: 2px solid rgba(214, 176, 122, 180);
+}
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 12px;
+    margin: 4px;
+}
+
+QScrollBar::handle:vertical {
+    background: rgba(194, 148, 98, 180);
+    border-radius: 6px;
+    min-height: 35px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: rgba(222, 178, 124, 220);
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+    background: transparent;
+}
+</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="comments">
+          <property name="styleSheet">
+           <string notr="true">    background: none;
+    background-color: transparent;
+
+    border: 1px solid transparent;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/resources/user/comments_logo.png</normaloff>:/resources/user/comments_logo.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>200</width>
+            <height>200</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="comments_pushButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    color: #8c4f2b; /* قهوه‌ای مایل به قرمز/آجری */
+    text-decoration: underline;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    color: #b86b3d; /* روشن‌تر شدن در حالت هاور */
+}</string>
+          </property>
+          <property name="text">
+           <string>مشاهده نظرات و ثبت نظر</string>
           </property>
          </widget>
         </item>
