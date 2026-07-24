@@ -1,9 +1,9 @@
 #include "book.h"
 
 Book::Book(int id, QString title, QString author, QString publisher, BookGenre genre,
-           QString coverImagePath, double price, double discountPercentage)
-    : id(id), title(title), author(author), publisher(publisher), genre(genre),
-    price(price), discountPercentage(discountPercentage) , coverImagePath(coverImagePath){}
+           QString coverImagePath, double price, double discountPercentage, double rating)
+    : id(id), title(title), author(author), publisher(publisher), genre(genre), price(price),
+    discountPercentage(discountPercentage) , coverImagePath(coverImagePath), rating(rating){}
 
 int Book::getId() const { return id; }
 
@@ -22,3 +22,5 @@ QString Book::getPublisher() const{ return publisher; }
 double Book::getPrice() const{ return price; }
 
 double Book::getDiscountPercentage() const{ return discountPercentage; }
+
+double Book::getRating(){ return rating; }
