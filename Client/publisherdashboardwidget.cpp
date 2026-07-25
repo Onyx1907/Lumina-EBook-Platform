@@ -26,12 +26,14 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     PublisherBookPage = new PublisherBookWidget(publisher->getId(), this);
     EditBookPage = new EditBookWidget(this, publisher->getId());
     BookReaderPage = new BookReaderWidget(-1, this);
+    CommentsPage = new CommentsWidget(publisher->getId(), this, true);
 
     ui->stackedWidget->addWidget(PublisherStatsPage);
     ui->stackedWidget->addWidget(ProfilePage);
     ui->stackedWidget->addWidget(PublisherBookPage);
     ui->stackedWidget->addWidget(EditBookPage);
     ui->stackedWidget->addWidget(BookReaderPage);
+    ui->stackedWidget->addWidget(CommentsPage);
 
     ui->home_pushButton->setChecked(true);
     ui->stackedWidget->setCurrentIndex(Page::PublisherStatsPageIndex);
@@ -65,6 +67,16 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     //رفتن به همه کتاب ها از طریق صفحه داشبورد
     connect(PublisherStatsPage, &PublisherStatsWidget::goToBooks, this, [this](){
        fadeToPage(PublisherBookPageIndex);
+    });
+
+    //رفتن به صفحه نظرات
+    connect(PublisherBookPage, &PublisherBookWidget::goToCommentsPage,this, [this](int bookID){
+        CommentsPage->loadComments(bookID);
+        fadeToPage(Page::CommentsPageIndex);
+    });
+
+    connect(CommentsPage, &CommentsWidget::backToBookDatailPage, this, [this](){
+        fadeToPage(PublisherBookPageIndex);
     });
 }
 

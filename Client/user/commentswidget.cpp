@@ -6,8 +6,8 @@
 #include <QJsonArray>
 #include <QScrollBar>
 
-CommentsWidget::CommentsWidget(int userid, QWidget *parent)
-    : QWidget(parent), userID(userid)
+CommentsWidget::CommentsWidget(int userid, QWidget *parent, bool isPublisher)
+    : QWidget(parent), userID(userid), m_isPublisher(isPublisher)
     , ui(new Ui::CommentsWidget)
 {
     ui->setupUi(this);
@@ -117,33 +117,32 @@ void CommentsWidget::processNetworkData(const QString& action, const QJsonObject
 void CommentsWidget::updateListUi (const QJsonObject& response) {
     if (response["status"].toString() != "SUCCESS") return;
 
-    // ۱. پاکسازی لیست قبلی
     ui->listWidget->clear();
 
-    // حالت پیش‌فرض: فریم ثبت نظر جدید باز است و فیلدها خالی هستند
-    ui->write_frame->show();
+    if(!m_isPublisher){
+        ui->write_frame->show();
+    }
+    else{
+        ui->write_frame->hide();
+    }
     ui->comment_textEdit->clear();
     ui->rating_spinBox->setValue(5);
-    m_editingCommentId = -1; // پرچم ادیت را ریست می‌کنیم (اگر تعریفش کرده‌اید)
+    m_editingCommentId = -1;
 
     QJsonArray commentsArray = response["comments"].toArray();
 
-    // حل مشکل باگ حافظه: به جای آدرس‌دهی مستقیم به شیء روی استک،
-    // جیسونِ کامنت کاربر را ذخیره می‌کنیم تا خارج از حلقه دوباره آن را بسازیم.
     QJsonObject userCommentJson;
     bool hasUserComment = false;
 
-    // ۲. چرخش روی کامنت‌ها و ساخت مدل شیءگرا
     for (const QJsonValue& value : commentsArray) {
         QJsonObject commentObj = value.toObject();
         commentObj["book_id"] = bookID;
-        Comment comment(commentObj); // ساخت شیء موقت
+        Comment comment(commentObj);
 
         if (comment.getUserID() == userID) {
             hasUserComment = true;
-            userCommentJson = commentObj; // کپی کردن اطلاعات کامنت کاربر
+            userCommentJson = commentObj;
         } else {
-            // حل باگ حافظه: ویجت‌ها حتما باید با new روی Heap ساخته شوند تا زنده بمانند
             CommentItemWidget* itemWidget = new CommentItemWidget(comment, userID, this);
 
             QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
@@ -152,20 +151,18 @@ void CommentsWidget::updateListUi (const QJsonObject& response) {
         }
     }
 
-    // ۳. اگر کاربر قبلا کامنت ثبت کرده بود، آن را به عنوان اولین آیتم بالا سنجاق می‌کنیم
     if (hasUserComment) {
-        ui->write_frame->hide(); // مخفی کردن فریم ثبت نظر شما (بر اساس اسم معماری خودتان)
+        ui->write_frame->hide();
 
         Comment userComment(userCommentJson);
-        // ساخت ویجت با پوینتر (new)
+
         CommentItemWidget* userItemWidget = new CommentItemWidget(userComment, userID, this);
 
-        // اتصال سیگنال‌های دکمه‌های کامنت کاربر به فیلدهای متنی این صفحه اصلی
         connect(userItemWidget, &CommentItemWidget::editRequested, this, &CommentsWidget::onCommentEditRequested);
         connect(userItemWidget, &CommentItemWidget::deleteRequested, this, &CommentsWidget::onCommentDeleteRequested);
 
         QListWidgetItem* item = new QListWidgetItem();
-        ui->listWidget->insertItem(0, item); // قرار دادن در ردیف اول (ایندکس 0)
+        ui->listWidget->insertItem(0, item);
         item->setSizeHint(userItemWidget->sizeHint());
         ui->listWidget->setItemWidget(item, userItemWidget);
     }

@@ -94,3 +94,32 @@ void BookInfoCard::on_delete_pushButton_clicked()
     emit removeRequested(book.getId());
 }
 
+
+void BookInfoCard::updatePrice(double price, double discount){
+    book.setPrice(price, discount);
+
+    if(book.getDiscountPercentage() && book.getPrice()){
+        ui->discount_label->show();
+        ui->oldPrice_label->show();
+        ui->discount_label->setText(QString::number(book.getDiscountPercentage(), 'f', 1) + "%");
+        ui->oldPrice_label->setText(QString::number(book.getPrice(), 'f', 0));
+        ui->finalPrice_label->setText(QString::number(book.getFinalPrice(), 'f', 0));
+        QFont font = ui->oldPrice_label->font();
+        font.setStrikeOut(true);
+        ui->oldPrice_label->setFont(font);
+    }
+    else{
+        ui->discount_label->hide();
+        ui->oldPrice_label->hide();
+        ui->finalPrice_label->setText(QString::number(book.getFinalPrice(), 'f', 0));
+    }
+    if(book.getPrice() == 0){
+        ui->finalPrice_label->setText("رایگان");
+        ui->tooman_label->hide();
+    }
+
+}
+
+int BookInfoCard::getBookID(){
+    return book.getId();
+}

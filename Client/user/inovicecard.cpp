@@ -11,10 +11,10 @@ InoviceCard::InoviceCard(int bookID, QString date, QString title,
 
     ui->title_label->setText(title);
     ui->author_label->setText(author);
-    ui->price_label->setText(QString::number(price));
+    ui->price_label->setText(QString::number(price) + " تومان");
 
     QDateTime dateTime = QDateTime::fromString(date, Qt::ISODate);
-    ui->date_label->setText(dateTime.toString("yyyy-MM-DD - HH:mm:ss"));
+    ui->date_label->setText(dateTime.toString("yyyy/MM/dd - HH:mm:ss"));
 }
 
 InoviceCard::~InoviceCard()

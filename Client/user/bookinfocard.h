@@ -23,6 +23,8 @@ public:
     };
 
     void setCardMode(CardMode mode = CardMode::Normal);
+    void updatePrice(double price, double discount);
+    int getBookID();
 
 signals:
     void clicked(Book* bookPtr);

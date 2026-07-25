@@ -73,7 +73,7 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     }
 
     ui->active_checkBox->setChecked(isActive);
-
+    ui->active_checkBox->setEnabled(true);
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &SharedBookCard::handleCheckIsActive);
@@ -202,5 +202,11 @@ void SharedBookCard::handleCheckIsActive(const QString& action, const QJsonObjec
 void SharedBookCard::on_study_pushButton_clicked()
 {
     emit goToPDF(PDFpath);
+}
+
+
+void SharedBookCard::on_star_clicked()
+{
+    emit goToComments(book.getId());
 }
 

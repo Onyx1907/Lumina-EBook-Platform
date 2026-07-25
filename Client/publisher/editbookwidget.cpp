@@ -73,6 +73,11 @@ void EditBookWidget::on_chooseCover_pushButton_clicked()
         "Images (*.png *.jpg *.jpeg *.bmp)"
         );
 
+
+    coverPath = fileName;
+
+    if(fileName.isEmpty()) return;
+
     ui->chooseCover_pushButton->setText(fileName);
 
     QPixmap pix(fileName);
@@ -82,8 +87,6 @@ void EditBookWidget::on_chooseCover_pushButton_clicked()
             Qt::KeepAspectRatio,
             Qt::SmoothTransformation
             ));
-
-    coverPath = fileName;
 }
 
 
@@ -96,9 +99,11 @@ void EditBookWidget::on_choosePDF_pushButton_clicked()
         "PDF Files (*.pdf)"
         );
 
-    ui->choosePDF_pushButton->setText(fileName);
 
     filePath = fileName;
+
+    if(fileName.isEmpty()) return;
+    ui->choosePDF_pushButton->setText(fileName);
 }
 
 

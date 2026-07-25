@@ -23,6 +23,7 @@ signals:
     void discountRequested(int bookID, double discount);
     void changeActiveRequested(int bookID, bool isActive);
     void goToPDF(QString path);
+    void goToComments(int bookID);
 
 private slots:
     void on_edit_pushButton_clicked();
@@ -34,6 +35,8 @@ private slots:
     void handleCheckIsActive(const QString& action, const QJsonObject& data);
 
     void on_study_pushButton_clicked();
+
+    void on_star_clicked();
 
 private:
     Ui::SharedBookCard *ui;

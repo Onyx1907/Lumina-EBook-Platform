@@ -121,7 +121,7 @@ void LoginWidget::processNetworkData(const QString& action, const QJsonObject& d
             emit goToUSerDashboard(user, is_first_login);
         });
 
-        enableFormWithError("");
+        ui->error_label->setText("");
     }
     else if(status == "FAILED"){
         enableFormWithError(message);
