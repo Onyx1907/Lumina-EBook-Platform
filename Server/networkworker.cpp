@@ -217,10 +217,7 @@ void NetworkWorker::handleLogin(QTcpSocket* socket, const QJsonObject& data) {
     resp["action"] = "LOGIN_RESPONSE";
 
     QString inputHash = CryptoHelper::hashPassword(passwordPlain);
-
     if (username == ADMIN_USERNAME && inputHash == ADMIN_PASSWORD_HASH) {
-        QJsonObject resp;
-        resp["action"] = "LOGIN_RESPONSE";
         resp["status"] = "SUCCESS";
         resp["message"] = "!خوش آمدی مدیر";
         resp["user_role"] = "Admin";
@@ -232,7 +229,7 @@ void NetworkWorker::handleLogin(QTcpSocket* socket, const QJsonObject& data) {
         return;
     }
 
-    if (!m_dbManager->verifyUser(username, passwordPlain, role, isBlocked, userId, firstLogin)) {
+    if(!m_dbManager->verifyUser(username, passwordPlain, role, isBlocked, userId, firstLogin)) {
         resp["status"] = "FAILED";
         resp["message"] = ".نام کاربری یا رمز عبور اشتباه است یا حساب شما مسدود است";
         sendJson(socket, resp);
