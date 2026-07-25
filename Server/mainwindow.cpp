@@ -1,14 +1,13 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(Server *server, QWidget *parent)
+    : QMainWindow(parent), m_server(server) // مقداردهی m_server با سرور اصلی
 {
-    ui->setupUi(this);
+    setupUI();
+    setWindowTitle("Server Management Dashboard");
+    resize(950, 650);
 }
-
 MainWindow::~MainWindow()
 {
-    delete ui;
 }

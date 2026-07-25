@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
 
 //----- UI اجرای-----
-    MainWindow w;
+    MainWindow w(&server);
     w.show();
     return a.exec();
 }
