@@ -1975,7 +1975,16 @@ bool DatabaseManager::adminDeleteBook(int bookId) {
     // همزمان کتاب را غیرفعال (0) و حذف منطقی (1) میکنیم
     q.prepare("UPDATE books SET isActive = 0, is_deleted = 1 WHERE id = :id");
     q.bindValue(":id", bookId);
-    return q.exec();
+    if (!q.exec()) {
+        qDebug() << "Admin Delete Error:" << q.lastError().text();
+        return false;
+    }
+
+    // بررسی کنیم که آیا واقعاً سطری تحت این آیدی آپدیت شد یا نه
+    int affectedRows = q.numRowsAffected();
+    qDebug() << "Admin Delete - Rows affected:" << affectedRows;
+
+    return affectedRows > 0;
 }
 
 
