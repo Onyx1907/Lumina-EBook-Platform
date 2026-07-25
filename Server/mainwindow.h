@@ -2,22 +2,50 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
+#include <QTextEdit>
+#include <QListWidget>
+#include <QProgressBar>
+#include <QTimer>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include "server.h"
+#include "constants.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
-QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(Server *server, QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+
+    void updateOnlineCount(int count);
+    void appendLog(const QString &logMessage);
+    void appendSystemNotification(const QString &message);
+    void updateClientList(const QStringList &usernames);
+
+    // تایمر داخلی برای محاسبه زمان واقعی منابع سیستم و سلامت سرور
+    void updateSystemMetrics();
+
 private:
-    Ui::MainWindow *ui;
+    void setupUI();
+
+    Server *m_server;
+    QTimer *m_metricsTimer;
+
+    // المان  های گرافیکی داشبورد مدیریتی
+    QLabel *lblOnlineCount;
+    QLabel *lblServerStatus;
+    QProgressBar *barCPU;
+    QProgressBar *barRAM;
+    QTextEdit *txtLogs;
+    QTextEdit *txtNotifications;
+    QListWidget *listClients;
 };
+
+
 #endif // MAINWINDOW_H
