@@ -1,0 +1,93 @@
+#include "alluserswidget.h"
+#include "ui_alluserswidget.h"
+#include "clientnetworkmanager.h"
+#include <QTimer>
+#include <QScrollBar>
+#include "usercard.h"
+#include <QJsonArray>
+
+AllUsersWidget::AllUsersWidget(QWidget *parent)
+    : QWidget(parent)
+    , ui(new Ui::AllUsersWidget)
+{
+    ui->setupUi(this);
+
+    ui->error_label->hide();
+
+
+    ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->listWidget->verticalScrollBar()->setSingleStep(15);
+
+    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
+            this, &AllUsersWidget::processNetworkData);
+}
+
+AllUsersWidget::~AllUsersWidget()
+{
+    delete ui;
+}
+
+void AllUsersWidget::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+
+    loadUsers();
+}
+
+void AllUsersWidget::loadUsers(){
+    pendingScrollValue = ui->listWidget->verticalScrollBar()->value();
+
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+
+        ClientNetworkManager::instance().sendRequest("GET_ALL_USERS", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject& data){
+    qDebug() <<data;
+
+    if(action != "GET_ALL_USERS_RESPONSE"){
+        return;
+    }
+
+    if(data.value("message").toString() == "SUCCESS"){
+        return;
+    }
+
+    if(action == "GET_ALL_USERS_RESPONSE"){
+        fillResults(data);
+    }
+}
+
+
+void AllUsersWidget::fillResults(const QJsonObject& data){
+    ui->listWidget->clear();
+
+    QJsonArray usersArray = data["users"].toArray();
+
+    for (const QJsonValue& value : usersArray) {
+        QJsonObject userObj = value.toObject();
+
+        UserCard* itemWidget = new UserCard(userObj);
+
+        QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
+        item->setSizeHint(itemWidget->sizeHint());
+        ui->listWidget->setItemWidget(item, itemWidget);
+    }
+
+    QTimer::singleShot(0, this, [this]() {
+        auto *bar = ui->listWidget->verticalScrollBar();
+
+        bar->setValue(qMin(pendingScrollValue, bar->maximum()));
+    });
+}
+

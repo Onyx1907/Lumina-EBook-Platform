@@ -57,6 +57,8 @@ qt_add_executable(LuminaClient
     user/inovicecard.h user/inovicecard.cpp user/inovicecard.ui
     admindashboardwidget.h admindashboardwidget.cpp admindashboardwidget.ui
     admin/adminbookswidget.h admin/adminbookswidget.cpp admin/adminbookswidget.ui
+    admin/alluserswidget.h admin/alluserswidget.cpp admin/alluserswidget.ui
+    admin/usercard.h admin/usercard.cpp admin/usercard.ui
 
 
 

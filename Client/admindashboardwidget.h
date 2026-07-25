@@ -7,6 +7,7 @@
 #include "editbookwidget.h"
 #include "bookreaderwidget.h"
 #include "commentswidget.h"
+#include "alluserswidget.h"
 
 namespace Ui {
 class AdminDashboardWidget;
@@ -23,6 +24,8 @@ public:
 private slots:
     void on_books_pushButton_clicked();
 
+    void on_users_pushButton_clicked();
+
 private:
     Ui::AdminDashboardWidget *ui;
 
@@ -32,12 +35,14 @@ private:
     EditBookWidget *EditBookPage;
     BookReaderWidget *BookReaderPage;
     CommentsWidget *CommentsPage;
+    AllUsersWidget *AllUsersPage;
 
     enum Page{
         AdminBooksPageIndex = 0,
         EditBookPageIndex = 1,
         BookReaderPageIndex = 2,
-        CommentsPageIndex = 3
+        CommentsPageIndex = 3,
+        AllUsersPageIndex = 4
     };
 };
 
