@@ -116,7 +116,7 @@ void CommentsWidget::updateListUi (const QJsonObject& response) {
 
     ui->listWidget->clear();
 
-    if(!m_isPublisher){
+    if(!m_isPublisher && userID != -1){
         ui->write_frame->show();
     }
     else{
@@ -145,6 +145,10 @@ void CommentsWidget::updateListUi (const QJsonObject& response) {
             QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
             item->setSizeHint(itemWidget->sizeHint());
             ui->listWidget->setItemWidget(item, itemWidget);
+
+            if(userID == -1){
+                connect(itemWidget, &CommentItemWidget::deleteRequested, this, &CommentsWidget::onCommentDeleteRequested);
+            }
         }
     }
 

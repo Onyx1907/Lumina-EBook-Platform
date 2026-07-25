@@ -13,9 +13,13 @@ AdminDashboardWidget::AdminDashboardWidget(Admin *admin, QWidget *parent)
 
     AdminBooksPage = new AdminBooksWidget(this);
     EditBookPage = new EditBookWidget(this);
+    BookReaderPage = new BookReaderWidget(-1, this);
+    CommentsPage = new CommentsWidget(-1, this);
 
     ui->stackedWidget->addWidget(AdminBooksPage);
     ui->stackedWidget->addWidget(EditBookPage);
+    ui->stackedWidget->addWidget(BookReaderPage);
+    ui->stackedWidget->addWidget(CommentsPage);
 
     ui->stackedWidget->setCurrentIndex(Page::AdminBooksPageIndex);
 
@@ -27,6 +31,28 @@ AdminDashboardWidget::AdminDashboardWidget(Admin *admin, QWidget *parent)
 
     //برگشت از صفحه ویرایش کتاب
     connect(EditBookPage, &EditBookWidget::back, this, [this](){
+        fadeToPage(Page::AdminBooksPageIndex);
+    });
+
+    //رفتن به صفحه پی دی اف کتاب
+    connect(AdminBooksPage, &AdminBooksWidget::PDFreader, this, [this](QString path){
+        BookReaderPage->loadBook(path);
+        fadeToPage(Page::BookReaderPageIndex);
+    });
+
+    //برگشت از صفحه پی دی اف خوان
+    connect(BookReaderPage, &BookReaderWidget::back, this, [this](){
+        fadeToPage(Page::AdminBooksPageIndex);
+    });
+
+    //رفتن به صفحه کامنت ها
+    connect(AdminBooksPage, &AdminBooksWidget::goToCommentsPage, this, [this](int bookID){
+        CommentsPage->loadComments(bookID);
+        fadeToPage(Page::CommentsPageIndex);
+    });
+
+    //برگشت از صفحه کامنت ها
+    connect(CommentsPage, &CommentsWidget::backToBookDatailPage, this, [this](){
         fadeToPage(Page::AdminBooksPageIndex);
     });
 }

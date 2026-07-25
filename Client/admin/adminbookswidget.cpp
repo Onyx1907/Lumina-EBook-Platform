@@ -98,6 +98,14 @@ void AdminBooksWidget::handleGetBooks(const QJsonObject& data){
         connect(itemWidget, &SharedBookCard::editRequested, this, [this](int bookID){
             emit editBook(bookID);
         });
+
+        connect(itemWidget, &SharedBookCard::goToPDF, this, [this](QString path){
+           emit PDFreader(path);
+        });
+
+        connect(itemWidget, &SharedBookCard::goToComments, this, [this](int bookID){
+            emit goToCommentsPage(bookID);
+        });
     }
 }
 

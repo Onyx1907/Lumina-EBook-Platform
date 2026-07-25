@@ -19,7 +19,12 @@ CommentItemWidget::CommentItemWidget(const Comment& comment, int currentUserId, 
     if (m_comment.getUserID() == currentUserId) {
         ui->edit_pushButton->show();
         ui->delete_pushButton->show();
-    } else {
+    }
+    else if(currentUserId == -1){
+        ui->edit_pushButton->hide();
+        ui->delete_pushButton->show();
+    }
+    else {
         ui->edit_pushButton->hide();
         ui->delete_pushButton->hide();
     }
