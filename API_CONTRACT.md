@@ -1047,7 +1047,7 @@
     }
   },
 "-----------------------------------------"
-"PUBLISHER_DELETE_BOOK": {
+46_"PUBLISHER_DELETE_BOOK": {
     "client_request": {
       "action": "PUBLISHER_DELETE_BOOK",
       "book_id": 123,
@@ -1065,7 +1065,7 @@
     }
   }
 ,
-  "46_GET_PUBLISHER_BOOKS": {
+  "47_GET_PUBLISHER_BOOKS": {
     "client_request": {
       "action": "GET_PUBLISHER_BOOKS",
       "publisher_id": 5
@@ -1091,7 +1091,7 @@
     }
   }
 ,
-  "47_GET_PUBLISHER_STATS": {
+  "48_GET_PUBLISHER_STATS": {
     "client_request": {
       "action": "GET_PUBLISHER_STATS",
       "publisher_id": 5
@@ -1134,7 +1134,7 @@
     }
   }
 ,
-  "48_GET_ALL_USERS": {
+  "49_GET_ALL_USERS": {
     "client_request": {
       "action": "GET_ALL_USERS"
     },
@@ -1159,7 +1159,7 @@
       ]
     }
   },
-  "49_GET_USER_DETAILS": {
+   "50_GET_USER_DETAILS": {
     "client_request": {
       "action": "GET_USER_DETAILS",
       "user_id": 2
@@ -1172,8 +1172,25 @@
         "username": "publisher_test",
         "role": "publisher",
         "is_blocked": 1,
-        "security_question": "نام اولین مدرسه شما چیست؟",
-        "registration_date": "2026-02-20 14:45:12"
+        "name": "علی رضایی",
+        "email": "publisher@test.com",
+        "registration_date": "2026-02-20 14:45:12",
+        "published_books_count": 5
+      }
+    },
+     "server_response_success": {
+      "action": "GET_USER_DETAILS_RESPONSE",
+      "status": "SUCCESS",
+      "user": {
+        "id": 3,
+        "username": "user_test",
+        "role": "RegularUser",
+        "is_blocked": 0,
+        "name": "سارا محمدی",
+        "email": "user@test.com",
+        "favorite_genres": "رمان, تاریخی, علمی",
+        "registration_date": "2026-02-21 10:15:00",
+        "total_purchases": 3
       }
     },
     "server_response_error": {
@@ -1181,8 +1198,9 @@
       "status": "ERROR",
       "message": ".کاربر یافت نشد"
     }
-  },
-  "50_SEARCH_USERS": {
+  }
+  ,
+  "51_SEARCH_USERS": {
     "client_request": {
       "action": "SEARCH_USERS",
       "keyword": "test",
@@ -1205,7 +1223,7 @@
     }
   }
 ,
-  "51_DELETE_USER": {
+  "52_DELETE_USER": {
     "client_request": {
       "action": "DELETE_USER",
       "user_id": 3
@@ -1221,7 +1239,7 @@
       "message": ".خطا در حذف حساب"
     }
   },
-  "52_SET_USER_ACTIVE_STATE": {
+  "53_SET_USER_ACTIVE_STATE": {
     "client_request": {
       "action": "SET_USER_ACTIVE",
       "user_id": 4,
@@ -1239,7 +1257,7 @@
     }
   }
 ,
-  "53_GET_ALL_BOOKS": {
+  "54_GET_ALL_BOOKS": {
     "client_request": {
       "action": "GET_ALL_BOOKS"
     },
@@ -1257,39 +1275,11 @@
           "discountPercent": 10.0,
           "discountAmount": 25000.0,
           "coverImagePath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh_cover.jpg",
+          "pdfPath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh.pdf",
           "publisher_id": 5,
           "isActive": 1
         }
       ]
-    }
-  },
-  "54_GET_BOOK_DETAILS": {
-    "client_request": {
-      "action": "GET_BOOK_DETAILS",
-      "book_id": 10
-    },
-    "server_response_success": {
-      "action": "GET_BOOK_DETAILS_RESPONSE",
-      "status": "SUCCESS",
-      "book_data": {
-        "id": 10,
-        "title": "شاهنامه فردوسی",
-        "author": "ابوالقاسم فردوسی",
-        "genre": "حماسی",
-        "description": "شاهکار حماسی زبان فارسی",
-        "price": 250000.0,
-        "discountPercent": 10.0,
-        "discountAmount": 25000.0,
-        "coverImagePath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh_cover.jpg",
-        "pdfPath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh.pdf",
-        "publisher_id": 5,
-        "isActive": 1
-      }
-    },
-    "server_response_error": {
-      "action": "GET_BOOK_DETAILS_RESPONSE",
-      "status": "FAILED",
-      "message": ".کتاب یافت نشد یا حذف شده است"
     }
   },
   "55_ADMIN_UPDATE_BOOK": {
