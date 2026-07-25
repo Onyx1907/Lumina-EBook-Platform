@@ -33,11 +33,19 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_
     StorageUtils::displayBookCover(book.getCoverImagePath(),
                                    ui->book_cover);
 
+
+    ui->active_checkBox->blockSignals(true);
+    ui->active_checkBox->setChecked(isActive);
+    ui->active_checkBox->blockSignals(false);
+
     if(isAdmin){
         ui->discount_pushButton->hide();
-        ui->active_checkBox->hide();
+        ui->active_checkBox->setEnabled(false);
         ui->rating_label->hide();
         ui->star->setText("مشاهده نظرات");
+    }
+    else{
+        ui->active_checkBox->setEnabled(true);
     }
 
     QString sv = genreToString(book.getGenre());
@@ -77,9 +85,6 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_
         ui->finalPrice_label->setText("رایگان");
         ui->tooman_label->hide();
     }
-
-    ui->active_checkBox->setChecked(isActive);
-    ui->active_checkBox->setEnabled(true);
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &SharedBookCard::handleCheckIsActive);
@@ -180,6 +185,8 @@ void SharedBookCard::on_discount_pushButton_clicked()
 
 void SharedBookCard::on_active_checkBox_toggled(bool checked)
 {
+    if(isAdmin) return;
+
     old_active_state = !checked;
 
     ui->active_checkBox->setEnabled(false);
