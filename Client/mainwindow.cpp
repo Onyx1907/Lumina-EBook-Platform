@@ -7,6 +7,7 @@
 #include <QSequentialAnimationGroup>
 #include "clientnetworkmanager.h"
 #include "publisher.h"
+#include "admin.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -80,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         RegularUser *cur_user = dynamic_cast<RegularUser*>(user);
         Publisher *cur_user2 = dynamic_cast<Publisher*>(user);
+        Admin *cur_user3 = dynamic_cast<Admin*>(user);
 
         if(cur_user != nullptr) {
             UserDashboardPage = new UserDashboardWidget(cur_user, is_first_login, this);
@@ -92,6 +94,13 @@ MainWindow::MainWindow(QWidget *parent)
             PublisherDashboardPage = new PublisherDashboardWidget(cur_user2, this);
 
             ui->stackedWidget->addWidget(PublisherDashboardPage);
+
+            fadeToPage(Page::UserDashboardPageIndex);
+        }
+        else if(cur_user3 != nullptr){
+            AdminDashboardPage = new AdminDashboardWidget(cur_user3, this);
+
+            ui->stackedWidget->addWidget(AdminDashboardPage);
 
             fadeToPage(Page::UserDashboardPageIndex);
         }

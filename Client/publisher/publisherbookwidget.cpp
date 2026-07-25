@@ -77,7 +77,17 @@ void PublisherBookWidget::processNetworkData(const QString& action, const QJsonO
         handleGetBooks(data);
     }
     else if(action == "SET_BOOK_DISCOUNT_RESPONSE"){
-        loadBooks();
+
+        for (int i = 0; i < ui->listWidget->count(); i++){
+            SharedBookCard *card =
+                qobject_cast<SharedBookCard*>(
+                    ui->listWidget->itemWidget(ui->listWidget->item(i)));
+            if(!card) continue;
+
+            if(card->getBookID() == m_bookID){
+                card->updatePrice(m_discount);
+            }
+        }
     }
 
 }
@@ -174,6 +184,9 @@ void PublisherBookWidget::setDiscountRequested(int bookID, double percent){
         data["publisher_id"] = m_publisherID;
         data["book_id"] = bookID;
         data["discountPercent"] = percent;
+
+        m_bookID = bookID;
+        m_discount = percent;
 
         ClientNetworkManager::instance().sendRequest("SET_BOOK_DISCOUNT", data, true);
     }

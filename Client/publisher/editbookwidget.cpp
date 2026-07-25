@@ -147,7 +147,37 @@ void EditBookWidget::on_submit_pushButton_clicked()
 
     if(ClientNetworkManager::instance().connectToServer()){
 
-        if(m_bookID == -1){
+        if(m_publisherID == -1){
+            QJsonObject data;
+            data["book_id"] = m_bookID;
+            if(!title.isEmpty()){
+                data["title"] = title;
+            }
+            if(!author.isEmpty()){
+                data["author"] = author;
+            }
+            if(!description.isEmpty()){
+                data["description"] = description;
+            }
+            if(price != -1){
+                data["price"] = price;
+            }
+            if(discount != -1){
+                data["discountPercent"] = discount;
+            }
+            if(!filePath.isEmpty()){
+                data["publisher_pdf_path"] = filePath;
+            }
+            if(!coverPath.isEmpty()){
+                data["publisher_cover_path"] = coverPath;
+            }
+            data["genre"] = genreToString(genre);
+
+            ClientNetworkManager::instance().sendRequest("ADMIN_UPDATE_BOOK", data, true);
+
+        }
+
+        else if(m_bookID == -1){
             if(title.isEmpty() || author.isEmpty() || price == -1 || discount == -1 ||
                 filePath.isEmpty() || coverPath.isEmpty()){
                 ui->error_label->show();
@@ -216,7 +246,8 @@ void EditBookWidget::on_submit_pushButton_clicked()
 
 void EditBookWidget::processNetworkData(const QString& action, const QJsonObject& data){
     if(action != "ADD_BOOK_RESPONSE" &&
-        action != "UPDATE_BOOK_RESPONSE"){
+        action != "UPDATE_BOOK_RESPONSE" &&
+        action != "ADMIN_UPDATE_BOOK_RESPONSE"){
         return;
     }
 

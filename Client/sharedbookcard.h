@@ -14,8 +14,11 @@ class SharedBookCard : public QWidget
     Q_OBJECT
 
 public:
-    explicit SharedBookCard(const QJsonObject& obj, QWidget *parent = nullptr);
+    explicit SharedBookCard(const QJsonObject& obj, QWidget *parent = nullptr, bool is_admin = false);
     ~SharedBookCard();
+
+    void updatePrice(double discount);
+    int getBookID();
 
 signals:
     void editRequested(int bookID);
@@ -45,6 +48,7 @@ private:
     QString PDFpath;
 
     bool old_active_state;
+    bool isAdmin = false;
 };
 
 #endif // SHAREDBOOKCARD_H

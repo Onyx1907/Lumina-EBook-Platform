@@ -55,6 +55,8 @@ qt_add_executable(LuminaClient
     publisher/editbookwidget.h publisher/editbookwidget.cpp publisher/editbookwidget.ui
     user/purchasehistorywidget.h user/purchasehistorywidget.cpp user/purchasehistorywidget.ui
     user/inovicecard.h user/inovicecard.cpp user/inovicecard.ui
+    admindashboardwidget.h admindashboardwidget.cpp admindashboardwidget.ui
+    admin/adminbookswidget.h admin/adminbookswidget.cpp admin/adminbookswidget.ui
 
 
 
@@ -83,7 +85,8 @@ set_target_properties(LuminaClient PROPERTIES
 target_include_directories(LuminaClient PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/user
-    ${CMAKE_CURRENT_SOURCE_DIR}/publisher)
+    ${CMAKE_CURRENT_SOURCE_DIR}/publisher
+    ${CMAKE_CURRENT_SOURCE_DIR}/admin)
 
 include(GNUInstallDirs)
 install(TARGETS LuminaClient

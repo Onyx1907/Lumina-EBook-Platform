@@ -9,7 +9,7 @@
 #include <QInputDialog>
 
 
-SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
+SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_admin)
     : QWidget(parent), book(obj["id"].toInt(),
                         obj["title"].toString(),
                         obj["author"].toString(),
@@ -19,7 +19,7 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
                         obj["discountPercent"].toDouble(),
                         obj["avgRating"].toDouble()),
     isActive((obj["isActive"].toInt()) == 1),
-    PDFpath(obj.value("pdfPath").toString())
+    PDFpath(obj.value("pdfPath").toString()), isAdmin(is_admin)
     , ui(new Ui::SharedBookCard)
 {
     ui->setupUi(this);
@@ -33,6 +33,22 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     StorageUtils::displayBookCover(book.getCoverImagePath(),
                                    ui->book_cover);
 
+
+    ui->active_checkBox->blockSignals(true);
+    ui->active_checkBox->setChecked(isActive);
+    ui->active_checkBox->blockSignals(false);
+
+    if(isAdmin){
+        ui->discount_pushButton->hide();
+        ui->active_checkBox->setEnabled(false);
+        ui->rating_label->hide();
+        ui->star->setText("مشاهده نظرات");
+        ui->publisher_label->setText("آیدی ناشر: " + QString::number(obj["publisher_id"].toInt()));
+    }
+    else{
+        ui->active_checkBox->setEnabled(true);
+        ui->publisher_label->hide();
+    }
 
     QString sv = genreToString(book.getGenre());
 
@@ -71,9 +87,6 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
         ui->finalPrice_label->setText("رایگان");
         ui->tooman_label->hide();
     }
-
-    ui->active_checkBox->setChecked(isActive);
-    ui->active_checkBox->setEnabled(true);
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &SharedBookCard::handleCheckIsActive);
@@ -174,6 +187,8 @@ void SharedBookCard::on_discount_pushButton_clicked()
 
 void SharedBookCard::on_active_checkBox_toggled(bool checked)
 {
+    if(isAdmin) return;
+
     old_active_state = !checked;
 
     ui->active_checkBox->setEnabled(false);
@@ -210,3 +225,32 @@ void SharedBookCard::on_star_clicked()
     emit goToComments(book.getId());
 }
 
+
+void SharedBookCard::updatePrice(double discount){
+    book.setPrice(book.getPrice(), discount);
+
+    if(book.getDiscountPercentage() && book.getPrice()){
+        ui->discount_label->show();
+        ui->oldPrice_label->show();
+        ui->discount_label->setText(QString::number(book.getDiscountPercentage(), 'f', 1) + "%");
+        ui->oldPrice_label->setText(QString::number(book.getPrice(), 'f', 0));
+        ui->finalPrice_label->setText(QString::number(book.getFinalPrice(), 'f', 0));
+        QFont font = ui->oldPrice_label->font();
+        font.setStrikeOut(true);
+        ui->oldPrice_label->setFont(font);
+    }
+    else{
+        ui->discount_label->hide();
+        ui->oldPrice_label->hide();
+        ui->finalPrice_label->setText(QString::number(book.getFinalPrice(), 'f', 0));
+    }
+    if(book.getPrice() == 0){
+        ui->finalPrice_label->setText("رایگان");
+        ui->tooman_label->hide();
+    }
+
+}
+
+int SharedBookCard::getBookID(){
+    return book.getId();
+}

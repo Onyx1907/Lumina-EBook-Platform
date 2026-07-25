@@ -68,9 +68,6 @@ void CommentsWidget::processNetworkData(const QString& action, const QJsonObject
         if(data.contains("book_id") && data["book_id"].toInt() == bookID){
             loadComments(bookID);
         }
-        else if(!data.contains("book_id")){
-            loadComments(bookID);
-        }
     }
     else if(action == "ADD_COMMENT_RESPONSE"){
         if(data["status"].toString() != "SUCCESS"){
@@ -119,7 +116,7 @@ void CommentsWidget::updateListUi (const QJsonObject& response) {
 
     ui->listWidget->clear();
 
-    if(!m_isPublisher){
+    if(!m_isPublisher && userID != -1){
         ui->write_frame->show();
     }
     else{
@@ -148,6 +145,10 @@ void CommentsWidget::updateListUi (const QJsonObject& response) {
             QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
             item->setSizeHint(itemWidget->sizeHint());
             ui->listWidget->setItemWidget(item, itemWidget);
+
+            if(userID == -1){
+                connect(itemWidget, &CommentItemWidget::deleteRequested, this, &CommentsWidget::onCommentDeleteRequested);
+            }
         }
     }
 
