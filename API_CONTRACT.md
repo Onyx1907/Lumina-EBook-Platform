@@ -1170,7 +1170,7 @@
       "user": {
         "id": 2,
         "username": "publisher_test",
-        "role": "publisher",
+        "role": "Publisher",
         "is_blocked": 1,
         "name": "علی رضایی",
         "email": "publisher@test.com",
