@@ -820,9 +820,11 @@ void NetworkWorker::handleEditComment(QTcpSocket* socket, const QJsonObject& dat
     sendJson(socket, resp);
 
     if (ok) {
+        int bookId = m_dbManager->getBookIdByCommentId(commentId);
+
         QJsonObject b;
         b["action"] = "COMMENT_UPDATED";
-        b["comment_id"] = commentId;
+        b["book_id"] = bookId;
         b["type"] = "EDIT";
         emit broadcastRequested(b);
     }
@@ -830,6 +832,8 @@ void NetworkWorker::handleEditComment(QTcpSocket* socket, const QJsonObject& dat
 
 void NetworkWorker::handleDeleteComment(QTcpSocket* socket, const QJsonObject& data) {
     int commentId = data["comment_id"].toInt();
+
+    int bookId = m_dbManager->getBookIdByCommentId(commentId);
 
     bool ok = m_dbManager->deleteComment(commentId);
 
@@ -845,7 +849,7 @@ void NetworkWorker::handleDeleteComment(QTcpSocket* socket, const QJsonObject& d
     if (ok) {
         QJsonObject b;
         b["action"] = "COMMENT_UPDATED";
-        b["comment_id"] = commentId;
+        b["book_id"] = bookId;
         b["type"] = "DELETE";
         emit broadcastRequested(b);
     }

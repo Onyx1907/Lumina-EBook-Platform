@@ -770,6 +770,17 @@ QList<QJsonObject> DatabaseManager::searchBooks(const QString& title, const QStr
 
 //*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
 
+//گرفتن  آیدی کتاب از روی آیدی کامنت برای برودکست
+int DatabaseManager::getBookIdByCommentId(int commentId) {
+    QSqlQuery q(db);
+    q.prepare("SELECT book_id FROM comments WHERE id = :id");
+    q.bindValue(":id", commentId);
+
+    if (q.exec() && q.next()) {
+        return q.value(0).toInt();
+    }
+    return -1; // اگر پیدا نشد
+}
 
 //اضافه کردن نظر
 bool DatabaseManager::addComment(int bookId, int userId,

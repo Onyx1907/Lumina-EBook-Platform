@@ -88,6 +88,7 @@ public:
     //*********************************************پنل کاربر عادی ( ماژول 3 )****************************************************
 
 
+    int getBookIdByCommentId(int commentId);
     bool addComment(int bookId, int userId, const QString& text, int rating);
     bool editComment(int commentId, const QString& newText, int newRating);
     bool deleteComment(int commentId);
