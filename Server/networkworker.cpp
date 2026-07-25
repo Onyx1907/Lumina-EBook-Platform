@@ -187,7 +187,6 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
 
     else if (action == "GET_ALL_BOOKS") { handleGetAllBooks(socket, data); return; }
-    else if (action == "GET_BOOK_DETAILS") { handleGetBookDetails(socket, data); return; }
     else if (action == "ADMIN_UPDATE_BOOK") { handleAdminUpdateBook(socket, obj); return; }
     else if (action == "ADMIN_DELETE_BOOK") { handleAdminDeleteBook(socket, data); return; }
 
@@ -218,10 +217,7 @@ void NetworkWorker::handleLogin(QTcpSocket* socket, const QJsonObject& data) {
     resp["action"] = "LOGIN_RESPONSE";
 
     QString inputHash = CryptoHelper::hashPassword(passwordPlain);
-
     if (username == ADMIN_USERNAME && inputHash == ADMIN_PASSWORD_HASH) {
-        QJsonObject resp;
-        resp["action"] = "LOGIN_RESPONSE";
         resp["status"] = "SUCCESS";
         resp["message"] = "!خوش آمدی مدیر";
         resp["user_role"] = "Admin";
@@ -233,7 +229,7 @@ void NetworkWorker::handleLogin(QTcpSocket* socket, const QJsonObject& data) {
         return;
     }
 
-    if (!m_dbManager->verifyUser(username, passwordPlain, role, isBlocked, userId, firstLogin)) {
+    if(!m_dbManager->verifyUser(username, passwordPlain, role, isBlocked, userId, firstLogin)) {
         resp["status"] = "FAILED";
         resp["message"] = ".نام کاربری یا رمز عبور اشتباه است یا حساب شما مسدود است";
         sendJson(socket, resp);
@@ -1809,6 +1805,12 @@ void NetworkWorker::handleGetAllBooks(QTcpSocket* socket, const QJsonObject& dat
         if (!relativeCover.isEmpty()) {
             mutableBook["coverImagePath"] = storagePath + relativeCover; // ساخت آدرس کامل برای لود عکس در ویترین
         }
+
+        QString relativePdf = mutableBook["pdfPath"].toString();
+        if (!relativePdf.isEmpty()) {
+            mutableBook["pdfPath"] = storagePath + relativePdf;
+        }
+
         arr.append(mutableBook);
     }
 
@@ -1816,41 +1818,6 @@ void NetworkWorker::handleGetAllBooks(QTcpSocket* socket, const QJsonObject& dat
     resp["action"] = "GET_ALL_BOOKS_RESPONSE";
     resp["status"] = "SUCCESS";
     resp["books"] = arr;
-
-    sendJson(socket, resp);
-}
-
-void NetworkWorker::handleGetBookDetails(QTcpSocket* socket, const QJsonObject& data)
-{
-    int bookId = data.value("book_id").toInt();
-    QJsonObject resp;
-    resp["action"] = "GET_BOOK_DETAILS_RESPONSE";
-
-    QJsonObject book = m_dbManager->getadminBookDetails(bookId);
-
-    if (!book.isEmpty()) {
-        resp["status"] = "SUCCESS";
-
-        // استفاده از مسیر استاندارد Home برای هماهنگی با اینستالر
-        QString storagePath = QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/BookClub_Storage") + "/";
-
-        // تبدیل مسیر نسبی عکس به آدرس کامل فیزیکی
-        QString relativeCover = book["coverImagePath"].toString();
-        if (!relativeCover.isEmpty()) {
-            book["coverImagePath"] = storagePath + relativeCover;
-        }
-
-        // تبدیل مسیر نسبی پی دی اف به آدرس کامل فیزیکی
-        QString relativePdf = book["pdfPath"].toString();
-        if (!relativePdf.isEmpty()) {
-            book["pdfPath"] = storagePath + relativePdf;
-        }
-
-        resp["book_data"] = book;
-    } else {
-        resp["status"] = "FAILED";
-        resp["message"] = ".کتاب یافت نشد یا حذف شده است";
-    }
 
     sendJson(socket, resp);
 }

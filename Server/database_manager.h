@@ -184,7 +184,6 @@ public:
 
 
     QList<QJsonObject> getAllBooks();
-    QJsonObject getadminBookDetails(int bookId);
     bool adminUpdateBook(int bookId, const QJsonObject& bookData);
     bool adminDeleteBook(int bookId);
 
@@ -195,12 +194,12 @@ public:
     QList<QJsonObject> getNotifications(int userId, const QString& role);
     bool markNotificationRead(int notificationId);
     int createNotification(int userId, const QString& role, const QString& type, const QString& message, int relatedId);
-    QString getUsernameById(int userId);
 
 
     //***************************************************توابع کمکی برای اعلان*****************************************************
 
 
+    QString getUsernameById(int userId);
     int getPublisherIdForBook(int bookId);
     QString getBookTitle(int bookId);
     QList<QPair<int, QString>> getPublisherAndBooksForCart(int userId);

@@ -1793,22 +1793,46 @@ QList<QJsonObject> DatabaseManager::getAllUsers() {
 QJsonObject DatabaseManager::getUserById(int userId) {
     QJsonObject u;
     QSqlQuery q(db);
-    q.prepare("SELECT id, username, role, is_blocked, security_question, registration_date "
+    q.prepare("SELECT id, username, role, is_blocked, registration_date, name, email, favorite_genres "
               "FROM users WHERE id = :id AND is_deleted = 0");
     q.bindValue(":id", userId);
 
     if (!q.exec() || !q.next()) return u;
 
-    u["id"]               = q.value("id").toInt();
-    u["username"]         = q.value("username").toString();
-    u["role"]             = q.value("role").toString();
-    u["is_blocked"]       = q.value("is_blocked").toInt();
-    u["security_question"]= q.value("security_question").toString();
-    u["registration_date"]= q.value("registration_date").toString();
+    QString role = q.value("role").toString();
+
+    u["id"]                = q.value("id").toInt();
+    u["username"]          = q.value("username").toString();
+    u["role"]              = role;
+    u["is_blocked"]        = q.value("is_blocked").toInt();
+    u["registration_date"] = q.value("registration_date").toString();
+    u["name"]              = q.value("name").toString();
+    u["email"]             = q.value("email").toString();
+    u["favorite_genres"]   = q.value("favorite_genres").toString();
+
+    // بررسی نقش کاربر برای اضافه کردن اطلاعات اختصاصی
+    if (role == "publisher") {
+        QSqlQuery qPub(db);
+        qPub.prepare("SELECT COUNT(*) FROM books WHERE publisher_id = :userId AND is_deleted = 0");
+        qPub.bindValue(":userId", userId);
+        if (qPub.exec() && qPub.next()) {
+            u["published_books_count"] = qPub.value(0).toInt();
+        } else {
+            u["published_books_count"] = 0;
+        }
+    } else if (role == "RegularUser") {
+        QSqlQuery qCart(db);
+        qCart.prepare("SELECT COUNT(*) FROM library WHERE user_id = :userId");
+        qCart.bindValue(":userId", userId);
+        if (qCart.exec() && qCart.next()) {
+            u["total_purchases"] = qCart.value(0).toInt();
+        } else {
+            u["total_purchases"] = 0;
+        }
+    }
 
     return u;
 }
-
 //جست و جو و فیلتر کاربران
 QList<QJsonObject> DatabaseManager::searchUsers(const QString& keyword, const QString& roleFilter,
                                                 int blockedFilter, const QString& registerDateFilter) {
@@ -1887,11 +1911,11 @@ bool DatabaseManager::setUserActiveState(int userId, bool active) {
 
 //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
 
-//مشاهده تمامی کتاب های فعال
+//مشاهده تمامی کتاب های فعال و اطلاعات کاملشون
 QList<QJsonObject> DatabaseManager::getAllBooks() {
     QList<QJsonObject> list;
 
-    QSqlQuery q("SELECT id, title, author, genre, description, price, discountPercent, discountAmount, coverImagePath, publisher_id, isActive "
+    QSqlQuery q("SELECT id, title, author, genre, description, price, discountPercent, discountAmount, coverImagePath, pdfPath, publisher_id, isActive "
                 "FROM books WHERE is_deleted = 0", db);
 
     if (!q.exec()) {
@@ -1909,43 +1933,13 @@ QList<QJsonObject> DatabaseManager::getAllBooks() {
         book["price"]           = q.value("price").toDouble();
         book["discountPercent"] = q.value("discountPercent").toDouble();
         book["discountAmount"]  = q.value("discountAmount").toDouble();
-        book["coverImagePath"]  = q.value("coverImagePath").toString(); // مسیر نسبی عکس
+        book["coverImagePath"]  = q.value("coverImagePath").toString();
+        book["pdfPath"]         = q.value("pdfPath").toString();
         book["publisher_id"]    = q.value("publisher_id").toInt();
         book["isActive"]        = q.value("isActive").toInt();
         list.append(book);
     }
     return list;
-}
-
-// مشاهده اطلاعات کامل یک کتاب
-QJsonObject DatabaseManager::getadminBookDetails(int bookId) {
-    QJsonObject book;
-    QSqlQuery q(db);
-
-    q.prepare("SELECT id, title, author, genre, description, price, discountPercent, discountAmount, "
-              "coverImagePath, pdfPath, publisher_id, isActive "
-              "FROM books WHERE id = :id AND is_deleted = 0");
-    q.bindValue(":id", bookId);
-
-    if (!q.exec() || !q.next()) return book;
-
-    book["id"]              = q.value("id").toInt();
-    book["title"]           = q.value("title").toString();
-    book["author"]          = q.value("author").toString();
-    book["genre"]           = q.value("genre").toString();
-    book["description"]     = q.value("description").toString();
-    book["price"]           = q.value("price").toDouble();
-    book["discountPercent"] = q.value("discountPercent").toDouble();
-    book["discountAmount"]  = q.value("discountAmount").toDouble();
-
-    // استخراج مسیرها از دیتابیس
-    book["coverImagePath"]  = q.value("coverImagePath").toString();
-    book["pdfPath"]         = q.value("pdfPath").toString();
-
-    book["publisher_id"]    = q.value("publisher_id").toInt();
-    book["isActive"]        = q.value("isActive").toInt();
-
-    return book;
 }
 
 //ویرایش اطلاعات کتاب توسط مدیر

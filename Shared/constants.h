@@ -58,7 +58,7 @@ inline BookGenre stringToGenre(const QString& genreStr) {
 
 
 const QString ADMIN_USERNAME = "AdminSystem";
-const QString ADMIN_PASSWORD_HASH = "b594b953d611f7c32766324b910e53a992a54b38d3131c9a9226f30a9e701962"; //SystemAdmin@2026
+const QString ADMIN_PASSWORD_HASH = "defcf100db14c5cc3b00e33cb098642a94af1e3fecc61a1176ca4becca3afce4"; //SystemAdmin@2026
 
 
 #endif // CONSTANTS_H
