@@ -43,9 +43,11 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_
         ui->active_checkBox->setEnabled(false);
         ui->rating_label->hide();
         ui->star->setText("مشاهده نظرات");
+        ui->publisher_label->setText("آیدی ناشر: " + QString::number(obj["publisher_id"].toInt()));
     }
     else{
         ui->active_checkBox->setEnabled(true);
+        ui->publisher_label->hide();
     }
 
     QString sv = genreToString(book.getGenre());

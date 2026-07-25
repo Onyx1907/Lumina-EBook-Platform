@@ -12,11 +12,23 @@ AdminDashboardWidget::AdminDashboardWidget(Admin *admin, QWidget *parent)
     ui->setupUi(this);
 
     AdminBooksPage = new AdminBooksWidget(this);
+    EditBookPage = new EditBookWidget(this);
 
     ui->stackedWidget->addWidget(AdminBooksPage);
+    ui->stackedWidget->addWidget(EditBookPage);
 
     ui->stackedWidget->setCurrentIndex(Page::AdminBooksPageIndex);
 
+    //رفتن به صفحه ویرایش کتاب
+    connect(AdminBooksPage, &AdminBooksWidget::editBook, this, [this](int bookID){
+        EditBookPage->loadEditBook(bookID);
+        fadeToPage(Page::EditBookPageIndex);
+    });
+
+    //برگشت از صفحه ویرایش کتاب
+    connect(EditBookPage, &EditBookWidget::back, this, [this](){
+        fadeToPage(Page::AdminBooksPageIndex);
+    });
 }
 
 AdminDashboardWidget::~AdminDashboardWidget()

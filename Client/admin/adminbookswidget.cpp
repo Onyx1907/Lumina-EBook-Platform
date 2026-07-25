@@ -52,7 +52,10 @@ void AdminBooksWidget::loadBooks(){
 
 
 void AdminBooksWidget::processNetworkData(const QString& action, const QJsonObject& data){
-    if(action != "GET_ALL_BOOKS_RESPONSE"){
+    qDebug() <<data;
+
+    if(action != "GET_ALL_BOOKS_RESPONSE" &&
+        action != "ADMIN_DELETE_BOOK_RESPONSE"){
         return;
     }
 
@@ -68,6 +71,9 @@ void AdminBooksWidget::processNetworkData(const QString& action, const QJsonObje
 
     if(action == "GET_ALL_BOOKS_RESPONSE"){
         handleGetBooks(data);
+    }
+    else if(action == "ADMIN_DELETE_BOOK_RESPONSE"){
+        loadBooks();
     }
 }
 
@@ -85,7 +91,31 @@ void AdminBooksWidget::handleGetBooks(const QJsonObject& data){
         QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
         item->setSizeHint(itemWidget->sizeHint());
         ui->listWidget->setItemWidget(item, itemWidget);
+
+        connect(itemWidget, &SharedBookCard::deleteRequested, this,
+                &AdminBooksWidget::deleteBookRequested);
+
+        connect(itemWidget, &SharedBookCard::editRequested, this, [this](int bookID){
+            emit editBook(bookID);
+        });
     }
 }
 
 
+void AdminBooksWidget::deleteBookRequested(int bookID){
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+        data["book_id"] = bookID;
+
+        ClientNetworkManager::instance().sendRequest("ADMIN_DELETE_BOOK", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}

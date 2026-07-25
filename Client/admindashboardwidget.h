@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "admin.h"
 #include "adminbookswidget.h"
+#include "editbookwidget.h"
 
 namespace Ui {
 class AdminDashboardWidget;
@@ -26,9 +27,11 @@ private:
     void fadeToPage(int pageIndex);
 
     AdminBooksWidget *AdminBooksPage;
+    EditBookWidget *EditBookPage;
 
     enum Page{
-        AdminBooksPageIndex = 0
+        AdminBooksPageIndex = 0,
+        EditBookPageIndex = 1
     };
 };
 

@@ -15,8 +15,8 @@ public:
     explicit AdminBooksWidget(QWidget *parent = nullptr);
     ~AdminBooksWidget();
 
-// signals:
-//     void editBook(int bookID);
+signals:
+    void editBook(int bookID);
 //     void PDFreader(QString path);
 //     void goToCommentsPage(int bookID);
 
@@ -26,9 +26,7 @@ protected:
 private slots:
     void processNetworkData(const QString& action, const QJsonObject& data);
 
-//     void checkIsActiveRequested(int bookID, bool isActive);
-
-//     void deleteBookRequested(int bookID);
+    void deleteBookRequested(int bookID);
 
 private:
     Ui::AdminBooksWidget *ui;
