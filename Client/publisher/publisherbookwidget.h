@@ -45,6 +45,8 @@ private slots:
 
     void loadBooks();
     void handleGetBooks(const QJsonObject& data);
+
+    int pendingScrollValue = 0;
 };
 
 #endif // PUBLISHERBOOKWIDGET_H

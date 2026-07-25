@@ -34,6 +34,8 @@ private:
     void loadBooks();
 
     void handleGetBooks(const QJsonObject& data);
+
+    int pendingScrollValue = 0;
 };
 
 #endif // ADMINBOOKSWIDGET_H

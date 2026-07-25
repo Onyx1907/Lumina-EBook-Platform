@@ -27,6 +27,8 @@ CommentsWidget::CommentsWidget(int userid, QWidget *parent, bool isPublisher)
 void CommentsWidget::loadComments(int bookid){
     bookID = bookid;
 
+    pendingScrollValue = ui->listWidget->verticalScrollBar()->value();
+
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
@@ -167,6 +169,12 @@ void CommentsWidget::updateListUi (const QJsonObject& response) {
         item->setSizeHint(userItemWidget->sizeHint());
         ui->listWidget->setItemWidget(item, userItemWidget);
     }
+
+    QTimer::singleShot(0, this, [this]() {
+        auto *bar = ui->listWidget->verticalScrollBar();
+
+        bar->setValue(qMin(pendingScrollValue, bar->maximum()));
+    });
 }
 
 

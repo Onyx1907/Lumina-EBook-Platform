@@ -22,6 +22,8 @@ PublisherBookWidget::PublisherBookWidget(int publisherID, QWidget *parent)
 }
 
 void PublisherBookWidget::loadBooks(){
+    pendingScrollValue = ui->listWidget->verticalScrollBar()->value();
+
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
@@ -127,6 +129,12 @@ void PublisherBookWidget::handleGetBooks(const QJsonObject& data){
             emit goToCommentsPage(bookID);
         });
     }
+
+    QTimer::singleShot(0, this, [this]() {
+        auto *bar = ui->listWidget->verticalScrollBar();
+
+        bar->setValue(qMin(pendingScrollValue, bar->maximum()));
+    });
 }
 
 void PublisherBookWidget::on_back_pushButton_clicked()

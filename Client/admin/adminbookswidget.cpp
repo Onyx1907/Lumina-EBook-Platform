@@ -34,6 +34,8 @@ void AdminBooksWidget::showEvent(QShowEvent *event) {
 }
 
 void AdminBooksWidget::loadBooks(){
+    pendingScrollValue = ui->listWidget->verticalScrollBar()->value();
+
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
@@ -107,6 +109,12 @@ void AdminBooksWidget::handleGetBooks(const QJsonObject& data){
             emit goToCommentsPage(bookID);
         });
     }
+
+    QTimer::singleShot(0, this, [this]() {
+        auto *bar = ui->listWidget->verticalScrollBar();
+
+        bar->setValue(qMin(pendingScrollValue, bar->maximum()));
+    });
 }
 
 
