@@ -1811,7 +1811,7 @@ QJsonObject DatabaseManager::getUserById(int userId) {
     u["favorite_genres"]   = q.value("favorite_genres").toString();
 
     // بررسی نقش کاربر برای اضافه کردن اطلاعات اختصاصی
-    if (role == "publisher") {
+    if (role == "Publisher") {
         QSqlQuery qPub(db);
         qPub.prepare("SELECT COUNT(*) FROM books WHERE publisher_id = :userId AND is_deleted = 0");
         qPub.bindValue(":userId", userId);
@@ -1849,7 +1849,7 @@ QList<QJsonObject> DatabaseManager::searchUsers(const QString& keyword, const QS
     if (!roleFilter.isEmpty())
         queryStr += "AND role = :role ";
 
-    //فیلتر وضعیت مسدود بودن (۰ یا ۱ فعال است، ۱- یعنی بی‌اثر)
+    //فیلتر وضعیت مسدود بودن (۰ یا ۱ فعال است، ۱- یعنی بی اثر)
     if (blockedFilter == 0 || blockedFilter == 1)
         queryStr += "AND is_blocked = :blk ";
 

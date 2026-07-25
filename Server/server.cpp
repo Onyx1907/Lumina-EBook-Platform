@@ -111,6 +111,12 @@ void Server::incomingConnection(qintptr socketDescriptor) {
             [this](const QString& username, const QJsonObject& notifObj) {
                 QMutexLocker locker(&mutex);
 
+        // استخراج متن پیام از درون JSON برای نمایش در پنل مدیریت (MainWindow)
+        QString message = notifObj.value("message").toString();
+        if (!message.isEmpty()) {
+            emit systemNotificationGenerated(QString("کاربر %1: %2").arg(username, message));
+        }
+
                 int targetUserId = -1;
                 QMapIterator<QTcpSocket*, QString> i(socketToName);
                 while (i.hasNext()) {
