@@ -24,3 +24,8 @@ double Book::getPrice() const{ return price; }
 double Book::getDiscountPercentage() const{ return discountPercentage; }
 
 double Book::getRating(){ return rating; }
+
+void Book::setPrice(double p, double d){
+    price = p;
+    discountPercentage = d;
+}

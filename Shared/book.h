@@ -34,6 +34,7 @@ public:
     QString getCoverImagePath() const;
 
     double getRating();
+    void setPrice(double price, double discount);
 };
 
 #endif // BOOK_H
