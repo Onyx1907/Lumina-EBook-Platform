@@ -188,7 +188,7 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     else if (action == "GET_ALL_BOOKS") { handleGetAllBooks(socket, data); return; }
     else if (action == "ADMIN_UPDATE_BOOK") { handleAdminUpdateBook(socket, obj); return; }
-    else if (action == "ADMIN_DELETE_BOOK") { handleAdminDeleteBook(socket, data); return; }
+    else if (action == "ADMIN_DELETE_BOOK") { handleAdminDeleteBook(socket, obj); return; }
 
 
     //****************************************************سیستم اعلان ها**********************************************************

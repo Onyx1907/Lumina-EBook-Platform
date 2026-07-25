@@ -10,6 +10,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include "server.h"
+#include "constants.h"
 
 
 class MainWindow : public QMainWindow
