@@ -35,6 +35,9 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_
 
     if(isAdmin){
         ui->discount_pushButton->hide();
+        ui->active_checkBox->hide();
+        ui->rating_label->hide();
+        ui->star->setText("مشاهده نظرات");
     }
 
     QString sv = genreToString(book.getGenre());

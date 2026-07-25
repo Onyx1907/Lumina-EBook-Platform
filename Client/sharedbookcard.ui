@@ -625,12 +625,6 @@ QPushButton:pressed {
             <height>0</height>
            </size>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>50</width>
-            <height>16777215</height>
-           </size>
-          </property>
           <property name="styleSheet">
            <string notr="true">
 qproperty-alignment: 'AlignHCenter | AlignVCenter';
@@ -657,8 +651,8 @@ font-size : 20px;</string>
           </property>
           <property name="maximumSize">
            <size>
-            <width>40</width>
-            <height>40</height>
+            <width>200</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -666,6 +660,10 @@ font-size : 20px;</string>
            background-color: transparent;
            border: 2px solid transparent;
            border-radius: 10px;
+    color: #5C3A21;
+    font-family: &quot;Vazirmatn&quot;, &quot;Segoe UI&quot;;
+    font-weight: bold;
+    font-size: 12px;
         }
 
         /* ۲. حالت Hover: هاله طلایی ملایم و لوکس دور کارت */

@@ -20,11 +20,11 @@ public:
 //     void PDFreader(QString path);
 //     void goToCommentsPage(int bookID);
 
-// protected:
-//     void showEvent(QShowEvent *event) override;
+protected:
+    void showEvent(QShowEvent *event) override;
 
-// private slots:
-//     void processNetworkData(const QString& action, const QJsonObject& data);
+private slots:
+    void processNetworkData(const QString& action, const QJsonObject& data);
 
 //     void checkIsActiveRequested(int bookID, bool isActive);
 
@@ -32,6 +32,10 @@ public:
 
 private:
     Ui::AdminBooksWidget *ui;
+
+    void loadBooks();
+
+    void handleGetBooks(const QJsonObject& data);
 };
 
 #endif // ADMINBOOKSWIDGET_H
