@@ -68,9 +68,6 @@ void CommentsWidget::processNetworkData(const QString& action, const QJsonObject
         if(data.contains("book_id") && data["book_id"].toInt() == bookID){
             loadComments(bookID);
         }
-        else if(!data.contains("book_id")){
-            loadComments(bookID);
-        }
     }
     else if(action == "ADD_COMMENT_RESPONSE"){
         if(data["status"].toString() != "SUCCESS"){

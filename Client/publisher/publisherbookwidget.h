@@ -40,6 +40,9 @@ private slots:
     Ui::PublisherBookWidget *ui;
     int m_publisherID;
 
+    int m_bookID;
+    int m_discount;
+
     void loadBooks();
     void handleGetBooks(const QJsonObject& data);
 };

@@ -17,6 +17,9 @@ public:
     explicit SharedBookCard(const QJsonObject& obj, QWidget *parent = nullptr);
     ~SharedBookCard();
 
+    void updatePrice(double discount);
+    int getBookID();
+
 signals:
     void editRequested(int bookID);
     void deleteRequested(int bookID);

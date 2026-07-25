@@ -210,3 +210,32 @@ void SharedBookCard::on_star_clicked()
     emit goToComments(book.getId());
 }
 
+
+void SharedBookCard::updatePrice(double discount){
+    book.setPrice(book.getPrice(), discount);
+
+    if(book.getDiscountPercentage() && book.getPrice()){
+        ui->discount_label->show();
+        ui->oldPrice_label->show();
+        ui->discount_label->setText(QString::number(book.getDiscountPercentage(), 'f', 1) + "%");
+        ui->oldPrice_label->setText(QString::number(book.getPrice(), 'f', 0));
+        ui->finalPrice_label->setText(QString::number(book.getFinalPrice(), 'f', 0));
+        QFont font = ui->oldPrice_label->font();
+        font.setStrikeOut(true);
+        ui->oldPrice_label->setFont(font);
+    }
+    else{
+        ui->discount_label->hide();
+        ui->oldPrice_label->hide();
+        ui->finalPrice_label->setText(QString::number(book.getFinalPrice(), 'f', 0));
+    }
+    if(book.getPrice() == 0){
+        ui->finalPrice_label->setText("رایگان");
+        ui->tooman_label->hide();
+    }
+
+}
+
+int SharedBookCard::getBookID(){
+    return book.getId();
+}
