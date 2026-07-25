@@ -9,7 +9,7 @@
 #include <QInputDialog>
 
 
-SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
+SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_admin)
     : QWidget(parent), book(obj["id"].toInt(),
                         obj["title"].toString(),
                         obj["author"].toString(),
@@ -19,7 +19,7 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
                         obj["discountPercent"].toDouble(),
                         obj["avgRating"].toDouble()),
     isActive((obj["isActive"].toInt()) == 1),
-    PDFpath(obj.value("pdfPath").toString())
+    PDFpath(obj.value("pdfPath").toString()), isAdmin(is_admin)
     , ui(new Ui::SharedBookCard)
 {
     ui->setupUi(this);
@@ -33,6 +33,9 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     StorageUtils::displayBookCover(book.getCoverImagePath(),
                                    ui->book_cover);
 
+    if(isAdmin){
+        ui->discount_pushButton->hide();
+    }
 
     QString sv = genreToString(book.getGenre());
 
