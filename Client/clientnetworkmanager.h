@@ -16,7 +16,7 @@ public:
     static ClientNetworkManager& instance();
 
     bool connectToServer(); // دیگر نیازی به پاس دادن IP و پورت نیست
-    void sendRequest(const QString& action, const QJsonObject& data);
+    void sendRequest(const QString& action, const QJsonObject& data, bool isFlat = false);
 
 signals:
     void responseReceived(const QString& action, const QJsonObject& data);
@@ -31,6 +31,8 @@ private:
     ClientNetworkManager& operator=(const ClientNetworkManager&) = delete;
 
     QTcpSocket* socket;
+
+    QByteArray m_buffer;
 };
 
 #endif // CLIENTNETWORKMANAGER_H

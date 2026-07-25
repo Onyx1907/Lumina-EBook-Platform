@@ -1,167 +1,193 @@
 #include "server.h"
+#include "networkworker.h"
+#include <QSqlQuery>
+#include <QSqlDatabase>
 
-// سازنده کلاس سرور: پایگاه داده را در بدو راه اندازی مقداردهی اولیه می کند
-Server::Server(QObject* parent):QTcpServer(parent) {
-    dbManager.initDatabase();
+Server::Server(QObject* parent)
+    : QTcpServer(parent),
+    dbManager("main_connection")
+{
+    // دیتابیس اصلی سرور (فقط برای ساخت جدول ها و کارهای عمومی)
+    if (!dbManager.initDatabase()) {
+        qDebug() << "Main DB init failed";
+    }
 }
-// راه اندازی سرور برای گوش دادن به آی پی و پورت مشخص شده در تنظیمات
-bool Server::start(){
-    if(!listen(QHostAddress(SERVER_IP),SERVER_PORT)){
+
+bool Server::start() {
+    if (!listen(QHostAddress(SERVER_IP), SERVER_PORT)) {
         qDebug() << "Server listen failed:" << errorString();
         return false;
     }
-    qDebug() << "Server listen on" << SERVER_IP << SERVER_PORT ;
+    qDebug() << "Server listen on" << SERVER_IP << SERVER_PORT;
     return true;
 }
-// مدیریت اتصال های ورودی: به محض اتصال هر کلاینت جدید، این متد اجرا میشود
-void Server::incomingConnection(qintptr socketDescriptor){
-   QTcpSocket* socket = new QTcpSocket(this);
-    socket->setSocketDescriptor(socketDescriptor);
 
-   connect(socket,&QTcpSocket::readyRead,this,&Server::onReadyRead);
-   connect(socket,&QTcpSocket::disconnected,this,&Server::onDisconnected);
-}
-// اسلات خواندن داده ها: زمان ارسال اطلاعات از طرف کلاینت فعال میشود
-void Server::onReadyRead(){
-    qDebug() << "data recived...";
-    QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
-    if (!socket) return;
+void Server::incomingConnection(qintptr socketDescriptor) {
+    QThread* thread = new QThread();
 
-    QByteArray raw = socket->readAll();
-
-    QJsonParseError err;
-    QJsonDocument doc = QJsonDocument::fromJson(raw, &err);
-    if (err.error != QJsonParseError::NoError || !doc.isObject()) return;
-
-    QJsonObject obj = doc.object();
-    handleRequest(socket, obj);
-}
-// اسلات مدیریت قطع اتصال: حافظه سوکت کلاینتی که خارج شده را آزاد می کند
-void Server::onDisconnected(){
-    QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
-    if (socket) socket->deleteLater();
-}
-// کلاینت را به متد مربوطه هدایت می کند "action" متد بررسی اولیه درخواست: بر اساس کلید
-void Server::handleRequest(QTcpSocket* socket, const QJsonObject& obj){
-    QString action = obj.value("action").toString();
-    QJsonObject data = obj.value("data").toObject();
-
-    if (action == "LOGIN") {
-        handleLogin(socket, data);
-    } else if (action == "REGISTER") {
-        handleRegister(socket, data);
-    } else if (action == "FORGOT_PASSWORD") {
-        handleForgotPassword(socket, data);
-    }
-}
-// برای تبدیل نوع شمارشی نقش کاربر به رشته متنی جهت ارسال در شبکه (Static) تابع کمکی محلی
-static QString roleToString(UserRole role) {
-    switch (role) {
-    case UserRole::RegularUser: return "User";
-    case UserRole::Publisher:   return "Publisher";
-    case UserRole::Admin:       return "Admin";
-    }
-    return "User";
-}
-// مدیریت فرآیند ورود کاربران
-void Server::handleLogin(QTcpSocket* socket, const QJsonObject& data){
-    QString username = data.value("username").toString();
-    QString passwordPlain = data.value("password").toString();
-
-    UserRole role;
-    bool isBlocked;
-    int userId;
-
-    QJsonObject resp;
-    resp["action"] = "LOGIN_RESPONSE";
-
-    if (!dbManager.verifyUser(username, passwordPlain, role, isBlocked, userId)) {
-        resp["status"] = "FAILED";
-        resp["message"] = ".نام کاربری یا رمز عبور اشتباه است یا حساب شما مسدود است";
-        sendJson(socket, resp);
+    // دیتابیس اختصاصی برای این کلاینت (در ترد خودش)
+    auto* workerDb = new DatabaseManager(QString("conn_%1").arg(socketDescriptor));
+    if (!workerDb->initDatabase()) {
+        qDebug() << "Worker DB init failed for socket" << socketDescriptor;
+        delete workerDb;
+        delete thread;
         return;
     }
-    resp["status"] = "SUCCESS";
-    resp["message"] = "!خوش آمدی";
-    resp["user_role"] = roleToString(role);
-    sendJson(socket, resp);
+
+    NetworkWorker* worker = new NetworkWorker(socketDescriptor, workerDb);
+    worker->moveToThread(thread);
+
+    // پاک کردن دیتابیس بعد از پایان کار ترد
+    connect(worker, &NetworkWorker::finished, thread, [workerDb]() {
+        delete workerDb;
+    });
+
+    // پخش همگانی (کامنت‌ها و …) به همه‌ی کاربران آنلاین
+    connect(worker, &NetworkWorker::broadcastRequested, this,
+            [this](const QJsonObject& obj){
+                QMutexLocker locker(&mutex);
+                for (QTcpSocket* socket : onlineUsers.values()) {
+                    if (socket && socket->isOpen()) {
+                        QMetaObject::invokeMethod(socket, [socket, obj]() {
+                            QJsonDocument doc(obj);
+                            QByteArray bytes = doc.toJson(QJsonDocument::Compact);
+                            bytes.append('\n');          // مهم برای کلاینتی که line-based می‌خواند
+                            socket->write(bytes);
+                            socket->flush();
+                        }, Qt::QueuedConnection);
+                    }
+                }
+            });
+
+    // پخش بر اساس نقش (Publisher / Admin / …)
+    connect(worker, &NetworkWorker::roleBroadcastRequested, this,
+            [this](const QJsonObject& broadcastObj){
+                QMutexLocker locker(&mutex);
+
+                QString targetRoles = broadcastObj.value("role").toString().trimmed();
+                QStringList roleList = targetRoles.split(',', Qt::SkipEmptyParts);
+                for (QString &r : roleList) r = r.trimmed();
+
+                for (QTcpSocket* socket : onlineUsers.values()) {
+                    if (!socket || !socket->isOpen())
+                        continue;
+
+                    int userId = socketToUser.value(socket, -1);
+                    bool shouldSend = false;
+
+                    if (roleList.isEmpty()) {
+                        shouldSend = true;
+                    }
+                    else if (userId > 0) {
+                        // استفاده از کانکشن اصلی سرور (main_connection)
+                        QSqlDatabase db = QSqlDatabase::database("main_connection");
+                        if (db.isValid() && db.isOpen()) {
+                            QSqlQuery q(db);
+                            q.prepare("SELECT role FROM users WHERE id = :id");
+                            q.bindValue(":id", userId);
+                            if (q.exec() && q.next()) {
+                                QString userRole = q.value(0).toString();
+                                if (roleList.contains(userRole)) {
+                                    shouldSend = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (shouldSend) {
+                        QMetaObject::invokeMethod(socket, [socket, broadcastObj]() {
+                            QJsonDocument doc(broadcastObj);
+                            QByteArray bytes = doc.toJson(QJsonDocument::Compact);
+                            bytes.append('\n');
+                            socket->write(bytes);
+                            socket->flush();
+                        }, Qt::QueuedConnection);
+                    }
+                }
+            });
+
+    // نوتیفیکیشن به یک کاربر خاص (با username)
+    connect(worker, &NetworkWorker::notificationTriggered, this,
+            [this](const QString& username, const QJsonObject& notifObj) {
+                QMutexLocker locker(&mutex);
+
+                int targetUserId = -1;
+                QMapIterator<QTcpSocket*, QString> i(socketToName);
+                while (i.hasNext()) {
+                    i.next();
+                    if (i.value() == username) {
+                        targetUserId = socketToUser.value(i.key(), -1);
+                        break;
+                    }
+                }
+
+                if (targetUserId != -1) {
+                    locker.unlock();
+                    pushNotification(targetUserId, notifObj);
+                }
+            });
+
+    // ورود کاربر
+    connect(worker, &NetworkWorker::userLoggedIn, this,
+            [this](int userId, const QString& username, QTcpSocket* socket){
+                QMutexLocker locker(&mutex);
+                onlineUsers[userId] = socket;
+                socketToUser[socket] = userId;
+                socketToName[socket] = username;
+
+                emit onlineCountChanged(onlineUsers.size());
+                emit clientListChanged(socketToName.values());
+                emit logGenerated("NETWORK: User ID '" + QString::number(userId) +
+                                  "' (" + username + ") logged in.");
+            });
+
+    // خروج کاربر
+    connect(worker, &NetworkWorker::userDisconnected, this,
+            [this](QTcpSocket* socket){
+                QMutexLocker locker(&mutex);
+                if (socket && socketToUser.contains(socket)) {
+                    int disconnectedUserId = socketToUser.value(socket);
+                    QString username = socketToName.value(socket, "Unknown");
+
+                    socketToUser.remove(socket);
+                    socketToName.remove(socket);
+                    if (disconnectedUserId != 0) {
+                        onlineUsers.remove(disconnectedUserId);
+                    }
+
+                    emit onlineCountChanged(onlineUsers.size());
+                    emit clientListChanged(socketToName.values());
+
+                    emit logGenerated("NETWORK: Client '" + username +
+                                      "' (ID: " + QString::number(disconnectedUserId) +
+                                      ") connection closed.");
+                }
+            });
+
+    // مدیریت طول عمر ترد و Worker
+    connect(thread, &QThread::started, worker, &NetworkWorker::startProcessing);
+    connect(worker, &NetworkWorker::finished, thread, &QThread::quit);
+    connect(worker, &NetworkWorker::finished, worker, &QObject::deleteLater);
+    connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+
+    emit logGenerated("NETWORK: Incoming connection detected. Thread context spawned.");
+    thread->start();
 }
-// مدیریت فرآیند ثبت نام کاربر جدید
-void Server::handleRegister(QTcpSocket* socket, const QJsonObject& data){
-        QString username = data.value("username").toString();
-        QString passwordPlain = data.value("password").toString();
-        QString roleStr = data.value("role").toString();
-        QString securityQuestion = data.value("security_question").toString();
-        QString securityAnswerPlain = data.value("security_answer").toString();
 
-        UserRole role = UserRole::RegularUser;
-        if (roleStr == "Publisher") role = UserRole::Publisher;
-        else if (roleStr == "Admin") role = UserRole::Admin;
+void Server::pushNotification(int userId, const QJsonObject& notif)
+{
+    QMutexLocker locker(&mutex);
+    QTcpSocket* userSocket = onlineUsers.value(userId, nullptr);
+    if (!userSocket || !userSocket->isOpen())
+        return;
 
-        QJsonObject resp;
-        resp["action"] = "REGISTER_RESPONSE";
+    QJsonObject obj = notif;
 
-        if (dbManager.isUsernameTaken(username)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".نام کاربری تکراری است";
-            sendJson(socket, resp);
-            return;
-        }
-        if (!dbManager.registerUser(username, passwordPlain, role, securityQuestion, securityAnswerPlain)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".خطا در ثبت نام";
-            sendJson(socket, resp);
-            return;
-        }
-
-        resp["status"] = "SUCCESS";
-        resp["message"] = ".ثبت نام با موفقیت انجام شد";
-        sendJson(socket, resp);
+    QMetaObject::invokeMethod(userSocket, [userSocket, obj]() {
+        QJsonDocument doc(obj);
+        QByteArray bytes = doc.toJson(QJsonDocument::Compact);
+        bytes.append('\n');
+        userSocket->write(bytes);
+        userSocket->flush();
+    }, Qt::QueuedConnection);
 }
-// مدیریت دو مرحله ای فرآیند فراموشی رمز عبور
-void Server::handleForgotPassword(QTcpSocket* socket, const QJsonObject& data){
-    QString step = data.value("step").toString();
-
-    QJsonObject resp;
-
-    if (step == "REQUEST_QUESTION") {
-        QString username = data.value("username").toString();
-        QString question;
-        resp["action"] = "FORGOT_PASSWORD_RESPONSE";
-
-        if (!dbManager.getSecurityQuestion(username, question)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".کاربر یافت نشد";
-        } else {
-            resp["status"] = "SUCCESS";
-            resp["security_question"] = question;
-        }
-         sendJson(socket, resp);
-    }
-    else if (step == "ANSWER_AND_RESET") {
-        QString username = data.value("username").toString();
-        QString answerPlain = data.value("security_answer").toString();
-        QString newPasswordPlain = data.value("new_password").toString();
-
-        resp["action"] = "FORGOT_PASSWORD_RESPONSE";
-
-        if (!dbManager.verifySecurityAnswerAndResetPassword(username,answerPlain,newPasswordPlain)) {
-            resp["status"] = "FAILED";
-            resp["message"] = ".پاسخ امنیتی نادرست است";
-        }
-        else {
-            resp["status"] = "SUCCESS";
-            resp["message"] = ".رمز عبور با موفقیت تغییر کرد";
-        }
-        sendJson(socket, resp);
-    }
-}
-//  :متد ارسال اطلاعات
-//را فشرده کرده و از طریق سوکت شبکه به کلاینت می فرستد JSON شی
-void Server::sendJson(QTcpSocket* socket, const QJsonObject& obj) {
-    QJsonDocument doc(obj);
-    QByteArray bytes = doc.toJson(QJsonDocument::Compact);
-    socket->write(bytes);
-    socket->flush();
-}
-

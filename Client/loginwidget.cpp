@@ -4,6 +4,8 @@
 #include <QPushButton>
 #include <QJsonObject>
 #include "clientnetworkmanager.h"
+#include <QTimer>
+#include "publisher.h"
 
 LoginWidget::LoginWidget(QWidget *parent) :
     QWidget(parent),
@@ -46,6 +48,7 @@ void LoginWidget::on_forget_pushButton_clicked()
 {
     ui->username_input->clear();
     ui->password_input->clear();
+    ui->error_label->clear();
 
     emit goToForgotPasswordRequested();
 }
@@ -61,8 +64,8 @@ void LoginWidget::on_login_pushButton_clicked()
         return;
     }
 
-    if(password.length() < 6) {
-        ui->error_label->setText("رمز عبور نمی‌تواند کمتر از ۶ کارکتر باشد");
+    if(password.length() < 5) {
+        ui->error_label->setText("رمز عبور نمی‌تواند کمتر از ۵ کارکتر باشد");
         return;
     }
 
@@ -70,7 +73,7 @@ void LoginWidget::on_login_pushButton_clicked()
     ui->error_label->setText("در حال برقراری ارتباط با سرور");
 
     if(ClientNetworkManager::instance().connectToServer()){
-
+        current_username = username;
 
         ui->login_pushButton->setEnabled(false);
         ui->username_input->setEnabled(false);
@@ -100,9 +103,25 @@ void LoginWidget::processNetworkData(const QString& action, const QJsonObject& d
 
     if(status == "SUCCESS"){
         ui->success_label->setText("ورود با موفقیت انجام شد");
-        // اضافه کردن سیگنال جابجایی صفحه
 
-        enableFormWithError("");
+        QString role = data.value("user_role").toString();
+        bool is_first_login = (data.value("first_login").toInt() == 1);
+        int id = data.value("user_id").toInt();
+
+        User *user;
+
+        if(role == "RegularUser"){
+            user = new RegularUser(id, current_username);
+        }
+        else if(role == "Publisher"){
+            user = new Publisher(id, current_username, "");
+        }
+
+        QTimer::singleShot(3000, this, [this, user, is_first_login](){
+            emit goToUSerDashboard(user, is_first_login);
+        });
+
+        ui->error_label->setText("");
     }
     else if(status == "FAILED"){
         enableFormWithError(message);

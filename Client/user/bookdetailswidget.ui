@@ -1,0 +1,899 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BookDetailsWidget</class>
+ <widget class="QWidget" name="BookDetailsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="minimumSize">
+      <size>
+       <width>730</width>
+       <height>530</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>730</width>
+       <height>530</height>
+      </size>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>false</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>-156</y>
+        <width>730</width>
+        <height>1000</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>730</width>
+        <height>1000</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>730</width>
+        <height>1500</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">/* ۱. بوم اصلی صفحه (پشت ویجت‌ها) که ویدیو زیر آن پخش می‌شود */
+QWidget#scrollAreaWidgetContents {
+    /* یک لایه شفاف نسکافه‌ای روشن روی ویدیو می‌کشد */
+    background-color: rgba(235, 220, 203, 0.45); 
+}
+
+/* ۲. حذف کامل کادر و پس‌زمینه اسکرول‌اریا برای دیده شدن ویدیو */
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+QListWidget {
+    background-color: rgba(245, 230, 211, 0.65); /* ۶۵ درصد کدر، بقیه شفاف برای دیدن بک‌گراند */
+    border: 2px solid rgba(111, 78, 55, 0.8); /* حاشیه قهوه‌ای با کمی شفافیت */
+    border-radius: 10px;
+    padding: 5px;
+}
+
+QLabel {
+    background: transparent;      /* حذف کامل پس‌زمینه */
+    background-color: transparent; /* اطمینان از نبود هیچ رنگی */
+    border: none;                 /* اطمینان از نبود کادر */
+    color: #4A3728;               /* رنگ متن رو اینجا تنظیم کن */
+    margin: 0px;                  /* اطمینان از نبود فاصله اضافه */
+    padding: 0px;                 /* اطمینان از نبود پدینگ اضافه */
+qproperty-alignment: 'AlignRight | AlignVCenter';
+
+}
+
+</string>
+      </property>
+      <widget class="QPushButton" name="author">
+       <property name="geometry">
+        <rect>
+         <x>600</x>
+         <y>210</y>
+         <width>111</width>
+         <height>101</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">    background: none;
+    background-color: transparent;
+
+    border: 1px solid transparent;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources.qrc">
+         <normaloff>:/resources/user/author_logo.png</normaloff>:/resources/user/author_logo.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>100</width>
+         <height>100</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QLabel" name="name_label">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>70</y>
+         <width>341</width>
+         <height>121</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    font-size: 30px;
+    font-weight: 1000;   /* یا bold */
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+
+}</string>
+       </property>
+       <property name="text">
+        <string>هری پاتر</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="author_label">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>210</y>
+         <width>240</width>
+         <height>40</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>240</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>240</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">qproperty-alignment: 'AlignLeft | AlignVCenter';
+</string>
+       </property>
+       <property name="text">
+        <string>جی کی رولینگ</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="back_pushButton">
+       <property name="geometry">
+        <rect>
+         <x>660</x>
+         <y>0</y>
+         <width>50</width>
+         <height>50</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* وضعیت عادی دکمه: کاملاً بدون پس‌زمینه و فریم */
+QPushButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 20px;
+    padding: 5px;
+    min-width: 40px;
+    max-width: 40px;
+    min-height: 40px;
+    max-height: 40px;
+}
+
+/* وضعیت هاور: ایجاد یک هاله نوری ملایم و درخشش گرم در پس‌زمینه */
+QPushButton:hover {
+    background-color: rgba(255, 250, 240, 60); /* بک‌گراند بسیار ملایم کرم/سفید */
+    border: 1px solid rgba(240, 200, 150, 120); /* مرز درخشان مسی/طلایی خفیف */
+}
+
+/* وضعیت کلیک: درخشش شدیدتر و حالت فشرده شدن */
+QPushButton:pressed {
+    background-color: rgba(255, 250, 240, 110);
+    border: 1px solid rgba(240, 200, 150, 200);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources.qrc">
+         <normaloff>:/resources/back_icon.svg</normaloff>:/resources/back_icon.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QLabel" name="publisher_label">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>250</y>
+         <width>240</width>
+         <height>40</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>240</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>240</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">qproperty-alignment: 'AlignLeft | AlignVCenter';
+</string>
+       </property>
+       <property name="text">
+        <string>انتشارات پرتقال</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="rating_label">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>350</y>
+         <width>61</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+font-size : 20px;</string>
+       </property>
+       <property name="text">
+        <string>0.0</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="star">
+       <property name="geometry">
+        <rect>
+         <x>560</x>
+         <y>340</y>
+         <width>41</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">    background: none;
+    background-color: transparent;
+
+    border: 1px solid transparent;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources.qrc">
+         <normaloff>:/resources/user/star.svg</normaloff>:/resources/user/star.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="saveBook_pushButton">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>30</y>
+         <width>88</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    color: #8c4f2b; /* قهوه‌ای مایل به قرمز/آجری */
+    text-decoration: underline;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    color: #b86b3d; /* روشن‌تر شدن در حالت هاور */
+}</string>
+       </property>
+       <property name="text">
+        <string>نشان کردن</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="discount_label">
+       <property name="geometry">
+        <rect>
+         <x>380</x>
+         <y>430</y>
+         <width>90</width>
+         <height>50</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background-color: #C79A3B;
+    color: #FFF8EE;
+    border-radius: 10px;
+    padding: 4px 10px;
+    font-size: 18px;
+    font-weight: 700;
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+}
+</string>
+       </property>
+       <property name="text">
+        <string>50%</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="genre_label">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>290</y>
+         <width>240</width>
+         <height>40</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>240</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>240</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">qproperty-alignment: 'AlignLeft | AlignVCenter';
+</string>
+       </property>
+       <property name="text">
+        <string>ادبیات داستانی</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="error_label">
+       <property name="geometry">
+        <rect>
+         <x>400</x>
+         <y>10</y>
+         <width>251</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    color: #8A6623; 
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="book_cover">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>340</width>
+         <height>440</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>340</width>
+         <height>440</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>340</width>
+         <height>440</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">   background: none;
+    background-color: transparent;
+
+    border: 1px solid transparent;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../resources.qrc">:/resources/default_book.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="savedBook_pushButton">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>10</y>
+         <width>51</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    color #8B5E3C;
+    padding: 6px;
+    border-radius: 10px;
+}
+
+QPushButton:hover {
+    background-color: rgba(200, 169, 126, 0.18);
+    color: #B08D57;
+}
+
+QPushButton:pressed {
+    background-color: rgba(176, 141, 87, 0.28);
+    color: #6F4A2F;
+}
+
+QPushButton:disabled {
+    background-color: transparent;
+    color: #CBB8A3;
+}
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources.qrc">
+         <normaloff>:/resources/user/save_logo.png</normaloff>:/resources/user/save_logo.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>150</width>
+         <height>150</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>490</x>
+         <y>420</y>
+         <width>161</width>
+         <height>85</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="oldPrice_label">
+          <property name="styleSheet">
+           <string notr="true">QLabel {
+    color: #7A6452;
+    font-size: 18px;
+    background: transparent;
+
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+}
+</string>
+          </property>
+          <property name="text">
+           <string>40000</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="finalPrice_label">
+          <property name="styleSheet">
+           <string notr="true">QLabel {
+    color: #5C3B2E;
+    font-size: 23px;
+    font-weight: 700;
+    background: transparent;
+
+qproperty-alignment: 'AlignHCenter | AlignVCenter';
+}
+</string>
+          </property>
+          <property name="text">
+           <string>20000</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="tooman_label">
+          <property name="styleSheet">
+           <string notr="true">
+qproperty-alignment: 'AlignHCenter | AlignVCenter';</string>
+          </property>
+          <property name="text">
+           <string>تومان</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="widget" native="true">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>530</y>
+         <width>710</width>
+         <height>470</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>710</width>
+         <height>470</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>710</width>
+         <height>470</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QPushButton" name="removeCart_pushButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #F8F3ED;
+    color: #7A3E2F;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #F1E7DB;
+    border: 2px solid #B8956A;
+    color: #6A2F22;
+}
+
+QPushButton:pressed {
+    background-color: #E6D8C8;
+    border: 2px solid #A67C52;
+    color: #552017;
+}
+
+QPushButton:disabled {
+    background-color: #EEE7DE;
+    color: #B8A89A;
+    border: 2px solid #D8C9B8;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>حذف از سبد خرید</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="study_pushButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #B08D57;
+    color: #FFFAF3;
+    border: 2px solid #D6B97B;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #C29B5F;
+    border: 2px solid #E0C68A;
+}
+
+QPushButton:pressed {
+    background-color: #967646;
+    border: 2px solid #C9AA6B;
+}
+
+QPushButton:disabled {
+    background-color: #D3C1A1;
+    color: #FFF8EE;
+    border: 2px solid #E2D2B4;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>مطالعه کتاب</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="addCart_pushButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #8B5E3C;
+    color: #FFF8F0;
+    border: 2px solid #C8A97E;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+QPushButton:hover {
+    background-color: #9C6B46;
+    border: 2px solid #D4B183;
+}
+
+QPushButton:pressed {
+    background-color: #6F4A2F;
+    border: 2px solid #B8956A;
+}
+
+QPushButton:disabled {
+    background-color: #C7B299;
+    color: #F5EBDD;
+    border: 2px solid #D8C3A5;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>افزودن به سبد خرید</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="disconnected">
+          <property name="styleSheet">
+           <string notr="true">    background: none;
+    background-color: transparent;
+    color: #7A3E2F;
+    border: 1px solid transparent;
+    font-size: 15px;
+    font-weight: 700;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/resources/disconnected.png</normaloff>:/resources/disconnected.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>400</width>
+            <height>400</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="description_label">
+          <property name="styleSheet">
+           <string notr="true">QTextEdit {
+    background: rgba(78, 56, 42, 170);
+    color: #F5EBDD;
+    border: 1px solid rgba(255, 240, 220, 70);
+    border-radius: 16px;
+    padding: 12px;
+    selection-background-color: rgba(201, 156, 99, 170);
+    selection-color: white;
+    font-size: 11pt;
+}
+
+QTextEdit:focus {
+    border: 2px solid rgba(214, 176, 122, 180);
+}
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 12px;
+    margin: 4px;
+}
+
+QScrollBar::handle:vertical {
+    background: rgba(194, 148, 98, 180);
+    border-radius: 6px;
+    min-height: 35px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: rgba(222, 178, 124, 220);
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+    background: transparent;
+}
+</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="comments">
+          <property name="styleSheet">
+           <string notr="true">    background: none;
+    background-color: transparent;
+
+    border: 1px solid transparent;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/resources/user/comments_logo.png</normaloff>:/resources/user/comments_logo.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>200</width>
+            <height>200</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="comments_pushButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    color: #8c4f2b; /* قهوه‌ای مایل به قرمز/آجری */
+    text-decoration: underline;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    color: #b86b3d; /* روشن‌تر شدن در حالت هاور */
+}</string>
+          </property>
+          <property name="text">
+           <string>مشاهده نظرات و ثبت نظر</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

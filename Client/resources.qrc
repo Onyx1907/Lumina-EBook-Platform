@@ -2,5 +2,34 @@
     <qresource prefix="/">
         <file>resources/Lumina_Logo.png</file>
         <file>resources/background.webm</file>
+        <file>resources/dashboard.mp4</file>
+        <file>resources/home_icon.svg</file>
+        <file>resources/profile_icon.svg</file>
+        <file>resources/search_icon.svg</file>
+        <file>resources/cart_icon.svg</file>
+        <file>resources/genres/ficition_genre.svg</file>
+        <file>resources/genres/Psychology_genre.svg</file>
+        <file>resources/genres/educational_genre.svg</file>
+        <file>resources/genres/history_genre.svg</file>
+        <file>resources/genres/scifi_genre.svg</file>
+        <file>resources/genres/biography_genre.svg</file>
+        <file>resources/library_icon.svg</file>
+        <file>resources/magic_home.png</file>
+        <file>resources/default_book.png</file>
+        <file>resources/user/profile_logo.png</file>
+        <file>resources/user/profile_edit.png</file>
+        <file>resources/user/author_logo.png</file>
+        <file>resources/user/star.svg</file>
+        <file>resources/back_icon.svg</file>
+        <file>resources/user/save_logo.png</file>
+        <file>resources/user/comments_logo.png</file>
+        <file>resources/disconnected.png</file>
+        <file>resources/user/search_logo.png</file>
+        <file>resources/edit_icon.svg</file>
+        <file>resources/delete_icon.png</file>
+        <file>resources/user/emptyCart.png</file>
+        <file>resources/user/close_shelf.png</file>
+        <file>resources/user/open_shelf.png</file>
+        <file>resources/check.svg</file>
     </qresource>
 </RCC>

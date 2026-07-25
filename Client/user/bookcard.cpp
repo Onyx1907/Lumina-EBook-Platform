@@ -1,0 +1,65 @@
+#include "bookcard.h"
+#include "ui_bookcard.h"
+#include "storageutils.h"
+#include <QPixmap>
+
+BookCard::BookCard(Book b, QWidget *parent, int sales)
+    : QWidget(parent)
+    , ui(new Ui::BookCard), book(b)
+{
+    ui->setupUi(this);
+
+    ui->title_label->setText(this->book.getTitle());
+    ui->total_revenue_label->hide();
+
+    if(sales != -1){
+        ui->total_revenue_label->show();
+        ui->total_revenue_label->setText("تعداد فروش: " + QString::number(sales));
+    }
+
+    StorageUtils::displayBookCover(book.getCoverImagePath(), ui->book_cover);
+
+    book_pushbutton = new QPushButton(this);
+
+    book_pushbutton->setStyleSheet(
+        /* ۱. حالت عادی: دکمه کاملاً شفاف با گوشه‌های گرد */
+        "QPushButton {"
+        "   background-color: transparent;"
+        "   border: 2px solid transparent;"
+        "   border-radius: 10px;"
+        "}"
+
+        /* ۲. حالت Hover: هاله طلایی ملایم و لوکس دور کارت */
+        "QPushButton:hover {"
+        "   background-color: rgba(218, 165, 32, 0.07);" /* ۷ درصد طلایی متالیک (Goldenrod) روی عکس کتاب */
+        "   border: 2px solid rgba(184, 134, 11, 0.6);" /* حاشیه طلایی تیره نیمه‌شفاف دور کارت */
+        "}"
+
+        /* ۳. حالت Pressed: وقتی کاربر کلیک می‌کند (کمی تیره و فشرده‌تر) */
+        "QPushButton:pressed {"
+        "   background-color: rgba(139, 69, 19, 0.15);" /* هاله قهوه‌ای شکلاتی ملایم برای حس کلیک */
+        "   border: 2px solid #B8860B;" /* حاشیه طلایی صلب و مشخص */
+        "}"
+        );
+    //اتصال کتاب به صفحه جزییات کتاب
+
+    connect(book_pushbutton, &QPushButton::clicked, this, [this](){
+        emit clicked(&book);
+    });
+}
+
+
+void BookCard::resizeEvent(QResizeEvent *event){
+    QWidget::resizeEvent(event);
+
+    if(book_pushbutton){
+        book_pushbutton->setGeometry(0, 0, this->width(), this->height());
+        book_pushbutton->raise();
+    }
+}
+
+
+BookCard::~BookCard()
+{
+    delete ui;
+}

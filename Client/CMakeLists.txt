@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ۲. پکیج Network رو هم اینجا اضافه کن برای سوکت‌ها
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network Multimedia MultimediaWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Multimedia MultimediaWidgets Pdf PdfWidgets)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -24,7 +24,6 @@ set(PROJECT_SOURCES
         resources.qrc
 )
 
-# ۳. نام تارگت رو از Client به LuminaClient تغییر دادم
 qt_add_executable(LuminaClient
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
@@ -33,7 +32,32 @@ qt_add_executable(LuminaClient
     registerwidget.h registerwidget.cpp registerwidget.ui
     forgotpasswordwidget.h forgotpasswordwidget.cpp forgotpasswordwidget.ui
     clientnetworkmanager.h clientnetworkmanager.cpp
-    page_indices.h
+
+    userdashboardwidget.h userdashboardwidget.cpp userdashboardwidget.ui
+    user/genreselectionwidget.h user/genreselectionwidget.cpp user/genreselectionwidget.ui
+    user/userhomewidget.h user/userhomewidget.cpp user/userhomewidget.ui
+    user/bookcard.h user/bookcard.cpp user/bookcard.ui
+    user/profilewidget.h user/profilewidget.cpp user/profilewidget.ui
+    user/bookdetailswidget.h user/bookdetailswidget.cpp user/bookdetailswidget.ui
+    user/searchwidget.h user/searchwidget.cpp user/searchwidget.ui
+    user/bookinfocard.h user/bookinfocard.cpp user/bookinfocard.ui
+    user/resultwidget.h user/resultwidget.cpp user/resultwidget.ui
+    user/commentitemwidget.h user/commentitemwidget.cpp user/commentitemwidget.ui
+    user/commentswidget.h user/commentswidget.cpp user/commentswidget.ui
+    user/cartwidget.h user/cartwidget.cpp user/cartwidget.ui
+    user/librarywidget.h user/librarywidget.cpp user/librarywidget.ui
+    storageutils.h storageutils.cpp
+    user/bookreaderwidget.h user/bookreaderwidget.cpp user/bookreaderwidget.ui
+    publisherdashboardwidget.h publisherdashboardwidget.cpp publisherdashboardwidget.ui
+    publisher/publisherstatswidget.h publisher/publisherstatswidget.cpp publisher/publisherstatswidget.ui
+    sharedbookcard.h sharedbookcard.cpp sharedbookcard.ui
+    publisher/publisherbookwidget.h publisher/publisherbookwidget.cpp publisher/publisherbookwidget.ui
+    publisher/editbookwidget.h publisher/editbookwidget.cpp publisher/editbookwidget.ui
+    user/purchasehistorywidget.h user/purchasehistorywidget.cpp user/purchasehistorywidget.ui
+    user/inovicecard.h user/inovicecard.cpp user/inovicecard.ui
+
+
+
 
 
 )
@@ -45,6 +69,8 @@ target_link_libraries(LuminaClient PRIVATE
     Qt6::Network
     Qt6::Multimedia
     Qt6::MultimediaWidgets
+    Qt6::Pdf
+    Qt6::PdfWidgets
 )
 
 set_target_properties(LuminaClient PROPERTIES
@@ -53,6 +79,11 @@ set_target_properties(LuminaClient PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+
+target_include_directories(LuminaClient PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/user
+    ${CMAKE_CURRENT_SOURCE_DIR}/publisher)
 
 include(GNUInstallDirs)
 install(TARGETS LuminaClient

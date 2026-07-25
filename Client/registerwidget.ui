@@ -10,11 +10,11 @@
     <height>650</height>
    </rect>
   </property>
-  <property name="maximumSize">
-   <size>
-    <width>900</width>
-    <height>650</height>
-   </size>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>

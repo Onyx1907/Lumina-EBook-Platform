@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CartWidget</class>
+ <widget class="QWidget" name="CartWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="empty_cart_label">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../resources.qrc">:/resources/user/emptyCart.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="listWidget">
+       <property name="styleSheet">
+        <string notr="true">/* کاملاً شفاف کردن پس‌زمینه و حذف مرزهای لیست اصلی */
+QListWidget {
+    background-color: transparent;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px;
+}
+
+
+QListWidget::item:selected {
+    background-color: rgba(139, 90, 43, 0.7);
+    border: 1px solid #D2B48C;
+}
+/* اسکرول‌بار شیشه‌ای و هماهنگ */
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 0px;
+}
+QScrollBar::handle:vertical {
+    background: rgba(111, 78, 55, 0.6); /* دستگیره قهوه‌ای نیمه شفاف */
+    border-radius: 4px;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+    background: rgba(139, 90, 43, 0.8);
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: none; /* حذف دکمه‌های بالا و پایین اسکرول */
+}</string>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="error_label">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background-color: rgba(93, 37, 25, 0.45);  /* پس‌زمینه شیشه‌ای شرابی/شکلاتی تیره */
+    border: 1px solid rgba(217, 136, 128, 0.35); /* مرز ملو متمایل به رز-گلد شفاف */
+    border-radius: 8px;                         /* گوشه‌های نرم */
+    color: #FADBD8;                             /* رنگ متن صورتی بسیار ملایم و خوانا */
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 8px 16px;                          /* ایجاد فضای تنفس داخلی برای حالت شیشه‌ای */
+    qproperty-alignment: 'AlignCenter';         /* وسط‌چین کردن متن خطا */
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <widget class="QPushButton" name="back_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>90</width>
+         <height>38</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 0.08); /* پس‌زمینه شیشه‌ای بسیار ملو */
+    border: 1px solid rgba(193, 154, 107, 0.25); /* مرز کاراملی شفاف */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #D2B48C; /* رنگ متنی خامه ای/نسکافه‌ای روشن */
+    font-size: 14px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود) */
+QPushButton:hover {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ‌تر */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه ای */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود) */
+QPushButton:pressed {
+    background-color: rgba(111, 78, 55, 0.6); /* رنگ قهوه‌ای تیره فشرده شده */
+    border: 1px solid #8B5A2B;
+    padding-left: 16px; /* افکت کلیک کوچک ملو (متمایل شدن متن به راست) */
+}</string>
+       </property>
+       <property name="text">
+        <string>تاریخچه خرید</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="invoice_frame">
+       <property name="minimumSize">
+        <size>
+         <width>180</width>
+         <height>300</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* استایل کلی فریم فاکتور (شیشه‌ای و نیمه‌شفاف برای دیدن ویدیو) */
+QFrame#invoice_frame {
+    /* رنگ کرم-نسکافه‌ای با شفافیت ۴۰ درصد */
+    background-color: rgba(252, 250, 247, 0.4); 
+    
+    /* مرز نسکافه‌ای ظریف با شفافیت ۶۰ درصد */
+    border: 1px solid rgba(217, 205, 184, 0.6); 
+    
+    border-radius: 12px;
+    padding: 15px;
+}
+
+/* استایل تایتل اصلی فاکتور خرید */
+QLabel#title_label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3E2723; /* قهوه‌ای تیره با کنتراست بالا روی شیشه */
+    border-bottom: 2px solid rgba(239, 234, 226, 0.5); /* خط نیمه‌شفاف زیر تایتل */
+    padding-bottom: 10px;
+    margin-bottom: 8px;
+}
+
+/* عناوین ثابت فاکتور (label, label_2, label_3, label_4) */
+QFrame#invoice_frame QLabel#label,
+QFrame#invoice_frame QLabel#label_2,
+QFrame#invoice_frame QLabel#label_3,
+QFrame#invoice_frame QLabel#label_4 {
+    font-size: 14px;
+    font-weight: bold;
+    color: #3E2723; /* تیره کردن رنگ برای خوانایی عالی روی پس‌زمینه متحرک */
+    background: transparent;
+}
+
+/* مقادیر عددی پویا (تعداد، قیمت کل، تخفیف) */
+QLabel#count_label, 
+QLabel#total_price_label, 
+QLabel#discount_label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #5D4037; /* قهوه‌ای کلاسیک پررنگ */
+}
+
+/* متمایز کردن رنگ تخفیف */
+QLabel#discount_label {
+    color: #A0522D; /* برنزی آجری مایل به سفالی برای تمایز */
+}
+
+/* خط جداکننده افقی */
+QFrame#line {
+    background-color: rgba(239, 234, 226, 0.5);
+    max-height: 1px;
+    border: none;
+}
+
+/* مبلغ نهایی قابل پرداخت (بخش اصلی فاکتور) */
+QLabel#final_price_label {
+    font-size: 21px;
+    font-weight: bold;
+    color: #3E2723; /* بسیار تیره و خوانا */
+}
+
+/* دکمه نهایی‌سازی پرداخت (توپر با رنگ نسکافه‌ای گرم برای کنتراست عالی با شیشه) */
+QPushButton#pay_pushButton {
+    background-color: #8D6E63; 
+    color: #FCFAF7;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    min-height: 22px;
+}
+
+/* افکت رفتن موس روی دکمه (Hover) */
+QPushButton#pay_pushButton:hover {
+    background-color: #7D5245; 
+}
+
+/* افکت کلیک دکمه (Pressed) */
+QPushButton#pay_pushButton:pressed {
+    background-color: #5D4037;
+}</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="title_label">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>فاکتور خرید</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>تعداد کتاب ها:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="count_label">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="total_price_Layout">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>قیمت کل:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="total_price_label">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="discount_Layout">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>تخفیف دریافتی:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="discount_label">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="final_price_Layout">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>مبلغ قابل پرداخت:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="final_price_label">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pay_pushButton">
+          <property name="text">
+           <string>پرداخت</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

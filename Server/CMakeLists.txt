@@ -33,6 +33,7 @@ qt_add_executable(LuminaServer
     database_manager.h database_manager.cpp
     server.h
     server.cpp
+    networkworker.h networkworker.cpp
 )
 
 # ۵. جادوی اصلی: لینک کردن لایبرری مشترک (توابع هش و کلاس‌ها) و ابزارهای کیوت به سرور
