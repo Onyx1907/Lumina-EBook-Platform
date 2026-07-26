@@ -58,19 +58,18 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
 
     if(action != "GET_ALL_USERS_RESPONSE" &&
         action != "SEARCH_USERS_RESPONSE" &&
-        action != "DELETE_USER_RESPONSE"){
+        action != "DELETE_USER_RESPONSE" &&
+        action != "SET_USER_ACTIVE_RESPONSE"){
         return;
     }
 
-    if(data.value("status").toString() != "SUCCESS"){
+    if(!(data.value("message").toString().isEmpty())){
         ui->error_label->show();
         ui->error_label->setText(data.value("message").toString());
         QTimer::singleShot(3000, this, [this](){
             ui->error_label->setText("");
             ui->error_label->hide();
         });
-
-        return;
     }
 
     if(action == "GET_ALL_USERS_RESPONSE"){
@@ -83,8 +82,13 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
 
         ui->allUsers_pushButton->show();
     }
-    else if(action != "DELETE_USER_RESPONSE"){
+    else if(action == "DELETE_USER_RESPONSE"){
         loadUsers();
+    }
+    else if(action == "SET_USER_ACTIVE_RESPONSE"){
+        if(data.value("status").toString() != "SUCCESS"){
+            loadUsers();
+        }
     }
 }
 
@@ -105,6 +109,9 @@ void AllUsersWidget::fillResults(const QJsonObject& data, bool is_new){
 
         connect(itemWidget, &UserCard::deleteRequested, this,
                 &AllUsersWidget::sendDeleteRequest);
+
+        connect(itemWidget, &UserCard::changeBlockedState, this,
+                &AllUsersWidget::sendChangedBlockState);
     }
 
     if(!is_new){
@@ -114,19 +121,6 @@ void AllUsersWidget::fillResults(const QJsonObject& data, bool is_new){
             bar->setValue(qMin(pendingScrollValue, bar->maximum()));
         });
     }
-
-    auto *effect = new QGraphicsOpacityEffect(ui->listWidget);
-    ui->listWidget->setGraphicsEffect(effect);
-
-    auto *anim = new QPropertyAnimation(effect, "opacity", this);
-    effect->setOpacity(0);
-
-    anim->setDuration(200);
-    anim->setStartValue(0);
-    anim->setEndValue(1);
-    anim->setEasingCurve(QEasingCurve::OutCubic);
-
-    anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 
@@ -229,6 +223,27 @@ void AllUsersWidget::sendDeleteRequest(int userID){
         data["user_id"] = userID;
 
         ClientNetworkManager::instance().sendRequest("DELETE_USER", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+void AllUsersWidget::sendChangedBlockState(int userID, bool isActive){
+
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+
+        data["user_id"] = userID;
+        data["active"] = isActive;
+
+        ClientNetworkManager::instance().sendRequest("SET_USER_ACTIVE_STATE", data, true);
     }
     else{
         ui->error_label->show();

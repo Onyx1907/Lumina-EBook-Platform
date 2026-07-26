@@ -3,6 +3,8 @@
 #include <QJsonObject>
 #include <QDateTime>
 #include"QMessageBox"
+#include <QTimer>
+
 
 UserCard::UserCard(const QJsonObject& user, QWidget *parent)
     : QWidget(parent), m_userID(user.value("id").toInt())
@@ -14,7 +16,7 @@ UserCard::UserCard(const QJsonObject& user, QWidget *parent)
     ui->username_label->setText("نام کاربری: " + user.value("username").toString());
 
     ui->block_checkBox->blockSignals(true);
-    ui->block_checkBox->setChecked(user.value("is_blocked").toInt() == 1);
+    ui->block_checkBox->setChecked(user.value("is_blocked").toInt() == 0);
     ui->block_checkBox->blockSignals(false);
 
     QString role = user.value("role").toString();
@@ -85,4 +87,17 @@ void UserCard::on_delete_pushButton_clicked()
         emit deleteRequested(m_userID);
     }
 }
+
+
+void UserCard::on_block_checkBox_toggled(bool checked)
+{
+    ui->block_checkBox->setEnabled(false);
+
+    QTimer::singleShot(10000, this, [this](){
+        ui->block_checkBox->setEnabled(true);
+    });
+    emit changeBlockedState(m_userID, checked);
+}
+
+
 

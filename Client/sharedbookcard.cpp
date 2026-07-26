@@ -5,7 +5,6 @@
 #include "storageutils.h"
 #include <QFont>
 #include <QMessageBox>
-#include "clientnetworkmanager.h"
 #include <QInputDialog>
 
 
@@ -88,9 +87,6 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_
         ui->finalPrice_label->setText("رایگان");
         ui->tooman_label->hide();
     }
-
-    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
-            this, &SharedBookCard::handleCheckIsActive);
 
     connect(ui->delete_pushButton, &QPushButton::clicked, this, [this]() {
         QMessageBox msgBox(this);
@@ -190,8 +186,6 @@ void SharedBookCard::on_active_checkBox_toggled(bool checked)
 {
     if(isAdmin) return;
 
-    old_active_state = !checked;
-
     ui->active_checkBox->setEnabled(false);
 
     QTimer::singleShot(10000, this, [this](){
@@ -201,19 +195,6 @@ void SharedBookCard::on_active_checkBox_toggled(bool checked)
     emit changeActiveRequested(book.getId(), checked);
 }
 
-
-void SharedBookCard::handleCheckIsActive(const QString& action, const QJsonObject& data){
-    if(action != "SET_BOOK_ACTIVE_STATE_RESPONSE"){
-        return;
-    }
-
-    if(data.value("status").toString() != "SUCCESS"){
-        ui->active_checkBox->setChecked(old_active_state);
-    }
-    else{
-        old_active_state = ui->active_checkBox->isChecked();
-    }
-}
 
 void SharedBookCard::on_study_pushButton_clicked()
 {
