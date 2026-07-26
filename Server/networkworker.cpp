@@ -1734,9 +1734,10 @@ void NetworkWorker::handleGetUserDetails(QTcpSocket* socket, const QJsonObject& 
 }
 
 void NetworkWorker::handleSearchUsers(QTcpSocket* socket, const QJsonObject& data) {
+    qDebug() << data;
     QString keyword      = data["keyword"].toString();
     QString roleFilter   = data["role"].toString();
-    int blockedFilter    = data["blocked"].toInt(); // کلاینت اگر فیلتر نخواهد، باید ۱- بفرستد
+    int blockedFilter    = data["blocked"].toInt();
     QString registerDate = data["register_date"].toString(); // کلاینت اگر فیلتر نخواهد، رشته خالی "" میفرستد
 
     QList<QJsonObject> list = m_dbManager->searchUsers(keyword, roleFilter, blockedFilter, registerDate);
