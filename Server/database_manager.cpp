@@ -1896,7 +1896,17 @@ bool DatabaseManager::deleteUser(int userId) {
     // هم پرچم حذف فعال می شود و هم برای امنیت دوبل کاربر مسدود میشود
     q.prepare("UPDATE users SET is_deleted = 1, is_blocked = 1 WHERE id = :id");
     q.bindValue(":id", userId);
-    return q.exec();
+    if (!q.exec()) {
+        qDebug() << "Admin Delete Error:" << q.lastError().text();
+        return false;
+    }
+
+    // بررسی کنیم که آیا واقعاً سطری تحت این آیدی آپدیت شد یا نه
+    int affectedRows = q.numRowsAffected();
+    qDebug() << "Admin Delete - Rows affected:" << affectedRows;
+
+    return affectedRows > 0;
+
 }
 
 //فعال/غیر فعال کردن کاربر
@@ -1905,7 +1915,17 @@ bool DatabaseManager::setUserActiveState(int userId, bool active) {
     q.prepare("UPDATE users SET is_blocked = :b WHERE id = :id  AND is_deleted = 0");
     q.bindValue(":b", active ? 0 : 1);
     q.bindValue(":id", userId);
-    return q.exec();
+    if (!q.exec()) {
+        qDebug() << "Admin Set Active Error:" << q.lastError().text();
+        return false;
+    }
+
+    // بررسی کنیم که آیا واقعاً سطری تحت این آیدی آپدیت شد یا نه
+    int affectedRows = q.numRowsAffected();
+    qDebug() << "Admin Set Active - Rows affected:" << affectedRows;
+
+    return affectedRows > 0;
+
 }
 
 
