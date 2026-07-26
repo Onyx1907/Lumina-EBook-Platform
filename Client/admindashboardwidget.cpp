@@ -25,6 +25,7 @@ AdminDashboardWidget::AdminDashboardWidget(Admin *admin, QWidget *parent)
 
     ui->stackedWidget->setCurrentIndex(Page::AllUsersPageIndex);
     ui->users_pushButton->setChecked(true);
+    AllUsersPage->loadUsers();
 
     //رفتن به صفحه ویرایش کتاب
     connect(AdminBooksPage, &AdminBooksWidget::editBook, this, [this](int bookID){
@@ -121,6 +122,7 @@ void AdminDashboardWidget::on_books_pushButton_clicked()
 
 void AdminDashboardWidget::on_users_pushButton_clicked()
 {
+    AllUsersPage->loadUsers();
     fadeToPage(Page::AllUsersPageIndex);
 }
 

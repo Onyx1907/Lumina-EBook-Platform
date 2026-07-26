@@ -5,6 +5,10 @@
 #include <QScrollBar>
 #include "usercard.h"
 #include <QJsonArray>
+#include "datefilterdialog.h"
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
+#include <QEasingCurve>
 
 AllUsersWidget::AllUsersWidget(QWidget *parent)
     : QWidget(parent)
@@ -14,6 +18,9 @@ AllUsersWidget::AllUsersWidget(QWidget *parent)
 
     ui->error_label->hide();
 
+    ui->clear_toolButton->hide();
+
+    ui->allUsers_pushButton->hide();
 
     ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     ui->listWidget->verticalScrollBar()->setSingleStep(15);
@@ -25,12 +32,6 @@ AllUsersWidget::AllUsersWidget(QWidget *parent)
 AllUsersWidget::~AllUsersWidget()
 {
     delete ui;
-}
-
-void AllUsersWidget::showEvent(QShowEvent *event) {
-    QWidget::showEvent(event);
-
-    loadUsers();
 }
 
 void AllUsersWidget::loadUsers(){
@@ -55,7 +56,8 @@ void AllUsersWidget::loadUsers(){
 void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject& data){
     qDebug() <<data;
 
-    if(action != "GET_ALL_USERS_RESPONSE"){
+    if(action != "GET_ALL_USERS_RESPONSE" &&
+        action != "SEARCH_USERS_RESPONSE"){
         return;
     }
 
@@ -65,11 +67,18 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
 
     if(action == "GET_ALL_USERS_RESPONSE"){
         fillResults(data);
+
+        ui->allUsers_pushButton->hide();
+    }
+    else if(action == "SEARCH_USERS_RESPONSE"){
+        fillResults(data, true);
+
+        ui->allUsers_pushButton->show();
     }
 }
 
 
-void AllUsersWidget::fillResults(const QJsonObject& data){
+void AllUsersWidget::fillResults(const QJsonObject& data, bool is_new){
     ui->listWidget->clear();
 
     QJsonArray usersArray = data["users"].toArray();
@@ -84,10 +93,115 @@ void AllUsersWidget::fillResults(const QJsonObject& data){
         ui->listWidget->setItemWidget(item, itemWidget);
     }
 
-    QTimer::singleShot(0, this, [this]() {
-        auto *bar = ui->listWidget->verticalScrollBar();
+    if(!is_new){
+        QTimer::singleShot(0, this, [this]() {
+            auto *bar = ui->listWidget->verticalScrollBar();
 
-        bar->setValue(qMin(pendingScrollValue, bar->maximum()));
-    });
+            bar->setValue(qMin(pendingScrollValue, bar->maximum()));
+        });
+    }
+
+    auto *effect = new QGraphicsOpacityEffect(ui->listWidget);
+    ui->listWidget->setGraphicsEffect(effect);
+
+    auto *anim = new QPropertyAnimation(effect, "opacity", this);
+    effect->setOpacity(0);
+
+    anim->setDuration(200);
+    anim->setStartValue(0);
+    anim->setEndValue(1);
+    anim->setEasingCurve(QEasingCurve::OutCubic);
+
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+
+void AllUsersWidget::on_date_toolButton_clicked()
+{
+    DateFilterDialog dialog(this);
+    if(dialog.exec() == QDialog::Accepted){
+        registerDate = dialog.selectedDate();
+
+        ui->date_toolButton->setText(registerDate);
+        ui->clear_toolButton->show();
+    }
+}
+
+
+void AllUsersWidget::on_clear_toolButton_clicked()
+{
+    registerDate.clear();
+
+    ui->date_toolButton->setText("همه تاریخ ها");
+
+    ui->clear_toolButton->hide();
+}
+
+
+void AllUsersWidget::on_search_pushButton_clicked()
+{
+    QString role = "";
+    int blocked = -1;
+
+    switch (ui->blocked_comboBox->currentIndex()) {
+    case 0:
+        blocked = -1;
+        break;
+    case 1:
+        blocked = 1;
+        break;
+    case 2:
+        blocked = 0;
+        break;
+    }
+
+    switch (ui->role_comboBox->currentIndex()) {
+    case 0:
+        role = "";
+        break;
+    case 1:
+        role = "RegulerUser";
+        break;
+    case 2:
+        role = "Publisher";
+        break;
+    }
+
+    if(registerDate.isEmpty() && ui->keyword_lineEdit->text().trimmed().isEmpty()
+        && role.isEmpty() && blocked == -1){
+        ui->error_label->show();
+        ui->error_label->setText("حداقل یک فیلتر برای جستجو وارد کنید");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+        return;
+    }
+
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+
+        data["keyword"] = ui->keyword_lineEdit->text().trimmed();
+        data["role"] = role;
+        data["blocked"] = blocked;
+        data["register_date"] = registerDate;
+
+        ClientNetworkManager::instance().sendRequest("SEARCH_USERS", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+
+void AllUsersWidget::on_allUsers_pushButton_clicked()
+{
+    loadUsers();
 }
 

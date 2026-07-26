@@ -378,17 +378,21 @@ QPushButton:pressed {
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>30</height>
+       <height>50</height>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: #a63a3a;
-font-size: 11px;
-font-family: &quot;Ubuntu&quot;, &quot;Segoe UI&quot;, &quot;Tahoma&quot;, sans-serif;
-font-weight: bold;
-qproperty-alignment: 'AlignHCenter | AlignVCenter';
-background: transparent;
-</string>
+      <string notr="true">QLabel {
+    background-color: rgba(93, 37, 25, 0.45);  /* پس‌زمینه شیشه‌ای شرابی/شکلاتی تیره */
+    border: 1px solid rgba(217, 136, 128, 0.35); /* مرز ملو متمایل به رز-گلد شفاف */
+    border-radius: 8px;                         /* گوشه‌های نرم */
+    color: #FADBD8;                             /* رنگ متن صورتی بسیار ملایم و خوانا */
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 8px 16px;                          /* ایجاد فضای تنفس داخلی برای حالت شیشه‌ای */
+    qproperty-alignment: 'AlignCenter';         /* وسط‌چین کردن متن خطا */
+}</string>
      </property>
      <property name="text">
       <string/>

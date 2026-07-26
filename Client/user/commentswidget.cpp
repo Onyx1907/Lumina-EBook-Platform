@@ -43,6 +43,8 @@ void CommentsWidget::loadComments(int bookid){
             ui->error_label->setText("");
             ui->error_label->hide();
         });
+
+        ui->listWidget->clear();
     }
 
 }

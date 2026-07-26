@@ -59,6 +59,7 @@ qt_add_executable(LuminaClient
     admin/adminbookswidget.h admin/adminbookswidget.cpp admin/adminbookswidget.ui
     admin/alluserswidget.h admin/alluserswidget.cpp admin/alluserswidget.ui
     admin/usercard.h admin/usercard.cpp admin/usercard.ui
+    admin/datefilterdialog.h admin/datefilterdialog.cpp admin/datefilterdialog.ui
 
 
 

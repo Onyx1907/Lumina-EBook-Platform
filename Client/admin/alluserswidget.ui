@@ -25,9 +25,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QPushButton" name="search_pushButton">
        <property name="styleSheet">
@@ -65,12 +65,110 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout"/>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="date_label">
+         <property name="styleSheet">
+          <string notr="true">QLabel {
+    background: transparent;
+    color: #F5E6D3;
+    font-size: 13px;
+    font-weight: bold;
+}</string>
+         </property>
+         <property name="text">
+          <string>تاریخ ثبت نام</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QToolButton" name="clear_toolButton">
+           <property name="styleSheet">
+            <string notr="true">QToolButton{
+
+    background:transparent;
+
+    border:none;
+
+    border-radius:9px;
+
+    color:#8A5A44;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    padding:2px;
+
+}
+
+QToolButton:hover{
+
+    background:rgba(210,180,140,120);
+
+    color:#5A4033;
+
+}
+
+QToolButton:pressed{
+
+    background:rgba(180,150,110,170);
+
+}</string>
+           </property>
+           <property name="text">
+            <string>✕</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="date_toolButton">
+           <property name="styleSheet">
+            <string notr="true">QToolButton{
+
+    background:rgba(255,255,255,110);
+
+    border:1px solid rgba(193,161,116,170);
+
+    border-radius:10px;
+
+    padding:6px 12px;
+
+    color:#5A4033;
+
+    font-size:13px;
+
+}
+
+QToolButton:hover{
+
+    background:rgba(255,248,240,170);
+
+    border:1px solid #C7A269;
+
+}
+
+QToolButton:pressed{
+
+    background:rgba(232,217,195,200);
+
+}</string>
+           </property>
+           <property name="text">
+            <string>همه تاریخ ها</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="role_label">
          <property name="styleSheet">
           <string notr="true">QLabel {
     background: transparent;
@@ -85,7 +183,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="QComboBox" name="role_comboBox">
          <property name="styleSheet">
           <string notr="true">QComboBox {
     background: rgba(255,255,255,22);
@@ -139,7 +237,7 @@ QComboBox QAbstractItemView {
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="blocked_label">
          <property name="styleSheet">
           <string notr="true">QLabel {
     background: transparent;
@@ -154,7 +252,7 @@ QComboBox QAbstractItemView {
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_2">
+        <widget class="QComboBox" name="blocked_comboBox">
          <property name="styleSheet">
           <string notr="true">QComboBox {
     background: rgba(255,255,255,22);
@@ -206,15 +304,17 @@ QComboBox QAbstractItemView {
       </layout>
      </item>
      <item>
-      <widget class="QLineEdit" name="keyword_lineEdit">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QLineEdit {
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLineEdit" name="keyword_lineEdit">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
     background-color: rgba(255, 255, 255, 190); /* پس‌زمینه سفید-کرمی نرم */
     color: #2d1f10; /* رنگ متن قهوه‌ای تیره */
     border: 1px solid #b3a394;
@@ -228,11 +328,59 @@ QLineEdit:focus {
     border: 2px solid #8c6239; /* مرز قهوه‌ای طلایی گرم */
     background-color: #ffffff;
 }</string>
-       </property>
-       <property name="placeholderText">
-        <string>جستجوی کاربران</string>
-       </property>
-      </widget>
+         </property>
+         <property name="placeholderText">
+          <string>جستجوی کاربران</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="allUsers_pushButton">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>38</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 0.08); /* پس‌زمینه شیشه‌ای بسیار ملو */
+    border: 1px solid rgba(193, 154, 107, 0.25); /* مرز کاراملی شفاف */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #D2B48C; /* رنگ متنی خامه ای/نسکافه‌ای روشن */
+    font-size: 11px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود) */
+QPushButton:hover {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ‌تر */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه ای */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود) */
+QPushButton:pressed {
+    background-color: rgba(111, 78, 55, 0.6); /* رنگ قهوه‌ای تیره فشرده شده */
+    border: 1px solid #8B5A2B;
+    padding-left: 16px; /* افکت کلیک کوچک ملو (متمایل شدن متن به راست) */
+}</string>
+         </property>
+         <property name="text">
+          <string>مشاهده همه کاربران</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -316,7 +464,7 @@ QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
 }</string>
      </property>
      <property name="dragDropMode">
-      <enum>QAbstractItemView::NoDragDrop</enum>
+      <enum>QAbstractItemView::DragDrop</enum>
      </property>
      <property name="viewMode">
       <enum>QListView::IconMode</enum>
