@@ -149,6 +149,17 @@ void AllUsersWidget::on_search_pushButton_clicked()
         break;
     }
 
+    if(registerDate.isEmpty() && ui->keyword_lineEdit->text().trimmed().isEmpty()
+        && role.isEmpty() && blocked == -1){
+        ui->error_label->show();
+        ui->error_label->setText("حداقل یک فیلتر برای جستجو وارد کنید");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+        return;
+    }
+
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
