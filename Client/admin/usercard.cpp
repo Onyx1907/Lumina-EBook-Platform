@@ -4,7 +4,7 @@
 #include <QDateTime>
 #include"QMessageBox"
 #include <QTimer>
-#include "clientnetworkmanager.h"
+
 
 UserCard::UserCard(const QJsonObject& user, QWidget *parent)
     : QWidget(parent), m_userID(user.value("id").toInt())
@@ -32,10 +32,6 @@ UserCard::UserCard(const QJsonObject& user, QWidget *parent)
 
     QDateTime dateTime = QDateTime::fromString(user.value("registration_date").toString(), Qt::ISODate);
     ui->date_label->setText("ثبت‌نام شده در: " + dateTime.toString("yyyy/MM/dd - HH:mm:ss"));
-
-
-    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
-            this, &UserCard::handleCheckIsActive);
 }
 
 UserCard::~UserCard()
@@ -95,9 +91,6 @@ void UserCard::on_delete_pushButton_clicked()
 
 void UserCard::on_block_checkBox_toggled(bool checked)
 {
-
-    old_active_state = !checked;
-
     ui->block_checkBox->setEnabled(false);
 
     QTimer::singleShot(10000, this, [this](){
@@ -107,14 +100,4 @@ void UserCard::on_block_checkBox_toggled(bool checked)
 }
 
 
-void UserCard::handleCheckIsActive(const QString& action, const QJsonObject& data){
-    if(action != "SET_USER_ACTIVE_RESPONSE"){
-        return;
-    }
-    if(data.value("status").toString() != "SUCCESS"){
-        ui->block_checkBox->blockSignals(true);
-        ui->block_checkBox->setChecked(old_active_state);
-        ui->block_checkBox->blockSignals(false);
-    }
-}
 

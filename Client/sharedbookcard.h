@@ -35,8 +35,6 @@ private slots:
 
     void on_active_checkBox_toggled(bool checked);
 
-    void handleCheckIsActive(const QString& action, const QJsonObject& data);
-
     void on_study_pushButton_clicked();
 
     void on_star_clicked();
@@ -47,7 +45,6 @@ private:
     bool isActive;
     QString PDFpath;
 
-    bool old_active_state;
     bool isAdmin = false;
 };
 

@@ -24,14 +24,10 @@ private slots:
 
     void on_block_checkBox_toggled(bool checked);
 
-    void handleCheckIsActive(const QString& action, const QJsonObject& data);
-
 private:
     Ui::UserCard *ui;
 
     int m_userID;
-
-    bool old_active_state;
 };
 
 #endif // USERCARD_H

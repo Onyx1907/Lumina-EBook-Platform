@@ -70,8 +70,6 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
             ui->error_label->setText("");
             ui->error_label->hide();
         });
-
-        return;
     }
 
     if(action == "GET_ALL_USERS_RESPONSE"){
@@ -86,6 +84,11 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
     }
     else if(action == "DELETE_USER_RESPONSE"){
         loadUsers();
+    }
+    else if(action == "SET_USER_ACTIVE_RESPONSE"){
+        if(data.value("status").toString() != "SUCCESS"){
+            loadUsers();
+        }
     }
 }
 
