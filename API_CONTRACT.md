@@ -1277,7 +1277,8 @@
           "coverImagePath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh_cover.jpg",
           "pdfPath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh.pdf",
           "publisher_id": 5,
-          "isActive": 1
+          "isActive": 1,
+          "publisher_name": "نام ناشر مربوطه"
         }
       ]
     }
