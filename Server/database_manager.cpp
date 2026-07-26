@@ -1915,7 +1915,7 @@ bool DatabaseManager::setUserActiveState(int userId, bool active) {
 QList<QJsonObject> DatabaseManager::getAllBooks() {
     QList<QJsonObject> list;
 
-    QSqlQuery q("SELECT id, title, author, genre, description, price, discountPercent, discountAmount, coverImagePath, pdfPath, publisher_id, isActive "
+    QSqlQuery q("SELECT id, title, author, genre, description, price, discountPercent, discountAmount, coverImagePath, pdfPath, publisher_id, isActive, "
                 "(SELECT name FROM users WHERE users.id = books.publisher_id) AS publisher_name "
                 "FROM books WHERE is_deleted = 0", db);
 
