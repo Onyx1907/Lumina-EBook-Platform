@@ -15,10 +15,14 @@ Server::Server(QObject* parent)
 
 bool Server::start() {
     if (!listen(QHostAddress(SERVER_IP), SERVER_PORT)) {
-        qDebug() << "Server listen failed:" << errorString();
+        QString errorStr = "SERVER ERROR: Server listen failed: " + errorString();
+        qDebug() << errorStr;
+        emit logGenerated(errorStr);
         return false;
     }
-    qDebug() << "Server listen on" << SERVER_IP << SERVER_PORT;
+    QString successStr = QString("SERVER: Server successfully listening on %1:%2").arg(SERVER_IP).arg(SERVER_PORT);
+    qDebug() << successStr;
+    emit logGenerated(successStr);
     return true;
 }
 
@@ -28,7 +32,9 @@ void Server::incomingConnection(qintptr socketDescriptor) {
     // دیتابیس اختصاصی برای این کلاینت (در ترد خودش)
     auto* workerDb = new DatabaseManager(QString("conn_%1").arg(socketDescriptor));
     if (!workerDb->initDatabase()) {
-        qDebug() << "Worker DB init failed for socket" << socketDescriptor;
+        QString errStr = QString("DATABASE ERROR: Worker DB init failed for socket %1").arg(socketDescriptor);
+        qDebug() << errStr;
+        emit logGenerated(errStr);
         delete workerDb;
         delete thread;
         return;
@@ -42,7 +48,7 @@ void Server::incomingConnection(qintptr socketDescriptor) {
         delete workerDb;
     });
 
-    // پخش همگانی (کامنت‌ها و …) به همه‌ی کاربران آنلاین
+    // پخش همگانی (کامنت ها و …) به همه ی کاربران آنلاین
     connect(worker, &NetworkWorker::broadcastRequested, this,
             [this](const QJsonObject& obj){
                 QMutexLocker locker(&mutex);
@@ -51,7 +57,7 @@ void Server::incomingConnection(qintptr socketDescriptor) {
                         QMetaObject::invokeMethod(socket, [socket, obj]() {
                             QJsonDocument doc(obj);
                             QByteArray bytes = doc.toJson(QJsonDocument::Compact);
-                            bytes.append('\n');          // مهم برای کلاینتی که line-based می‌خواند
+                            bytes.append('\n');          // مهم برای کلاینتی که line-based میخواند
                             socket->write(bytes);
                             socket->flush();
                         }, Qt::QueuedConnection);
@@ -110,6 +116,13 @@ void Server::incomingConnection(qintptr socketDescriptor) {
     connect(worker, &NetworkWorker::notificationTriggered, this,
             [this](const QString& username, const QJsonObject& notifObj) {
                 QMutexLocker locker(&mutex);
+
+        // استخراج متن پیام از درون JSON برای نمایش در پنل مدیریت (MainWindow)
+        QString message = notifObj.value("message").toString();
+        if (!message.isEmpty()) {
+            emit systemNotificationGenerated(QString("کاربر %1: %2").arg(username, message));
+            emit logGenerated(QString("NOTIFICATION: System alert generated for user '%1'.").arg(username));
+        }
 
                 int targetUserId = -1;
                 QMapIterator<QTcpSocket*, QString> i(socketToName);

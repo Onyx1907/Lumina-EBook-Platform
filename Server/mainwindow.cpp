@@ -12,7 +12,7 @@ MainWindow::MainWindow(Server *server, QWidget *parent)
     setWindowTitle("Server Management Dashboard");
     resize(950, 650);
 
-    // اتصال سیگنال های لایه سرور به اسلات‌های رابط گرافیکی
+    // اتصال سیگنال های لایه سرور به اسلات های رابط گرافیکی
     connect(m_server, &Server::onlineCountChanged, this, &MainWindow::updateOnlineCount);
     connect(m_server, &Server::logGenerated, this, &MainWindow::appendLog);
     connect(m_server, &Server::systemNotificationGenerated, this, &MainWindow::appendSystemNotification);
