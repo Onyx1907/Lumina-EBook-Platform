@@ -6,9 +6,7 @@
 #include "usercard.h"
 #include <QJsonArray>
 #include "datefilterdialog.h"
-#include <QGraphicsOpacityEffect>
-#include <QPropertyAnimation>
-#include <QEasingCurve>
+#include "userdetailsdialog.h"
 
 AllUsersWidget::AllUsersWidget(QWidget *parent)
     : QWidget(parent)
@@ -59,7 +57,8 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
     if(action != "GET_ALL_USERS_RESPONSE" &&
         action != "SEARCH_USERS_RESPONSE" &&
         action != "DELETE_USER_RESPONSE" &&
-        action != "SET_USER_ACTIVE_RESPONSE"){
+        action != "SET_USER_ACTIVE_RESPONSE" &&
+        action != "GET_USER_DETAILS_RESPONSE"){
         return;
     }
 
@@ -90,6 +89,12 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
             loadUsers();
         }
     }
+    else if(action == "GET_USER_DETAILS_RESPONSE"){
+        if(data.value("status").toString() != "SUCCESS"){
+            return;
+        }
+        showDetails(data);
+    }
 }
 
 
@@ -112,6 +117,9 @@ void AllUsersWidget::fillResults(const QJsonObject& data, bool is_new){
 
         connect(itemWidget, &UserCard::changeBlockedState, this,
                 &AllUsersWidget::sendChangedBlockState);
+
+        connect(itemWidget, &UserCard::detailsRequested, this,
+                &AllUsersWidget::sendDetailsRequest);
     }
 
     if(!is_new){
@@ -253,4 +261,28 @@ void AllUsersWidget::sendChangedBlockState(int userID, bool isActive){
             ui->error_label->hide();
         });
     }
+}
+
+void AllUsersWidget::sendDetailsRequest(int userID){
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+
+        data["user_id"] = userID;
+
+        ClientNetworkManager::instance().sendRequest("GET_USER_DETAILS", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+void AllUsersWidget::showDetails(const QJsonObject& data){
+    UserDetailsDialog dialog(data["user"].toObject(), this);
+    dialog.exec();
 }

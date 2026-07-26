@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UserDetailsDialog</class>
+ <widget class="QDialog" name="UserDetailsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>520</width>
+    <height>472</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>520</width>
+    <height>430</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(223, 190, 120);
+
+font: bold 20pt &quot;Vazirmatn&quot;;
+
+padding: 8px;</string>
+     </property>
+     <property name="text">
+      <string>اطلاعات کاربری</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(193, 154, 107, 90);
+border: none;</string>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="id_label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(205, 184, 155);
+
+font: bold 12pt &quot;Vazirmatn&quot;;</string>
+     </property>
+     <property name="text">
+      <string>آیدی:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="username_label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(205, 184, 155);
+
+font: bold 12pt &quot;Vazirmatn&quot;;</string>
+     </property>
+     <property name="text">
+      <string>نام کاربری:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="name_label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(205, 184, 155);
+
+font: bold 12pt &quot;Vazirmatn&quot;;</string>
+     </property>
+     <property name="text">
+      <string>نام و نام خانوادگی</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="email_label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(205, 184, 155);
+
+font: bold 12pt &quot;Vazirmatn&quot;;</string>
+     </property>
+     <property name="text">
+      <string>ایمیل</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="role_label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(205, 184, 155);
+
+font: bold 12pt &quot;Vazirmatn&quot;;</string>
+     </property>
+     <property name="text">
+      <string>نقش</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="state_label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(205, 184, 155);
+
+font: bold 12pt &quot;Vazirmatn&quot;;</string>
+     </property>
+     <property name="text">
+      <string>وضعیت</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="date_label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(205, 184, 155);
+
+font: bold 12pt &quot;Vazirmatn&quot;;</string>
+     </property>
+     <property name="text">
+      <string>تاریخ عضویت</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="genres_label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(205, 184, 155);
+
+font: bold 12pt &quot;Vazirmatn&quot;;</string>
+     </property>
+     <property name="text">
+      <string>ژانر های مورد علاقه</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="books_label">
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+color: rgb(205, 184, 155);
+
+font: bold 12pt &quot;Vazirmatn&quot;;</string>
+     </property>
+     <property name="text">
+      <string>تعداد کتاب های خریده شده</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="back_pushButton">
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+    background-color: rgba(193,154,107,35);
+    color: rgb(236,224,208);
+
+    border: 1px solid rgba(193,154,107,120);
+    border-radius: 8px;
+
+    min-height: 36px;
+    min-width: 110px;
+
+    font: bold 12pt &quot;Vazirmatn&quot;;
+}
+
+QPushButton:hover{
+    background-color: rgba(193,154,107,70);
+    border: 1px solid rgb(215,185,120);
+}
+
+QPushButton:pressed{
+    background-color: rgba(193,154,107,120);
+}</string>
+     </property>
+     <property name="text">
+      <string>بستن</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

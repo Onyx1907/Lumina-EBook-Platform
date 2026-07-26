@@ -30,6 +30,7 @@ private slots:
 
     void sendDeleteRequest(int userID);
     void sendChangedBlockState(int userID, bool isActive);
+    void sendDetailsRequest(int userID);
 
 
 private:
@@ -38,6 +39,7 @@ private:
     QString registerDate;
 
     void fillResults(const QJsonObject& data, bool is_new = false);
+    void showDetails(const QJsonObject& data);
 
 };
 

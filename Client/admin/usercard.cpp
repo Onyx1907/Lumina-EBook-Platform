@@ -101,3 +101,9 @@ void UserCard::on_block_checkBox_toggled(bool checked)
 
 
 
+
+void UserCard::on_back_pushButton_clicked()
+{
+    emit detailsRequested(m_userID);
+}
+
