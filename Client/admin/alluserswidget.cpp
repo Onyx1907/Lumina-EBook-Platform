@@ -85,9 +85,11 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
         loadUsers();
     }
     else if(action == "SET_USER_ACTIVE_RESPONSE"){
-        if(data.value("status").toString() != "SUCCESS"){
+        if(data.value("status").toString() != "SUCCESS" ||
+            previous_failure){
             loadUsers();
         }
+        previous_failure = false;
     }
     else if(action == "GET_USER_DETAILS_RESPONSE"){
         if(data.value("status").toString() != "SUCCESS"){
@@ -260,6 +262,8 @@ void AllUsersWidget::sendChangedBlockState(int userID, bool isActive){
             ui->error_label->setText("");
             ui->error_label->hide();
         });
+
+        previous_failure = true;
     }
 }
 
