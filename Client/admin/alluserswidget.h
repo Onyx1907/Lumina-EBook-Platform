@@ -24,8 +24,10 @@ private slots:
 
     void on_clear_toolButton_clicked();
 
-protected:
-    void showEvent(QShowEvent *event) override;
+    void on_search_pushButton_clicked();
+
+    void on_allUsers_pushButton_clicked();
+
 
 private:
     Ui::AllUsersWidget *ui;

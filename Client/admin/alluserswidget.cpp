@@ -31,12 +31,6 @@ AllUsersWidget::~AllUsersWidget()
     delete ui;
 }
 
-void AllUsersWidget::showEvent(QShowEvent *event) {
-    QWidget::showEvent(event);
-
-    loadUsers();
-}
-
 void AllUsersWidget::loadUsers(){
     pendingScrollValue = ui->listWidget->verticalScrollBar()->value();
 
@@ -59,7 +53,8 @@ void AllUsersWidget::loadUsers(){
 void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject& data){
     qDebug() <<data;
 
-    if(action != "GET_ALL_USERS_RESPONSE"){
+    if(action != "GET_ALL_USERS_RESPONSE" &&
+        action != "SEARCH_USERS_RESPONSE"){
         return;
     }
 
@@ -71,6 +66,11 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
         fillResults(data);
 
         ui->allUsers_pushButton->hide();
+    }
+    else if(action == "SEARCH_USERS_RESPONSE"){
+        fillResults(data);
+
+        ui->allUsers_pushButton->show();
     }
 }
 
@@ -122,6 +122,57 @@ void AllUsersWidget::on_clear_toolButton_clicked()
 
 void AllUsersWidget::on_search_pushButton_clicked()
 {
+    QString role = "";
+    int blocked = -1;
 
+    switch (ui->blocked_comboBox->currentIndex()) {
+    case 0:
+        blocked = -1;
+        break;
+    case 1:
+        blocked = 1;
+        break;
+    case 2:
+        blocked = 0;
+        break;
+    }
+
+    switch (ui->role_comboBox->currentIndex()) {
+    case 0:
+        role = "";
+        break;
+    case 1:
+        role = "RegulerUser";
+        break;
+    case 2:
+        role = "Publisher";
+        break;
+    }
+
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+
+        data["keyword"] = ui->keyword_lineEdit->text().trimmed();
+        data["role"] = role;
+        data["blocked"] = blocked;
+        data["register_date"] = registerDate;
+
+        ClientNetworkManager::instance().sendRequest("SEARCH_USERS", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}
+
+
+void AllUsersWidget::on_allUsers_pushButton_clicked()
+{
+    loadUsers();
 }
 

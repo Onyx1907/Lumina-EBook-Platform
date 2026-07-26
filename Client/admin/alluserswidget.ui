@@ -168,7 +168,7 @@ QToolButton:pressed{
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="role_label">
          <property name="styleSheet">
           <string notr="true">QLabel {
     background: transparent;
@@ -183,7 +183,7 @@ QToolButton:pressed{
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="QComboBox" name="role_comboBox">
          <property name="styleSheet">
           <string notr="true">QComboBox {
     background: rgba(255,255,255,22);
@@ -237,7 +237,7 @@ QComboBox QAbstractItemView {
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="blocked_label">
          <property name="styleSheet">
           <string notr="true">QLabel {
     background: transparent;
@@ -252,7 +252,7 @@ QComboBox QAbstractItemView {
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_2">
+        <widget class="QComboBox" name="blocked_comboBox">
          <property name="styleSheet">
           <string notr="true">QComboBox {
     background: rgba(255,255,255,22);
@@ -339,7 +339,7 @@ QLineEdit:focus {
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>30</height>
+           <height>38</height>
           </size>
          </property>
          <property name="maximumSize">
