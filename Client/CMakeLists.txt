@@ -61,6 +61,7 @@ qt_add_executable(LuminaClient
     admin/usercard.h admin/usercard.cpp admin/usercard.ui
     admin/datefilterdialog.h admin/datefilterdialog.cpp admin/datefilterdialog.ui
     admin/userdetailsdialog.h admin/userdetailsdialog.cpp admin/userdetailsdialog.ui
+    notification/notificationbar.h notification/notificationbar.cpp notification/notificationbar.ui
 
 
 
@@ -90,7 +91,8 @@ target_include_directories(LuminaClient PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/user
     ${CMAKE_CURRENT_SOURCE_DIR}/publisher
-    ${CMAKE_CURRENT_SOURCE_DIR}/admin)
+    ${CMAKE_CURRENT_SOURCE_DIR}/admin
+    ${CMAKE_CURRENT_SOURCE_DIR}/notification)
 
 include(GNUInstallDirs)
 install(TARGETS LuminaClient

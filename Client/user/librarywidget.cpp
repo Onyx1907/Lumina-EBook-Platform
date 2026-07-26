@@ -250,7 +250,7 @@ void LibraryWidget::handleGetSavedBooks(const QJsonObject& response) {
             stringToGenre(bookObj["genre"].toString()),
             bookObj["coverImagePath"].toString(),
             bookObj["price"].toDouble(),
-            0.0);
+            bookObj["discount"].toDouble());
 
         BookInfoCard* card = new BookInfoCard(book, this);
         card->setCardMode();
