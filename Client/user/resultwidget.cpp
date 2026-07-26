@@ -3,6 +3,7 @@
 #include "bookinfocard.h"
 #include <QAbstractItemView>
 #include <QScrollBar>
+#include <QTimer>
 
 ResultWidget::ResultWidget(QWidget *parent)
     : QWidget(parent)
@@ -36,6 +37,12 @@ void ResultWidget::fillResults(const QVector<Book>& booksList){
            emit bookSelected(clickedBookptr);
         });
     }
+
+    QTimer::singleShot(0, this, [this]() {
+        auto *bar = ui->listWidget->verticalScrollBar();
+
+        bar->setValue(0);
+    });
 }
 
 

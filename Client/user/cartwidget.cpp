@@ -41,6 +41,7 @@ void CartWidget::showEvent(QShowEvent *event) {
 
 
 void CartWidget::loadCartFromServer(){
+    pendingScrollValue = ui->listWidget->verticalScrollBar()->value();
 
     QJsonObject data;
     data["user_id"] = m_userID;
@@ -180,6 +181,12 @@ void CartWidget::handleGetCartResponse(const QJsonObject& response) {
     ui->final_price_label->setText(QString::number(response.value("final_price").toDouble(), 'f', 0) + " تومان");
 
     m_finalPrice = response.value("final_price").toDouble();
+
+    QTimer::singleShot(0, this, [this]() {
+        auto *bar = ui->listWidget->verticalScrollBar();
+
+        bar->setValue(qMin(pendingScrollValue, bar->maximum()));
+    });
 }
 
 

@@ -41,6 +41,8 @@ private:
     void loadCartFromServer();
 
     void handleGetCartResponse(const QJsonObject& response);
+
+    int pendingScrollValue = 0;
 };
 
 #endif // CARTWIDGET_H

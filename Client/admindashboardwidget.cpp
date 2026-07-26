@@ -15,13 +15,16 @@ AdminDashboardWidget::AdminDashboardWidget(Admin *admin, QWidget *parent)
     EditBookPage = new EditBookWidget(this);
     BookReaderPage = new BookReaderWidget(-1, this);
     CommentsPage = new CommentsWidget(-1, this);
+    AllUsersPage = new AllUsersWidget(this);
 
     ui->stackedWidget->addWidget(AdminBooksPage);
     ui->stackedWidget->addWidget(EditBookPage);
     ui->stackedWidget->addWidget(BookReaderPage);
     ui->stackedWidget->addWidget(CommentsPage);
+    ui->stackedWidget->addWidget(AllUsersPage);
 
-    ui->stackedWidget->setCurrentIndex(Page::AdminBooksPageIndex);
+    ui->stackedWidget->setCurrentIndex(Page::AllUsersPageIndex);
+    ui->users_pushButton->setChecked(true);
 
     //رفتن به صفحه ویرایش کتاب
     connect(AdminBooksPage, &AdminBooksWidget::editBook, this, [this](int bookID){
@@ -113,5 +116,11 @@ void AdminDashboardWidget::fadeToPage(int pageIndex) {
 void AdminDashboardWidget::on_books_pushButton_clicked()
 {
     fadeToPage(Page::AdminBooksPageIndex);
+}
+
+
+void AdminDashboardWidget::on_users_pushButton_clicked()
+{
+    fadeToPage(Page::AllUsersPageIndex);
 }
 
