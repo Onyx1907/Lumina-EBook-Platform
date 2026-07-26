@@ -2,7 +2,6 @@
 #define USERCARD_H
 
 #include <QWidget>
-#include "user.h"
 
 namespace Ui {
 class UserCard;
@@ -16,10 +15,16 @@ public:
     explicit UserCard(const QJsonObject& user, QWidget *parent = nullptr);
     ~UserCard();
 
+signals:
+    void deleteRequested(int userID);
+
+private slots:
+    void on_delete_pushButton_clicked();
+
 private:
     Ui::UserCard *ui;
 
-    User *m_user;
+    int m_userID;
 };
 
 #endif // USERCARD_H

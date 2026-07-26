@@ -2,9 +2,10 @@
 #include "ui_usercard.h"
 #include <QJsonObject>
 #include <QDateTime>
+#include"QMessageBox"
 
 UserCard::UserCard(const QJsonObject& user, QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent), m_userID(user.value("id").toInt())
     , ui(new Ui::UserCard)
 {
     ui->setupUi(this);
@@ -35,3 +36,53 @@ UserCard::~UserCard()
 {
     delete ui;
 }
+
+void UserCard::on_delete_pushButton_clicked()
+{
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("حذف حساب کاربری");
+    msgBox.setText("آیا از حذف حساب این کاربر مطمئن هستید؟ امکان بازگردانی وجود ندارد");
+    msgBox.setIcon(QMessageBox::Question);
+
+
+    QPushButton *yesButton = msgBox.addButton("بله، حذف شود", QMessageBox::YesRole);
+    QPushButton *noButton = msgBox.addButton("خیر", QMessageBox::NoRole);
+    msgBox.setDefaultButton(noButton);
+
+    // 🎨 جادوی QSS برای شیک کردن کل بدنه و دکمه‌های QMessageBox
+    msgBox.setStyleSheet(
+        "QMessageBox {"
+        "   background-color: #1A1512;" // پس‌زمینه تیره نسکافه‌ای
+        "   border: 1px solid #C19A6B;" // مرز طلایی/نسکافه‌ای ملایم
+        "   border-radius: 12px;"
+        "}"
+        "QLabel {"
+        "   color: #E6D7C3;" // رنگ متن کرم روشن
+        "   font-family: 'Segoe UI', 'Tahoma';"
+        "   font-size: 13px;"
+        "   padding: 10px;"
+        "}"
+        "QPushButton {"
+        "   background-color: rgba(193, 154, 107, 0.15);"
+        "   border: 1px solid rgba(193, 154, 107, 0.4);"
+        "   border-radius: 6px;"
+        "   color: #E6D7C3;"
+        "   font-family: 'Segoe UI', 'Tahoma';"
+        "   font-size: 11px;"
+        "   min-width: 80px;"
+        "   padding: 6px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #C19A6B;"
+        "   color: #1E1914;" // متن تیره موقع هاور برای خوانایی
+        "   font-weight: bold;"
+        "}"
+        );
+
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == yesButton) {
+        emit deleteRequested(m_userID);
+    }
+}
+

@@ -57,11 +57,19 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
     qDebug() <<data;
 
     if(action != "GET_ALL_USERS_RESPONSE" &&
-        action != "SEARCH_USERS_RESPONSE"){
+        action != "SEARCH_USERS_RESPONSE" &&
+        action != "DELETE_USER_RESPONSE"){
         return;
     }
 
-    if(data.value("message").toString() == "SUCCESS"){
+    if(data.value("status").toString() != "SUCCESS"){
+        ui->error_label->show();
+        ui->error_label->setText(data.value("message").toString());
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+
         return;
     }
 
@@ -74,6 +82,9 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
         fillResults(data, true);
 
         ui->allUsers_pushButton->show();
+    }
+    else if(action != "DELETE_USER_RESPONSE"){
+        loadUsers();
     }
 }
 
@@ -91,6 +102,9 @@ void AllUsersWidget::fillResults(const QJsonObject& data, bool is_new){
         QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
         item->setSizeHint(itemWidget->sizeHint());
         ui->listWidget->setItemWidget(item, itemWidget);
+
+        connect(itemWidget, &UserCard::deleteRequested, this,
+                &AllUsersWidget::sendDeleteRequest);
     }
 
     if(!is_new){
@@ -205,3 +219,23 @@ void AllUsersWidget::on_allUsers_pushButton_clicked()
     loadUsers();
 }
 
+
+void AllUsersWidget::sendDeleteRequest(int userID){
+
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+
+        data["user_id"] = userID;
+
+        ClientNetworkManager::instance().sendRequest("DELETE_USER", data, true);
+    }
+    else{
+        ui->error_label->show();
+        ui->error_label->setText("خطا در برقراری اتصال");
+        QTimer::singleShot(3000, this, [this](){
+            ui->error_label->setText("");
+            ui->error_label->hide();
+        });
+    }
+}

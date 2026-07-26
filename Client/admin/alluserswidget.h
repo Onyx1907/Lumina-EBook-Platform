@@ -28,6 +28,8 @@ private slots:
 
     void on_allUsers_pushButton_clicked();
 
+    void sendDeleteRequest(int userID);
+
 
 private:
     Ui::AllUsersWidget *ui;
@@ -35,6 +37,7 @@ private:
     QString registerDate;
 
     void fillResults(const QJsonObject& data, bool is_new = false);
+
 };
 
 #endif // ALLUSERSWIDGET_H
