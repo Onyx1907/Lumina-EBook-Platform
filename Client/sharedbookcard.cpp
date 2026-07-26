@@ -5,21 +5,20 @@
 #include "storageutils.h"
 #include <QFont>
 #include <QMessageBox>
-#include "clientnetworkmanager.h"
 #include <QInputDialog>
 
 
-SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
+SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_admin)
     : QWidget(parent), book(obj["id"].toInt(),
                         obj["title"].toString(),
                         obj["author"].toString(),
-                        "", stringToGenre(obj["genre"].toString()),
+                        obj["publisher_name"].toString(), stringToGenre(obj["genre"].toString()),
                         obj["coverImagePath"].toString(),
                         obj["price"].toDouble(),
                         obj["discountPercent"].toDouble(),
                         obj["avgRating"].toDouble()),
     isActive((obj["isActive"].toInt()) == 1),
-    PDFpath(obj.value("pdfPath").toString())
+    PDFpath(obj.value("pdfPath").toString()), isAdmin(is_admin)
     , ui(new Ui::SharedBookCard)
 {
     ui->setupUi(this);
@@ -33,6 +32,23 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
     StorageUtils::displayBookCover(book.getCoverImagePath(),
                                    ui->book_cover);
 
+
+    ui->active_checkBox->blockSignals(true);
+    ui->active_checkBox->setChecked(isActive);
+    ui->active_checkBox->blockSignals(false);
+
+    if(isAdmin){
+        ui->discount_pushButton->hide();
+        ui->active_checkBox->setEnabled(false);
+        ui->rating_label->hide();
+        ui->star->setText("مشاهده نظرات");
+        ui->publisher_label->setText("آیدی ناشر: " + QString::number(obj["publisher_id"].toInt())
+                                     + "    " + book.getPublisher());
+    }
+    else{
+        ui->active_checkBox->setEnabled(true);
+        ui->publisher_label->hide();
+    }
 
     QString sv = genreToString(book.getGenre());
 
@@ -71,12 +87,6 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent)
         ui->finalPrice_label->setText("رایگان");
         ui->tooman_label->hide();
     }
-
-    ui->active_checkBox->setChecked(isActive);
-    ui->active_checkBox->setEnabled(true);
-
-    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
-            this, &SharedBookCard::handleCheckIsActive);
 
     connect(ui->delete_pushButton, &QPushButton::clicked, this, [this]() {
         QMessageBox msgBox(this);
@@ -174,7 +184,7 @@ void SharedBookCard::on_discount_pushButton_clicked()
 
 void SharedBookCard::on_active_checkBox_toggled(bool checked)
 {
-    old_active_state = !checked;
+    if(isAdmin) return;
 
     ui->active_checkBox->setEnabled(false);
 
@@ -185,19 +195,6 @@ void SharedBookCard::on_active_checkBox_toggled(bool checked)
     emit changeActiveRequested(book.getId(), checked);
 }
 
-
-void SharedBookCard::handleCheckIsActive(const QString& action, const QJsonObject& data){
-    if(action != "SET_BOOK_ACTIVE_STATE_RESPONSE"){
-        return;
-    }
-
-    if(data.value("status").toString() != "SUCCESS"){
-        ui->active_checkBox->setChecked(old_active_state);
-    }
-    else{
-        old_active_state = ui->active_checkBox->isChecked();
-    }
-}
 
 void SharedBookCard::on_study_pushButton_clicked()
 {

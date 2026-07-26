@@ -27,6 +27,8 @@ CommentsWidget::CommentsWidget(int userid, QWidget *parent, bool isPublisher)
 void CommentsWidget::loadComments(int bookid){
     bookID = bookid;
 
+    pendingScrollValue = ui->listWidget->verticalScrollBar()->value();
+
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
@@ -41,6 +43,8 @@ void CommentsWidget::loadComments(int bookid){
             ui->error_label->setText("");
             ui->error_label->hide();
         });
+
+        ui->listWidget->clear();
     }
 
 }
@@ -116,7 +120,7 @@ void CommentsWidget::updateListUi (const QJsonObject& response) {
 
     ui->listWidget->clear();
 
-    if(!m_isPublisher){
+    if(!m_isPublisher && userID != -1){
         ui->write_frame->show();
     }
     else{
@@ -145,6 +149,10 @@ void CommentsWidget::updateListUi (const QJsonObject& response) {
             QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
             item->setSizeHint(itemWidget->sizeHint());
             ui->listWidget->setItemWidget(item, itemWidget);
+
+            if(userID == -1){
+                connect(itemWidget, &CommentItemWidget::deleteRequested, this, &CommentsWidget::onCommentDeleteRequested);
+            }
         }
     }
 
@@ -163,6 +171,12 @@ void CommentsWidget::updateListUi (const QJsonObject& response) {
         item->setSizeHint(userItemWidget->sizeHint());
         ui->listWidget->setItemWidget(item, userItemWidget);
     }
+
+    QTimer::singleShot(0, this, [this]() {
+        auto *bar = ui->listWidget->verticalScrollBar();
+
+        bar->setValue(qMin(pendingScrollValue, bar->maximum()));
+    });
 }
 
 

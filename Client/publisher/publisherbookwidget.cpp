@@ -22,6 +22,8 @@ PublisherBookWidget::PublisherBookWidget(int publisherID, QWidget *parent)
 }
 
 void PublisherBookWidget::loadBooks(){
+    pendingScrollValue = ui->listWidget->verticalScrollBar()->value();
+
     if(ClientNetworkManager::instance().connectToServer()){
 
         QJsonObject data;
@@ -59,8 +61,12 @@ void PublisherBookWidget::processNetworkData(const QString& action, const QJsonO
         return;
     }
 
-    if (action == "PUBLISHER_DELETE_BOOK_RESPONSE"){
+    if (action == "PUBLISHER_DELETE_BOOK_RESPONSE" ||
+        (action == "SET_BOOK_ACTIVE_STATE_RESPONSE" &&
+        data.value("status").toString() != "SUCCESS")){
         loadBooks();
+
+        previous_failure = false;
     }
 
     if(data.value("status").toString() != "SUCCESS"){
@@ -88,6 +94,12 @@ void PublisherBookWidget::processNetworkData(const QString& action, const QJsonO
                 card->updatePrice(m_discount);
             }
         }
+    }
+    else if(action == "SET_BOOK_ACTIVE_STATE_RESPONSE"){
+        if(previous_failure){
+            loadBooks();
+        }
+        previous_failure = false;
     }
 
 }
@@ -127,6 +139,12 @@ void PublisherBookWidget::handleGetBooks(const QJsonObject& data){
             emit goToCommentsPage(bookID);
         });
     }
+
+    QTimer::singleShot(0, this, [this]() {
+        auto *bar = ui->listWidget->verticalScrollBar();
+
+        bar->setValue(qMin(pendingScrollValue, bar->maximum()));
+    });
 }
 
 void PublisherBookWidget::on_back_pushButton_clicked()
@@ -153,6 +171,8 @@ void PublisherBookWidget::checkIsActiveRequested(int bookID, bool isActive){
             ui->error_label->setText("");
             ui->error_label->hide();
         });
+
+        previous_failure = true;
     }
 }
 

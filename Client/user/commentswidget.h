@@ -42,6 +42,8 @@ private:
     bool m_isPublisher = false;
 
     void updateListUi(const QJsonObject& response);
+
+    int pendingScrollValue = 0;
 };
 
 #endif // COMMENTSWIDGET_H

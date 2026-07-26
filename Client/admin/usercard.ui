@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UserCard</class>
+ <widget class="QWidget" name="UserCard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>350</width>
+    <height>190</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>350</width>
+    <height>190</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>350</width>
+    <height>190</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="styleSheet">
+      <string notr="true">QFrame#frame {
+    background-color: rgba(75, 50, 35, 180);
+    border: 1px solid rgba(205, 170, 120, 170);
+    border-radius: 18px;
+}
+
+QFrame#frame:hover {
+    background-color: rgba(88, 60, 42, 210);
+    border: 1px solid rgb(235, 200, 140);
+}
+
+
+QLabel#username_label {
+    color: rgb(255, 245, 220);
+    font: 700 16px &quot;Vazirmatn&quot;;
+    border: none;
+    background: transparent;
+}
+
+
+QLabel#id_label {
+    color: rgb(214, 195, 170);
+    font: 12pt &quot;Vazirmatn&quot;;
+    border: none;
+    background: transparent;
+}
+
+
+QLabel#date_label {
+    color: rgb(185, 170, 150);
+    font: 10pt &quot;Vazirmatn&quot;;
+    border: none;
+    background: transparent;
+}
+
+
+QLabel#role_label {
+    color: rgb(255, 215, 120);
+    font: bold 11pt &quot;Vazirmatn&quot;;
+    border: none;
+    background: transparent;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="date_label">
+        <property name="text">
+         <string>2026</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="id_label">
+        <property name="text">
+         <string>آیدی کاربر: ۲</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="username_label">
+        <property name="text">
+         <string>نام کاربری: fateme</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="role_label">
+        <property name="text">
+         <string>نقش: کاربر عادی</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="block_checkBox">
+          <property name="styleSheet">
+           <string notr="true">QCheckBox {
+    color: rgb(214, 195, 170);
+    font: 10pt &quot;Vazirmatn&quot;;
+    border: none;
+    background: transparent;
+    spacing: 8px;
+}
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #7A5C45;
+    border-radius: 5px;
+    background: #FFF8EE;
+}
+
+QCheckBox::indicator:hover {
+    border-color: #9A775B;
+}
+
+QCheckBox::indicator:checked {
+    background: #6F4E37;
+    border: 2px solid #5A3F2C;
+    image: url(://resources/check.svg);
+}
+
+QCheckBox::indicator:pressed {
+    background: #5A3F2C;
+}
+
+QCheckBox::indicator:unchecked:hover {
+    background-color: #E8D7BF;
+    border: 2px solid #8A6548;
+}
+
+QCheckBox::indicator:checked:hover {
+    background-color: #7B5740;
+    border: 2px solid #A57C5A;
+    image: url(://resources/check.svg);
+}</string>
+          </property>
+          <property name="text">
+           <string>ایا کاربر فعال است</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="back_pushButton">
+          <property name="minimumSize">
+           <size>
+            <width>90</width>
+            <height>38</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 0.08); /* پس‌زمینه شیشه‌ای بسیار ملو */
+    border: 1px solid rgba(193, 154, 107, 0.25); /* مرز کاراملی شفاف */
+    border-radius: 8px; /* گوشه‌های نرم کلاسیک */
+    color: #D2B48C; /* رنگ متنی خامه ای/نسکافه‌ای روشن */
+    font-size: 12px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, &quot;Tahoma&quot;;
+    padding: 6px 14px;
+    min-height: 24px;
+}
+
+/* حالت Hover (وقتی موس روی دکمه می‌رود) */
+QPushButton:hover {
+    background-color: rgba(139, 90, 43, 0.35); /* شیشه کاراملی غلیظ‌تر */
+    border: 1px solid #C19A6B; /* لبه طلایی خامه ای */
+    color: #FFF; /* متن کاملا سفید و درخشان */
+}
+
+/* حالت Pressed (وقتی روی دکمه کلیک می‌شود) */
+QPushButton:pressed {
+    background-color: rgba(111, 78, 55, 0.6); /* رنگ قهوه‌ای تیره فشرده شده */
+    border: 1px solid #8B5A2B;
+    padding-left: 16px; /* افکت کلیک کوچک ملو (متمایل شدن متن به راست) */
+}</string>
+          </property>
+          <property name="text">
+           <string>مشاهده جزییات</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="delete_pushButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">    background: none;
+    background-color: transparent;
+
+    border: 1px solid transparent;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/resources/delete_icon.png</normaloff>:/resources/delete_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>26</width>
+            <height>26</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -160,7 +160,6 @@ private:
     //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
 
     void handleGetAllBooks(QTcpSocket* socket, const QJsonObject& data);
-    void handleGetBookDetails(QTcpSocket* socket, const QJsonObject& data);
     void handleAdminUpdateBook(QTcpSocket* socket, const QJsonObject& data);
     void handleAdminDeleteBook(QTcpSocket* socket, const QJsonObject& data);
 

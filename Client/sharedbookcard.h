@@ -14,7 +14,7 @@ class SharedBookCard : public QWidget
     Q_OBJECT
 
 public:
-    explicit SharedBookCard(const QJsonObject& obj, QWidget *parent = nullptr);
+    explicit SharedBookCard(const QJsonObject& obj, QWidget *parent = nullptr, bool is_admin = false);
     ~SharedBookCard();
 
     void updatePrice(double discount);
@@ -35,8 +35,6 @@ private slots:
 
     void on_active_checkBox_toggled(bool checked);
 
-    void handleCheckIsActive(const QString& action, const QJsonObject& data);
-
     void on_study_pushButton_clicked();
 
     void on_star_clicked();
@@ -47,7 +45,7 @@ private:
     bool isActive;
     QString PDFpath;
 
-    bool old_active_state;
+    bool isAdmin = false;
 };
 
 #endif // SHAREDBOOKCARD_H

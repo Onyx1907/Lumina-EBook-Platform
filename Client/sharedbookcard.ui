@@ -313,6 +313,39 @@ font-size: 13px;
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QLabel" name="publisher_label">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">qproperty-alignment: 'AlignLeft | AlignVCenter';
+font-size: 13px;
+</string>
+            </property>
+            <property name="text">
+             <string>آیدی ناشر: </string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::PlainText</enum>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -625,12 +658,6 @@ QPushButton:pressed {
             <height>0</height>
            </size>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>50</width>
-            <height>16777215</height>
-           </size>
-          </property>
           <property name="styleSheet">
            <string notr="true">
 qproperty-alignment: 'AlignHCenter | AlignVCenter';
@@ -657,8 +684,8 @@ font-size : 20px;</string>
           </property>
           <property name="maximumSize">
            <size>
-            <width>40</width>
-            <height>40</height>
+            <width>200</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -666,6 +693,10 @@ font-size : 20px;</string>
            background-color: transparent;
            border: 2px solid transparent;
            border-radius: 10px;
+    color: #5C3A21;
+    font-family: &quot;Vazirmatn&quot;, &quot;Segoe UI&quot;;
+    font-weight: bold;
+    font-size: 12px;
         }
 
         /* ۲. حالت Hover: هاله طلایی ملایم و لوکس دور کارت */
