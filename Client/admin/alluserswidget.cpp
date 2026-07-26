@@ -6,6 +6,9 @@
 #include "usercard.h"
 #include <QJsonArray>
 #include "datefilterdialog.h"
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
+#include <QEasingCurve>
 
 AllUsersWidget::AllUsersWidget(QWidget *parent)
     : QWidget(parent)
@@ -68,14 +71,14 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
         ui->allUsers_pushButton->hide();
     }
     else if(action == "SEARCH_USERS_RESPONSE"){
-        fillResults(data);
+        fillResults(data, true);
 
         ui->allUsers_pushButton->show();
     }
 }
 
 
-void AllUsersWidget::fillResults(const QJsonObject& data){
+void AllUsersWidget::fillResults(const QJsonObject& data, bool is_new){
     ui->listWidget->clear();
 
     QJsonArray usersArray = data["users"].toArray();
@@ -90,11 +93,26 @@ void AllUsersWidget::fillResults(const QJsonObject& data){
         ui->listWidget->setItemWidget(item, itemWidget);
     }
 
-    QTimer::singleShot(0, this, [this]() {
-        auto *bar = ui->listWidget->verticalScrollBar();
+    if(!is_new){
+        QTimer::singleShot(0, this, [this]() {
+            auto *bar = ui->listWidget->verticalScrollBar();
 
-        bar->setValue(qMin(pendingScrollValue, bar->maximum()));
-    });
+            bar->setValue(qMin(pendingScrollValue, bar->maximum()));
+        });
+    }
+
+    auto *effect = new QGraphicsOpacityEffect(ui->listWidget);
+    ui->listWidget->setGraphicsEffect(effect);
+
+    auto *anim = new QPropertyAnimation(effect, "opacity", this);
+    effect->setOpacity(0);
+
+    anim->setDuration(200);
+    anim->setStartValue(0);
+    anim->setEndValue(1);
+    anim->setEasingCurve(QEasingCurve::OutCubic);
+
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 

@@ -34,7 +34,7 @@ private:
     int pendingScrollValue = 0;
     QString registerDate;
 
-    void fillResults(const QJsonObject& data);
+    void fillResults(const QJsonObject& data, bool is_new = false);
 };
 
 #endif // ALLUSERSWIDGET_H
