@@ -1916,6 +1916,7 @@ QList<QJsonObject> DatabaseManager::getAllBooks() {
     QList<QJsonObject> list;
 
     QSqlQuery q("SELECT id, title, author, genre, description, price, discountPercent, discountAmount, coverImagePath, pdfPath, publisher_id, isActive "
+                "(SELECT name FROM users WHERE users.id = books.publisher_id) AS publisher_name "
                 "FROM books WHERE is_deleted = 0", db);
 
     if (!q.exec()) {
@@ -1937,6 +1938,7 @@ QList<QJsonObject> DatabaseManager::getAllBooks() {
         book["pdfPath"]         = q.value("pdfPath").toString();
         book["publisher_id"]    = q.value("publisher_id").toInt();
         book["isActive"]        = q.value("isActive").toInt();
+        book["publisher_name"]  = q.value("publisher_name").toString();
         list.append(book);
     }
     return list;
