@@ -207,12 +207,16 @@ void SharedBookCard::handleCheckIsActive(const QString& action, const QJsonObjec
         return;
     }
 
+    ui->active_checkBox->blockSignals(true);
+
     if(data.value("status").toString() != "SUCCESS"){
         ui->active_checkBox->setChecked(old_active_state);
     }
     else{
         old_active_state = ui->active_checkBox->isChecked();
     }
+
+    ui->active_checkBox->blockSignals(false);
 }
 
 void SharedBookCard::on_study_pushButton_clicked()

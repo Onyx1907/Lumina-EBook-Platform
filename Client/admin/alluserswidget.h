@@ -29,6 +29,7 @@ private slots:
     void on_allUsers_pushButton_clicked();
 
     void sendDeleteRequest(int userID);
+    void sendChangedBlockState(int userID, bool isActive);
 
 
 private:

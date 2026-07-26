@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>365</width>
-    <height>185</height>
+    <height>187</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -150,7 +150,7 @@ QCheckBox::indicator:checked:hover {
 }</string>
           </property>
           <property name="text">
-           <string>وضعیت مسدودی</string>
+           <string>ایا کاربر فعال است</string>
           </property>
          </widget>
         </item>

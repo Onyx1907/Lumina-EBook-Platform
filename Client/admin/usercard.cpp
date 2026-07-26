@@ -3,6 +3,8 @@
 #include <QJsonObject>
 #include <QDateTime>
 #include"QMessageBox"
+#include <QTimer>
+#include "clientnetworkmanager.h"
 
 UserCard::UserCard(const QJsonObject& user, QWidget *parent)
     : QWidget(parent), m_userID(user.value("id").toInt())
@@ -14,7 +16,7 @@ UserCard::UserCard(const QJsonObject& user, QWidget *parent)
     ui->username_label->setText("نام کاربری: " + user.value("username").toString());
 
     ui->block_checkBox->blockSignals(true);
-    ui->block_checkBox->setChecked(user.value("is_blocked").toInt() == 1);
+    ui->block_checkBox->setChecked(user.value("is_blocked").toInt() == 0);
     ui->block_checkBox->blockSignals(false);
 
     QString role = user.value("role").toString();
@@ -30,6 +32,10 @@ UserCard::UserCard(const QJsonObject& user, QWidget *parent)
 
     QDateTime dateTime = QDateTime::fromString(user.value("registration_date").toString(), Qt::ISODate);
     ui->date_label->setText("ثبت‌نام شده در: " + dateTime.toString("yyyy/MM/dd - HH:mm:ss"));
+
+
+    connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
+            this, &UserCard::handleCheckIsActive);
 }
 
 UserCard::~UserCard()
@@ -83,6 +89,32 @@ void UserCard::on_delete_pushButton_clicked()
 
     if (msgBox.clickedButton() == yesButton) {
         emit deleteRequested(m_userID);
+    }
+}
+
+
+void UserCard::on_block_checkBox_toggled(bool checked)
+{
+
+    old_active_state = !checked;
+
+    ui->block_checkBox->setEnabled(false);
+
+    QTimer::singleShot(10000, this, [this](){
+        ui->block_checkBox->setEnabled(true);
+    });
+    emit changeBlockedState(m_userID, checked);
+}
+
+
+void UserCard::handleCheckIsActive(const QString& action, const QJsonObject& data){
+    if(action != "SET_USER_ACTIVE_RESPONSE"){
+        return;
+    }
+    if(data.value("status").toString() != "SUCCESS"){
+        ui->block_checkBox->blockSignals(true);
+        ui->block_checkBox->setChecked(old_active_state);
+        ui->block_checkBox->blockSignals(false);
     }
 }
 
