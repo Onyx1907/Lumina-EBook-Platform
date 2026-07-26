@@ -174,7 +174,7 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
     //*********************************************پنل مدیر سیستم ( ماژول 1 )****************************************************
 
     else if (action == "GET_ALL_USERS") { handleGetAllUsers(socket, data); return; }
-    else if (action == "GET_USER_DETAILS") { handleGetUserDetails(socket, data); return; }
+    else if (action == "GET_USER_DETAILS") { handleGetUserDetails(socket, obj); return; }
     else if (action == "SEARCH_USERS") { handleSearchUsers(socket, obj); return; }
 
 
