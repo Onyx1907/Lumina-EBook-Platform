@@ -175,7 +175,7 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     else if (action == "GET_ALL_USERS") { handleGetAllUsers(socket, data); return; }
     else if (action == "GET_USER_DETAILS") { handleGetUserDetails(socket, data); return; }
-    else if (action == "SEARCH_USERS") { handleSearchUsers(socket, data); return; }
+    else if (action == "SEARCH_USERS") { handleSearchUsers(socket, obj); return; }
 
 
     //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
@@ -1736,7 +1736,7 @@ void NetworkWorker::handleGetUserDetails(QTcpSocket* socket, const QJsonObject& 
 void NetworkWorker::handleSearchUsers(QTcpSocket* socket, const QJsonObject& data) {
     QString keyword      = data["keyword"].toString();
     QString roleFilter   = data["role"].toString();
-    int blockedFilter    = data["blocked"].toInt(); // کلاینت اگر فیلتر نخواهد، باید ۱- بفرستد
+    int blockedFilter    = data["blocked"].toInt();
     QString registerDate = data["register_date"].toString(); // کلاینت اگر فیلتر نخواهد، رشته خالی "" میفرستد
 
     QList<QJsonObject> list = m_dbManager->searchUsers(keyword, roleFilter, blockedFilter, registerDate);
