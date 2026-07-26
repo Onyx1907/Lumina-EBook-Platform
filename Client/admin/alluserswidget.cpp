@@ -148,10 +148,10 @@ void AllUsersWidget::on_search_pushButton_clicked()
         blocked = -1;
         break;
     case 1:
-        blocked = 1;
+        blocked = 0;
         break;
     case 2:
-        blocked = 0;
+        blocked = 1;
         break;
     }
 
@@ -160,7 +160,7 @@ void AllUsersWidget::on_search_pushButton_clicked()
         role = "";
         break;
     case 1:
-        role = "RegulerUser";
+        role = "RegularUser";
         break;
     case 2:
         role = "Publisher";
