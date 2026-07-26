@@ -180,8 +180,8 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     //*********************************************پنل مدیر سیستم ( ماژول 2 )****************************************************
 
-    else if (action == "DELETE_USER") { handleDeleteUser(socket, data); return; }
-    else if (action == "SET_USER_ACTIVE_STATE") { handleSetUserActiveState(socket, data); return; }
+    else if (action == "DELETE_USER") { handleDeleteUser(socket, obj); return; }
+    else if (action == "SET_USER_ACTIVE_STATE") { handleSetUserActiveState(socket, obj); return; }
 
 
     //*********************************************پنل مدیر سیستم ( ماژول 3 )****************************************************
