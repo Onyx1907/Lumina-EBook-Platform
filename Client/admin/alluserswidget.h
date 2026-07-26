@@ -20,12 +20,17 @@ public:
 private slots:
     void processNetworkData(const QString& action, const QJsonObject& data);
 
+    void on_date_toolButton_clicked();
+
+    void on_clear_toolButton_clicked();
+
 protected:
     void showEvent(QShowEvent *event) override;
 
 private:
     Ui::AllUsersWidget *ui;
     int pendingScrollValue = 0;
+    QString registerDate;
 
     void fillResults(const QJsonObject& data);
 };

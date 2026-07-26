@@ -5,6 +5,7 @@
 #include <QScrollBar>
 #include "usercard.h"
 #include <QJsonArray>
+#include "datefilterdialog.h"
 
 AllUsersWidget::AllUsersWidget(QWidget *parent)
     : QWidget(parent)
@@ -14,6 +15,9 @@ AllUsersWidget::AllUsersWidget(QWidget *parent)
 
     ui->error_label->hide();
 
+    ui->clear_toolButton->hide();
+
+    ui->allUsers_pushButton->hide();
 
     ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     ui->listWidget->verticalScrollBar()->setSingleStep(15);
@@ -65,6 +69,8 @@ void AllUsersWidget::processNetworkData(const QString& action, const QJsonObject
 
     if(action == "GET_ALL_USERS_RESPONSE"){
         fillResults(data);
+
+        ui->allUsers_pushButton->hide();
     }
 }
 
@@ -89,5 +95,33 @@ void AllUsersWidget::fillResults(const QJsonObject& data){
 
         bar->setValue(qMin(pendingScrollValue, bar->maximum()));
     });
+}
+
+
+void AllUsersWidget::on_date_toolButton_clicked()
+{
+    DateFilterDialog dialog(this);
+    if(dialog.exec() == QDialog::Accepted){
+        registerDate = dialog.selectedDate();
+
+        ui->date_toolButton->setText(registerDate);
+        ui->clear_toolButton->show();
+    }
+}
+
+
+void AllUsersWidget::on_clear_toolButton_clicked()
+{
+    registerDate.clear();
+
+    ui->date_toolButton->setText("همه تاریخ ها");
+
+    ui->clear_toolButton->hide();
+}
+
+
+void AllUsersWidget::on_search_pushButton_clicked()
+{
+
 }
 

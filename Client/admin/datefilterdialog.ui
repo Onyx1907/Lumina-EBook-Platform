@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DateFilterDialog</class>
+ <widget class="QDialog" name="DateFilterDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>420</width>
+    <height>420</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>420</width>
+    <height>420</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>420</width>
+    <height>420</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>انتخاب تاریخ ثبت نام</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* =========================
+   Dialog
+   ========================= */
+
+QDialog{
+    background:qlineargradient(
+        x1:0,y1:0,
+        x2:0,y2:1,
+        stop:0 rgba(252,248,242,245),
+        stop:1 rgba(244,236,225,245)
+    );
+
+    border:1px solid rgba(194,164,126,160);
+    border-radius:16px;
+}
+
+
+/* =========================
+   Title
+   ========================= */
+
+QLabel#titleLabel{
+
+    color:#5A4033;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+
+/* =========================
+   Radio
+   ========================= */
+
+QRadioButton{
+
+    color:#5A4033;
+
+    font-size:13px;
+
+    spacing:7px;
+
+}
+
+QRadioButton::indicator{
+
+    width:16px;
+    height:16px;
+
+}
+
+QRadioButton::indicator:unchecked{
+
+    background:rgba(255,255,255,160);
+
+    border:2px solid #B8945A;
+
+    border-radius:8px;
+
+}
+
+QRadioButton::indicator:checked{
+
+    background:#C9A66B;
+
+    border:2px solid #B8945A;
+
+    border-radius:8px;
+
+}
+
+
+/* =========================
+   Calendar Frame
+   ========================= */
+
+QCalendarWidget{
+
+    background:transparent;
+
+    border:none;
+
+}
+
+
+/* قسمت اصلی تقویم */
+
+QCalendarWidget QWidget{
+
+    background:rgba(255,250,245,185);
+
+    color:#4E342E;
+
+}
+
+
+/* Header */
+
+QCalendarWidget QHeaderView::section{
+
+    background:rgba(214,191,162,160);
+
+    color:#5A4033;
+
+    border:none;
+
+    padding:6px;
+
+    font-weight:bold;
+
+}
+
+
+/* روزها */
+
+QCalendarWidget QAbstractItemView{
+
+    background:rgba(255,250,245,200);
+
+    color:#4E342E;
+
+    selection-background-color:#C9A66B;
+
+    selection-color:white;
+
+    alternate-background-color:transparent;
+
+    outline:0;
+
+}
+
+
+/* Hover روی روزها */
+
+QCalendarWidget QAbstractItemView::item:hover{
+
+    background:#E7D0AA;
+
+}
+
+
+/* نوار بالا */
+
+QCalendarWidget QToolButton{
+
+    background:rgba(250,244,236,180);
+
+    color:#5A4033;
+
+    border:1px solid rgba(200,170,120,120);
+
+    border-radius:8px;
+
+    padding:5px;
+
+    margin:2px;
+
+    font-weight:bold;
+
+}
+
+QCalendarWidget QToolButton:hover{
+
+    background:rgba(214,191,162,170);
+
+}
+
+
+/* فلش */
+
+QCalendarWidget QToolButton::menu-indicator{
+
+    image:none;
+
+}
+
+
+/* SpinBox سال */
+
+QCalendarWidget QSpinBox{
+
+    background:transparent;
+
+    color:#5A4033;
+
+    border:none;
+
+}
+
+
+/* Popup انتخاب ماه */
+
+QCalendarWidget QMenu{
+
+    background:#FAF6F1;
+
+    color:#5A4033;
+
+    border:1px solid #D9C3A0;
+
+}
+
+QCalendarWidget QMenu::item{
+
+    padding:6px 18px;
+
+}
+
+QCalendarWidget QMenu::item:selected{
+
+    background:#C9A66B;
+
+    color:white;
+
+}
+
+
+/* امروز */
+
+QCalendarWidget QAbstractItemView:enabled{
+
+    font-weight:500;
+
+}
+
+
+/* =========================
+   Buttons
+   ========================= */
+
+QDialogButtonBox QPushButton{
+
+    min-height:34px;
+
+    min-width:90px;
+
+    border:none;
+
+    border-radius:9px;
+
+    color:white;
+
+    font-weight:bold;
+
+    background:qlineargradient(
+
+        x1:0,y1:0,
+
+        x2:0,y2:1,
+
+        stop:0 #D8B57C,
+
+        stop:1 #A87A4C
+
+    );
+
+}
+
+QDialogButtonBox QPushButton:hover{
+
+    background:#B8945A;
+
+}
+
+QDialogButtonBox QPushButton:pressed{
+
+    background:#8D6746;
+
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="titleLabel">
+     <property name="text">
+      <string>انتخاب نوع فیلتر تاریخ</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QRadioButton" name="monthRadio">
+       <property name="text">
+        <string> بر اساس ماه ثبت نام</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">buttonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="dayRadio">
+       <property name="text">
+        <string> بر اساس تاریخ دقیق ثبت نام</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">buttonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCalendarWidget" name="calendarWidget">
+     <property name="gridVisible">
+      <bool>true</bool>
+     </property>
+     <property name="verticalHeaderFormat">
+      <enum>QCalendarWidget::NoVerticalHeader</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
+</ui>

@@ -13,7 +13,7 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_
     : QWidget(parent), book(obj["id"].toInt(),
                         obj["title"].toString(),
                         obj["author"].toString(),
-                        "", stringToGenre(obj["genre"].toString()),
+                        obj["publisher_name"].toString(), stringToGenre(obj["genre"].toString()),
                         obj["coverImagePath"].toString(),
                         obj["price"].toDouble(),
                         obj["discountPercent"].toDouble(),
@@ -43,7 +43,8 @@ SharedBookCard::SharedBookCard(const QJsonObject& obj, QWidget *parent, bool is_
         ui->active_checkBox->setEnabled(false);
         ui->rating_label->hide();
         ui->star->setText("مشاهده نظرات");
-        ui->publisher_label->setText("آیدی ناشر: " + QString::number(obj["publisher_id"].toInt()));
+        ui->publisher_label->setText("آیدی ناشر: " + QString::number(obj["publisher_id"].toInt())
+                                     + "    " + book.getPublisher());
     }
     else{
         ui->active_checkBox->setEnabled(true);
