@@ -121,19 +121,6 @@ void AllUsersWidget::fillResults(const QJsonObject& data, bool is_new){
             bar->setValue(qMin(pendingScrollValue, bar->maximum()));
         });
     }
-
-    auto *effect = new QGraphicsOpacityEffect(ui->listWidget);
-    ui->listWidget->setGraphicsEffect(effect);
-
-    auto *anim = new QPropertyAnimation(effect, "opacity", this);
-    effect->setOpacity(0);
-
-    anim->setDuration(200);
-    anim->setStartValue(0);
-    anim->setEndValue(1);
-    anim->setEasingCurve(QEasingCurve::OutCubic);
-
-    anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 
