@@ -1734,7 +1734,6 @@ void NetworkWorker::handleGetUserDetails(QTcpSocket* socket, const QJsonObject& 
 }
 
 void NetworkWorker::handleSearchUsers(QTcpSocket* socket, const QJsonObject& data) {
-    qDebug() << data;
     QString keyword      = data["keyword"].toString();
     QString roleFilter   = data["role"].toString();
     int blockedFilter    = data["blocked"].toInt();
