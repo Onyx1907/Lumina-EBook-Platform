@@ -18,12 +18,20 @@ public:
     ~NotificationBar();
 
     int unreadCount = 0;
+    void setID(int id);
+
+signals:
+    void displayNotifs();
 
 private slots:
     void getNotification(const QString& action, const QJsonObject& data);
 
+    void on_notif_pushButton_clicked();
+
 private:
     Ui::NotificationBar *ui;
+
+    int m_userID;
 
     QGraphicsOpacityEffect *opacityEffect;
     QPropertyAnimation *fadeInAnimation;
@@ -32,6 +40,9 @@ private:
 
     void initializePreview();
     void showPreview(const QString &message);
+    void sendUnreadNotifsRequest();
+
+    void setUnreadCount(int count);
 };
 
 #endif // NOTIFICATIONBAR_H

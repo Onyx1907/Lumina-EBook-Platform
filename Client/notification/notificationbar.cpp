@@ -12,15 +12,21 @@ NotificationBar::NotificationBar(QWidget *parent)
 
     initializePreview();
 
-    ui->unread_label->setText(QString::number(unreadCount));
+    ui->unread_label->hide();
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &NotificationBar::getNotification);
+
+    sendUnreadNotifsRequest();
 }
 
 NotificationBar::~NotificationBar()
 {
     delete ui;
+}
+
+void NotificationBar::setID(int id){
+    m_userID = id;
 }
 
 void NotificationBar::initializePreview()
@@ -72,12 +78,50 @@ void NotificationBar::showPreview(const QString &message)
 
 
 void NotificationBar::getNotification(const QString& action, const QJsonObject& data){
-    if(action != "NEW_NOTIFICATION_RECEIVED"){
+    if(action != "NEW_NOTIFICATION_RECEIVED" &&
+        action != "GET_UNREAD_NOTIFICATIONS_COUNT_RESPONSE"){
         return;
     }
 
-    showPreview(data.value("message").toString());
+    if(action == "NEW_NOTIFICATION_RECEIVED"){
+        showPreview(data.value("message").toString());
 
-    unreadCount++;
-    ui->unread_label->setText(QString::number(unreadCount));
+        setUnreadCount(unreadCount + 1);
+    }
+    else if(action == "GET_UNREAD_NOTIFICATIONS_COUNT_RESPONSE"){
+        setUnreadCount( data.value("unread_count").toInt());
+    }
 }
+
+void NotificationBar::sendUnreadNotifsRequest(){
+    if(ClientNetworkManager::instance().connectToServer()){
+
+        QJsonObject data;
+        data["user_id"] = m_userID;
+
+        ClientNetworkManager::instance().sendRequest("GET_UNREAD_NOTIFICATIONS_COUNT", data, true);
+    }
+    else{
+        ui->unread_label->hide();
+    }
+}
+
+
+void NotificationBar::setUnreadCount(int count){
+    unreadCount = count;
+
+    if(unreadCount <= 0){
+        ui->unread_label->hide();
+    }
+    else{
+        ui->unread_label->show();
+
+        ui->unread_label->setText(QString::number(unreadCount));
+    }
+}
+
+void NotificationBar::on_notif_pushButton_clicked()
+{
+    emit displayNotifs();
+}
+

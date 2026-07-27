@@ -46,6 +46,8 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ui->stackedWidget->addWidget(BookReaderPage);
     ui->stackedWidget->addWidget(PurchaseHistoryPage);
 
+    ui->notif_widget->setID(user->getId());
+
     //مدیریت نمایش صفحه انتخاب ژانر
     if(is_first_login){
         ui->stackedWidget->setCurrentIndex(Page::GenreSelectionPageIndex);

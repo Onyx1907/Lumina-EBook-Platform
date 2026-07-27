@@ -62,6 +62,8 @@ qt_add_executable(LuminaClient
     admin/datefilterdialog.h admin/datefilterdialog.cpp admin/datefilterdialog.ui
     admin/userdetailsdialog.h admin/userdetailsdialog.cpp admin/userdetailsdialog.ui
     notification/notificationbar.h notification/notificationbar.cpp notification/notificationbar.ui
+    notification/notificationswidget.h notification/notificationswidget.cpp notification/notificationswidget.ui
+    notification/notificationcard.h notification/notificationcard.cpp notification/notificationcard.ui
 
 
 

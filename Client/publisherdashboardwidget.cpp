@@ -35,6 +35,8 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     ui->stackedWidget->addWidget(BookReaderPage);
     ui->stackedWidget->addWidget(CommentsPage);
 
+    ui->notif_widget->setID(publisher->getId());
+
     ui->home_pushButton->setChecked(true);
     ui->stackedWidget->setCurrentIndex(Page::PublisherStatsPageIndex);
 
