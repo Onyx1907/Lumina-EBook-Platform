@@ -456,7 +456,6 @@
       "id": 45,
       "type": "NEW_COMMENT",
       "message": ".برای کتاب شما (نام کتاب) نظر یا امتیاز جدیدی ثبت شد",
-      "related_id": 10,
       "is_read": 0,
       "created_at": "2026-06-06 14:30:00"
     }
@@ -616,7 +615,6 @@
       "id": 50,
       "type": "BOOK_SOLD",
       "message": ".کتاب شما (نام کتاب) با موفقیت فروخته شد",
-      "related_id": 0,
       "is_read": 0,
       "created_at": "2026-06-06 14:35:00"
     }
@@ -943,7 +941,6 @@
       "id": 60,
       "type": "NEW_BOOK_GENRE",
       "message": ".کتاب جدیدی در ژانر مورد علاقه شما (حماسی) با نام «شاهنامه فردوسی» اضافه شد",
-      "related_id": 1,
       "is_read": 0,
       "created_at": "2026-06-06 14:40:00"
     }
@@ -1023,7 +1020,6 @@
       "id": 70,
       "type": "BOOK_DISCOUNT",
       "message": "!کتاب «نام کتاب» که آن را ذخیره کرده بودید، تخفیف خورد",
-      "related_id": 10,
       "is_read": 0,
       "created_at": "2026-06-06 14:45:00"
     }
@@ -1391,6 +1387,18 @@
     "server_response_error": {
       "action": "MARK_NOTIFICATION_READ_RESPONSE",
       "status": "ERROR"
+    }
+  }
+,
+  "59_GET_UNREAD_NOTIFICATIONS_COUNT": {
+    "client_request": {
+      "action": "GET_UNREAD_NOTIFICATIONS_COUNT",
+      "user_id": 5
+    },
+    "server_response_success": {
+      "action": "GET_UNREAD_NOTIFICATIONS_COUNT_RESPONSE",
+      "status": "SUCCESS",
+      "unread_count": 3
     }
   }
 }
