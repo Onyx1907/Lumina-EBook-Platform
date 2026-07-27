@@ -193,8 +193,8 @@ public:
 
     QList<QJsonObject> getNotifications(int userId, const QString& role);
     bool markNotificationRead(int notificationId);
-    int createNotification(int userId, const QString& role, const QString& type, const QString& message, int relatedId);
-
+    int createNotification(int userId, const QString& role, const QString& type, const QString& message);
+    int getUnreadNotificationsCount(int userId);
 
     //***************************************************توابع کمکی برای اعلان*****************************************************
 
@@ -208,7 +208,7 @@ public:
     QList<InterestedUser> getUsersInterestedInGenre(const QString& genre);
 
     QList<InterestedUser> getUsersWhoSavedBook(int bookId);
-
+    QString translateGenreToPersian(const QString& sv);
 
 
 

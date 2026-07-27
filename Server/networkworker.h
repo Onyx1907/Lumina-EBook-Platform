@@ -168,7 +168,7 @@ private:
 
     void handleGetNotifications(QTcpSocket* socket, const QJsonObject& data);
     void handleMarkNotificationRead(QTcpSocket* socket, const QJsonObject& data);
-
+    void handleGetUnreadNotificationsCount(QTcpSocket* socket, const QJsonObject& data);
 
 
 
