@@ -14,6 +14,7 @@
 #include "librarywidget.h"
 #include "bookreaderwidget.h"
 #include "purchasehistorywidget.h"
+#include "notificationswidget.h"
 
 
 namespace Ui {
@@ -57,9 +58,11 @@ private:
     LibraryWidget* LibraryPage;
     BookReaderWidget* BookReaderPage;
     PurchaseHistoryWidget * PurchaseHistoryPage;
+    NotificationsWidget *NotificationsPage;
 
     int previousPageIndex = 0;
     int prevPagePDF = 0;
+    int prevNotifs = 0;
 
     void fadeToPage(int pageIndex);
 
@@ -74,7 +77,8 @@ private:
         CartPageIndex = 7,
         LibraryPageIndex = 8,
         BookReaderPageIndex = 9,
-        PurchaseHistoryPageIndex = 10
+        PurchaseHistoryPageIndex = 10,
+        NotificationsPageIndex = 11
     };
 
 

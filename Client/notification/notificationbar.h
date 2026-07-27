@@ -17,8 +17,8 @@ public:
     explicit NotificationBar(QWidget *parent = nullptr);
     ~NotificationBar();
 
-    int unreadCount = 0;
     void setID(int id);
+    void sendUnreadNotifsRequest();
 
 signals:
     void displayNotifs();
@@ -40,9 +40,9 @@ private:
 
     void initializePreview();
     void showPreview(const QString &message);
-    void sendUnreadNotifsRequest();
 
     void setUnreadCount(int count);
+    int unreadCount = 0;
 };
 
 #endif // NOTIFICATIONBAR_H

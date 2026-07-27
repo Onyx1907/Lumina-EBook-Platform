@@ -33,6 +33,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     LibraryPage =  new LibraryWidget(user->getId(), this);
     BookReaderPage =  new BookReaderWidget(user->getId(), this);
     PurchaseHistoryPage = new PurchaseHistoryWidget(user->getId(), this);
+    NotificationsPage = new NotificationsWidget(user->getId(), "RegularUser", this);
 
     ui->stackedWidget->addWidget(GenreSelectionPage);
     ui->stackedWidget->addWidget(UserHomePage);
@@ -45,6 +46,7 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ui->stackedWidget->addWidget(LibraryPage);
     ui->stackedWidget->addWidget(BookReaderPage);
     ui->stackedWidget->addWidget(PurchaseHistoryPage);
+    ui->stackedWidget->addWidget(NotificationsPage);
 
     ui->notif_widget->setID(user->getId());
 
@@ -160,6 +162,20 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     //برگشت به سبد خرید
     connect(PurchaseHistoryPage, &PurchaseHistoryWidget::back, this, [this](){
         fadeToPage(Page::CartPageIndex);
+    });
+
+    //رفتن به صفحه اعلان ها
+    connect(ui->notif_widget, &NotificationBar::displayNotifs, this, [this](){
+        NotificationsPage->loadNotifs();
+        ui->notif_widget->sendUnreadNotifsRequest();
+        prevNotifs = ui->stackedWidget->currentIndex();
+        fadeToPage(Page::NotificationsPageIndex);
+    });
+
+    //برگشت از صفحه اعلان ها
+    connect(NotificationsPage, &NotificationsWidget::back, this, [this](){
+        ui->notif_widget->sendUnreadNotifsRequest();
+        fadeToPage(prevNotifs);
     });
 }
 

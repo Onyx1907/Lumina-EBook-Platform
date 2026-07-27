@@ -27,6 +27,7 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     EditBookPage = new EditBookWidget(this, publisher->getId());
     BookReaderPage = new BookReaderWidget(-1, this);
     CommentsPage = new CommentsWidget(publisher->getId(), this, true);
+    NotificationsPage = new NotificationsWidget(publisher->getId(), "Publisher", this);
 
     ui->stackedWidget->addWidget(PublisherStatsPage);
     ui->stackedWidget->addWidget(ProfilePage);
@@ -34,6 +35,7 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     ui->stackedWidget->addWidget(EditBookPage);
     ui->stackedWidget->addWidget(BookReaderPage);
     ui->stackedWidget->addWidget(CommentsPage);
+    ui->stackedWidget->addWidget(NotificationsPage);
 
     ui->notif_widget->setID(publisher->getId());
 
@@ -79,6 +81,20 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
 
     connect(CommentsPage, &CommentsWidget::backToBookDatailPage, this, [this](){
         fadeToPage(PublisherBookPageIndex);
+    });
+
+    //رفتن به صفحه اعلان ها
+    connect(ui->notif_widget, &NotificationBar::displayNotifs, this, [this](){
+        NotificationsPage->loadNotifs();
+        ui->notif_widget->sendUnreadNotifsRequest();
+        prevNotifs = ui->stackedWidget->currentIndex();
+        fadeToPage(Page::NotificationsPageIndex);
+    });
+
+    //برگشت از صفحه اعلان ها
+    connect(NotificationsPage, &NotificationsWidget::back, this, [this](){
+        ui->notif_widget->sendUnreadNotifsRequest();
+        fadeToPage(prevNotifs);
     });
 }
 
