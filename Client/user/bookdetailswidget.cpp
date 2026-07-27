@@ -109,8 +109,6 @@ BookDetailsWidget::~BookDetailsWidget()
 
 void BookDetailsWidget::processNetworkData(const QString& action, const QJsonObject& data){
 
-    qDebug() << data;
-
     if(action == "CHECK_BOOK_OWNERSHIP_RESPONSE"){
         if(data.value("status").toString() == "SUCCESS"){
             ui->disconnected->hide();

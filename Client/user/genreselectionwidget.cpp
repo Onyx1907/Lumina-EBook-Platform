@@ -74,9 +74,6 @@ void GenreSelectionWidget::on_check_pushButton_clicked()
             }
         }
 
-        // qDebug()<< username;
-        // qDebug() << genresArray.size();
-
         QJsonObject data;
 
         data["username"] = username;

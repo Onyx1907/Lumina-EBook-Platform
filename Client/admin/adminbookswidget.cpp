@@ -54,7 +54,6 @@ void AdminBooksWidget::loadBooks(){
 
 
 void AdminBooksWidget::processNetworkData(const QString& action, const QJsonObject& data){
-    qDebug() <<data;
 
     if(action != "GET_ALL_BOOKS_RESPONSE" &&
         action != "ADMIN_DELETE_BOOK_RESPONSE"){

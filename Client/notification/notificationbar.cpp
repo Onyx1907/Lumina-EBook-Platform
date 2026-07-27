@@ -92,7 +92,9 @@ void NotificationBar::getNotification(const QString& action, const QJsonObject& 
         setUnreadCount(unreadCount + 1);
     }
     else if(action == "GET_UNREAD_NOTIFICATIONS_COUNT_RESPONSE"){
-        setUnreadCount( data.value("unread_count").toInt());
+        if(data.value("status").toString() == "SUCCESS"){
+            setUnreadCount( data.value("unread_count").toInt());
+        }
     }
 }
 
@@ -103,9 +105,6 @@ void NotificationBar::sendUnreadNotifsRequest(){
         data["user_id"] = m_userID;
 
         ClientNetworkManager::instance().sendRequest("GET_UNREAD_NOTIFICATIONS_COUNT", data, true);
-    }
-    else{
-        ui->unread_label->hide();
     }
 }
 
@@ -131,4 +130,9 @@ void NotificationBar::on_notif_pushButton_clicked()
 
 void NotificationBar::decreaseUnreadCount(){
     setUnreadCount(unreadCount - 1);
+}
+
+
+void NotificationBar::setEnableButton(bool isEnable){
+    ui->notif_pushButton->setEnabled(isEnable);
 }

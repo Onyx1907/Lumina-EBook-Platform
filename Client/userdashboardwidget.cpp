@@ -4,6 +4,8 @@
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QSequentialAnimationGroup>
+#include <QQuickWidget>
+#include <QQuickItem>
 
 UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_login, QWidget *parent)
     : QWidget(parent) , user(cur_user)
@@ -47,6 +49,14 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     ui->stackedWidget->addWidget(BookReaderPage);
     ui->stackedWidget->addWidget(PurchaseHistoryPage);
     ui->stackedWidget->addWidget(NotificationsPage);
+
+    QQuickWidget *disconnectedPage = new QQuickWidget(this);
+
+    disconnectedPage->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    disconnectedPage->setSource(QUrl("qrc:/qml/Disconnected.qml"));
+
+    ui->stackedWidget->addWidget(disconnectedPage);
+
 
     ui->notif_widget->setID(user->getId());
 
@@ -186,6 +196,20 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     connect(NotificationsPage, &NotificationsWidget::decreaseCount, this, [this](){
         ui->notif_widget->decreaseUnreadCount();
     });
+
+    //نمایش صفحه قطع اتصال
+    connect(UserHomePage, &UserHomeWidget::disconnected, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::disconnectedPageIndex);
+        for(QAbstractButton *button : ui->sidebar_buttonGroup->buttons()){
+            button->setEnabled(false);
+        }
+        ui->notif_widget->setEnableButton(false);
+    });
+
+    //تلاش مجدد
+    if (disconnectedPage->rootObject()) {
+        connect(disconnectedPage->rootObject(), SIGNAL(retryClicked()), this, SLOT(onRetryClicked()));
+    }
 }
 
 
@@ -273,3 +297,14 @@ void UserDashboardWidget::on_library_pushButton_clicked()
     fadeToPage(Page::LibraryPageIndex);
 }
 
+
+void UserDashboardWidget::onRetryClicked(){
+    for(QAbstractButton *button : ui->sidebar_buttonGroup->buttons()){
+        button->setEnabled(true);
+    }
+    ui->notif_widget->setEnableButton(true);
+
+    QTimer::singleShot(0, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::UserHomePageIndex);
+    });
+}

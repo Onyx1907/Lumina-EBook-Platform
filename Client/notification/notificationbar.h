@@ -22,6 +22,8 @@ public:
     void sendUnreadNotifsRequest();
     void decreaseUnreadCount();
 
+    void setEnableButton(bool isEnable);
+
 signals:
     void displayNotifs();
 

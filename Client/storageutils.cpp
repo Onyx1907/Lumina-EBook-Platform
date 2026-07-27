@@ -10,8 +10,6 @@ void StorageUtils::displayBookCover(const QString& absolutePathFromServer, QLabe
         return;
     }
 
-    qDebug() << "Rendering image from:" << absolutePathFromServer;
-
     QPixmap bookImage(absolutePathFromServer);
     if (!bookImage.isNull()) {
         QPixmap scaledImage = bookImage.scaled(labelTarget->size(),

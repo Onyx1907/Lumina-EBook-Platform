@@ -43,6 +43,8 @@ private slots:
 
     void on_library_pushButton_clicked();
 
+    void onRetryClicked();
+
 private:
     Ui::UserDashboardWidget *ui;
     RegularUser *user;
@@ -78,7 +80,8 @@ private:
         LibraryPageIndex = 8,
         BookReaderPageIndex = 9,
         PurchaseHistoryPageIndex = 10,
-        NotificationsPageIndex = 11
+        NotificationsPageIndex = 11,
+        disconnectedPageIndex = 12
     };
 
 

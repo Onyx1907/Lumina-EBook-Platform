@@ -178,9 +178,6 @@ void SearchWidget::processNetworkData(const QString& action, const QJsonObject& 
         return;
     }
 
-    //چک کردن دریافت داده
-    qDebug() << data;
-
     QJsonArray booksArray = data["books"].toArray();
 
     QVector<Book> results;

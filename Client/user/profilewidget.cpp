@@ -70,7 +70,6 @@ void ProfileWidget::on_changeGenres_pushButton_clicked()
 
 void ProfileWidget::processNetworkData(const QString& action, const QJsonObject& data)
 {
-    qDebug() << data;
     if (action != "GET_PROFILE_RESPONSE" &&
         action != "UPDATE_PROFILE_RESPONSE" &&
         action != "CHANGE_PASSWORD_RESPONSE" &&
@@ -83,8 +82,6 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
         if (data.value("status").toString() == "SUCCESS") {
 
             QJsonObject profileObj = data.value("profile").toObject();
-
-            qDebug() << profileObj;
 
             ui->name_label->setText(profileObj.value("name").toString());
             ui->email_label->setText(profileObj.value("email").toString());
@@ -127,8 +124,6 @@ void ProfileWidget::processNetworkData(const QString& action, const QJsonObject&
         if (data.value("status").toString() == "SUCCESS") {
 
             QJsonObject profileObj = data.value("profile").toObject();
-
-            qDebug() << profileObj;
 
             ui->name_label->setText(profileObj.value("name").toString());
             ui->email_label->setText(profileObj.value("email").toString());
@@ -235,8 +230,6 @@ void ProfileWidget::on_submitProfile_pushButton_clicked()
         data["name"] = name;
         data["email"] = email;
 
-        qDebug() << data;
-
         ClientNetworkManager::instance().sendRequest("UPDATE_PROFILE", data);
         ui->submitProfile_pushButton->setEnabled(false);
     }
@@ -247,8 +240,6 @@ void ProfileWidget::on_submitProfile_pushButton_clicked()
         data["username"] = new_username;
         data["name"] = name;
         data["email"] = email;
-
-        qDebug() << data;
 
         ClientNetworkManager::instance().sendRequest("UPDATE_PUBLISHER_PROFILE", data, true);
         ui->submitProfile_pushButton->setEnabled(false);

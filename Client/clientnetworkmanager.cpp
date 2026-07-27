@@ -24,11 +24,9 @@ bool ClientNetworkManager::connectToServer() {
 
     // حداکثر ۳ ثانیه منتظر می‌ماند تا سوکت وصل شود (UI را قفل نمی‌کند چون زمانش کم است)
     if (socket->waitForConnected(3000)) {
-        qDebug() << "connected to server successfully";
         return true; // اتصال موفقیت‌آمیز بود
     }
 
-    qDebug() << "failed to connect to server";
     return false; // اتصال ناموفق بود
 }
 
@@ -36,7 +34,6 @@ void ClientNetworkManager::sendRequest(const QString& action,
                                        const QJsonObject& data,
                                        bool isFlat) {
     if (socket->state() != QAbstractSocket::ConnectedState) {
-        qDebug() << "cannot send request";
         return;
     }
 
@@ -50,12 +47,9 @@ void ClientNetworkManager::sendRequest(const QString& action,
         packet["data"] = data;
     }
 
-    qDebug() << packet;
 
     QJsonDocument doc(packet);
     QByteArray bytes = doc.toJson(QJsonDocument::Compact) + "\n";
-
-    // qDebug().noquote() << bytes;
 
     socket->write(bytes);
     socket->flush();
@@ -106,7 +100,6 @@ void ClientNetworkManager::onReadyRead() {
 
         // حالت چهارم: خطای ساختاری
         else {
-            qDebug() << "Real JSON conversion error:" << parseError.errorString();
             m_buffer.clear();
             break;
         }

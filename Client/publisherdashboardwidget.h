@@ -30,6 +30,8 @@ private slots:
 
     void on_home_pushButton_clicked();
 
+    void onRetryClicked();
+
 private:
     Ui::PublisherDashboardWidget *ui;
 
@@ -54,7 +56,8 @@ private:
         EditBookPageIndex = 3,
         BookReaderPageIndex = 4,
         CommentsPageIndex = 5,
-        NotificationsPageIndex = 6
+        NotificationsPageIndex = 6,
+        disconnectedPageIndex = 7
     };
 };
 

@@ -4,6 +4,8 @@
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QSequentialAnimationGroup>
+#include <QQuickWidget>
+#include <QQuickItem>
 
 PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget *parent)
     : QWidget(parent), publisher(cur_user)
@@ -36,6 +38,13 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     ui->stackedWidget->addWidget(BookReaderPage);
     ui->stackedWidget->addWidget(CommentsPage);
     ui->stackedWidget->addWidget(NotificationsPage);
+
+    QQuickWidget *disconnectedPage = new QQuickWidget(this);
+
+    disconnectedPage->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    disconnectedPage->setSource(QUrl("qrc:/qml/Disconnected.qml"));
+
+    ui->stackedWidget->addWidget(disconnectedPage);
 
     ui->notif_widget->setID(publisher->getId());
 
@@ -105,6 +114,21 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     connect(NotificationsPage, &NotificationsWidget::decreaseCount, this, [this](){
         ui->notif_widget->decreaseUnreadCount();
     });
+
+    //نمایش صفحه قطع اتصال
+    connect(PublisherStatsPage, &PublisherStatsWidget::disconnected, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::disconnectedPageIndex);
+        for(QAbstractButton *button : ui->sidebar_buttonGroup->buttons()){
+            button->setEnabled(false);
+        }
+
+        ui->notif_widget->setEnableButton(false);
+    });
+
+    //تلاش مجدد
+    if (disconnectedPage->rootObject()) {
+        connect(disconnectedPage->rootObject(), SIGNAL(retryClicked()), this, SLOT(onRetryClicked()));
+    }
 }
 
 PublisherDashboardWidget::~PublisherDashboardWidget()
@@ -178,3 +202,15 @@ void PublisherDashboardWidget::on_home_pushButton_clicked()
     fadeToPage(Page::PublisherStatsPageIndex);
 }
 
+
+void PublisherDashboardWidget::onRetryClicked(){
+
+    for(QAbstractButton *button : ui->sidebar_buttonGroup->buttons()){
+        button->setEnabled(true);
+    }
+    ui->notif_widget->setEnableButton(true);
+
+    QTimer::singleShot(0, this, [this](){
+        ui->stackedWidget->setCurrentIndex(Page::PublisherStatsPageIndex);
+    });
+}

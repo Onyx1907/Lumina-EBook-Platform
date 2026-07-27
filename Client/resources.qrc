@@ -35,5 +35,7 @@
         <file>resources/read.svg</file>
         <file>resources/refresh.svg</file>
         <file>resources/notif_bell.wav</file>
+        <file>qml/Disconnected.qml</file>
+        <file>resources/library_disconnected.svg</file>
     </qresource>
 </RCC>

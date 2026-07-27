@@ -20,6 +20,7 @@ protected:
 
 signals:
     void goToBooks();
+    void disconnected();
 
 private slots:
     void on_books_pushButton_clicked();

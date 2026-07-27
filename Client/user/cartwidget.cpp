@@ -69,8 +69,6 @@ void CartWidget::processNetworkData(const QString& action, const QJsonObject& da
         return;
     }
 
-    qDebug() << data;
-
     if (action == "GET_CART_RESPONSE") {
         handleGetCartResponse(data);
     }
