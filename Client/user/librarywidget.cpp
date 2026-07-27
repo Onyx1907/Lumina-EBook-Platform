@@ -221,7 +221,7 @@ void LibraryWidget::handleGetPurchasedBooks(const QJsonObject& response) {
             stringToGenre(bookObj["genre"].toString()),
             bookObj["coverImagePath"].toString(),
             bookObj["price"].toDouble(),
-            bookObj["discount_percentage"].toDouble());
+            bookObj["discount"].toDouble());
 
         BookCard* card = new BookCard(book, this);
 
@@ -312,7 +312,7 @@ void LibraryWidget::handleGetShelfBooks(const QJsonObject& response){
             stringToGenre(bookObj["genre"].toString()),
             bookObj["coverImagePath"].toString(),
             bookObj["price"].toDouble(),
-            bookObj["discount_percentage"].toDouble());
+            bookObj["discount"].toDouble());
 
         BookCard* card = new BookCard(book, this);
 
