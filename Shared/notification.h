@@ -32,7 +32,7 @@ public:
 
     bool isRead = false;
 
-    QDateTime createdAt;
+    QString createdAt;
 
 private:
     static NotificationType stringToType(const QString &type);

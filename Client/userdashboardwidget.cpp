@@ -50,6 +50,8 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
 
     ui->notif_widget->setID(user->getId());
 
+    ui->notif_widget->sendUnreadNotifsRequest();
+
     //مدیریت نمایش صفحه انتخاب ژانر
     if(is_first_login){
         ui->stackedWidget->setCurrentIndex(Page::GenreSelectionPageIndex);
@@ -168,7 +170,9 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     connect(ui->notif_widget, &NotificationBar::displayNotifs, this, [this](){
         NotificationsPage->loadNotifs();
         ui->notif_widget->sendUnreadNotifsRequest();
-        prevNotifs = ui->stackedWidget->currentIndex();
+        if(ui->stackedWidget->currentIndex() != Page::NotificationsPageIndex){
+            prevNotifs = ui->stackedWidget->currentIndex();
+        }
         fadeToPage(Page::NotificationsPageIndex);
     });
 
@@ -176,6 +180,11 @@ UserDashboardWidget::UserDashboardWidget(RegularUser* cur_user, bool is_first_lo
     connect(NotificationsPage, &NotificationsWidget::back, this, [this](){
         ui->notif_widget->sendUnreadNotifsRequest();
         fadeToPage(prevNotifs);
+    });
+
+    //کم شدن عدد اعلان ها
+    connect(NotificationsPage, &NotificationsWidget::decreaseCount, this, [this](){
+        ui->notif_widget->decreaseUnreadCount();
     });
 }
 

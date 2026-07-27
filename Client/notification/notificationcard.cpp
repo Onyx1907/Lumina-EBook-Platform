@@ -2,10 +2,12 @@
 #include "ui_notificationcard.h"
 
 NotificationCard::NotificationCard(Notification &notification, QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::NotificationCard), m_notification(notification)
+    : QWidget(parent), m_notification(notification)
+    , ui(new Ui::NotificationCard)
 {
     ui->setupUi(this);
+
+    updateUi();
 }
 
 NotificationCard::~NotificationCard()
@@ -17,9 +19,7 @@ void NotificationCard::updateUi()
 {
     ui->message_label->setText(m_notification.message);
 
-    ui->time_label->setText(
-        m_notification.createdAt.toString("yyyy/MM/dd  hh:mm")
-        );
+    ui->time_label->setText(m_notification.createdAt);
 
     if(m_notification.isRead)
     {
@@ -56,3 +56,12 @@ void NotificationCard::updateUi()
         break;
     }
 }
+
+void NotificationCard::on_read_pushButton_clicked()
+{
+    emit markRead(m_notification.id);
+
+    ui->line->hide();
+    ui->read_pushButton->hide();
+}
+

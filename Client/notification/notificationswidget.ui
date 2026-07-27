@@ -69,7 +69,7 @@ QPushButton:pressed {
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="back_pushButton_2">
+      <widget class="QPushButton" name="refresh_pushButton">
        <property name="minimumSize">
         <size>
          <width>40</width>

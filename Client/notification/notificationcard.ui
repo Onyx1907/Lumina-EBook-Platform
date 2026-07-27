@@ -44,10 +44,6 @@
     border-radius: 18px;
 }
 
-QFrame:hover {
-    background-color: rgba(95, 66, 45, 210);
-    border: 1px solid rgba(245, 215, 160, 150);
-}
 
 QFrame#line {
     background-color: #F0C987;
@@ -63,7 +59,7 @@ QLabel {
     color: #FFF8EE;
 }
 
-QLabel#type_label {
+QLabel#title_label {
     color: #FFD27F;
     font-size: 11pt;
     font-weight: bold;
@@ -114,13 +110,13 @@ QPushButton#read_pushButton:pressed {
            <widget class="QLabel" name="time_label">
             <property name="minimumSize">
              <size>
-              <width>0</width>
+              <width>180</width>
               <height>25</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
+              <width>180</width>
               <height>25</height>
              </size>
             </property>
@@ -133,18 +129,43 @@ QPushButton#read_pushButton:pressed {
            <widget class="QLabel" name="title_label">
             <property name="minimumSize">
              <size>
-              <width>0</width>
+              <width>225</width>
               <height>25</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
+              <width>225</width>
               <height>25</height>
              </size>
             </property>
             <property name="text">
              <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="minimumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="../resources.qrc">:/resources/notif.svg</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

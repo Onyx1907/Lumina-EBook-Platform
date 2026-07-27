@@ -16,8 +16,6 @@ NotificationBar::NotificationBar(QWidget *parent)
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &NotificationBar::getNotification);
-
-    sendUnreadNotifsRequest();
 }
 
 NotificationBar::~NotificationBar()
@@ -125,3 +123,7 @@ void NotificationBar::on_notif_pushButton_clicked()
     emit displayNotifs();
 }
 
+
+void NotificationBar::decreaseUnreadCount(){
+    setUnreadCount(unreadCount - 1);
+}

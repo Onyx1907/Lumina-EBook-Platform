@@ -19,6 +19,7 @@ public:
 
     void setID(int id);
     void sendUnreadNotifsRequest();
+    void decreaseUnreadCount();
 
 signals:
     void displayNotifs();
