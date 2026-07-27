@@ -1357,7 +1357,6 @@
           "role": "publisher",
           "type": "BOOK_APPROVED",
           "message": "کتاب شما با موفقیت تایید شد.",
-          "related_id": 10,
           "is_read": 0,
           "created_at": "2026-07-23 14:20:00"
         },
@@ -1368,7 +1367,6 @@
           "role": "publisher",
           "type": "SYSTEM_ANNOUNCEMENT",
           "message": "به‌روزرسانی جدید سیستم منتشر شد.",
-          "related_id": 0,
           "is_read": 1,
           "created_at": "2026-07-20 09:00:00"
         }
