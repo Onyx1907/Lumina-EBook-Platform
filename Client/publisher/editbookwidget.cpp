@@ -6,6 +6,7 @@
 #include "clientnetworkmanager.h"
 #include <QTimer>
 #include "constants.h"
+#include <QMessageBox>
 
 EditBookWidget::EditBookWidget(QWidget *parent, int publisherID)
     : QWidget(parent), m_publisherID(publisherID)
@@ -73,6 +74,16 @@ void EditBookWidget::on_chooseCover_pushButton_clicked()
         "Images (*.png *.jpg *.jpeg *.bmp)"
         );
 
+    constexpr qint64 MAX_IMAGE_SIZE = 2LL * 1024 * 1024; // 2 MB
+
+    if (!isFileSizeValid(fileName, MAX_IMAGE_SIZE)) {
+        QMessageBox::warning(
+            this,
+            "حجم نامعتبر",
+            "تصویر انتخابی نمی‌تواند بیشتر از ۲ مگابایت باشد"
+            );
+        return;
+    }
 
     coverPath = fileName;
 
@@ -100,10 +111,31 @@ void EditBookWidget::on_choosePDF_pushButton_clicked()
         );
 
 
+    constexpr qint64 MAX_IMAGE_SIZE = 50LL * 1024 * 1024; // 50 MB
+
+    if (!isFileSizeValid(fileName, MAX_IMAGE_SIZE)) {
+        QMessageBox::warning(
+            this,
+            "حجم نامعتبر",
+            "فایل انتخابی نمی‌تواند بیشتر از ۵۰ مگابایت باشد"
+            );
+        return;
+    }
+
     filePath = fileName;
 
     if(fileName.isEmpty()) return;
     ui->choosePDF_pushButton->setText(fileName);
+}
+
+bool EditBookWidget::isFileSizeValid(const QString &filePath, qint64 maxSizeBytes)
+{
+    QFileInfo fileInfo(filePath);
+
+    if (!fileInfo.exists())
+        return false;
+
+    return fileInfo.size() <= maxSizeBytes;
 }
 
 

@@ -37,6 +37,8 @@ private:
     int m_publisherID = -1;
     QString coverPath = "";
     QString filePath = "";
+
+    bool isFileSizeValid(const QString &filePath, qint64 maxSizeBytes);
 };
 
 #endif // EDITBOOKWIDGET_H
