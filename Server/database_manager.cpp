@@ -1086,7 +1086,7 @@ QList<QJsonObject> DatabaseManager::getPurchasedBooks(int userId) {
     QSqlQuery q(db);
 
     // انتخاب دقیق فیلدهای مسیر فیزیکی کتاب از دیتابیس
-    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.pdfPath, b.coverImagePath "
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.genre, b.pdfPath, b.coverImagePath "
               "FROM library l "
               "JOIN books b ON l.book_id = b.id "
               "WHERE l.user_id = :u");
@@ -1102,6 +1102,8 @@ QList<QJsonObject> DatabaseManager::getPurchasedBooks(int userId) {
         o["id"] = q.value("id").toInt();
         o["title"] = q.value("title").toString();
         o["author"] = q.value("author").toString();
+        o["price"] = q.value("price").toDouble();
+        o["discount"] = q.value("discountPercent").toDouble();
         o["genre"] = q.value("genre").toString();
         o["pdfPath"] = q.value("pdfPath").toString();                 // فیلد فیزیکی هارد سرور
         o["coverImagePath"] = q.value("coverImagePath").toString();   // فیلد فیزیکی هارد سرور
@@ -1304,7 +1306,7 @@ QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
     QList<QJsonObject> list;
 
     QSqlQuery q(db);
-    q.prepare("SELECT b.id, b.title, b.author, b.genre, b.coverImagePath "
+    q.prepare("SELECT b.id, b.title, b.author, b.price, b.discountPercent, b.genre, b.coverImagePath "
               "FROM shelf_books sb "
               "JOIN books b ON sb.book_id = b.id "
               "WHERE sb.shelf_id = :s");
@@ -1318,6 +1320,8 @@ QList<QJsonObject> DatabaseManager::getBooksInShelf(int shelfId) {
         book["id"] = q.value("id").toInt();
         book["title"] = q.value("title").toString();
         book["author"] = q.value("author").toString();
+        book["price"] = q.value("price").toDouble();
+        book["discount"] = q.value("discountPercent").toDouble();
         book["genre"] = q.value("genre").toString();
         book["coverImagePath"] = q.value("coverImagePath").toString();
 
