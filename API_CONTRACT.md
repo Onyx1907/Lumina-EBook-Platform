@@ -636,8 +636,9 @@
           "id": 10,
           "title": "شاهنامه",
           "author": "فردوسی",
-          "genre": "Epic",
           "price": 250000.0,
+          "discount_percentage": 10.0,
+          "genre": "Epic",
           "pdfPath": "/home/username/BookClub_Storage/shahnameh.pdf",
           "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
@@ -819,6 +820,8 @@
           "id": 10,
           "title": "شاهنامه",
           "author": "فردوسی",
+          "price": 250000.0,
+          "discount_percentage": 10.0,
           "genre": "Epic",
           "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
