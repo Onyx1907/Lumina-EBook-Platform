@@ -2078,7 +2078,7 @@ int DatabaseManager::createNotification(int userId, const QString& role, const Q
               "    WHEN :userId > 0 THEN (SELECT role FROM users WHERE id = :userId) "
               "    ELSE '' "
               "  END, "
-              "  :t, :m, :rid, 0, datetime('now'))");
+              "  :t, :m, 0, datetime('now'))");
 
     q.bindValue(":userId", userId);
     q.bindValue(":r",      role);
