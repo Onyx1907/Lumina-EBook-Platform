@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ۲. پکیج Network رو هم اینجا اضافه کن برای سوکت‌ها
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network Multimedia MultimediaWidgets Pdf PdfWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Multimedia MultimediaWidgets Pdf PdfWidgets Quick QuickWidgets)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -64,10 +64,7 @@ qt_add_executable(LuminaClient
     notification/notificationbar.h notification/notificationbar.cpp notification/notificationbar.ui
     notification/notificationswidget.h notification/notificationswidget.cpp notification/notificationswidget.ui
     notification/notificationcard.h notification/notificationcard.cpp notification/notificationcard.ui
-
-
-
-
+    qml/Disconnected.qml
 
 )
 
@@ -80,6 +77,8 @@ target_link_libraries(LuminaClient PRIVATE
     Qt6::MultimediaWidgets
     Qt6::Pdf
     Qt6::PdfWidgets
+    Qt6::Quick
+    Qt6::QuickWidgets
 )
 
 set_target_properties(LuminaClient PROPERTIES

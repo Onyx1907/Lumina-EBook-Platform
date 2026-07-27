@@ -23,6 +23,7 @@ protected:
 
 signals:
     void bookSelected(Book* book);
+    void disconnected();
 
 private slots:
     void processNetworkData(const QString& action, const QJsonObject& data);

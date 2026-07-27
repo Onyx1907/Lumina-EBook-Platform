@@ -35,7 +35,7 @@ void PublisherStatsWidget::showEvent(QShowEvent *event){
         ClientNetworkManager::instance().sendRequest("GET_PUBLISHER_STATS", data, true);
     }
     else{
-        //نمایش صفحه نمایش خطای برقراری اتصال
+        emit disconnected();
     }
 }
 

@@ -1,0 +1,69 @@
+<svg width="120" height="120" viewBox="0 0 120 120"
+     xmlns="http://www.w3.org/2000/svg">
+
+    <!-- کتاب باز -->
+    <path d="M20 35
+             C35 28 48 30 60 40
+             C72 30 85 28 100 35
+             V85
+             C85 78 72 80 60 90
+             C48 80 35 78 20 85
+             Z"
+          fill="#D3A06E"
+          stroke="#FFF0DE"
+          stroke-width="3"
+          stroke-linejoin="round"/>
+
+
+    <!-- خط وسط کتاب -->
+    <path d="M60 40 V90"
+          stroke="#8A5A3B"
+          stroke-width="3"/>
+
+
+    <!-- خطوط روی صفحات -->
+    <path d="M32 50 C42 46 50 48 55 52"
+          stroke="#FFF0DE"
+          stroke-width="2"
+          fill="none"/>
+
+
+    <path d="M88 50 C78 46 70 48 65 52"
+          stroke="#FFF0DE"
+          stroke-width="2"
+          fill="none"/>
+
+
+
+    <!-- امواج ارتباط -->
+    <path d="M42 22
+             Q60 8 78 22"
+          stroke="#F5D7B5"
+          stroke-width="4"
+          fill="none"
+          stroke-linecap="round"/>
+
+
+    <path d="M48 28
+             Q60 18 72 28"
+          stroke="#F5D7B5"
+          stroke-width="4"
+          fill="none"
+          stroke-linecap="round"/>
+
+
+
+    <!-- علامت قطع -->
+    <circle cx="88" cy="32" r="18"
+            fill="#8B5E3C"
+            stroke="#FFF0DE"
+            stroke-width="3"/>
+
+
+    <path d="M80 24 L96 40
+             M96 24 L80 40"
+          stroke="#FFF0DE"
+          stroke-width="4"
+          stroke-linecap="round"/>
+
+</svg>

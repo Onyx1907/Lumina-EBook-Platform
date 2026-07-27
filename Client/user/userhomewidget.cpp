@@ -14,7 +14,6 @@ UserHomeWidget::UserHomeWidget(int ID, QWidget *parent)
 {
     ui->setupUi(this);
 
-
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &UserHomeWidget::processNetworkData);
 }
@@ -38,7 +37,7 @@ void UserHomeWidget::showEvent(QShowEvent *event) {
         ClientNetworkManager::instance().sendRequest("GET_FREE_BOOKS", emptyData);
     }
     else{
-        //نمایش صفحه نمایش خطای برقراری اتصال
+        emit disconnected();
     }
 }
 
@@ -66,8 +65,6 @@ void UserHomeWidget::parseAndFillList(const QJsonObject &data, QListWidget *targ
 
     // مستقیم می‌رویم سراغ آرایه کتاب‌ها (چون دیتا از قبل آبجکت شده)
     QJsonArray booksArray = data["books"].toArray();
-
-    qDebug() << "here : " << booksArray.size();
 
     for (int i = 0; i < booksArray.size(); ++i) {
         QJsonObject bookObj = booksArray[i].toObject();

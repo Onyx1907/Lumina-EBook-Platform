@@ -103,8 +103,6 @@ void RegisterWidget::processNetworkData(const QString& action, const QJsonObject
     QString status = data.value("status").toString();
     QString message = data.value("message").toString();
 
-    qDebug() << status << " " << message;
-
     if(status == "SUCCESS") {
         enableFormWithError("", true);
         ui->success_label->setText("ثبت نام با موفقیت انجام شد... شما می‌توانید وارد شوید");;
