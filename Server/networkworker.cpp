@@ -1383,7 +1383,8 @@ void NetworkWorker::handleAddBook(QTcpSocket* socket, const QJsonObject& data)
 
         if (newBookId > 0 && !genre.isEmpty()) {
             QList<InterestedUser> interestedUsers = m_dbManager->getUsersInterestedInGenre(genre);
-            QString messageText = QString(".کتاب جدیدی در ژانر مورد علاقه شما (%1) با نام «%2» اضافه شد").arg(genre, title);
+            QString persianGenre = m_dbManager->translateGenreToPersian(genre);
+            QString messageText = QString(".کتاب جدیدی در ژانر مورد علاقه شما (%1) با نام «%2» اضافه شد").arg(persianGenre, title);
 
             for (const auto& user : interestedUsers) {
                 int notifId = m_dbManager->createNotification(user.id, "", "NEW_BOOK_GENRE", messageText);

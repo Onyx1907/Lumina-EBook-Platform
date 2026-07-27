@@ -2205,3 +2205,14 @@ QList<InterestedUser> DatabaseManager::getUsersWhoSavedBook(int bookId) {
     }
     return list;
 }
+
+QString DatabaseManager::translateGenreToPersian(const QString& sv) {
+    if (sv == "Biography")     return "زندگینامه";
+    else if (sv == "Educational") return "علمی و تحصیلی";
+    else if (sv == "Psychology")  return "روانشناسی";
+    else if (sv == "Fiction")     return "ادبیات داستانی";
+    else if (sv == "History")     return "تاریخی";
+    else if (sv == "SciFi")       return "علمی تخیلی";
+
+    return sv;
+}

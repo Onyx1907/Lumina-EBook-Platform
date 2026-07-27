@@ -208,7 +208,7 @@ public:
     QList<InterestedUser> getUsersInterestedInGenre(const QString& genre);
 
     QList<InterestedUser> getUsersWhoSavedBook(int bookId);
-
+    QString translateGenreToPersian(const QString& sv);
 
 
 
