@@ -195,7 +195,7 @@ void NetworkWorker::handleRequest(QTcpSocket* socket, const QJsonObject& obj) {
 
     else if (action == "GET_NOTIFICATIONS") { handleGetNotifications(socket, data); return; }
     else if (action == "MARK_NOTIFICATION_READ") { handleMarkNotificationRead(socket, data); return; }
-
+    else if (action == "GET_UNREAD_NOTIFICATIONS_COUNT") { handleGetUnreadNotificationsCount(socket, data); return;}
 
 
 
@@ -779,7 +779,7 @@ void NetworkWorker::handleAddComment(QTcpSocket* socket, const QJsonObject& data
             QString messageText = QString(".برای کتاب شما (%1) نظر یا امتیاز جدیدی ثبت شد").arg(bookTitle);
 
             // استفاده از تابع createNotification که از قبل در DatabaseManager داشتید
-            int notifId = m_dbManager->createNotification(publisherId, "", "NEW_COMMENT", messageText, bookId);
+            int notifId = m_dbManager->createNotification(publisherId, "", "NEW_COMMENT", messageText);
 
             if (notifId > 0) {
                 //ارسال آنی اعلان به ناشر در صورت آنلاین بودن
@@ -788,7 +788,6 @@ void NetworkWorker::handleAddComment(QTcpSocket* socket, const QJsonObject& data
                 notifObj["id"] = notifId;
                 notifObj["type"] = "NEW_COMMENT";
                 notifObj["message"] = messageText;
-                notifObj["related_id"] = bookId;
                 notifObj["is_read"] = 0;
                 notifObj["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
 
@@ -973,7 +972,7 @@ void NetworkWorker::handleFinalizePurchase(QTcpSocket* socket, const QJsonObject
             QString messageText = QString(".کتاب شما (%1) با موفقیت فروخته شد").arg(bookTitle);
 
 
-            int notifId = m_dbManager->createNotification(publisherId, "", "BOOK_SOLD", messageText, 0);
+            int notifId = m_dbManager->createNotification(publisherId, "", "BOOK_SOLD", messageText);
 
             if (notifId > 0) {
                 QJsonObject notifObj;
@@ -1387,7 +1386,7 @@ void NetworkWorker::handleAddBook(QTcpSocket* socket, const QJsonObject& data)
             QString messageText = QString(".کتاب جدیدی در ژانر مورد علاقه شما (%1) با نام «%2» اضافه شد").arg(genre, title);
 
             for (const auto& user : interestedUsers) {
-                int notifId = m_dbManager->createNotification(user.id, "", "NEW_BOOK_GENRE", messageText, newBookId);
+                int notifId = m_dbManager->createNotification(user.id, "", "NEW_BOOK_GENRE", messageText);
 
                 if (notifId > 0) {
                     QJsonObject notifObj;
@@ -1395,7 +1394,6 @@ void NetworkWorker::handleAddBook(QTcpSocket* socket, const QJsonObject& data)
                     notifObj["id"] = notifId;
                     notifObj["type"] = "NEW_BOOK_GENRE";
                     notifObj["message"] = messageText;
-                    notifObj["related_id"] = newBookId;
                     notifObj["is_read"] = 0;
                     notifObj["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
 
@@ -1551,7 +1549,7 @@ void NetworkWorker::handleSetBookDiscount(QTcpSocket* socket, const QJsonObject&
 
         for (const auto& user : savedUsers) {
             // ثبت در جدول notifications شما
-            int notifId = m_dbManager->createNotification(user.id, "", "BOOK_DISCOUNT", messageText, bookId);
+            int notifId = m_dbManager->createNotification(user.id, "", "BOOK_DISCOUNT", messageText);
 
             if (notifId > 0) {
                 QJsonObject notifObj;
@@ -1559,7 +1557,6 @@ void NetworkWorker::handleSetBookDiscount(QTcpSocket* socket, const QJsonObject&
                 notifObj["id"] = notifId;
                 notifObj["type"] = "BOOK_DISCOUNT";
                 notifObj["message"] = messageText;
-                notifObj["related_id"] = bookId;
                 notifObj["is_read"] = 0;
                 notifObj["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
 
@@ -1973,5 +1970,15 @@ void NetworkWorker::handleMarkNotificationRead(QTcpSocket* socket, const QJsonOb
     sendJson(socket, resp);
 }
 
+void NetworkWorker::handleGetUnreadNotificationsCount(QTcpSocket* socket, const QJsonObject& data) {
+    const int userId = data.value("user_id").toInt();
 
+    int unreadCount = m_dbManager->getUnreadNotificationsCount(userId);
+
+    QJsonObject resp;
+    resp["action"] = "GET_UNREAD_NOTIFICATIONS_COUNT_RESPONSE";
+    resp["status"] = "SUCCESS";
+    resp["unread_count"] = unreadCount;
+    sendJson(socket, resp);
+}
 

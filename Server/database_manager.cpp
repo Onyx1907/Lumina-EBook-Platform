@@ -64,7 +64,6 @@ bool DatabaseManager::createTables(){
         "role TEXT,"                                                                //نقش کاربری (متنی و اختیاری)
         "type TEXT NOT NULL,"                                                      //نوع اعلان مثلاً سیستم، پیام یا هشدار (متنی و اجباری)
         "message TEXT NOT NULL,"                                                  //متن اصلی اعلان (متنی و اجباری)
-        "related_id INTEGER,"                                                    //شناسه مرتبط با اعلان مثل شناسه پست یا فاکتور (عددی و اختیاری)
         "is_read INTEGER NOT NULL DEFAULT 0,"                                   //وضعیت خوانده شدن: 0 یعنی خوانده نشده، 1 یعنی خوانده‌شده (پیش فرض 0)
         "created_at TEXT NOT NULL"                                             //تاریخ و زمان ثبت اعلان (متنی و اجباری)
         ");";
@@ -2018,7 +2017,7 @@ QList<QJsonObject> DatabaseManager::getNotifications(int userId, const QString& 
     QSqlQuery q(db);
 
     // اصلاح شد: اضافه شدن LIMIT 50 برای تضمین سرعت بالای سرور در طولانی مدت
-    q.prepare("SELECT id, user_id, username, role, type, message, related_id, is_read, created_at "
+    q.prepare("SELECT id, user_id, username, role, type, message, is_read, created_at "
               "FROM notifications "
               "WHERE user_id = :userId OR (role = :role AND (user_id IS NULL OR user_id = 0)) "
               "ORDER BY created_at DESC LIMIT 50");
@@ -2037,7 +2036,6 @@ QList<QJsonObject> DatabaseManager::getNotifications(int userId, const QString& 
         n["role"]       = q.value("role").toString();
         n["type"]       = q.value("type").toString();
         n["message"]    = q.value("message").toString();
-        n["related_id"] = q.value("related_id").toInt();
         n["is_read"]    = q.value("is_read").toInt();
         n["created_at"] = q.value("created_at").toString();
         list.append(n);
@@ -2060,12 +2058,12 @@ bool DatabaseManager::markNotificationRead(int notificationId)
 }
 
 //  تغییر خروجی جهت بازگرداندن آیدی سطر جدید
-int DatabaseManager::createNotification(int userId, const QString& role, const QString& type, const QString& message, int relatedId)
+int DatabaseManager::createNotification(int userId, const QString& role, const QString& type, const QString& message)
 {
     QSqlQuery q(db);
 
     q.prepare("INSERT INTO notifications "
-              "(user_id, username, role, type, message, related_id, is_read, created_at) "
+              "(user_id, username, role, type, message, is_read, created_at) "
               "VALUES ("
               "  CASE "
               "    WHEN :userId > 0 THEN :userId "
@@ -2086,7 +2084,6 @@ int DatabaseManager::createNotification(int userId, const QString& role, const Q
     q.bindValue(":r",      role);
     q.bindValue(":t",      type);
     q.bindValue(":m",      message);
-    q.bindValue(":rid",    relatedId);
 
     if (q.exec()) {
         return q.lastInsertId().toInt(); // برگرداندن آیدیِ اتوماتیکِ ثبت شده
@@ -2102,6 +2099,22 @@ QString DatabaseManager::getUsernameById(int userId) {
         return q.value("username").toString();
     }
     return "";
+}
+
+//گرفتن اعلان های خوانده نشده
+int DatabaseManager::getUnreadNotificationsCount(int userId)
+{
+    QSqlQuery q(db);
+    q.prepare("SELECT COUNT(*) FROM notifications "
+              "WHERE (user_id = :userId OR user_id IS NULL OR user_id = 0) "
+              "AND is_read = 0");
+
+    q.bindValue(":userId", userId);
+
+    if (q.exec() && q.next()) {
+        return q.value(0).toInt();
+    }
+    return 0;
 }
 
 //***************************************************توابع کمکی برای اعلان*****************************************************
