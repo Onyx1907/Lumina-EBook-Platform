@@ -65,7 +65,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-156</y>
+        <y>0</y>
         <width>730</width>
         <height>1000</height>
        </rect>
@@ -162,7 +162,7 @@ qproperty-alignment: 'AlignHCenter | AlignVCenter';
 }</string>
        </property>
        <property name="text">
-        <string>هری پاتر</string>
+        <string/>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
@@ -200,7 +200,7 @@ qproperty-alignment: 'AlignHCenter | AlignVCenter';
 </string>
        </property>
        <property name="text">
-        <string>جی کی رولینگ</string>
+        <string/>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
@@ -286,7 +286,7 @@ QPushButton:pressed {
 </string>
        </property>
        <property name="text">
-        <string>انتشارات پرتقال</string>
+        <string/>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
@@ -432,7 +432,7 @@ qproperty-alignment: 'AlignHCenter | AlignVCenter';
 </string>
        </property>
        <property name="text">
-        <string>ادبیات داستانی</string>
+        <string/>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>

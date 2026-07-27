@@ -31,5 +31,8 @@
         <file>resources/user/close_shelf.png</file>
         <file>resources/user/open_shelf.png</file>
         <file>resources/check.svg</file>
+        <file>resources/notif.svg</file>
+        <file>resources/read.svg</file>
+        <file>resources/refresh.svg</file>
     </qresource>
 </RCC>

@@ -9,6 +9,7 @@
 #include "bookreaderwidget.h"
 #include "publisherstatswidget.h"
 #include "commentswidget.h"
+#include "notificationswidget.h"
 
 namespace Ui {
 class PublisherDashboardWidget;
@@ -36,12 +37,15 @@ private:
 
     Publisher *publisher;
 
+    int prevNotifs = 0;
+
     PublisherStatsWidget *PublisherStatsPage;
     ProfileWidget *ProfilePage;
     PublisherBookWidget* PublisherBookPage;
     EditBookWidget *EditBookPage;
     BookReaderWidget *BookReaderPage;
     CommentsWidget *CommentsPage;
+    NotificationsWidget *NotificationsPage;
 
     enum Page{
         PublisherStatsPageIndex = 0,
@@ -49,7 +53,8 @@ private:
         PublisherBookPageIndex = 2,
         EditBookPageIndex = 3,
         BookReaderPageIndex = 4,
-        CommentsPageIndex = 5
+        CommentsPageIndex = 5,
+        NotificationsPageIndex = 6
     };
 };
 
