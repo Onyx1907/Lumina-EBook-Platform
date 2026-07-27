@@ -1,6 +1,9 @@
 #include "userdetailsdialog.h"
 #include "ui_userdetailsdialog.h"
 #include <QJsonObject>
+#include <QJsonDocument>
+#include <QDateTime>
+#include <QJsonArray>
 
 UserDetailsDialog::UserDetailsDialog(const QJsonObject &user, QWidget *parent)
     : QDialog(parent)
@@ -10,17 +13,14 @@ UserDetailsDialog::UserDetailsDialog(const QJsonObject &user, QWidget *parent)
 
     QString role = user.value("role").toString();
 
-    // آیدی
     ui->id_label->setText(
         "آیدی کاربر: " +
         QString::number(user.value("id").toInt()));
 
-    // نام کاربری
     ui->username_label->setText(
         "نام کاربری: " +
         user.value("username").toString());
 
-    // نام / نام انتشارات
     if(role == "Publisher")
         ui->name_label->setText(
             "نام انتشارات: " +
@@ -30,12 +30,10 @@ UserDetailsDialog::UserDetailsDialog(const QJsonObject &user, QWidget *parent)
             "نام و نام خانوادگی: " +
             user.value("name").toString());
 
-    // ایمیل
     ui->email_label->setText(
         "ایمیل: " +
         user.value("email").toString());
 
-    // نقش
     QString persianRole;
 
     if(role == "Admin")
@@ -47,67 +45,60 @@ UserDetailsDialog::UserDetailsDialog(const QJsonObject &user, QWidget *parent)
 
     ui->role_label->setText("نقش: " + persianRole);
 
-    // وضعیت
     ui->state_label->setText(
         user.value("is_blocked").toInt()
             ? "وضعیت: مسدود"
             : "وضعیت: فعال");
 
-    // تاریخ ثبت نام
     QDateTime date =
         QDateTime::fromString(
             user.value("registration_date").toString(),
-            "yyyy-MM-dd HH:mm:ss");
+            Qt::ISODate);
 
     ui->date_label->setText(
-        "تاریخ ثبت‌نام: " +
-        date.toString("yyyy/MM/dd - HH:mm"));
+        "زمان ثبت‌نام: " +
+        date.toString("yyyy/MM/dd - HH:mm:ss"));
 
-    // اطلاعات مخصوص ناشر / کاربر عادی
     if(role == "Publisher")
     {
         ui->genres_label->hide();
 
         ui->books_label->setText(
             "تعداد کتاب‌های منتشرشده: " +
-            QString::number(
-                user.value("published_books_count").toInt()));
+            QString::number(user.value("published_books_count").toInt()));
     }
     else
     {
-        QStringList genres =
-            user.value("favorite_genres")
-                .toString()
-                .split(',');
+        QJsonArray genresArray =
+            QJsonDocument::fromJson(
+                user.value("favorite_genres").toString().toUtf8()).array();
 
-        for(QString &genre : genres)
+        QStringList genres;
+
+        for(const QJsonValue &value : genresArray)
         {
-            genre = genre.trimmed();
+            QString genre = value.toString();
 
             if(genre == "Fiction")
-                genre = "داستانی";
+                genres << "ادبیات داستانی";
             else if(genre == "SciFi")
-                genre = "علمی و تخیلی";
+                genres << "علمی تخیلی";
             else if(genre == "Psychology")
-                genre = "روان‌شناسی";
+                genres << "روانشناسی";
             else if(genre == "History")
-                genre = "تاریخی";
+                genres << "تاریخی";
             else if(genre == "Educational")
-                genre = "علمی و تحصیلی";
+                genres << "علمی و تحصیلی";
             else if(genre == "Biography")
-                genre = "زندگینامه";
-            else
-                genre = "نامشخص";
+                genres << "زندگینامه";
         }
 
         ui->genres_label->setText(
-            "ژانرهای مورد علاقه: " +
-            genres.join("، "));
+            "ژانرهای مورد علاقه: " + genres.join("، "));
 
         ui->books_label->setText(
             "تعداد خریدها: " +
-            QString::number(
-                user.value("total_purchases").toInt()));
+            QString::number(user.value("total_purchases").toInt()));
     }
 }
 

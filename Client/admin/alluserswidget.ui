@@ -247,7 +247,7 @@ QComboBox QAbstractItemView {
 }</string>
          </property>
          <property name="text">
-          <string>مسدودیت</string>
+          <string>وضعیت</string>
          </property>
         </widget>
        </item>

@@ -41,6 +41,7 @@ private:
     void fillResults(const QJsonObject& data, bool is_new = false);
     void showDetails(const QJsonObject& data);
 
+    bool previous_failure = false;
 };
 
 #endif // ALLUSERSWIDGET_H
