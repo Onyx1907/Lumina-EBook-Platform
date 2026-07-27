@@ -16,6 +16,7 @@ add_library(LuminaShared STATIC
     regularuser.cpp
     cryptohelper.h cryptohelper.cpp
     comment.h comment.cpp
+    notification.h notification.cpp
 )
 
 # معرفی مسیر هدرها به پروژه اصلی و بقیه زیرپروژه‌ها
