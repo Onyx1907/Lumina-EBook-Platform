@@ -14,10 +14,7 @@ Notification::Notification(const QJsonObject &json)
 
     isRead = (json["is_read"].toInt() == 1);
 
-    createdAt = QDateTime::fromString(
-        json["created_at"].toString(),
-        Qt::ISODate
-        );
+    createdAt = json["created_at"].toString();
 }
 
 NotificationType Notification::stringToType(const QString &type)
