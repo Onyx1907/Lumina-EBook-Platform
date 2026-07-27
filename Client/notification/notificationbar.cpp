@@ -14,10 +14,11 @@ NotificationBar::NotificationBar(QWidget *parent)
 
     ui->unread_label->hide();
 
+    m_notificationSound.setSource(QUrl("qrc:/resources/notif_bell.wav"));
+    m_notificationSound.setVolume(0.6);
+
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
             this, &NotificationBar::getNotification);
-
-    sendUnreadNotifsRequest();
 }
 
 NotificationBar::~NotificationBar()
@@ -84,6 +85,8 @@ void NotificationBar::getNotification(const QString& action, const QJsonObject& 
     }
 
     if(action == "NEW_NOTIFICATION_RECEIVED"){
+        m_notificationSound.play();
+
         showPreview(data.value("message").toString());
 
         setUnreadCount(unreadCount + 1);
@@ -125,3 +128,7 @@ void NotificationBar::on_notif_pushButton_clicked()
     emit displayNotifs();
 }
 
+
+void NotificationBar::decreaseUnreadCount(){
+    setUnreadCount(unreadCount - 1);
+}

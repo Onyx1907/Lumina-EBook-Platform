@@ -34,5 +34,6 @@
         <file>resources/notif.svg</file>
         <file>resources/read.svg</file>
         <file>resources/refresh.svg</file>
+        <file>resources/notif_bell.wav</file>
     </qresource>
 </RCC>

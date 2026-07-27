@@ -22,10 +22,13 @@ private slots:
 
     void on_back_pushButton_clicked();
 
-    void on_back_pushButton_2_clicked();
+    void on_refresh_pushButton_clicked();
+
+    void sendMarkReadRequest(int id);
 
 signals:
     void back();
+    void decreaseCount();
 
 private:
     Ui::NotificationsWidget *ui;
@@ -34,6 +37,8 @@ private:
     QString m_role;
 
     void displayNotifications(const QJsonObject& data);
+
+    int pendingScrollValue = 0;
 };
 
 #endif // NOTIFICATIONSWIDGET_H

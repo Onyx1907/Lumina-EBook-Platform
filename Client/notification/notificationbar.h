@@ -4,6 +4,7 @@
 #include <QPropertyAnimation>
 #include <QTimer>
 #include <QWidget>
+#include <QSoundEffect>
 
 namespace Ui {
 class NotificationBar;
@@ -19,6 +20,7 @@ public:
 
     void setID(int id);
     void sendUnreadNotifsRequest();
+    void decreaseUnreadCount();
 
 signals:
     void displayNotifs();
@@ -43,6 +45,8 @@ private:
 
     void setUnreadCount(int count);
     int unreadCount = 0;
+
+    QSoundEffect m_notificationSound;
 };
 
 #endif // NOTIFICATIONBAR_H

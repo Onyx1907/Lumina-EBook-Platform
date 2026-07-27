@@ -39,6 +39,8 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
 
     ui->notif_widget->setID(publisher->getId());
 
+    ui->notif_widget->sendUnreadNotifsRequest();
+
     ui->home_pushButton->setChecked(true);
     ui->stackedWidget->setCurrentIndex(Page::PublisherStatsPageIndex);
 
@@ -87,7 +89,9 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     connect(ui->notif_widget, &NotificationBar::displayNotifs, this, [this](){
         NotificationsPage->loadNotifs();
         ui->notif_widget->sendUnreadNotifsRequest();
-        prevNotifs = ui->stackedWidget->currentIndex();
+        if(ui->stackedWidget->currentIndex() != Page::NotificationsPageIndex){
+            prevNotifs = ui->stackedWidget->currentIndex();
+        }
         fadeToPage(Page::NotificationsPageIndex);
     });
 
@@ -95,6 +99,11 @@ PublisherDashboardWidget::PublisherDashboardWidget(Publisher *cur_user, QWidget 
     connect(NotificationsPage, &NotificationsWidget::back, this, [this](){
         ui->notif_widget->sendUnreadNotifsRequest();
         fadeToPage(prevNotifs);
+    });
+
+    //کم شدن عدد اعلان ها
+    connect(NotificationsPage, &NotificationsWidget::decreaseCount, this, [this](){
+        ui->notif_widget->decreaseUnreadCount();
     });
 }
 
