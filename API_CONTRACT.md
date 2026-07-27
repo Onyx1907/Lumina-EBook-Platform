@@ -456,7 +456,6 @@
       "id": 45,
       "type": "NEW_COMMENT",
       "message": ".برای کتاب شما (نام کتاب) نظر یا امتیاز جدیدی ثبت شد",
-      "related_id": 10,
       "is_read": 0,
       "created_at": "2026-06-06 14:30:00"
     }
@@ -616,7 +615,6 @@
       "id": 50,
       "type": "BOOK_SOLD",
       "message": ".کتاب شما (نام کتاب) با موفقیت فروخته شد",
-      "related_id": 0,
       "is_read": 0,
       "created_at": "2026-06-06 14:35:00"
     }
@@ -638,8 +636,9 @@
           "id": 10,
           "title": "شاهنامه",
           "author": "فردوسی",
-          "genre": "Epic",
           "price": 250000.0,
+          "discount_percentage": 10.0,
+          "genre": "Epic",
           "pdfPath": "/home/username/BookClub_Storage/shahnameh.pdf",
           "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
@@ -821,6 +820,8 @@
           "id": 10,
           "title": "شاهنامه",
           "author": "فردوسی",
+          "price": 250000.0,
+          "discount_percentage": 10.0,
           "genre": "Epic",
           "coverImagePath": "/home/username/BookClub_Storage/shahnameh.jpg"
         }
@@ -943,7 +944,6 @@
       "id": 60,
       "type": "NEW_BOOK_GENRE",
       "message": ".کتاب جدیدی در ژانر مورد علاقه شما (حماسی) با نام «شاهنامه فردوسی» اضافه شد",
-      "related_id": 1,
       "is_read": 0,
       "created_at": "2026-06-06 14:40:00"
     }
@@ -1023,7 +1023,6 @@
       "id": 70,
       "type": "BOOK_DISCOUNT",
       "message": "!کتاب «نام کتاب» که آن را ذخیره کرده بودید، تخفیف خورد",
-      "related_id": 10,
       "is_read": 0,
       "created_at": "2026-06-06 14:45:00"
     }
@@ -1170,7 +1169,7 @@
       "user": {
         "id": 2,
         "username": "publisher_test",
-        "role": "publisher",
+        "role": "Publisher",
         "is_blocked": 1,
         "name": "علی رضایی",
         "email": "publisher@test.com",
@@ -1277,7 +1276,8 @@
           "coverImagePath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh_cover.jpg",
           "pdfPath": "C:/Users/User/BookClub_Storage/1700000000_shahnameh.pdf",
           "publisher_id": 5,
-          "isActive": 1
+          "isActive": 1,
+          "publisher_name": "نام ناشر مربوطه"
         }
       ]
     }
@@ -1360,7 +1360,6 @@
           "role": "publisher",
           "type": "BOOK_APPROVED",
           "message": "کتاب شما با موفقیت تایید شد.",
-          "related_id": 10,
           "is_read": 0,
           "created_at": "2026-07-23 14:20:00"
         },
@@ -1371,7 +1370,6 @@
           "role": "publisher",
           "type": "SYSTEM_ANNOUNCEMENT",
           "message": "به‌روزرسانی جدید سیستم منتشر شد.",
-          "related_id": 0,
           "is_read": 1,
           "created_at": "2026-07-20 09:00:00"
         }
@@ -1390,6 +1388,18 @@
     "server_response_error": {
       "action": "MARK_NOTIFICATION_READ_RESPONSE",
       "status": "ERROR"
+    }
+  }
+,
+  "59_GET_UNREAD_NOTIFICATIONS_COUNT": {
+    "client_request": {
+      "action": "GET_UNREAD_NOTIFICATIONS_COUNT",
+      "user_id": 5
+    },
+    "server_response_success": {
+      "action": "GET_UNREAD_NOTIFICATIONS_COUNT_RESPONSE",
+      "status": "SUCCESS",
+      "unread_count": 3
     }
   }
 }
