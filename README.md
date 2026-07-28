@@ -280,24 +280,40 @@ Lumina
 </p>
 
 ---
-
 ## 🖥️ Screenshots
 
-| Login & Authentication | User Home Page |
-|---|---|
-| <img src="assets/login.png" width="400"> | <img src="assets/user_panel.png" width="400"> |
+| Login & Authentication | First-Time Genre Selection |
+| :---: | :---: |
+| <img src="assets/login.png" width="400"> | <img src="assets/genre_selection.png" width="400"> |
 
-| Personal Library | PDF Reader |
-|---|---|
-| <img src="assets/library.png" width="400"> | <img src="assets/PDFreader.png" width="400"> |
+| User Home Page | Advanced Search & Genres |
+| :---: | :---: |
+| <img src="assets/user_panel.png" width="400"> | <img src="assets/search.png" width="400"> |
 
-| Publisher Panel | Admin Panel |
-|---|---|
-| <img src="assets/publisher_panel.png" width="400"> | <img src="assets/users_list.png" width="400"> |
+| Book Details | User Reviews & Rating |
+| :---: | :---: |
+| <img src="assets/bookDetails.png" width="400"> | <img src="assets/comments.png" width="400"> |
 
-| Notification System | Disconnected Page | Server Management Panel |
-|---|---|---|
-| <img src="assets/notifications.png" width="260"> | <img src="assets/qml_disconnected.png" width="260"> | <img src="assets/server.png" width="260"> |
+| Built-in PDF Reader | Personal Library & Shelves |
+| :---: | :---: |
+| <img src="assets/PDFreader.png" width="400"> | <img src="assets/library.png" width="400"> |
+
+| Shopping Cart | Publisher Dashboard |
+| :---: | :---: |
+| <img src="assets/cart.png" width="400"> | <img src="assets/publisher_panel.png" width="400"> |
+
+| Admin User Management | Network Reconnection Screen |
+| :---: | :---: |
+| <img src="assets/users_list.png" width="400"> | <img src="assets/qml_disconnected.png" width="400"> |
+
+| **Real-time Notifications (Alert & Bell)** | Notification Center |
+| :---: | :---: |
+| **<img src="assets/getNotif.gif" width="400">** | <img src="assets/notifications.png" width="400"> |
+
+<p align="center">
+  <b>Server Management Dashboard (Live Resource & Network Monitoring)</b><br>
+  <img src="assets/server.png" width="820">
+</p>
 
 ---
 
