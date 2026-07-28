@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# رفتن به پوشه اصلی پروژه
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$SCRIPT_DIR/.."
 cd "$PROJECT_ROOT"
@@ -10,28 +9,37 @@ echo "=========================================="
 echo " Building LuminaClient AppImage for Linux "
 echo "=========================================="
 
-# ۱. پاکسازی کامل فایل‌های قبلی
+# ۱. پاکسازی فایل‌های قبلی
 rm -rf installer/packaging_dir
 mkdir -p installer/packaging_dir
 
-# ۲. مطمئن شدن از نصب بودن imagemagick برای آیکون
+
+# ۲. نصب imagemagick در صورت نیاز
 if ! command -v convert &> /dev/null; then
-    echo "Installing imagemagick for icon resizing..."
+    echo "Installing imagemagick..."
     sudo apt update && sudo apt install -y imagemagick
 fi
 
-# ۳. ساخت پوشه Release و کامپایل پروژه
+
+# ۳. Build Release
 mkdir -p build-release
 cd build-release
+
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j$(nproc)
+
 cd "$PROJECT_ROOT"
 
-# ۴. کپی فایل اجرایی و آماده‌سازی آیکون و دسکتاپ
+
+# ۴. آماده سازی فایل‌ها
 cp build-release/Client/LuminaClient installer/packaging_dir/LuminaClient
 
+
 echo "Resizing icon..."
-convert Client/resources/Lumina_Logo.png -resize 512x512 installer/packaging_dir/Lumina_Logo.png
+convert Client/resources/Lumina_Logo.png \
+    -resize 512x512 \
+    installer/packaging_dir/Lumina_Logo.png
+
 
 cat <<EOF > installer/packaging_dir/luminaclient.desktop
 [Desktop Entry]
@@ -43,55 +51,120 @@ Categories=Office;Qt;
 Terminal=false
 EOF
 
-# ۵. دانلود ابزارهای بسته‌بندی در صورت عدم وجود
+
+
+# ۵. دانلود ابزارها
 mkdir -p installer/tools
+
+
 if [ ! -f "installer/tools/linuxdeploy-x86_64.AppImage" ]; then
     echo "Downloading linuxdeploy..."
-    wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage -O installer/tools/linuxdeploy-x86_64.AppImage
+
+    wget -q \
+    https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage \
+    -O installer/tools/linuxdeploy-x86_64.AppImage
+
     chmod +x installer/tools/linuxdeploy-x86_64.AppImage
 fi
 
+
+
 if [ ! -f "installer/tools/linuxdeploy-plugin-qt-x86_64.AppImage" ]; then
-    echo "Downloading linuxdeploy Qt plugin..."
-    wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage -O installer/tools/linuxdeploy-plugin-qt-x86_64.AppImage
+    echo "Downloading Qt plugin..."
+
+    wget -q \
+    https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage \
+    -O installer/tools/linuxdeploy-plugin-qt-x86_64.AppImage
+
     chmod +x installer/tools/linuxdeploy-plugin-qt-x86_64.AppImage
 fi
 
-# ۶. تنظیمات Qt6 و آماده‌سازی AppDir
+
+
+# ۶. تنظیمات Qt
 export QMAKE=${QMAKE:-/usr/bin/qmake6}
+
 export EXTRA_QT_PLUGINS="multimedia,mediaservice,playlistformats"
+
+export QML_SOURCES_PATHS="$PROJECT_ROOT/Client"
+
+export QML2_IMPORT_PATH="/usr/lib/x86_64-linux-gnu/qt6/qml"
+
+
 
 cd installer/packaging_dir
 
-# مرحله اول: ساخت ساختار اولیه AppDir توسط linuxdeploy
-../tools/linuxdeploy-x86_64.AppImage \
-  --appdir AppDir \
-  -e LuminaClient \
-  -i Lumina_Logo.png \
-  -d luminaclient.desktop \
-  --plugin qt
 
-# ۷. تزریق پلاگین‌های GStreamer به درون AppDir
-GST_PLUGIN_PATH_SYS=$(pkg-config --variable=pluginsdir gstreamer-1.0 2>/dev/null || echo "/usr/lib/x86_64-linux-gnu/gstreamer-1.0")
-if [ -d "$GST_PLUGIN_PATH_SYS" ]; then
-    echo "Bundling GStreamer plugins from $GST_PLUGIN_PATH_SYS..."
-    mkdir -p AppDir/usr/lib/gstreamer-1.0
-    cp -r $GST_PLUGIN_PATH_SYS/* AppDir/usr/lib/gstreamer-1.0/ 2>/dev/null || true
+
+# ساخت AppDir اولیه
+../tools/linuxdeploy-x86_64.AppImage \
+    --appdir AppDir \
+    -e LuminaClient \
+    -i Lumina_Logo.png \
+    -d luminaclient.desktop \
+    --plugin qt
+
+
+
+# ۷. اضافه کردن QML Modules
+echo "Bundling Qt6 QML modules..."
+
+QT_QML_PATH="/usr/lib/x86_64-linux-gnu/qt6/qml"
+
+mkdir -p AppDir/usr/qml
+
+
+if [ -d "$QT_QML_PATH/QtQml" ]; then
+    cp -r "$QT_QML_PATH/QtQml" AppDir/usr/qml/
 fi
 
-# ۸. تنظیم اسکریپت AppRun با ساخت پوشه apprun-hooks
+
+if [ -d "$QT_QML_PATH/QtQuick" ]; then
+    cp -r "$QT_QML_PATH/QtQuick" AppDir/usr/qml/
+fi
+
+
+
+# ۸. GStreamer plugins
+GST_PLUGIN_PATH_SYS=$(pkg-config --variable=pluginsdir gstreamer-1.0 2>/dev/null || echo "/usr/lib/x86_64-linux-gnu/gstreamer-1.0")
+
+
+if [ -d "$GST_PLUGIN_PATH_SYS" ]; then
+
+    echo "Bundling GStreamer plugins..."
+
+    mkdir -p AppDir/usr/lib/gstreamer-1.0
+
+    cp -r "$GST_PLUGIN_PATH_SYS"/* \
+    AppDir/usr/lib/gstreamer-1.0/ \
+    2>/dev/null || true
+
+fi
+
+
+
+# ۹. AppRun hooks
 mkdir -p AppDir/apprun-hooks
+
+
 cat <<'EOF' > AppDir/apprun-hooks/gstreamer.sh
 export GST_PLUGIN_SYSTEM_PATH_1_0="${APPDIR}/usr/lib/gstreamer-1.0"
 export GST_PLUGIN_SCANNER="${APPDIR}/usr/lib/gstreamer-1.0/gst-plugin-scanner"
 EOF
 
-# بازسازی مجدد AppRun استاندارد با در نظر گرفتن هوک جدید
+
+
+# ۱۰. ساخت نهایی AppImage
 rm -f AppDir/AppRun
+
+
 ../tools/linuxdeploy-x86_64.AppImage \
-  --appdir AppDir \
-  --output appimage
+    --appdir AppDir \
+    --output appimage
+
+
 
 echo "=========================================="
-echo " SUCCESS! AppImage created in installer/packaging_dir/ "
+echo " SUCCESS! AppImage created "
+echo " Location: installer/packaging_dir/"
 echo "=========================================="
