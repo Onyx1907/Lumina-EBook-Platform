@@ -65,7 +65,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-458</y>
         <width>730</width>
         <height>1000</height>
        </rect>
@@ -784,6 +784,12 @@ QPushButton:disabled {
         </item>
         <item>
          <widget class="QTextEdit" name="description_label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="styleSheet">
            <string notr="true">QTextEdit {
     background: rgba(78, 56, 42, 170);

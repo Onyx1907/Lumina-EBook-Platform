@@ -10,6 +10,12 @@
     <height>304</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -379,35 +385,79 @@ font-size: 13px;
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="description_label">
+       <widget class="QTextEdit" name="description_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>150</width>
-          <height>0</height>
+          <width>0</width>
+          <height>50</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>500</height>
+          <height>120</height>
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">qproperty-alignment: 'AlignLeft | AlignVCenter';
-font-size: 13px;
+         <string notr="true">QTextEdit {
+    background: rgba(78, 56, 42, 170);
+    color: #F5EBDD;
+    border: 1px solid rgba(255, 240, 220, 70);
+    border-radius: 16px;
+    padding: 12px;
+    selection-background-color: rgba(201, 156, 99, 170);
+    selection-color: white;
+    font-size: 11pt;
+}
+
+QTextEdit:focus {
+    border: 2px solid rgba(214, 176, 122, 180);
+}
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 12px;
+    margin: 4px;
+}
+
+QScrollBar::handle:vertical {
+    background: rgba(194, 148, 98, 180);
+    border-radius: 6px;
+    min-height: 35px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: rgba(222, 178, 124, 220);
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+    background: transparent;
+}
 </string>
         </property>
-        <property name="text">
-         <string>توضیحات کتاب</string>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAsNeeded</enum>
         </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-        <property name="wordWrap">
+        <property name="readOnly">
          <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::NoTextInteraction</set>
         </property>
        </widget>
       </item>

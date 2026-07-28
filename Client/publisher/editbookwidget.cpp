@@ -22,6 +22,15 @@ EditBookWidget::EditBookWidget(QWidget *parent, int publisherID)
 
     ui->percent_lineEdit->setValidator(validator);
 
+    connect(ui->percent_lineEdit, &QLineEdit::textChanged,
+            this, [this](const QString &text) {
+                bool ok;
+                double value = text.toDouble(&ok);
+
+                if (ok && value > 100.0)
+                    ui->percent_lineEdit->setText("100");
+            });
+
     ui->error_label->hide();
 
     connect(&ClientNetworkManager::instance(), &ClientNetworkManager::responseReceived,
