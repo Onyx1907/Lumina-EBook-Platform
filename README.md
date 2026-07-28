@@ -376,7 +376,7 @@ Pre-built binaries and ready-to-use installers are available in the project's **
 
 ## 👥 Team
 
-* 👩‍💻 [Onyx07](https://github.com/Onyx07) — *Client Application Developer*
+* 👩‍💻 [Onyx1907](https://github.com/Onyx1907) — *Client Application Developer*
   * Client-side architecture & Qt Widgets / QML integration
   * User/Publisher/Admin UI implementation
   * Notification system & Client-Server socket integration
