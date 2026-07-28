@@ -301,6 +301,18 @@ Lumina
 
 ---
 
+## 💡 Tips
+
+> [!TIP]
+> To edit or delete a personal shelf, right-click on the shelf item and use the context menu.
+
+> [!TIP]
+> Publishers can view book reviews and ratings by clicking the ⭐ star icon associated with each book.
+
+> [!TIP]
+> After bookmarking a book from its details page, a bookmark icon will appear on the book cover. Click the icon again to remove the bookmark.
+---
+
 ## 🚀 Build & Run
 
 ### Prerequisites
