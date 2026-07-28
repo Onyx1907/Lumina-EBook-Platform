@@ -10,7 +10,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{3F45BD8F-BD9D-461B-9DC3-1C00D95707A8}
+AppId={{4C8683F7-2111-4931-BF9C-CF66C2B80C08}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -32,7 +32,7 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=D:\installer_Server
-OutputBaseFilename=Lumina_installer_Server
+OutputBaseFilename=Installer_Server_SETUP
 SetupIconFile=C:\Users\Maadized\Desktop\favicon.ico
 SolidCompression=yes
 WizardStyle=modern dynamic
