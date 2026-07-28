@@ -312,7 +312,7 @@ Lumina
 
 1. **Clone the Repository**
 ```bash
-git clone [https://github.com/your-username/Lumina.git](https://github.com/your-username/Lumina.git)
+https://github.com/Onyx1907/Lumina-EBook-Platform.git
 cd Lumina
 ```
 
