@@ -259,7 +259,7 @@ Lumina
 ├── Shared/                    → Common data models and base classes shared between Client and Server
 │                                (e.g., User, Book, and other core entities)
 │
-├── API Contract.md            → Client-Server communication protocol and JSON request/response definitions
+├── API_CONTRACT.md            → Client-Server communication protocol and JSON request/response definitions
 │
 ├── installer/                 → Deployment and packaging scripts
 │
@@ -340,8 +340,8 @@ Lumina
 
 1. **Clone the Repository**
 ```bash
-https://github.com/Onyx1907/Lumina-EBook-Platform.git
-cd Lumina
+git clone https://github.com/Onyx1907/Lumina-EBook-Platform.git
+cd Lumina-EBook-Platform
 ```
 
 2. **Build Client & Server**
