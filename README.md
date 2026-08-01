@@ -370,21 +370,20 @@ The output package will be placed inside `installer/packaging_dir/`.
 
 Pre-built binaries and ready-to-use installers are available in the project's **Releases** section:
 * 🪟 **Windows:** Installer package created using Inno Setup (`.exe`)
-* 🐧 **Linux:** Portable AppImage package (`.AppImage`)
 
 ---
 
 ## 👥 Team
 
 * 👩‍💻 [Onyx1907](https://github.com/Onyx1907) — *Client Application Developer*
-  * Client-side architecture & Qt Widgets / QML integration
-  * User/Publisher/Admin UI implementation
-  * Notification system & Client-Server socket integration
+  * Client-side architecture & application development
+  * Qt Widgets / QML user interface
+  * Client networking & feature implementation
 
 * 👩‍💻 [SanaAliAkbari](https://github.com/SanaAliAkbari) — *Server Application Developer*
-  * Server-side multithreaded architecture
+  * Server-side architecture & application development
   * Database design & SQLite integration
-  * Request/Response JSON protocol handling & Server monitoring panel
+  * Request processing & server management
 
 ---
 
