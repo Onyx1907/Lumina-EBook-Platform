@@ -286,7 +286,13 @@ void LibraryWidget::handleGetShelves(const QJsonObject& response) {
         QListWidgetItem* item = new QListWidgetItem(ui->shelves_listWidget);
         item->setText(shelf.name);
 
-        item->setIcon(QIcon(":/resources/user/close_shelf.png"));
+        if(m_active_shelfID == shelf.id){
+            item->setIcon(QIcon(":/resources/user/open_shelf.png"));
+            requestShelfBooks(shelf.id);
+        }
+        else{
+            item->setIcon(QIcon(":/resources/user/close_shelf.png"));
+        }
 
         item->setData(Qt::UserRole, shelf.id);
 

@@ -48,7 +48,7 @@ private:
     Ui::LibraryWidget *ui;
     int m_userID;
     QList <Shelf> m_shelves;
-    int m_active_shelfID;
+    int m_active_shelfID = -1;
 
     void requestPurchasedBooks();
     void requestSavedBooks();
